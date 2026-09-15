@@ -10,22 +10,26 @@
 services:
   qingzhou:
     # 用官方预构建镜像（多架构）。想自己构建就注释掉 image、放开 build。
-    image: ghcr.io/mllt992/qing-zhou:latest
+    image: qingzhou:v0.2.80-qz-remote
     # build: .
     container_name: qingzhou
     restart: unless-stopped
     ports:
-      - "8081:8081"
+      - "127.0.0.1:8081:8081"
     environment:
       # 容器内必须监听 0.0.0.0，否则端口映射不通
       QZ_LISTEN: "0.0.0.0:8081"
       # 面板对外访问地址（订阅链接、探针安装、邮件链接都用它）——改成你的域名/IP
-      QZ_PUBLIC_BASE: "https://node.example.com"
+      QZ_PUBLIC_BASE: "https://qz.kreeper.cc"
       # 敏感配置加密主密钥，务必改：openssl rand -hex 32
-      QZ_SECRET_KEY: "please-change-me-openssl-rand-hex-32"
+      QZ_SECRET_KEY: "${QZ_SECRET_KEY:?set QZ_SECRET_KEY in /opt/qingzhou/qingzhou.env}"
       # 首次管理员（可选）。QZ_ADMIN_PASS 留空则首启生成随机密码并打印到日志一次
-      # QZ_ADMIN_USER: "admin"
-      # QZ_ADMIN_PASS: ""
+      QZ_ADMIN_USER: "${QZ_ADMIN_USER:?set QZ_ADMIN_USER in /opt/qingzhou/qingzhou.env}"
+      QZ_ADMIN_PASS: "${QZ_ADMIN_PASS:?set QZ_ADMIN_PASS in /opt/qingzhou/qingzhou.env}"
+      # 中心面板只通过 SSH 管理受管服务器，不在本机落地 sing-box。
+      QZ_SINGBOX_LOCAL: "false"
+      # 探针升级需要可写目录；数据库卷持久化它，避免容器重启丢失。
+      QZ_PROBE_DIR: "/data/probe"
       # 反代在最前面时填其 IP/CIDR，日志/限流才拿到真实客户端 IP
       # QZ_TRUSTED_PROXIES: "172.16.0.0/12"
       # SSH 私钥文件目录。默认就是 /data/ssh-keys（数据库同级），一般不用改。
@@ -38,7 +42,7 @@ services:
       # 想用「私钥文件」而不是把私钥粘进面板，就把私钥挂到 /data/ssh-keys 下。
       # 容器以 uid 10001 运行：宿主机上 root 拥有的 600 私钥挂进去是读不了的，
       # 先 chown 10001 <私钥>，否则面板的下拉框里会标成「面板读不了」。
-      # - /srv/qingzhou/ssh-keys:/data/ssh-keys:ro
+      - /srv/qingzhou/ssh-keys:/data/ssh-keys:ro
 
 volumes:
   qingzhou-data:

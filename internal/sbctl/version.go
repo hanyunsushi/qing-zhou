@@ -28,6 +28,9 @@ type VersionReporter interface {
 // node an operator is most likely to have installed by hand — so without this
 // it would be the one machine the panel can say nothing about.
 func (c *Controller) refreshLocalVersion(force bool) {
+	if c.localDisabled {
+		return
+	}
 	rep, ok := c.mgr.(VersionReporter)
 	if !ok {
 		return

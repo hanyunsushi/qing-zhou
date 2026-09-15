@@ -208,6 +208,7 @@ func buildSbController(st *store.Store, app *api.API, sshKeyDir string) *sbctl.C
 	remoteMgr.SetHostKeyPersister(func(id int64, key string) error { return st.SetServerHostKey(id, key) })
 
 	ctrl := sbctl.New(st, mgr, stats, base, v2rayListen)
+	ctrl.SetLocalEnabled(os.Getenv("QZ_SINGBOX_LOCAL") != "false")
 	ctrl.SetRemoteManager(remoteMgr)
 	app.SetSbController(ctrl)
 	// Restarts caused by the periodic pass — the ones nobody asked for — feed the

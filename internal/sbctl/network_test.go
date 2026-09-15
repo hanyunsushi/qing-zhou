@@ -122,6 +122,28 @@ func TestRebuildAndRemoteStatsShareSSHLimit(t *testing.T) {
 	}
 }
 
+func TestRemoteOnlyRebuildSkipsLocalApplier(t *testing.T) {
+	c, rm := networkController(1)
+	c.SetLocalEnabled(false)
+	close(rm.gate)
+
+	if err := c.Rebuild(); err != nil {
+		t.Fatalf("remote-only rebuild: %v", err)
+	}
+	if got := rm.applies.Load(); got != 1 {
+		t.Fatalf("remote applies=%d, want 1", got)
+	}
+}
+
+func TestRemoteOnlyRejectsExplicitLocalRebuild(t *testing.T) {
+	c, _ := networkController(1)
+	c.SetLocalEnabled(false)
+
+	if err := c.RebuildServer(0); err == nil {
+		t.Fatal("expected explicit local rebuild to be rejected")
+	}
+}
+
 func TestRemoteStatsCancelsActiveAndQueuedWork(t *testing.T) {
 	c, rm := networkController(100)
 	ctx, cancel := context.WithCancel(context.Background())
