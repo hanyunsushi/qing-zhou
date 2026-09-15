@@ -25,7 +25,7 @@ ACL4SSR 模板及订阅名称保存在运行时数据库，不在源码中硬编
 
 “上游管理”位于侧边栏“运营”的“管理概览”上方。管理员可以在面板内分别保存 OCI API Key 配置和 Cloudflare Account Analytics Token；两份 JSON 配置使用现有 `QZ_SECRET_KEY` 加密层存进 `settings`，读取接口只返回 `*_set` 标记，绝不返回私钥或 Token。删除操作会直接删除整份加密配置。
 
-- OCI：直接签名请求 `usageapi.{region}.oci.oraclecloud.com/20200107/usage`，查询当前 UTC 月并累加官方 Usage API 中 data transfer/outbound/egress 的可识别字节单位。余额是“管理员配置的月度上限 - OCI 官方用量”，并非声称 OCI API 返回统一余额。
+- OCI：直接签名请求 `usageapi.{region}.oci.oraclecloud.com/20200107/usage`，查询当月起点到当前 UTC 日 `00:00` 的日级官方数据，并累加 data transfer/outbound/egress 的可识别字节单位；当天尚未结算的用量会在下一日数据中体现。余额是“管理员配置的月度上限 - OCI 官方用量”，并非声称 OCI API 返回统一余额。
 - Cloudflare：直接请求 Account Analytics GraphQL，累加当前 UTC 日的 Pages Functions 和 Workers 调用数。必须填写专用 `Account Analytics Read` Token，禁止复用 DNS/ACME Token；余额是面板配置的每日上限减去官方请求数。
 - 这两项都不得经由 EdgeTunnel、Cloudflare Worker KV、服务器 `tx_bytes` 或节点统计转发。第三方接口错误只显示在上游页面，不得影响管理概览和订阅服务。
 

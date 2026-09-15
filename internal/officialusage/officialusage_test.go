@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
+	"encoding/json"
 	"encoding/pem"
 	"io"
 	"net/http"
@@ -57,6 +58,13 @@ func TestFetchOCIReadsTransferUsageAndSignsRequest(t *testing.T) {
 		if got := r.Header.Get("X-Content-SHA256"); got == "" {
 			t.Fatal("missing body digest")
 		}
+		var requestBody map[string]any
+		if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
+			t.Fatal(err)
+		}
+		if got := requestBody["timeUsageEnded"]; got != "2026-09-15T00:00:00Z" {
+			t.Fatalf("timeUsageEnded=%v", got)
+		}
 		return jsonResponse(200, `{"items":[
 			{"service":"Networking","skuName":"Data Transfer Out","unit":"GB","attributedUsage":"1.5"},
 			{"service":"Compute","skuName":"OCPU Hour","unit":"HOUR","attributedUsage":"99"},
@@ -69,6 +77,15 @@ func TestFetchOCIReadsTransferUsageAndSignsRequest(t *testing.T) {
 	}, now)
 	if !usage.Success || usage.Used != 1_502_097_152 || usage.Remaining != 497_902_848 {
 		t.Fatalf("unexpected OCI usage %#v", usage)
+	}
+}
+
+func TestFetchOCIOnFirstUTCDayReturnsZeroUntilDailyDataExists(t *testing.T) {
+	usage := FetchOCI(context.Background(), nil, OCIConfig{
+		TenancyOCID: "tenancy", UserOCID: "user", Fingerprint: "aa:bb", Region: "ap-tokyo-1", PrivateKey: testPrivateKey(t, false), MonthlyLimitBytes: 99,
+	}, time.Date(2026, 9, 1, 12, 0, 0, 0, time.UTC))
+	if !usage.Success || usage.Used != 0 || usage.Remaining != 99 || !strings.Contains(usage.Period, "截至今日 00:00") {
+		t.Fatalf("unexpected first-day usage %#v", usage)
 	}
 }
 

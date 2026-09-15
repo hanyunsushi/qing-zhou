@@ -143,10 +143,23 @@ func FetchOCI(ctx context.Context, client *http.Client, config OCIConfig, now ti
 		client = &http.Client{Timeout: 20 * time.Second}
 	}
 	now = now.UTC()
+	monthStart := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.UTC)
+	// OCI Usage is reported at daily granularity and rejects a partial UTC day.
+	// Query up to the current day's 00:00 UTC boundary, so the displayed balance
+	// may lag today's as-yet-unsettled usage but always matches OCI's API rules.
+	periodEnd := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+	if !periodEnd.After(monthStart) {
+		base.Success = true
+		base.Remaining = base.Limit
+		base.Period = "本月（UTC，日级数据截至今日 00:00）"
+		base.UpdatedAt = now.Format(time.RFC3339)
+		return base
+	}
+	base.Period = "本月（UTC，日级数据截至今日 00:00）"
 	body, err := json.Marshal(map[string]any{
 		"tenantId":          config.TenancyOCID,
-		"timeUsageStarted":  time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.UTC).Format(time.RFC3339),
-		"timeUsageEnded":    now.Format(time.RFC3339),
+		"timeUsageStarted":  monthStart.Format(time.RFC3339),
+		"timeUsageEnded":    periodEnd.Format(time.RFC3339),
 		"granularity":       "DAILY",
 		"isAggregateByTime": true,
 		"queryType":         "USAGE_ONLY",

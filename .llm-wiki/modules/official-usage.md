@@ -9,7 +9,7 @@ updated: 2026-09-15
 
 ## OCI
 
-`FetchOCI` posts a signed request to `https://usageapi.{region}.oci.oraclecloud.com/20200107/usage`. The request is RSA SHA-256 signed with an OCI API key and accepts PKCS#1 or PKCS#8 RSA PEM private keys. It queries the current UTC month, aggregates rows grouped by service/SKU/unit, and includes only transfer/outbound/egress rows with recognized byte units.
+`FetchOCI` posts a signed request to `https://usageapi.{region}.oci.oraclecloud.com/20200107/usage`. The request is RSA SHA-256 signed with an OCI API key and accepts PKCS#1 or PKCS#8 RSA PEM private keys. OCI requires full UTC-day precision, so it queries the current UTC month up to today's `00:00`; today's unsettled usage appears in a later daily result. It aggregates rows grouped by service/SKU/unit and includes only transfer/outbound/egress rows with recognized byte units.
 
 The provider response is usage. `remaining = max(configured_monthly_limit - used, 0)` is a QingZhou display calculation.
 
