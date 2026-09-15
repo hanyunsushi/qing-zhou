@@ -10,7 +10,7 @@
 services:
   qingzhou:
     # 用官方预构建镜像（多架构）。想自己构建就注释掉 image、放开 build。
-    image: qingzhou:v0.2.80-qz-remote
+    image: "${QZ_IMAGE:-qingzhou:kreeper}"
     # build: .
     container_name: qingzhou
     restart: unless-stopped
@@ -22,10 +22,10 @@ services:
       # 面板对外访问地址（订阅链接、探针安装、邮件链接都用它）——改成你的域名/IP
       QZ_PUBLIC_BASE: "https://qz.kreeper.cc"
       # 敏感配置加密主密钥，务必改：openssl rand -hex 32
-      QZ_SECRET_KEY: "${QZ_SECRET_KEY:?set QZ_SECRET_KEY in /opt/qingzhou/qingzhou.env}"
+      QZ_SECRET_KEY: "${QZ_SECRET_KEY:?set QZ_SECRET_KEY in /opt/qingzhou/.env}"
       # 首次管理员（可选）。QZ_ADMIN_PASS 留空则首启生成随机密码并打印到日志一次
-      QZ_ADMIN_USER: "${QZ_ADMIN_USER:?set QZ_ADMIN_USER in /opt/qingzhou/qingzhou.env}"
-      QZ_ADMIN_PASS: "${QZ_ADMIN_PASS:?set QZ_ADMIN_PASS in /opt/qingzhou/qingzhou.env}"
+      QZ_ADMIN_USER: "${QZ_ADMIN_USER:?set QZ_ADMIN_USER in /opt/qingzhou/.env}"
+      QZ_ADMIN_PASS: "${QZ_ADMIN_PASS:?set QZ_ADMIN_PASS in /opt/qingzhou/.env}"
       # 中心面板只通过 SSH 管理受管服务器，不在本机落地 sing-box。
       QZ_SINGBOX_LOCAL: "false"
       # 探针升级需要可写目录；数据库卷持久化它，避免容器重启丢失。
