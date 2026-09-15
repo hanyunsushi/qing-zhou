@@ -25,7 +25,7 @@ ACL4SSR 模板及订阅名称保存在运行时数据库，不在源码中硬编
 
 “上游管理”位于侧边栏“运营”的“管理概览”上方。管理员可以在面板内分别保存 OCI API Key 配置和 Cloudflare Account Analytics Token；两份 JSON 配置使用现有 `QZ_SECRET_KEY` 加密层存进 `settings`，读取接口只返回 `*_set` 标记，绝不返回私钥或 Token。删除操作会直接删除整份加密配置。
 
-- OCI：直接请求 Usage API，余额为“配置额度减去已返回的可识别出站用量”的参考值；10 TB 十进制默认值不是从账户自动读取的权益。查询至当日 UTC `00:00` 不代表该区间已经完整入账。账户免费及超额 SKU、计量单位和免费额度聚合范围必须用真实账户返回数据与 Console 核验，不能仅凭 HTTP 成功承诺余额准确。详见 `.llm-wiki/modules/official-usage.md`。
+- OCI：直接请求 Usage API，按 Oracle 价目表中 `First 10 TB / Month` / `Over 10 TB / Month` 的出站条目和 `Gigabyte outbound data transfer per month` 官方单位计算参考余额；识别到超额层级时余额直接归零。查询至当日 UTC `00:00` 不代表该区间已经完整入账。账户真实返回和 Console 仍需在生产验收中核对，不能仅凭 HTTP 成功承诺余额准确。详见 `.llm-wiki/modules/official-usage.md`。
 - Cloudflare：直接请求 Account Analytics GraphQL，累加当前 UTC 日的 Pages Functions 和 Workers 调用数。必须填写专用 `Account Analytics Read` Token，禁止复用 DNS/ACME Token；余额是面板配置的每日上限减去官方请求数。
 - 这两项都不得经由 EdgeTunnel、Cloudflare Worker KV、服务器 `tx_bytes` 或节点统计转发。第三方接口错误只显示在上游页面，不得影响管理概览和订阅服务。
 

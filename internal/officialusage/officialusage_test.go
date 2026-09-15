@@ -183,6 +183,17 @@ func TestFetchOCIRejectsPaginationCycles(t *testing.T) {
 	}
 }
 
+func TestFetchOCIOverageMakesFreeBalanceZero(t *testing.T) {
+	client := testClient(func(*http.Request) (*http.Response, error) {
+		return jsonResponse(200, `{"items":[{"service":"Networking","skuName":"Outbound Data Transfer - Originating in APAC - First 10 TB / Month","unit":"Gigabyte outbound data transfer per month","attributedUsage":"9999"},{"service":"Networking","skuName":"Outbound Data Transfer - Originating in APAC - Over 10 TB / Month","unit":"Gigabyte outbound data transfer per month","attributedUsage":"1"}]}`), nil
+	})
+	config := OCIConfig{TenancyOCID: "tenancy", UserOCID: "user", Fingerprint: "aa:bb", Region: "ap-tokyo-1", PrivateKey: testPrivateKey(t, false), MonthlyLimitBytes: 10_000_000_000_000}
+	usage := FetchOCI(context.Background(), client, config, time.Date(2026, 9, 15, 0, 0, 0, 0, time.UTC))
+	if !usage.Success || !usage.OverageDetected || usage.Remaining != 0 || usage.Used != 10_000_000_000_000 {
+		t.Fatalf("unexpected OCI overage usage %#v", usage)
+	}
+}
+
 func TestFetchOCIOnFirstUTCDayDoesNotClaimFullBalance(t *testing.T) {
 	usage := FetchOCI(context.Background(), nil, OCIConfig{
 		TenancyOCID: "tenancy", UserOCID: "user", Fingerprint: "aa:bb", Region: "ap-tokyo-1", PrivateKey: testPrivateKey(t, false), MonthlyLimitBytes: 99,

@@ -21,7 +21,7 @@
             <template v-if="ociUsage?.success">
               <div class="balance-kicker">{{ ociUsage.period }}参考余额（待账户口径核验）</div>
               <div class="balance-value">{{ fmtBytes(ociUsage.remaining) }}</div>
-              <div class="balance-meta">已用 {{ fmtBytes(ociUsage.used) }} / 上限 {{ fmtBytes(ociUsage.limit) }}</div>
+              <div class="balance-meta">已用 {{ fmtBytes(ociUsage.used) }} / 上限 {{ fmtBytes(ociUsage.limit) }}<template v-if="ociUsage.overage_detected"> · 已识别超额层级</template></div>
               <n-progress type="line" :percentage="usagePercent(ociUsage)" :show-indicator="false" :height="6" status="success" />
               <div class="balance-source">{{ ociUsage.source }} · 查询区间结束 {{ fmtUpdated(ociUsage.query_end) }} · 查询于 {{ fmtUpdated(ociUsage.updated_at) }}</div>
               <n-alert v-if="ociUsage.warning" type="warning" :bordered="false">{{ ociUsage.warning }}</n-alert>
@@ -132,6 +132,7 @@ type Usage = {
   source: string
   query_end?: string
   warning?: string
+  overage_detected?: boolean
   updated_at?: string
   error?: string
 }

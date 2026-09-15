@@ -67,6 +67,7 @@ type Usage struct {
 	TransferItemCount        int    `json:"transfer_item_count,omitempty"`
 	RecognizedTransferItems  int    `json:"recognized_transfer_items,omitempty"`
 	SkippedTransferItemCount int    `json:"skipped_transfer_items,omitempty"`
+	OverageDetected          bool   `json:"overage_detected,omitempty"`
 	Warning                  string `json:"warning,omitempty"`
 	UpdatedAt                string `json:"updated_at,omitempty"`
 	Error                    string `json:"error,omitempty"`
@@ -231,6 +232,7 @@ func FetchOCI(ctx context.Context, client *http.Client, config OCIConfig, now ti
 	base.TransferItemCount = report.TransferItemCount
 	base.RecognizedTransferItems = report.RecognizedTransferItems
 	base.SkippedTransferItemCount = report.SkippedTransferItemCount
+	base.OverageDetected = report.OverageDetected
 	if report.TransferItemCount == 0 {
 		base.Error = "未返回可识别的出站计量条目，不能认定用量为零；余额待确认"
 		return base
@@ -242,7 +244,10 @@ func FetchOCI(ctx context.Context, client *http.Client, config OCIConfig, now ti
 	base.Success = true
 	base.Used = report.UsedBytes
 	base.Remaining = remaining(base.Limit, report.UsedBytes)
-	base.Warning = "按已返回出站条目和配置额度计算；免费额度适用 SKU 与账户合同尚未核验，不能作为实时可用余额。查询结束时间不代表数据已完整入账。"
+	if report.OverageDetected {
+		base.Remaining = 0
+	}
+	base.Warning = "按 OCI 已返回的免费层级与超额层级出站条目、以及配置额度计算；查询结束时间不代表数据已完整入账。"
 	return base
 }
 
@@ -314,6 +319,7 @@ type ociTransferReport struct {
 	TransferItemCount        int
 	RecognizedTransferItems  int
 	SkippedTransferItemCount int
+	OverageDetected          bool
 }
 
 func (r *ociTransferReport) add(other ociTransferReport) error {
@@ -325,6 +331,7 @@ func (r *ociTransferReport) add(other ociTransferReport) error {
 	r.TransferItemCount += other.TransferItemCount
 	r.RecognizedTransferItems += other.RecognizedTransferItems
 	r.SkippedTransferItemCount += other.SkippedTransferItemCount
+	r.OverageDetected = r.OverageDetected || other.OverageDetected
 	return nil
 }
 
@@ -352,7 +359,8 @@ func parseOCITransferReport(data []byte) (ociTransferReport, error) {
 			continue
 		}
 		report.TransferItemCount++
-		if !strings.Contains(strings.ToLower(item.SkuName), "outbound") && !strings.Contains(strings.ToLower(item.SkuName), "egress") && !strings.Contains(strings.ToLower(item.SkuName), "transfer out") {
+		lowerSKU := strings.ToLower(item.SkuName)
+		if !strings.Contains(lowerSKU, "outbound") && !strings.Contains(lowerSKU, "egress") && !strings.Contains(lowerSKU, "transfer out") && !strings.Contains(lowerSKU, "outgoing") {
 			report.SkippedTransferItemCount++
 			continue
 		}
@@ -370,6 +378,9 @@ func parseOCITransferReport(data []byte) (ociTransferReport, error) {
 		}
 		report.UsedBytes += bytes
 		report.RecognizedTransferItems++
+		if strings.Contains(strings.ToLower(item.SkuName), "over 10 tb") {
+			report.OverageDetected = true
+		}
 	}
 	return report, nil
 }
