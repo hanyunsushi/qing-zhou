@@ -5,7 +5,7 @@
 - Fork：[hanyunsushi/qing-zhou](https://github.com/hanyunsushi/qing-zhou)，`origin/main` 是定制主线。
 - 官方：[mllt992/qing-zhou](https://github.com/mllt992/qing-zhou)，`upstream/main` 只作为更新来源。
 - 官方基线：`29740b9`，包含 `v0.2.80` 之后的开发提交，不宣称这是新的正式 release。
-- 定制分为两项独立提交：模板自主管理 Clash 分组；远程节点模式与部署配置。
+- 定制分为两项独立提交：模板自主管理 Clash 分组；本机原生节点与部署配置。
 - Fork 的 GitHub `main` 是可维护源码，不表示其每次提交都已部署到生产。
 
 ## 定制合同
@@ -13,7 +13,7 @@
 | 功能 | 配置 | 主要源码与测试 |
 | --- | --- | --- |
 | 只输出模板策略组 | Clash 模板 `x-qingzhou-template-groups: true` | [clash.go](internal/subconv/clash.go)、[分组测试](internal/subconv/clash_template_groups_test.go) |
-| 面板不运行本机节点 | `QZ_SINGBOX_LOCAL=false` | [main.go](main.go)、[controller.go](internal/sbctl/controller.go)、[network_test.go](internal/sbctl/network_test.go)、[version.go](internal/sbctl/version.go) |
+| 生产面板运行本机节点 | `QZ_SINGBOX_LOCAL=true`，宿主机 systemd 部署 | [main.go](main.go)、[controller.go](internal/sbctl/controller.go)、[network_test.go](internal/sbctl/network_test.go)、[version.go](internal/sbctl/version.go) |
 | 可写探针目录 | `QZ_PROBE_DIR=/data/probe` | [Dockerfile](Dockerfile)、[docker-compose.yml](docker-compose.yml) |
 | 上游账户余额 | 管理后台 → 运营 → 上游管理 | [upstreams.go](internal/api/upstreams.go)、[officialusage](internal/officialusage/officialusage.go)、[页面](frontend/src/views/AdminUpstreams.vue) |
 
@@ -29,7 +29,11 @@ ACL4SSR 模板及订阅名称保存在运行时数据库，不在源码中硬编
 - Cloudflare：直接请求 Account Analytics GraphQL，累加当前 UTC 日的 Pages Functions 和 Workers 调用数。必须填写专用 `Account Analytics Read` Token，禁止复用 DNS/ACME Token；余额是面板配置的每日上限减去官方请求数。
 - 这两项都不得经由 EdgeTunnel、Cloudflare Worker KV、服务器 `tx_bytes` 或节点统计转发。第三方接口错误只显示在上游页面，不得影响管理概览和订阅服务。
 
-本功能已于 2026-09-15 构建并部署到 OCI：生产镜像为 `qingzhou:kreeper-7e0f784`，程序版本为 `v0.2.80-kreeper-7e0f784`；服务只重建 `qingzhou`，保留现有 `/data` 卷与 `/opt/qingzhou/.env`。部署后本机和 `https://qz.kreeper.cc/api/health` 都返回健康状态。生产数据库中已保存 OCI 配置，并成功直连 OCI Usage API；查询结果遵守“截至今日 UTC 00:00”的日级结算边界。Cloudflare 账号标识已确认，但尚未写入配置：必须先创建并填写独立的 `Account Analytics Read` 最小权限 Token，不能以 Wrangler OAuth 会话或 ACME/DNS Token 代替。后续在浏览器以管理员身份测试“保存配置 → 查询余额 → 凭据不回显”。
+本功能已于 2026-09-15 构建并部署到 OCI：生产面板已从 Docker 中心模式切换为宿主机 systemd 本机模式，运行 `/opt/qingzhou/qingzhou`，使用 `QZ_SINGBOX_LOCAL=true`、`QZ_SINGBOX_CONFIG=/etc/qingzhou-sing-box/config.json`、`QZ_SINGBOX_UNIT=qingzhou-sing-box.service`、`QZ_SINGBOX_V2RAY=127.0.0.1:18082`。生产数据库从原 Docker 数据卷复制到 `/opt/qingzhou/qingzhou.db`，原入站和 TLS 配置已迁到 `server_id=0`，节点地址由 `node_host_override` 指向 OCI 公网地址。QingZhou 已成功生成并重载本机原生 sing-box 配置，面板和本机节点均健康，公网 `https://qz.kreeper.cc/api/health` 返回 `v0.2.80-kreeper-7e0f784`。
+
+旧 EdgeTunnel 节点服务暂时保留为 `sing-box.service`，监听 `8881`；EdgeTunnel Worker 当前仍生成指向 `140.245.43.76:8881` 的节点。QingZhou 原生节点由 `qingzhou-sing-box.service` 运行，监听 `8882`。因此当前是同机双服务：EdgeTunnel 旧节点不因本次 QingZhou 本机接管而被误停；如需完全合并，必须先把 EdgeTunnel 订阅和配置迁移到 QingZhou，再停用 `sing-box.service`。
+
+旧 Docker 面板容器已删除，但 `qingzhou_qingzhou-data` 数据卷、旧镜像和 `/opt/qingzhou/backups/local-switch-20260915-203413/` 回滚备份保留。Cloudflare 账号标识已确认，但尚未写入配置：必须先创建并填写独立的 `Account Analytics Read` 最小权限 Token，不能以 Wrangler OAuth 会话或 ACME/DNS Token 代替。
 
 ## 合并官方更新
 
@@ -63,7 +67,7 @@ docker buildx build --platform linux/arm64 --load \
 
 基线升级后调整版本前缀，不要沿用过期版本号。上面的镜像只进入执行构建的 Docker daemon；本机构建后需通过镜像仓库或 `docker save/load` 传入 OCI，不能直接把本机镜像名视作服务器已有镜像。GitHub fork 本身不会自动发布可用镜像或签名 release。
 
-发布前备份当前镜像、Compose 和相关数据库设置；保留 `/opt/qingzhou/.env`、现有数据卷和 SSH 私钥挂载。服务器上的项目名固定为 `qingzhou`，只重建面板服务：
+Docker Compose 仍保留为可选的“中心面板 + SSH 远程落地”部署模板；它不是当前 OCI 生产方式。当前 OCI 生产升级前应备份 `/opt/qingzhou/qingzhou`、`/opt/qingzhou/qingzhou.db`、`/opt/qingzhou/qingzhou.env`、两个 sing-box 服务定义和 `/etc/qingzhou-sing-box`。不要直接执行下面的 Compose 命令，否则会重新启用容器隔离并关闭本机接管：
 
 ```bash
 docker compose --env-file /opt/qingzhou/.env \
@@ -71,6 +75,6 @@ docker compose --env-file /opt/qingzhou/.env \
   up -d --no-deps qingzhou
 ```
 
-执行前必须在服务器 Compose 或环境中明确设置已经装入的 `QZ_IMAGE`。默认 `qingzhou:kreeper` 只是本地标签约定，并非已发布镜像。部署后核对 image ID、程序版本、健康检查、订阅和节点连接，回滚则恢复旧镜像及相关模板设置后重建面板；不要用整库恢复覆盖用户新数据。
+Compose 仅用于需要远程 SSH 管理的独立中心面板。当前生产升级应替换宿主机 `/opt/qingzhou/qingzhou`，保持 `QZ_DB`、`QZ_SECRET_KEY`、`QZ_SINGBOX_LOCAL=true`、`QZ_SINGBOX_CONFIG=/etc/qingzhou-sing-box/config.json` 和 `QZ_SINGBOX_UNIT=qingzhou-sing-box.service` 不变，然后执行 `systemctl restart qingzhou`。回滚只恢复面板二进制和对应服务配置，不要用整库恢复覆盖用户新数据。
 
 面板内置更新器的默认来源仍是官方 `mllt992/qing-zhou`。不要把官方一键二进制更新当作定制版升级方式，否则会丢失定制；本 fork 使用“合并源码 → 测试 → 构建 → 部署”。生产运行状态应单独验证，不能由 Git HEAD 推断。
