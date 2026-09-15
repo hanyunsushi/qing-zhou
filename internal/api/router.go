@@ -26,10 +26,11 @@ const RequestTimeout = 30 * time.Second
 const ServerWriteTimeout = RequestTimeout + 15*time.Second
 
 type API struct {
-	sourceClient  *http.Client
-	pingSlots     chan struct{}
-	oauthSlots    chan struct{}
-	oauthFinalize chan struct{}
+	sourceClient   *http.Client
+	upstreamClient *http.Client
+	pingSlots      chan struct{}
+	oauthSlots     chan struct{}
+	oauthFinalize  chan struct{}
 
 	st       *store.Store
 	secret   []byte
@@ -140,14 +141,15 @@ func (a *API) sbScheduleServer(serverIDs ...int64) {
 func New(st *store.Store, secret []byte, mail *mailer.Mailer) *API {
 	a := &API{
 		st: st, secret: secret, mailer: mail,
-		sourceClient:  safeFetchClient(),
-		pingSlots:     make(chan struct{}, 64),
-		oauthSlots:    make(chan struct{}, 8),
-		oauthFinalize: make(chan struct{}, 1),
-		authRL:        newRateLimiter(20, time.Minute),   // 20 auth attempts / IP / min
-		resendRL:      newRateLimiter(3, 10*time.Minute), // 3 verify resends / user / 10min
-		probeRL:       newRateLimiter(60, time.Minute),   // 60 probe reports / IP / min
-		pwRL:          newRateLimiter(5, 10*time.Minute), // 5 修改密码 attempts / user / 10min
+		sourceClient:   safeFetchClient(),
+		upstreamClient: &http.Client{Timeout: 20 * time.Second},
+		pingSlots:      make(chan struct{}, 64),
+		oauthSlots:     make(chan struct{}, 8),
+		oauthFinalize:  make(chan struct{}, 1),
+		authRL:         newRateLimiter(20, time.Minute),   // 20 auth attempts / IP / min
+		resendRL:       newRateLimiter(3, 10*time.Minute), // 3 verify resends / user / 10min
+		probeRL:        newRateLimiter(60, time.Minute),   // 60 probe reports / IP / min
+		pwRL:           newRateLimiter(5, 10*time.Minute), // 5 修改密码 attempts / user / 10min
 		// Each address swap revokes the previous one, so a loop of them — a stuck
 		// retry, a double-click, a misbehaving script — leaves the user with a
 		// subscription that never stays valid long enough to import. Generous
@@ -455,6 +457,13 @@ func (a *API) Router() http.Handler {
 		ar.Get("/api/admin/stats/usage", a.handleAdminUsage)
 		ar.Get("/api/admin/stats/usage/users", a.handleAdminUsageUsers)
 		ar.Get("/api/admin/stats/usage/packages", a.handleAdminUsagePackages)
+
+		// Upstream provider accounts are configured and queried only by an admin
+		// session. These routes never expose stored credentials.
+		ar.Get("/api/admin/upstreams", a.handleAdminGetUpstreams)
+		ar.Put("/api/admin/upstreams/{provider}", a.handleAdminPutUpstream)
+		ar.Delete("/api/admin/upstreams/{provider}", a.handleAdminDeleteUpstream)
+		ar.Post("/api/admin/upstreams/{provider}/refresh", a.handleAdminRefreshUpstream)
 
 		ar.Get("/api/admin/reg-codes", a.handleAdminListRegCodes)
 		ar.Post("/api/admin/reg-codes/generate", a.handleAdminGenerateRegCodes)

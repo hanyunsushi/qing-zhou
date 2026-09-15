@@ -15,10 +15,21 @@
 | 只输出模板策略组 | Clash 模板 `x-qingzhou-template-groups: true` | [clash.go](internal/subconv/clash.go)、[分组测试](internal/subconv/clash_template_groups_test.go) |
 | 面板不运行本机节点 | `QZ_SINGBOX_LOCAL=false` | [main.go](main.go)、[controller.go](internal/sbctl/controller.go)、[network_test.go](internal/sbctl/network_test.go)、[version.go](internal/sbctl/version.go) |
 | 可写探针目录 | `QZ_PROBE_DIR=/data/probe` | [Dockerfile](Dockerfile)、[docker-compose.yml](docker-compose.yml) |
+| 上游账户余额 | 管理后台 → 运营 → 上游管理 | [upstreams.go](internal/api/upstreams.go)、[officialusage](internal/officialusage/officialusage.go)、[页面](frontend/src/views/AdminUpstreams.vue) |
 
 模板开关只控制 Clash 输出。不开启时保留官方分组逻辑；开启后 `all` 按用户授权节点展开，不注入原生选择/固定/故障转移/AI 组及 AI 规则。模板已有的 MATCH 保持最后一条；没有 MATCH 时使用模板首组作为兜底。空节点组回退 DIRECT，模板组名与节点重名时节点被去重。Sing-box 输出和服务端节点安全不受影响。
 
 ACL4SSR 模板及订阅名称保存在运行时数据库，不在源码中硬编码。数据库、密码、SSH 私钥、订阅 token 和生产 `.env` 不得提交。
+
+## 上游账户余额
+
+“上游管理”位于侧边栏“运营”的“管理概览”上方。管理员可以在面板内分别保存 OCI API Key 配置和 Cloudflare Account Analytics Token；两份 JSON 配置使用现有 `QZ_SECRET_KEY` 加密层存进 `settings`，读取接口只返回 `*_set` 标记，绝不返回私钥或 Token。删除操作会直接删除整份加密配置。
+
+- OCI：直接签名请求 `usageapi.{region}.oci.oraclecloud.com/20200107/usage`，查询当前 UTC 月并累加官方 Usage API 中 data transfer/outbound/egress 的可识别字节单位。余额是“管理员配置的月度上限 - OCI 官方用量”，并非声称 OCI API 返回统一余额。
+- Cloudflare：直接请求 Account Analytics GraphQL，累加当前 UTC 日的 Pages Functions 和 Workers 调用数。必须填写专用 `Account Analytics Read` Token，禁止复用 DNS/ACME Token；余额是面板配置的每日上限减去官方请求数。
+- 这两项都不得经由 EdgeTunnel、Cloudflare Worker KV、服务器 `tx_bytes` 或节点统计转发。第三方接口错误只显示在上游页面，不得影响管理概览和订阅服务。
+
+本功能仅完成源码与本地测试，尚未构建/导入 OCI 生产镜像或部署。部署前按本文件的构建与部署流程操作，并在浏览器中以管理员身份分别测试“保存配置 → 查询余额 → 凭据不回显”。
 
 ## 合并官方更新
 
