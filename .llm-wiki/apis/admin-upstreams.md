@@ -15,3 +15,5 @@ All routes live in QingZhou's admin route group and require a valid administrato
 | `POST` | `/api/admin/upstreams/{oci|cloudflare}/refresh` | Read the stored profile and directly fetch the current official usage snapshot. |
 
 The two providers use independent credentials and allowance configurations. Cloudflare Analytics tokens must not be mixed with the existing Cloudflare DNS/ACME token.
+
+OCI refresh responses expose `query_end`, item counts, and a `warning` on successful reference calculations. `query_end` is not a provider data watermark. Consumers must inspect `success`: an empty window, absent or unrecognized transfer data, failed pagination, or unsupported units must not be rendered as zero usage or a full balance. Failure counters are diagnostic only. This response extension is locally tested and not production-verified.

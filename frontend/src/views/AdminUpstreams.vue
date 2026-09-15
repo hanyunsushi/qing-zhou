@@ -9,8 +9,8 @@
     </div>
 
     <n-alert type="info" :bordered="false" class="upstream-notice">
-      OCI 展示的是 <b>Usage API</b> 当前 UTC 月的出站数据传输用量；Cloudflare 展示的是 <b>Account Analytics GraphQL</b> 当日 Pages Functions 与 Workers 请求数。
-      “余额”由你填写的上限减去官方用量计算，不会把节点网卡流量或 EdgeTunnel 数据当作官方账单用量。
+      OCI 直接查询 <b>Usage API</b> 当月已返回的出站用量，配置额度默认 10 TB/月，实际免费额度和计量范围需按账户合同核验。
+      查询时间不代表官方数据已完整入账；参考余额不包含尚未返回的用量，不使用网卡流量或 EdgeTunnel 估算值替代。
     </n-alert>
 
     <n-spin :show="loading">
@@ -19,11 +19,12 @@
           <template #header-extra><n-tag :type="tagType(ociView.configured)" size="small" :bordered="false">{{ ociView.configured ? '已配置' : '未配置' }}</n-tag></template>
           <div class="balance-panel" :class="usageClass(ociUsage)">
             <template v-if="ociUsage?.success">
-              <div class="balance-kicker">{{ ociUsage.period }}官方出站余额</div>
+              <div class="balance-kicker">{{ ociUsage.period }}参考余额（待账户口径核验）</div>
               <div class="balance-value">{{ fmtBytes(ociUsage.remaining) }}</div>
               <div class="balance-meta">已用 {{ fmtBytes(ociUsage.used) }} / 上限 {{ fmtBytes(ociUsage.limit) }}</div>
               <n-progress type="line" :percentage="usagePercent(ociUsage)" :show-indicator="false" :height="6" status="success" />
-              <div class="balance-source">{{ ociUsage.source }} · {{ fmtUpdated(ociUsage.updated_at) }}</div>
+              <div class="balance-source">{{ ociUsage.source }} · 查询区间结束 {{ fmtUpdated(ociUsage.query_end) }} · 查询于 {{ fmtUpdated(ociUsage.updated_at) }}</div>
+              <n-alert v-if="ociUsage.warning" type="warning" :bordered="false">{{ ociUsage.warning }}</n-alert>
             </template>
             <template v-else>
               <div class="balance-kicker">OCI 官方账户用量</div>
@@ -45,7 +46,7 @@
             </n-form-item>
             <n-form-item label="月度上限（字节）">
               <n-input-number v-model:value="ociForm.monthly_limit_bytes" :min="1" :max="1000000000000000" :show-button="false" style="width:100%;" />
-              <div class="field-note">当前：{{ fmtBytes(ociForm.monthly_limit_bytes) }}。默认 10 TB/月；只用于从官方用量计算余额。</div>
+              <div class="field-note">当前：{{ fmtBytes(ociForm.monthly_limit_bytes) }}。配置默认 10 TB/月（十进制）；请按账户实际额度确认。</div>
             </n-form-item>
           </n-form>
           <div class="provider-actions">
@@ -129,6 +130,8 @@ type Usage = {
   unit: string
   period: string
   source: string
+  query_end?: string
+  warning?: string
   updated_at?: string
   error?: string
 }

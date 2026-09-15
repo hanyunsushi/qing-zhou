@@ -9,9 +9,13 @@ updated: 2026-09-15
 
 ## OCI
 
-`FetchOCI` posts a signed request to `https://usageapi.{region}.oci.oraclecloud.com/20200107/usage`. The request is RSA SHA-256 signed with an OCI API key and accepts PKCS#1 or PKCS#8 RSA PEM private keys. OCI requires full UTC-day precision, so it queries the current UTC month up to today's `00:00`; today's unsettled usage appears in a later daily result. It aggregates rows grouped by service/SKU/unit and includes only transfer/outbound/egress rows with recognized byte units.
+`FetchOCI` posts a signed request to `https://usageapi.{region}.oci.oraclecloud.com/20200107/usage`. RSA SHA-256 signing includes query parameters. The daily query covers the current UTC month up to today's `00:00`. `query_end` is a request boundary, not proof of provider publication completeness or settlement. Pages use `limit` and `page` in the URL and follow `opc-next-page`; repeated cursors, more than 100 continuation tokens, oversized responses, and overflow fail without publishing a partial balance.
 
-The provider response is usage. `remaining = max(configured_monthly_limit - used, 0)` is a QingZhou display calculation.
+The parser prioritizes the high-precision `attributedUsage` field and falls back to `computedQuantity` only when needed. Decimal quantities use rational arithmetic before per-item rounding to whole bytes. Unit aliases are exact: byte units and Oracle's published `Gigabyte outbound data transfer per month` are accepted, while storage capacity, rates, and unknown units are not guessed. Inbound rows are excluded; ambiguous transfer rows, unknown transfer units, missing response items, and no matched transfer rows prevent a successful balance. A first-day empty query window is also unknown, not a full allowance.
+
+`remaining = max(configured_monthly_limit - used, 0)` remains a reference calculation. The configured default of 10,000,000,000,000 bytes has not been verified against this account's entitlement, pricing units, or SKU coverage. The UI must retain the warning that matching names is not a verified allowance-specific SKU mapping. A successful HTTP response does not prove that free-tier quantities were returned. No live account raw response or post-change deployment has been verified.
+
+Oracle's networking pricing page lists first-10-TB/month outbound tiers and the verbose unit above; its overage rows identify B88327, B93455, and B93456. These are reference evidence, not an account-validated allowlist. Before exact balance support, verify the account's free and overage rows, aggregation scope, unit conversion, and publication delay against the Console. Sources: `https://www.oracle.com/cloud/networking/pricing/` and Oracle SDK `usageapi/request_summarized_usages_request_response.go` in `oracle/oci-go-sdk`.
 
 ## Cloudflare
 

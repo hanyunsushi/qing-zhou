@@ -52,6 +52,9 @@ func TestFetchOCIReadsTransferUsageAndSignsRequest(t *testing.T) {
 		if r.URL.Host != "usageapi.ap-tokyo-1.oci.oraclecloud.com" || r.URL.Path != "/20200107/usage" {
 			t.Fatalf("unexpected OCI endpoint %s", r.URL)
 		}
+		if got := r.URL.Query().Get("limit"); got != "1000" {
+			t.Fatalf("limit=%q", got)
+		}
 		if got := r.Header.Get("Authorization"); !strings.Contains(got, `algorithm="rsa-sha256"`) || strings.Contains(got, key) {
 			t.Fatalf("bad authorization header %q", got)
 		}
@@ -80,11 +83,111 @@ func TestFetchOCIReadsTransferUsageAndSignsRequest(t *testing.T) {
 	}
 }
 
-func TestFetchOCIOnFirstUTCDayReturnsZeroUntilDailyDataExists(t *testing.T) {
+func TestFetchOCIPaginatesAndPrefersAttributedUsage(t *testing.T) {
+	key := testPrivateKey(t, false)
+	page := 0
+	client := testClient(func(r *http.Request) (*http.Response, error) {
+		page++
+		if page == 1 {
+			if got := r.URL.Query().Get("page"); got != "" {
+				t.Fatalf("first page token=%q", got)
+			}
+			response := jsonResponse(200, `{"items":[{"service":"Networking","skuName":"Data Transfer Out","unit":"GB","attributedUsage":"999","computedQuantity":2}]}`)
+			response.Header.Set("opc-next-page", "next-page-token")
+			return response, nil
+		}
+		if got := r.URL.Query().Get("page"); got != "next-page-token" {
+			t.Fatalf("second page token=%q", got)
+		}
+		return jsonResponse(200, `{"items":[{"service":"Networking","skuName":"Data Transfer In","unit":"GB","computedQuantity":100},{"service":"Networking","skuName":"Egress","unit":"MiB","computedQuantity":3}]}`), nil
+	})
+	usage := FetchOCI(context.Background(), client, OCIConfig{
+		TenancyOCID: "tenancy", UserOCID: "user", Fingerprint: "aa:bb", Region: "ap-tokyo-1", PrivateKey: key, MonthlyLimitBytes: 3_000_000_000,
+	}, time.Date(2026, 9, 15, 8, 30, 0, 0, time.UTC))
+	if !usage.Success || usage.Used != 999_003_145_728 || usage.ItemCount != 3 || usage.TransferItemCount != 2 || usage.RecognizedTransferItems != 2 || page != 2 {
+		t.Fatalf("unexpected OCI usage %#v pages=%d", usage, page)
+	}
+}
+
+func TestFetchOCIRejectsUnrecognizedTransferUnit(t *testing.T) {
+	key := testPrivateKey(t, false)
+	client := testClient(func(*http.Request) (*http.Response, error) {
+		return jsonResponse(200, `{"items":[{"service":"Networking","skuName":"Data Transfer Out","unit":"GB-MONTH","computedQuantity":1}]}`), nil
+	})
+	usage := FetchOCI(context.Background(), client, OCIConfig{
+		TenancyOCID: "tenancy", UserOCID: "user", Fingerprint: "aa:bb", Region: "ap-tokyo-1", PrivateKey: key,
+	}, time.Date(2026, 9, 15, 8, 30, 0, 0, time.UTC))
+	if usage.Success || !strings.Contains(usage.Error, "无法识别") {
+		t.Fatalf("unexpected OCI usage %#v", usage)
+	}
+}
+
+func TestFetchOCIRefusesUnprovenBalances(t *testing.T) {
+	config := OCIConfig{TenancyOCID: "tenancy", UserOCID: "user", Fingerprint: "aa:bb", Region: "ap-tokyo-1", PrivateKey: testPrivateKey(t, false)}
+	for _, body := range []string{
+		`{}`, `{"items":null}`, `{"items":[]}`, `{"items":[]} {}`,
+		`{"items":[{"service":"Compute","skuName":"OCPU","unit":"HOUR","computedQuantity":5}]}`,
+		`{"items":[{"service":"Networking","skuName":"Data Transfer","unit":"GB","computedQuantity":5}]}`,
+		`{"items":[{"service":"Networking","skuName":"Data Transfer Out","unit":"GB/s","computedQuantity":5}]}`,
+	} {
+		t.Run(body, func(t *testing.T) {
+			client := testClient(func(*http.Request) (*http.Response, error) { return jsonResponse(200, body), nil })
+			usage := FetchOCI(context.Background(), client, config, time.Date(2026, 9, 15, 0, 0, 0, 0, time.UTC))
+			if usage.Success || usage.Error == "" || usage.Remaining != 0 {
+				t.Fatalf("unexpected usable balance: %#v", usage)
+			}
+		})
+	}
+}
+
+func TestOCIUnitConversionIsExactAndStrict(t *testing.T) {
+	for _, test := range []struct {
+		quantity string
+		unit     string
+		want     int64
+		valid    bool
+	}{
+		{"0.000000001", "GB", 1, true},
+		{"2", "Gigabytes", 2_000_000_000, true},
+		{"2", "Gigabyte outbound data transfer per month", 2_000_000_000, true},
+		{"2", "Gigabytes outbound data transfer per month", 2_000_000_000, true},
+		{"1", "MiB", 1_048_576, true},
+		{"1", "GB/s", 0, false},
+		{"1", "Gigabyte per hour", 0, false},
+		{"1", "unknown-bytes", 0, false},
+		{"1", "GB-MONTH", 0, false},
+	} {
+		quantity, err := usageQuantity("", json.Number(test.quantity))
+		if err != nil {
+			t.Fatal(err)
+		}
+		got, valid := quantityToBytes(quantity, test.unit)
+		if got != test.want || valid != test.valid {
+			t.Fatalf("%s %s: got %d/%v", test.quantity, test.unit, got, valid)
+		}
+	}
+}
+
+func TestFetchOCIRejectsPaginationCycles(t *testing.T) {
+	calls := 0
+	client := testClient(func(*http.Request) (*http.Response, error) {
+		calls++
+		response := jsonResponse(200, `{"items":[{"skuName":"Data Transfer Out","unit":"GB","computedQuantity":1}]}`)
+		response.Header.Set("opc-next-page", []string{"first", "second", "first"}[(calls-1)%3])
+		return response, nil
+	})
+	config := OCIConfig{TenancyOCID: "tenancy", UserOCID: "user", Fingerprint: "aa:bb", Region: "ap-tokyo-1", PrivateKey: testPrivateKey(t, false)}
+	usage := FetchOCI(context.Background(), client, config, time.Date(2026, 9, 15, 0, 0, 0, 0, time.UTC))
+	if usage.Success || calls != 3 || !strings.Contains(usage.Error, "分页循环") {
+		t.Fatalf("usage=%#v calls=%d", usage, calls)
+	}
+}
+
+func TestFetchOCIOnFirstUTCDayDoesNotClaimFullBalance(t *testing.T) {
 	usage := FetchOCI(context.Background(), nil, OCIConfig{
 		TenancyOCID: "tenancy", UserOCID: "user", Fingerprint: "aa:bb", Region: "ap-tokyo-1", PrivateKey: testPrivateKey(t, false), MonthlyLimitBytes: 99,
 	}, time.Date(2026, 9, 1, 12, 0, 0, 0, time.UTC))
-	if !usage.Success || usage.Used != 0 || usage.Remaining != 99 || !strings.Contains(usage.Period, "截至今日 00:00") {
+	if usage.Success || usage.Remaining != 0 || !strings.Contains(usage.Error, "余额待确认") {
 		t.Fatalf("unexpected first-day usage %#v", usage)
 	}
 }

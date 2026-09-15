@@ -18,7 +18,9 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"math/big"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strconv"
 	"strings"
@@ -52,16 +54,22 @@ type CloudflareConfig struct {
 // Usage is a provider-account usage snapshot. Remaining is derived by QingZhou
 // from the configured allowance; neither provider API returns one shared value.
 type Usage struct {
-	Configured bool   `json:"configured"`
-	Success    bool   `json:"success"`
-	Used       int64  `json:"used"`
-	Limit      int64  `json:"limit"`
-	Remaining  int64  `json:"remaining"`
-	Unit       string `json:"unit"`
-	Period     string `json:"period"`
-	Source     string `json:"source"`
-	UpdatedAt  string `json:"updated_at,omitempty"`
-	Error      string `json:"error,omitempty"`
+	Configured               bool   `json:"configured"`
+	Success                  bool   `json:"success"`
+	Used                     int64  `json:"used"`
+	Limit                    int64  `json:"limit"`
+	Remaining                int64  `json:"remaining"`
+	Unit                     string `json:"unit"`
+	Period                   string `json:"period"`
+	Source                   string `json:"source"`
+	QueryEnd                 string `json:"query_end,omitempty"`
+	ItemCount                int    `json:"item_count,omitempty"`
+	TransferItemCount        int    `json:"transfer_item_count,omitempty"`
+	RecognizedTransferItems  int    `json:"recognized_transfer_items,omitempty"`
+	SkippedTransferItemCount int    `json:"skipped_transfer_items,omitempty"`
+	Warning                  string `json:"warning,omitempty"`
+	UpdatedAt                string `json:"updated_at,omitempty"`
+	Error                    string `json:"error,omitempty"`
 }
 
 func (c OCIConfig) normalized() OCIConfig {
@@ -130,7 +138,7 @@ func (c CloudflareConfig) Validate() error {
 // FetchOCI reads current-UTC-month data-transfer usage from OCI's Usage API.
 func FetchOCI(ctx context.Context, client *http.Client, config OCIConfig, now time.Time) Usage {
 	config = config.normalized()
-	base := Usage{Configured: config.Configured(), Limit: config.MonthlyLimitBytes, Unit: "bytes", Period: "本月（UTC）", Source: "OCI Usage API"}
+	base := Usage{Configured: config.Configured(), Limit: config.MonthlyLimitBytes, Unit: "bytes", Period: "本月（UTC）", Source: "OCI Usage API（已返回用量，非实时余额）"}
 	if !base.Configured {
 		base.Error = "未配置"
 		return base
@@ -144,65 +152,97 @@ func FetchOCI(ctx context.Context, client *http.Client, config OCIConfig, now ti
 	}
 	now = now.UTC()
 	monthStart := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.UTC)
-	// OCI Usage is reported at daily granularity and rejects a partial UTC day.
-	// Query up to the current day's 00:00 UTC boundary, so the displayed balance
-	// may lag today's as-yet-unsettled usage but always matches OCI's API rules.
 	periodEnd := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+	base.QueryEnd = periodEnd.Format(time.RFC3339)
+	base.UpdatedAt = now.Format(time.RFC3339)
 	if !periodEnd.After(monthStart) {
-		base.Success = true
-		base.Remaining = base.Limit
-		base.Period = "本月（UTC，日级数据截至今日 00:00）"
-		base.UpdatedAt = now.Format(time.RFC3339)
+		base.Error = "本月尚无完整 UTC 查询日，余额待确认"
 		return base
 	}
-	base.Period = "本月（UTC，日级数据截至今日 00:00）"
-	body, err := json.Marshal(map[string]any{
-		"tenantId":          config.TenancyOCID,
-		"timeUsageStarted":  monthStart.Format(time.RFC3339),
-		"timeUsageEnded":    periodEnd.Format(time.RFC3339),
-		"granularity":       "DAILY",
-		"isAggregateByTime": true,
-		"queryType":         "USAGE_ONLY",
-		"groupBy":           []string{"service", "skuName", "unit"},
-	})
-	if err != nil {
-		base.Error = "构造 OCI 请求失败"
-		return base
-	}
+	base.Period = "本月（UTC，查询至今日 00:00）"
 	host := "usageapi." + config.Region + ".oci.oraclecloud.com"
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, "https://"+host+"/20200107/usage", bytes.NewReader(body))
-	if err != nil {
-		base.Error = "构造 OCI 请求失败"
+	var pageToken string
+	seenPages := map[string]bool{}
+	var report ociTransferReport
+	for {
+		request := map[string]any{
+			"tenantId":          config.TenancyOCID,
+			"timeUsageStarted":  monthStart.Format(time.RFC3339),
+			"timeUsageEnded":    periodEnd.Format(time.RFC3339),
+			"granularity":       "DAILY",
+			"isAggregateByTime": true,
+			"queryType":         "USAGE_ONLY",
+			"groupBy":           []string{"service", "skuName", "unit"},
+		}
+		body, err := json.Marshal(request)
+		if err != nil {
+			base.Error = "构造 OCI 请求失败"
+			return base
+		}
+		query := url.Values{"limit": []string{"1000"}}
+		if pageToken != "" {
+			query.Set("page", pageToken)
+		}
+		req, err := http.NewRequestWithContext(ctx, http.MethodPost, "https://"+host+"/20200107/usage?"+query.Encode(), bytes.NewReader(body))
+		if err != nil {
+			base.Error = "构造 OCI 请求失败"
+			return base
+		}
+		if err := signOCIRequest(req, body, config); err != nil {
+			base.Error = "签名 OCI 请求失败: " + err.Error()
+			return base
+		}
+		resp, err := client.Do(req)
+		if err != nil {
+			base.Error = "OCI Usage API 请求失败: " + err.Error()
+			return base
+		}
+		data, readErr := io.ReadAll(io.LimitReader(resp.Body, (2<<20)+1))
+		resp.Body.Close()
+		if readErr != nil || len(data) > 2<<20 {
+			base.Error = "读取 OCI Usage API 响应失败"
+			return base
+		}
+		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+			base.Error = fmt.Sprintf("OCI Usage API 返回 HTTP %d", resp.StatusCode)
+			return base
+		}
+		pageReport, parseErr := parseOCITransferReport(data)
+		if parseErr != nil {
+			base.Error = "解析 OCI Usage API 响应失败: " + parseErr.Error()
+			return base
+		}
+		if err := report.add(pageReport); err != nil {
+			base.Error = err.Error()
+			return base
+		}
+		next := strings.TrimSpace(resp.Header.Get("opc-next-page"))
+		if next == "" {
+			break
+		}
+		if seenPages[next] || len(seenPages) >= 100 {
+			base.Error = "OCI Usage API 分页循环或超出限制，余额待确认"
+			return base
+		}
+		seenPages[next] = true
+		pageToken = next
+	}
+	base.ItemCount = report.ItemCount
+	base.TransferItemCount = report.TransferItemCount
+	base.RecognizedTransferItems = report.RecognizedTransferItems
+	base.SkippedTransferItemCount = report.SkippedTransferItemCount
+	if report.TransferItemCount == 0 {
+		base.Error = "未返回可识别的出站计量条目，不能认定用量为零；余额待确认"
 		return base
 	}
-	if err := signOCIRequest(req, body, config); err != nil {
-		base.Error = "签名 OCI 请求失败: " + err.Error()
-		return base
-	}
-	resp, err := client.Do(req)
-	if err != nil {
-		base.Error = "OCI Usage API 请求失败: " + err.Error()
-		return base
-	}
-	defer resp.Body.Close()
-	data, err := io.ReadAll(io.LimitReader(resp.Body, 2<<20))
-	if err != nil {
-		base.Error = "读取 OCI Usage API 响应失败"
-		return base
-	}
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		base.Error = fmt.Sprintf("OCI Usage API 返回 HTTP %d", resp.StatusCode)
-		return base
-	}
-	used, err := parseOCITransferBytes(data)
-	if err != nil {
-		base.Error = "解析 OCI Usage API 响应失败: " + err.Error()
+	if report.SkippedTransferItemCount > 0 {
+		base.Error = fmt.Sprintf("OCI 返回了 %d 条出站计量，但其中 %d 条的单位或数量无法识别，已拒绝计算余额", report.TransferItemCount, report.SkippedTransferItemCount)
 		return base
 	}
 	base.Success = true
-	base.Used = used
-	base.Remaining = remaining(base.Limit, used)
-	base.UpdatedAt = now.Format(time.RFC3339)
+	base.Used = report.UsedBytes
+	base.Remaining = remaining(base.Limit, report.UsedBytes)
+	base.Warning = "按已返回出站条目和配置额度计算；免费额度适用 SKU 与账户合同尚未核验，不能作为实时可用余额。查询结束时间不代表数据已完整入账。"
 	return base
 }
 
@@ -257,78 +297,138 @@ func parsePrivateKey(value string) (*rsa.PrivateKey, error) {
 }
 
 type ociResponse struct {
-	Items []struct {
-		Service          string      `json:"service"`
-		SkuName          string      `json:"skuName"`
-		Unit             string      `json:"unit"`
-		AttributedUsage  string      `json:"attributedUsage"`
-		ComputedQuantity json.Number `json:"computedQuantity"`
-	} `json:"items"`
+	Items []ociUsageItem `json:"items"`
+}
+
+type ociUsageItem struct {
+	Service          string      `json:"service"`
+	SkuName          string      `json:"skuName"`
+	Unit             string      `json:"unit"`
+	AttributedUsage  string      `json:"attributedUsage"`
+	ComputedQuantity json.Number `json:"computedQuantity"`
+}
+
+type ociTransferReport struct {
+	UsedBytes                int64
+	ItemCount                int
+	TransferItemCount        int
+	RecognizedTransferItems  int
+	SkippedTransferItemCount int
+}
+
+func (r *ociTransferReport) add(other ociTransferReport) error {
+	if other.UsedBytes > math.MaxInt64-r.UsedBytes {
+		return errors.New("OCI 用量超出可表示范围")
+	}
+	r.UsedBytes += other.UsedBytes
+	r.ItemCount += other.ItemCount
+	r.TransferItemCount += other.TransferItemCount
+	r.RecognizedTransferItems += other.RecognizedTransferItems
+	r.SkippedTransferItemCount += other.SkippedTransferItemCount
+	return nil
 }
 
 func parseOCITransferBytes(data []byte) (int64, error) {
+	report, err := parseOCITransferReport(data)
+	return report.UsedBytes, err
+}
+
+func parseOCITransferReport(data []byte) (ociTransferReport, error) {
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.UseNumber()
 	var response ociResponse
 	if err := decoder.Decode(&response); err != nil {
-		return 0, err
+		return ociTransferReport{}, err
 	}
-	var total int64
+	if response.Items == nil {
+		return ociTransferReport{}, errors.New("OCI 响应缺少 items")
+	}
+	if err := decoder.Decode(new(any)); err != io.EOF {
+		return ociTransferReport{}, errors.New("OCI 响应包含额外内容")
+	}
+	report := ociTransferReport{ItemCount: len(response.Items)}
 	for _, item := range response.Items {
 		if !isTransferUsage(item.Service, item.SkuName) {
 			continue
 		}
+		report.TransferItemCount++
+		if !strings.Contains(strings.ToLower(item.SkuName), "outbound") && !strings.Contains(strings.ToLower(item.SkuName), "egress") && !strings.Contains(strings.ToLower(item.SkuName), "transfer out") {
+			report.SkippedTransferItemCount++
+			continue
+		}
 		quantity, err := usageQuantity(item.AttributedUsage, item.ComputedQuantity)
 		if err != nil {
-			return 0, err
+			return ociTransferReport{}, err
 		}
 		bytes, ok := quantityToBytes(quantity, item.Unit)
 		if !ok {
+			report.SkippedTransferItemCount++
 			continue
 		}
-		if bytes > math.MaxInt64-total {
-			return 0, errors.New("OCI 用量超出可表示范围")
+		if bytes > math.MaxInt64-report.UsedBytes {
+			return ociTransferReport{}, errors.New("OCI 用量超出可表示范围")
 		}
-		total += bytes
+		report.UsedBytes += bytes
+		report.RecognizedTransferItems++
 	}
-	return total, nil
+	return report, nil
 }
 
 func isTransferUsage(service, sku string) bool {
-	s := strings.ToLower(service + " " + sku)
-	return strings.Contains(s, "data transfer") || strings.Contains(s, "outbound") || strings.Contains(s, "egress")
+	s := strings.ToLower(strings.TrimSpace(service + " " + sku))
+	if strings.Contains(s, "inbound") || strings.Contains(s, "data transfer in") || strings.Contains(s, "transfer in") {
+		return false
+	}
+	return strings.Contains(s, "outbound") || strings.Contains(s, "egress") || strings.Contains(s, "data transfer out") || strings.Contains(s, "transfer out") || strings.Contains(s, "outgoing")
 }
 
-func usageQuantity(attributed string, computed json.Number) (float64, error) {
+func usageQuantity(attributed string, computed json.Number) (*big.Rat, error) {
 	v := strings.TrimSpace(attributed)
 	if v == "" {
-		v = computed.String()
+		v = strings.TrimSpace(computed.String())
 	}
 	if v == "" {
-		return 0, errors.New("OCI 用量条目缺少数值")
+		return nil, errors.New("OCI 用量条目缺少数值")
 	}
-	n, err := strconv.ParseFloat(v, 64)
-	if err != nil || n < 0 || math.IsNaN(n) || math.IsInf(n, 0) {
-		return 0, errors.New("OCI 用量数值无效")
+	n, ok := new(big.Rat).SetString(v)
+	if !ok || n.Sign() < 0 {
+		return nil, errors.New("OCI 用量数值无效")
 	}
 	return n, nil
 }
 
-func quantityToBytes(quantity float64, unit string) (int64, bool) {
-	u := strings.ToUpper(strings.ReplaceAll(strings.TrimSpace(unit), " ", ""))
-	multipliers := map[string]float64{
+func quantityToBytes(quantity *big.Rat, unit string) (int64, bool) {
+	rawUnit := strings.ToLower(strings.TrimSpace(unit))
+	normalizedUnit := strings.Join(strings.Fields(rawUnit), " ")
+	if normalizedUnit == "gigabyte outbound data transfer per month" || normalizedUnit == "gigabytes outbound data transfer per month" {
+		rawUnit = "gb"
+	}
+	if strings.Contains(rawUnit, "storage") || strings.Contains(rawUnit, "capacity") || strings.Contains(rawUnit, "per hour") || strings.Contains(rawUnit, "/hour") || strings.Contains(rawUnit, "rate") {
+		return 0, false
+	}
+	u := strings.ToUpper(rawUnit)
+	multipliers := map[string]int64{
 		"B": 1, "BYTE": 1, "BYTES": 1,
-		"KB": 1e3, "KILOBYTE": 1e3,
-		"MB": 1e6, "MEGABYTE": 1e6,
-		"GB": 1e9, "GIGABYTE": 1e9,
-		"TB": 1e12, "TERABYTE": 1e12,
+		"KB": 1_000, "KILOBYTE": 1_000, "KILOBYTES": 1_000,
+		"MB": 1_000_000, "MEGABYTE": 1_000_000, "MEGABYTES": 1_000_000,
+		"GB": 1_000_000_000, "GIGABYTE": 1_000_000_000, "GIGABYTES": 1_000_000_000,
+		"TB": 1_000_000_000_000, "TERABYTE": 1_000_000_000_000, "TERABYTES": 1_000_000_000_000,
 		"KIB": 1 << 10, "MIB": 1 << 20, "GIB": 1 << 30, "TIB": 1 << 40,
 	}
 	m, ok := multipliers[u]
-	if !ok || quantity > float64(math.MaxInt64)/m {
+	if !ok {
 		return 0, false
 	}
-	return int64(math.Round(quantity * m)), true
+	numerator := new(big.Int).Mul(quantity.Num(), big.NewInt(m))
+	quotient, remainder := new(big.Int), new(big.Int)
+	quotient.QuoRem(numerator, quantity.Denom(), remainder)
+	if new(big.Int).Lsh(remainder, 1).Cmp(quantity.Denom()) >= 0 {
+		quotient.Add(quotient, big.NewInt(1))
+	}
+	if !quotient.IsInt64() {
+		return 0, false
+	}
+	return quotient.Int64(), true
 }
 
 // FetchCloudflare reads the current UTC day's Pages Functions and Workers

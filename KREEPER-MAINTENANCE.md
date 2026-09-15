@@ -25,17 +25,19 @@ ACL4SSR 模板及订阅名称保存在运行时数据库，不在源码中硬编
 
 “上游管理”位于侧边栏“运营”的“管理概览”上方。管理员可以在面板内分别保存 OCI API Key 配置和 Cloudflare Account Analytics Token；两份 JSON 配置使用现有 `QZ_SECRET_KEY` 加密层存进 `settings`，读取接口只返回 `*_set` 标记，绝不返回私钥或 Token。删除操作会直接删除整份加密配置。
 
-- OCI：直接签名请求 `usageapi.{region}.oci.oraclecloud.com/20200107/usage`，查询当月起点到当前 UTC 日 `00:00` 的日级官方数据，并累加 data transfer/outbound/egress 的可识别字节单位；当天尚未结算的用量会在下一日数据中体现。余额是“管理员配置的月度上限 - OCI 官方用量”，并非声称 OCI API 返回统一余额。
+- OCI：直接请求 Usage API，余额为“配置额度减去已返回的可识别出站用量”的参考值；10 TB 十进制默认值不是从账户自动读取的权益。查询至当日 UTC `00:00` 不代表该区间已经完整入账。账户免费及超额 SKU、计量单位和免费额度聚合范围必须用真实账户返回数据与 Console 核验，不能仅凭 HTTP 成功承诺余额准确。详见 `.llm-wiki/modules/official-usage.md`。
 - Cloudflare：直接请求 Account Analytics GraphQL，累加当前 UTC 日的 Pages Functions 和 Workers 调用数。必须填写专用 `Account Analytics Read` Token，禁止复用 DNS/ACME Token；余额是面板配置的每日上限减去官方请求数。
 - 这两项都不得经由 EdgeTunnel、Cloudflare Worker KV、服务器 `tx_bytes` 或节点统计转发。第三方接口错误只显示在上游页面，不得影响管理概览和订阅服务。
 
 本功能已于 2026-09-15 构建并部署到 OCI：生产面板已从 Docker 中心模式切换为宿主机 systemd 本机模式，运行 `/opt/qingzhou/qingzhou`，使用 `QZ_SINGBOX_LOCAL=true`、`QZ_SINGBOX_CONFIG=/etc/qingzhou-sing-box/config.json`、`QZ_SINGBOX_UNIT=qingzhou-sing-box.service`、`QZ_SINGBOX_V2RAY=127.0.0.1:18082`。生产数据库从原 Docker 数据卷复制到 `/opt/qingzhou/qingzhou.db`，原入站和 TLS 配置已迁到 `server_id=0`，节点地址由 `node_host_override` 指向 OCI 公网地址。QingZhou 已成功生成并重载本机原生 sing-box 配置，面板和本机节点均健康，公网 `https://qz.kreeper.cc/api/health` 返回 `v0.2.80-kreeper-7e0f784`。
 
-旧 EdgeTunnel 节点服务暂时保留为 `sing-box.service`，监听 `8881`；EdgeTunnel Worker 当前仍生成指向 `140.245.43.76:8881` 的节点。QingZhou 原生节点由 `qingzhou-sing-box.service` 运行，监听 `8882`。因此当前是同机双服务：EdgeTunnel 旧节点不因本次 QingZhou 本机接管而被误停；如需完全合并，必须先把 EdgeTunnel 订阅和配置迁移到 QingZhou，再停用 `sing-box.service`。
+EdgeTunnel 已在 2026-09-15 的 Pages Production 发布 `122ac66` 中移除 OCI 节点导入、OCI 余额/上报和旧订阅节点输出。OCI 主机上的旧 `sing-box.service` 已备份到 `/root/edgetunnel-singbox-retired-20260915/` 后停用并归档，`8881` 不再监听。QingZhou 原生节点继续由 `qingzhou-sing-box.service` 独占运行，监听 `8882`；不得恢复旧服务或引用旧 `/etc/sing-box` 配置。
 
 旧 Docker 面板容器已删除，但 `qingzhou_qingzhou-data` 数据卷、旧镜像和 `/opt/qingzhou/backups/local-switch-20260915-203413/` 回滚备份保留。Cloudflare 账号标识已确认，但尚未写入配置：必须先创建并填写独立的 `Account Analytics Read` 最小权限 Token，不能以 Wrangler OAuth 会话或 ACME/DNS Token 代替。
 
 ## 合并官方更新
+
+本地 OCI 解析加固尚未发布：增加完整分页、未知数据失败关闭、官方长单位识别及参考余额警示。没有取得账户脱敏原始计量响应，不能认定线上 0 用量的唯一根因或声称精确余额已验收。本轮不改生产配置、数据库、节点或服务。
 
 工作区必须干净；不要用 reset/force push 覆盖本地或定制历史。
 
