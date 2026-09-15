@@ -29,7 +29,7 @@ ACL4SSR 模板及订阅名称保存在运行时数据库，不在源码中硬编
 - Cloudflare：直接请求 Account Analytics GraphQL，累加当前 UTC 日的 Pages Functions 和 Workers 调用数。必须填写专用 `Account Analytics Read` Token，禁止复用 DNS/ACME Token；余额是面板配置的每日上限减去官方请求数。
 - 这两项都不得经由 EdgeTunnel、Cloudflare Worker KV、服务器 `tx_bytes` 或节点统计转发。第三方接口错误只显示在上游页面，不得影响管理概览和订阅服务。
 
-本功能仅完成源码与本地测试，尚未构建/导入 OCI 生产镜像或部署。部署前按本文件的构建与部署流程操作，并在浏览器中以管理员身份分别测试“保存配置 → 查询余额 → 凭据不回显”。
+本功能已于 2026-09-15 构建并部署到 OCI：生产镜像为 `qingzhou:kreeper-7e0f784`，程序版本为 `v0.2.80-kreeper-7e0f784`；服务只重建 `qingzhou`，保留现有 `/data` 卷与 `/opt/qingzhou/.env`。部署后本机和 `https://qz.kreeper.cc/api/health` 都返回健康状态。生产数据库中已保存 OCI 配置，并成功直连 OCI Usage API；查询结果遵守“截至今日 UTC 00:00”的日级结算边界。Cloudflare 账号标识已确认，但尚未写入配置：必须先创建并填写独立的 `Account Analytics Read` 最小权限 Token，不能以 Wrangler OAuth 会话或 ACME/DNS Token 代替。后续在浏览器以管理员身份测试“保存配置 → 查询余额 → 凭据不回显”。
 
 ## 合并官方更新
 
