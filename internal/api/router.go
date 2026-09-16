@@ -253,6 +253,7 @@ func (a *API) Router() http.Handler {
 		pr.Get("/api/user/oauth2", a.handleUserOAuth)
 		pr.Post("/api/user/oauth2/bind", a.handleOAuthBind)
 		pr.Get("/api/user/plans", a.handleUserPlans)
+		pr.Put("/api/user/plans/{id}/auto-renew", a.handleUserPlanAutoRenew)
 		pr.Get("/api/user/subscription", a.handleSubscription)
 		pr.Get("/api/user/proxies", a.handleUserProxies)
 		pr.Get("/api/user/proxy-account", a.handleUserProxyAccount)

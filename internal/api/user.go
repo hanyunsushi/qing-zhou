@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -643,6 +644,41 @@ func (a *API) handleUserPlans(w http.ResponseWriter, r *http.Request) {
 	ok(w, buildPlanViews(buckets, pkgNames))
 }
 
+// handleUserPlanAutoRenew updates the user-controlled renewal setting for a
+// subscription line. The clicked bucket identifies the line; queued segments
+// in the same line are updated together by the store.
+func (a *API) handleUserPlanAutoRenew(w http.ResponseWriter, r *http.Request) {
+	u := a.currentUser(r)
+	if u == nil {
+		fail(w, http.StatusUnauthorized, "未登录")
+		return
+	}
+	bucketID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
+	if err != nil || bucketID <= 0 {
+		fail(w, http.StatusBadRequest, "套餐编号无效")
+		return
+	}
+	var req struct {
+		Enabled *bool `json:"enabled"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Enabled == nil {
+		fail(w, http.StatusBadRequest, "请求格式错误")
+		return
+	}
+	if err := a.st.SetPlanAutoRenew(u.ID, bucketID, *req.Enabled); err != nil {
+		switch {
+		case errors.Is(err, store.ErrBucketNotFound):
+			fail(w, http.StatusNotFound, err.Error())
+		case errors.Is(err, store.ErrAutoRenewNotPlan):
+			fail(w, http.StatusBadRequest, err.Error())
+		default:
+			fail(w, http.StatusInternalServerError, "保存自动续订设置失败")
+		}
+		return
+	}
+	ok(w, map[string]any{"id": bucketID, "auto_renew": *req.Enabled})
+}
+
 type planView struct {
 	ID           int64  `json:"id"`
 	Kind         string `json:"kind"`
@@ -671,6 +707,10 @@ type planView struct {
 	// and the 365-day份 as identical rows. 0 = legacy份 (bought before the queue
 	// model) or a grant with no duration.
 	DurationDays int64 `json:"duration_days,omitempty"`
+	// AutoRenew is shared by every live segment in the same renewal line.
+	// It is deliberately explicit instead of inferred in the frontend so the
+	// control stays correct across queued purchases and server restarts.
+	AutoRenew bool `json:"auto_renew"`
 	// StartedAt is when this份 began counting down, so the UI can draw a real
 	// period (起 → 止) instead of only an end date. Derived, not stored: promotion
 	// sets expiry = activation + duration, so the difference IS the activation
@@ -824,7 +864,7 @@ func buildPlanViews(buckets []*store.Bucket, pkgNames map[int64]string) []planVi
 		}
 		pv := planView{ID: b.ID, Kind: b.Kind, PackageID: b.PackageID, QueueKey: b.QueueKey, Name: name, TrafficLimit: b.TrafficLimit,
 			Used: b.Used(), ExpiryAt: b.ExpiryAt, Remaining: 0, CreatedAt: b.CreatedAt, OrderID: b.OrderID,
-			DurationDays: b.DurationDays, StartedAt: startedAt(b)}
+			DurationDays: b.DurationDays, AutoRenew: b.AutoRenew, StartedAt: startedAt(b)}
 		if b.TrafficLimit > 0 {
 			if rem := b.TrafficLimit - b.Used(); rem > 0 {
 				pv.Remaining = rem
