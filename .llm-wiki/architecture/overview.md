@@ -11,7 +11,7 @@ QingZhou is a Go/SQLite service with a Vue 3 administrative UI. Admin routes are
 
 The OCI production deployment runs QingZhou as a host `systemd` service rather than the Docker center-panel template. `QZ_SINGBOX_LOCAL=true` makes the controller generate, validate, write, and reload the local native sing-box configuration at `/etc/qingzhou-sing-box/config.json`; traffic statistics are read from its loopback `v2ray_api` endpoint at `127.0.0.1:18082`. The QingZhou inbound is owned by `server_id=0`, so this path does not use SSH.
 
-The legacy EdgeTunnel node remains a separate host service on port `8881` while its Worker subscriptions still advertise that endpoint. It must not be stopped as part of QingZhou deployment. The optional Docker Compose deployment remains a center-panel/remote-SSH mode and must not be used to replace the production host service without an explicit migration.
+The legacy EdgeTunnel OCI node service has been retired; port `8881` is not part of the current production path. QingZhou's native service owns the OCI node on `8882`. The optional Docker Compose deployment remains a center-panel/remote-SSH mode and must not be used to replace the production host service without an explicit migration.
 
 The upstream-management flow is independent of node telemetry:
 
