@@ -122,6 +122,21 @@ func TestFetchOCIRejectsUnrecognizedTransferUnit(t *testing.T) {
 	}
 }
 
+func TestFetchOCIParsesOracleOutboundGBMonths(t *testing.T) {
+	key := testPrivateKey(t, false)
+	client := testClient(func(*http.Request) (*http.Response, error) {
+		return jsonResponse(200, `{"items":[{"service":"Virtual Cloud Network","skuName":"Outbound Data Transfer Zone 2","unit":"GB Months","attributedUsage":"172.233401500476"}]}`), nil
+	})
+	usage := FetchOCI(context.Background(), client, OCIConfig{
+		TenancyOCID: "tenancy", UserOCID: "user", Fingerprint: "aa:bb", Region: "ap-tokyo-1", PrivateKey: key,
+		MonthlyLimitBytes: 10_000_000_000_000,
+	}, time.Date(2026, 9, 16, 8, 30, 0, 0, time.UTC))
+	want := int64(172_233_401_500)
+	if !usage.Success || usage.Used != want || usage.Remaining != 9_827_766_598_500 {
+		t.Fatalf("unexpected Oracle GB Months usage %#v", usage)
+	}
+}
+
 func TestFetchOCIRefusesUnprovenBalances(t *testing.T) {
 	config := OCIConfig{TenancyOCID: "tenancy", UserOCID: "user", Fingerprint: "aa:bb", Region: "ap-tokyo-1", PrivateKey: testPrivateKey(t, false)}
 	for _, body := range []string{

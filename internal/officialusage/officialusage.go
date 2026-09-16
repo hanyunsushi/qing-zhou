@@ -411,7 +411,7 @@ func usageQuantity(attributed string, computed json.Number) (*big.Rat, error) {
 func quantityToBytes(quantity *big.Rat, unit string) (int64, bool) {
 	rawUnit := strings.ToLower(strings.TrimSpace(unit))
 	normalizedUnit := strings.Join(strings.Fields(rawUnit), " ")
-	if normalizedUnit == "gigabyte outbound data transfer per month" || normalizedUnit == "gigabytes outbound data transfer per month" {
+	if normalizedUnit == "gigabyte outbound data transfer per month" || normalizedUnit == "gigabytes outbound data transfer per month" || normalizedUnit == "gb month" || normalizedUnit == "gb months" {
 		rawUnit = "gb"
 	}
 	if strings.Contains(rawUnit, "storage") || strings.Contains(rawUnit, "capacity") || strings.Contains(rawUnit, "per hour") || strings.Contains(rawUnit, "/hour") || strings.Contains(rawUnit, "rate") {

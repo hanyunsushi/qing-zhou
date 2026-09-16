@@ -19,9 +19,9 @@
           <template #header-extra><n-tag :type="tagType(ociView.configured)" size="small" :bordered="false">{{ ociView.configured ? '已配置' : '未配置' }}</n-tag></template>
           <div class="balance-panel" :class="usageClass(ociUsage)">
             <template v-if="ociUsage?.success">
-              <div class="balance-kicker">{{ ociUsage.period }}参考余额（待账户口径核验）</div>
+              <div class="balance-kicker">{{ ociUsage.period }}账户余额</div>
               <div class="balance-value">{{ fmtBytes(ociUsage.remaining) }}</div>
-              <div class="balance-meta">已用 {{ fmtBytes(ociUsage.used) }} / 上限 {{ fmtBytes(ociUsage.limit) }}<template v-if="ociUsage.overage_detected"> · 已识别超额层级</template></div>
+              <div class="balance-meta">账号总额 {{ fmtBytes(ociUsage.limit) }} − 官方已用 {{ fmtBytes(ociUsage.used) }}<template v-if="ociUsage.overage_detected"> · 已识别超额层级</template></div>
               <n-progress type="line" :percentage="usagePercent(ociUsage)" :show-indicator="false" :height="6" status="success" />
               <div class="balance-source">{{ ociUsage.source }} · 查询区间结束 {{ fmtUpdated(ociUsage.query_end) }} · 查询于 {{ fmtUpdated(ociUsage.updated_at) }}</div>
               <n-alert v-if="ociUsage.warning" type="warning" :bordered="false">{{ ociUsage.warning }}</n-alert>
@@ -103,7 +103,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { NAlert, NButton, NCard, NForm, NFormItem, NInput, NInputNumber, NProgress, NSpin, NTag, useDialog, useMessage } from 'naive-ui'
 import { apiDelete, apiGet, apiPost, apiPut } from '@/api'
 import { fmtBytes } from '@/utils/format'
@@ -183,6 +183,21 @@ async function refreshUsage(provider: Provider, quiet = false) {
     if (!quiet) message.error(error.message || '查询失败')
   } finally { refreshing[provider] = false }
 }
+let usageRefreshTimer: number | undefined
+function startUsageRefresh() {
+  if (usageRefreshTimer !== undefined) window.clearInterval(usageRefreshTimer)
+  usageRefreshTimer = window.setInterval(() => {
+    if (document.visibilityState === 'hidden') return
+    if (ociView.configured) refreshUsage('oci', true)
+    if (cfView.configured) refreshUsage('cloudflare', true)
+  }, 15 * 60 * 1000)
+  document.addEventListener('visibilitychange', handleVisibilityRefresh)
+}
+function handleVisibilityRefresh() {
+  if (document.visibilityState !== 'visible') return
+  if (ociView.configured) refreshUsage('oci', true)
+  if (cfView.configured) refreshUsage('cloudflare', true)
+}
 async function saveOCI() {
   saving.oci = true
   try {
@@ -231,7 +246,14 @@ function usagePercent(usage?: Usage) { return usage?.limit ? Math.min(100, Math.
 function fmtRequests(value?: number) { return new Intl.NumberFormat('zh-CN').format(value || 0) + ' 次' }
 function fmtUpdated(value?: string) { return value ? new Date(value).toLocaleString('zh-CN', { hour12: false }) : '尚未更新' }
 
-onMounted(load)
+onMounted(async () => {
+  await load()
+  startUsageRefresh()
+})
+onUnmounted(() => {
+  if (usageRefreshTimer !== undefined) window.clearInterval(usageRefreshTimer)
+  document.removeEventListener('visibilitychange', handleVisibilityRefresh)
+})
 </script>
 
 <style scoped>
