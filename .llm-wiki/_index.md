@@ -1,6 +1,6 @@
 ---
 title: QingZhou Fork Wiki
-updated: 2026-09-15
+updated: 2026-09-16
 ---
 
 [Project Authority](../agent.md)
@@ -10,9 +10,11 @@ updated: 2026-09-15
 
 # Modules
 - [Official Usage](modules/official-usage.md) - direct OCI and Cloudflare provider adapters.
+- [Subscription Auto Renewal](modules/subscription-auto-renew.md) - queued-plan renewal and charging rules.
 
 # APIs
 - [Admin Upstreams](apis/admin-upstreams.md) - configuration and usage-refresh contract.
+- [User Plans](apis/user-plans.md) - user plan state and automatic-renewal setting.
 
 # Guides
 - [Validation](guides/validation.md) - local verification commands.
