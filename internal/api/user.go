@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -1115,6 +1116,8 @@ type nodeEntry struct {
 	GroupID   int64
 	GroupName string
 	IsAI      bool
+	SortOrder int64
+	SortID    int64
 	// Tag is the sing-box inbound tag for a self-built node, "" for an external
 	// (imported share-link) one. It is the join key to the inbound row, and so to
 	// the relay/egress chain behind the node.
@@ -1125,6 +1128,22 @@ type nodeEntry struct {
 	RouteBroken   bool
 }
 
+func sortNodeEntries(entries []nodeEntry) {
+	sort.SliceStable(entries, func(i, j int) bool {
+		if entries[i].SortOrder != entries[j].SortOrder {
+			return entries[i].SortOrder < entries[j].SortOrder
+		}
+		return entries[i].SortID < entries[j].SortID
+	})
+}
+
+func nodeOrderBefore(order, id, otherOrder, otherID int64) bool {
+	if order != otherOrder {
+		return order < otherOrder
+	}
+	return id < otherID
+}
+
 // computeNodeEntries builds the user's nodes with group attribution: external
 // nodes in their accessible groups (raw), plus self-built node links filtered to
 // the inbound tags in those groups. No accessible group (no live plan and no
@@ -1132,7 +1151,7 @@ type nodeEntry struct {
 func (a *API) computeNodeEntries(u *store.User) []nodeEntry {
 	var out []nodeEntry
 	seen := map[string]int{}
-	add := func(l string, gid int64, gname, tag string, routeUpstream int64, routeBroken, isAI bool) {
+	add := func(l string, gid int64, gname, tag string, routeUpstream int64, routeBroken, isAI bool, sortOrder, sortID int64) {
 		if l == "" {
 			return
 		}
@@ -1142,7 +1161,7 @@ func (a *API) computeNodeEntries(u *store.User) []nodeEntry {
 		}
 		seen[l] = len(out)
 		out = append(out, nodeEntry{Link: l, GroupID: gid, GroupName: gname, IsAI: isAI, Tag: tag,
-			RouteUpstream: routeUpstream, RouteBroken: routeBroken})
+			RouteUpstream: routeUpstream, RouteBroken: routeBroken, SortOrder: sortOrder, SortID: sortID})
 	}
 
 	groupIDs, _ := a.st.AccessibleGroupIDs(u)
@@ -1164,19 +1183,25 @@ func (a *API) computeNodeEntries(u *store.User) []nodeEntry {
 		isAI          bool
 		routeUpstream int64
 		routeBroken   bool
+		sortOrder     int64
+		sortID        int64
 	}
 	nodeGroup := map[int64]nodeMeta{} // routed logical node id → accessible metadata
 	tagGroup := map[string]nodeMeta{} // legacy nodes still collapse by physical tag
 	for _, n := range nodes {
 		switch n.Type {
 		case "external":
-			add(subconv.WithLinkRemark(n.ShareLink, n.Remark), n.GroupID, gname[n.GroupID], "", 0, false, n.IsAI)
+			add(subconv.WithLinkRemark(n.ShareLink, n.Remark), n.GroupID, gname[n.GroupID], "", 0, false, n.IsAI, n.SortOrder, n.ID)
 		case "self_built":
 			if n.InboundTag != "" {
 				if n.RouteUpstreamInboundID == 0 {
 					meta, exists := tagGroup[n.InboundTag]
 					if !exists || n.GroupID < meta.groupID {
 						meta.groupID = n.GroupID
+					}
+					if !exists || nodeOrderBefore(n.SortOrder, n.ID, meta.sortOrder, meta.sortID) {
+						meta.sortOrder = n.SortOrder
+						meta.sortID = n.ID
 					}
 					meta.isAI = meta.isAI || n.IsAI
 					meta.routeBroken = n.RouteUpstreamBroken
@@ -1186,6 +1211,10 @@ func (a *API) computeNodeEntries(u *store.User) []nodeEntry {
 				meta, exists := nodeGroup[n.ID]
 				if !exists || n.GroupID < meta.groupID {
 					meta.groupID = n.GroupID
+				}
+				if !exists || nodeOrderBefore(n.SortOrder, n.ID, meta.sortOrder, meta.sortID) {
+					meta.sortOrder = n.SortOrder
+					meta.sortID = n.ID
 				}
 				meta.isAI = meta.isAI || n.IsAI
 				meta.routeUpstream = n.RouteUpstreamInboundID
@@ -1198,15 +1227,16 @@ func (a *API) computeNodeEntries(u *store.User) []nodeEntry {
 		for _, l := range a.selfBuiltLinks(u) {
 			if l.NodeID == 0 {
 				if meta, ok := tagGroup[l.Tag]; ok {
-					add(l.Link, meta.groupID, gname[meta.groupID], l.Tag, 0, meta.routeBroken, meta.isAI)
+					add(l.Link, meta.groupID, gname[meta.groupID], l.Tag, 0, meta.routeBroken, meta.isAI, meta.sortOrder, meta.sortID)
 				}
 				continue
 			}
 			if meta, ok := nodeGroup[l.NodeID]; ok {
-				add(l.Link, meta.groupID, gname[meta.groupID], l.Tag, meta.routeUpstream, meta.routeBroken, meta.isAI)
+				add(l.Link, meta.groupID, gname[meta.groupID], l.Tag, meta.routeUpstream, meta.routeBroken, meta.isAI, meta.sortOrder, meta.sortID)
 			}
 		}
 	}
+	sortNodeEntries(out)
 	return out
 }
 
