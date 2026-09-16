@@ -13,6 +13,12 @@ The OCI production deployment runs QingZhou as a host `systemd` service rather t
 
 The legacy EdgeTunnel OCI node service has been retired; port `8881` is not part of the current production path. QingZhou's native service owns the OCI node on `8882`. The optional Docker Compose deployment remains a center-panel/remote-SSH mode and must not be used to replace the production host service without an explicit migration.
 
+### Subscription node order
+
+The admin node order is stored in `nodes.sort_order` and applies globally across external nodes and QingZhou's native self-built nodes. Subscription aggregation carries that order through both paths and sorts the combined links before rendering Clash, sing-box, Surge, or Base64 output. When a node source refreshes, existing links keep their stored order by `share_link`; newly discovered links are appended after the current maximum.
+
+The implementation is covered by `internal/api/node_order_test.go` and `internal/store/source_order_test.go`.
+
 The upstream-management flow is independent of node telemetry:
 
 1. An administrator saves an OCI or Cloudflare profile in the Vue page.
