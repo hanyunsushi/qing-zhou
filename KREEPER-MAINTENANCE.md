@@ -71,7 +71,7 @@ ACL4SSR 模板及订阅名称保存在运行时数据库，不在源码中硬编
 
 EdgeTunnel 已在 2026-09-15 的 Pages Production 发布 `1296b77` 中移除 OCI 节点导入、OCI 余额/上报和旧订阅节点输出。OCI 主机上的旧 `sing-box.service` 已备份到 `/root/edgetunnel-singbox-retired-20260915/` 后停用并归档，`8881` 不再监听。QingZhou 原生节点继续由 `qingzhou-sing-box.service` 独占运行，监听 `8882`；不得恢复旧服务或引用旧 `/etc/sing-box` 配置。
 
-旧 Docker 面板容器已删除，但 `qingzhou_qingzhou-data` 数据卷、旧镜像和 `/opt/qingzhou/backups/local-switch-20260915-203413/` 回滚备份保留。Cloudflare 账号标识已确认，但尚未写入配置：必须先创建并填写独立的 `Account Analytics Read` 最小权限 Token，不能以 Wrangler OAuth 会话或 ACME/DNS Token 代替。
+旧 Docker 面板容器、全部 QingZhou Docker 镜像和 `qingzhou_qingzhou-data` 数据卷均已按受引用保护的专用流程清除；`/opt/qingzhou/backups/local-switch-20260915-203413/` 及其他宿主机回滚备份保留。Cloudflare 账号标识已确认，但尚未写入配置：必须先创建并填写独立的 `Account Analytics Read` 最小权限 Token，不能以 Wrangler OAuth 会话或 ACME/DNS Token 代替。
 
 ## 套餐自动续订
 
@@ -110,10 +110,9 @@ git push origin main
 
 ### OCI artifact 保留
 
-- 当前 OCI 正式运行态是宿主 systemd 二进制，不是 Docker center-panel；Docker 镜像只作为容器化回滚材料。
-- 每次应用项目保留现行 artifact 外加三枚可用回滚 artifact；Qingzhou 保留三枚最新定制 `qingzhou:kreeper-*` 或 `qingzhou:rollback-*` 镜像，不把它们误报为 active production；其他 `qingzhou:*` 临时 tag 与未被容器引用的官方 `ghcr.io/mllt992/qing-zhou:*` 应用镜像应清除。
-- 统一清理入口 `/Users/hinaw/Documents/Codex/2026-09-17/oci/oci-retention-cleanup.sh` 默认 dry-run，复核后才 `--apply`；它会保护 active 镜像、三枚回滚镜像和正式数据，只清理未被容器引用的带标签镜像、临时 tag、dangling image 与 BuildKit cache；不得执行 volume prune、`docker compose down -v` 或覆盖更新后的 SQLite 数据。
-- 清理前后必须核对 `qingzhou.service`、`qingzhou-sing-box.service`、`:8882`、active 二进制 hash、`qingzhou_qingzhou-data` 和 `/opt/qingzhou/backups/`。
+- 当前 OCI 正式运行态是宿主 systemd 二进制，不是 Docker center-panel；Docker 镜像不是 active production。
+- 统一清理入口 `/Users/hinaw/Documents/Codex/2026-09-17/oci/oci-retention-cleanup.sh` 默认仍按 dry-run → `--apply` 清理常规镜像并保留三枚 QingZhou 回滚镜像。若确认容器化 QingZhou 回滚不再需要，使用 `--purge-qingzhou`（同样先 dry-run）单独检查两个服务、本机健康端点及所有容器引用，再删除全部 `qingzhou:*`、`ghcr.io/mllt992/qing-zhou:*` 镜像和无引用的 `qingzhou_qingzhou-data`；该模式不会执行 `builder prune` 或处理 Sub2API、网站资源。
+- `--purge-qingzhou` 不删除 `/opt/qingzhou/qingzhou`、`/opt/qingzhou/qingzhou.db`、`/opt/qingzhou/backups/`、环境文件、服务定义或 `/etc/qingzhou-sing-box`。不得执行 volume prune、`docker compose down -v` 或覆盖更新后的 SQLite 数据；清理前后须核对两个 QingZhou 服务与健康端点，宿主机回滚备份仍保留。
 
 Compose 的 `QZ_IMAGE` 必须指向从 fork 构建的镜像，不要使用官方 `latest` 覆盖定制。例如在已验证且干净的源码上构建 OCI ARM64 镜像：
 

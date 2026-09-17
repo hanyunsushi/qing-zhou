@@ -17,15 +17,17 @@ Container builds use the upstream hosted-probe location `/opt/qingzhou/probe`;
 the host-service production path remains independent of this container setting.
 
 The shared retention workflow is
-`/Users/hinaw/Documents/Codex/2026-09-17/oci/oci-retention-cleanup.sh`. It keeps
-exactly the three newest custom `qingzhou:kreeper-*` or `qingzhou:rollback-*`
-Docker images as containerized rollback material, but does not treat them as the
-active production artifact. Other `qingzhou:*` tags and unused
-official `ghcr.io/mllt992/qing-zhou:*` application tags are removed unless a
-container references them. The shared cleanup also removes any other tagged image
-that no container references after the active and rollback sets are protected. It never removes the
-host binary, `/opt/qingzhou/backups`, `qingzhou_qingzhou-data`, the SQLite
-database, sing-box configuration, service definitions, or secrets.
+`/Users/hinaw/Documents/Codex/2026-09-17/oci/oci-retention-cleanup.sh`. Its normal
+mode retains the three newest custom `qingzhou:kreeper-*` or
+`qingzhou:rollback-*` Docker images as optional containerized rollback material;
+they are never the active production artifact. When that rollback path is no
+longer needed, `--purge-qingzhou` uses the same dry-run → `--apply` flow to
+verify both QingZhou services, local `/api/health`, and every image/volume
+container reference before deleting all `qingzhou:*` and
+`ghcr.io/mllt992/qing-zhou:*` images plus the unreferenced
+`qingzhou_qingzhou-data` volume. It does not run a builder prune or touch
+Sub2API/website Docker resources, the host binary, `/opt/qingzhou/backups`, the
+SQLite database, sing-box configuration, service definitions, or secrets.
 
 Before a host-binary rollout, back up the binary, database, environment, service
 definitions, and `/etc/qingzhou-sing-box`; after restart verify `/api/health`,
