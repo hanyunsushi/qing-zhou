@@ -113,7 +113,7 @@ git push origin main
 
 - 当前 OCI 正式运行态是宿主 systemd 二进制，不是 Docker center-panel；Docker 镜像只作为容器化回滚材料。
 - 每次应用项目保留现行 artifact 外加三枚可用回滚 artifact；Qingzhou 保留三枚最新定制 `qingzhou:kreeper-*` 或 `qingzhou:rollback-*` 镜像，不把它们误报为 active production；其他 `qingzhou:*` 临时 tag 与未被容器引用的官方 `ghcr.io/mllt992/qing-zhou:*` 应用镜像应清除。
-- 统一清理入口 `/Users/hinaw/Documents/Codex/2026-09-17/oci/oci-retention-cleanup.sh` 默认 dry-run，复核后才 `--apply`；不得执行 volume prune、`docker compose down -v` 或覆盖更新后的 SQLite 数据。
+- 统一清理入口 `/Users/hinaw/Documents/Codex/2026-09-17/oci/oci-retention-cleanup.sh` 默认 dry-run，复核后才 `--apply`；它会保护 active 镜像、三枚回滚镜像和正式数据，只清理未被容器引用的带标签镜像、临时 tag、dangling image 与 BuildKit cache；不得执行 volume prune、`docker compose down -v` 或覆盖更新后的 SQLite 数据。
 - 清理前后必须核对 `qingzhou.service`、`qingzhou-sing-box.service`、`:8882`、active 二进制 hash、`qingzhou_qingzhou-data` 和 `/opt/qingzhou/backups/`。
 
 Compose 的 `QZ_IMAGE` 必须指向从 fork 构建的镜像，不要使用官方 `latest` 覆盖定制。例如在已验证且干净的源码上构建 OCI ARM64 镜像：

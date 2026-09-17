@@ -16,7 +16,8 @@ exactly the three newest custom `qingzhou:kreeper-*` or `qingzhou:rollback-*`
 Docker images as containerized rollback material, but does not treat them as the
 active production artifact. Other `qingzhou:*` tags and unused
 official `ghcr.io/mllt992/qing-zhou:*` application tags are removed unless a
-container references them. It never removes the
+container references them. The shared cleanup also removes any other tagged image
+that no container references after the active and rollback sets are protected. It never removes the
 host binary, `/opt/qingzhou/backups`, `qingzhou_qingzhou-data`, the SQLite
 database, sing-box configuration, service definitions, or secrets.
 
