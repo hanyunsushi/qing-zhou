@@ -68,7 +68,7 @@ ACL4SSR 模板及订阅名称保存在运行时数据库，不在源码中硬编
 - Cloudflare：直接请求 Account Analytics GraphQL，累加当前 UTC 日的 Pages Functions 和 Workers 调用数。必须填写专用 `Account Analytics Read` Token，禁止复用 DNS/ACME Token；余额是面板配置的每日上限减去官方请求数。
 - 这两项都不得经由 EdgeTunnel、Cloudflare Worker KV、服务器 `tx_bytes` 或节点统计转发。第三方接口错误只显示在上游页面，不得影响管理概览和订阅服务。
 
-本功能已于 2026-09-16 构建并部署到 OCI：生产面板已从 Docker 中心模式切换为宿主机 systemd 本机模式，运行 `/opt/qingzhou/qingzhou`，使用 `QZ_SINGBOX_LOCAL=true`、`QZ_SINGBOX_CONFIG=/etc/qingzhou-sing-box/config.json`、`QZ_SINGBOX_UNIT=qingzhou-sing-box.service`、`QZ_SINGBOX_V2RAY=127.0.0.1:18082`。生产数据库从原 Docker 数据卷复制到 `/opt/qingzhou/qingzhou.db`，原入站和 TLS 配置已迁到 `server_id=0`，节点地址由 `node_host_override` 指向 OCI 公网地址。QingZhou 已成功生成并重载本机原生 sing-box 配置，面板和本机节点均健康；当前公网 `https://qz.kreeper.cc/api/health` 返回 `v0.2.80-kreeper-auto-renew-834cd3e`。
+本机模式切换记录：生产面板已从 Docker 中心模式切换为宿主机 systemd 本机模式，运行 `/opt/qingzhou/qingzhou`，使用 `QZ_SINGBOX_LOCAL=true`、`QZ_SINGBOX_CONFIG=/etc/qingzhou-sing-box/config.json`、`QZ_SINGBOX_UNIT=qingzhou-sing-box.service`、`QZ_SINGBOX_V2RAY=127.0.0.1:18082`。生产数据库从原 Docker 数据卷复制到 `/opt/qingzhou/qingzhou.db`，原入站和 TLS 配置已迁到 `server_id=0`，节点地址由 `node_host_override` 指向 OCI 公网地址。QingZhou 已成功生成并重载本机原生 sing-box 配置；当前发布状态见下方 2026-09-17 记录。
 
 EdgeTunnel 已在 2026-09-15 的 Pages Production 发布 `1296b77` 中移除 OCI 节点导入、OCI 余额/上报和旧订阅节点输出。OCI 主机上的旧 `sing-box.service` 已备份到 `/root/edgetunnel-singbox-retired-20260915/` 后停用并归档，`8881` 不再监听。QingZhou 原生节点继续由 `qingzhou-sing-box.service` 独占运行，监听 `8882`；不得恢复旧服务或引用旧 `/etc/sing-box` 配置。
 
@@ -82,7 +82,13 @@ EdgeTunnel 已在 2026-09-15 的 Pages Production 发布 `1296b77` 中移除 OCI
 
 ## 合并官方更新
 
-本地 OCI 解析已取得生产官方响应：本月返回 `Outbound Data Transfer Zone 2`，单位 `GB Months`，官方数量为非零值；此前因单位未识别导致已用量显示为 0。提交 `83267dd` 已完成 Go 测试、前端构建、ARM64 二进制替换和服务重启；生产二进制 SHA-256 为 `1b6955dc8d611d418d5cf8fbc8d6d53de8a0da7b1c49c183e194243fbac51516`，备份保存在 `/opt/qingzhou/backups/`，配置、数据库、节点和凭据未修改。随后 `834cd3e` 已在 2026-09-16 部署套餐自动续订；`b186d9d` 已在 2026-09-17 部署订阅显示名修复；当前 `c1151c2` 已部署订阅节点排序修复：生产版本为 `v0.2.80-kreeper-node-order-c1151c2`，二进制 SHA-256 为 `1c87bdb320808bb2a4419e54d8b81e3466018ad7481fb74a51ebf7ad9afe38d7`，回滚备份为 `/opt/qingzhou/backups/node-order-20260917-012133/`。启动迁移已确认 `user_plans.auto_renew` 默认值为 `1`，服务、原生节点、`8081` 与 `8882` 健康，`8881` 未监听；Clash 订阅响应头已验证不再附带 `.yaml`，外部与自建节点的混合顺序已按 `nodes.sort_order` 验证。
+本地 OCI 解析已取得生产官方响应：本月返回 `Outbound Data Transfer Zone 2`，单位 `GB Months`，官方数量为非零值；此前因单位未识别导致已用量显示为 0。提交 `83267dd` 已完成 Go 测试、前端构建、ARM64 二进制替换和服务重启；生产二进制 SHA-256 为 `1b6955dc8d611d418d5cf8fbc8d6d53de8a0da7b1c49c183e194243fbac51516`，备份保存在 `/opt/qingzhou/backups/`，配置、数据库、节点和凭据未修改。随后 `834cd3e` 已部署套餐自动续订；`b186d9d` 已部署订阅显示名修复；`c1151c2` 已部署订阅节点排序修复。各项源码事实和历史版本保留在对应验证记录中。
+
+### 2026-09-17 宿主面板发布
+
+源码 `4b65fec` 已构建为 Linux ARM64 版本 `v0.2.80-kreeper-4b65fec` 并部署到 `/opt/qingzhou/qingzhou`。active 二进制 SHA-256 为 `9b4dfec76b8523db32ce98c4a8a1fb07c6b9afabdcb489c3de559248135f66ff`；发布前备份位于 `/opt/qingzhou/backups/node-order-4b65fec-20260917-133155/`，包含旧二进制、SQLite 数据库、环境文件、两个 systemd unit 和 `/etc/qingzhou-sing-box`。本轮未覆盖数据库、凭据、服务定义或 sing-box 配置。
+
+发布后 `qingzhou.service`、`qingzhou-sing-box.service` 均为 active/enabled，本机和公网 `/api/health` 均返回 `v0.2.80-kreeper-4b65fec`；`127.0.0.1:8081`、`*:8882`、`127.0.0.1:18082` 正常监听，旧 `:8881` 未监听。生产数据库及发布前副本 `PRAGMA integrity_check` 均为 `ok`，其他 OCI 容器保持 healthy。
 
 工作区必须干净；不要用 reset/force push 覆盖本地或定制历史。
 
@@ -106,7 +112,7 @@ git push origin main
 ### OCI artifact 保留
 
 - 当前 OCI 正式运行态是宿主 systemd 二进制，不是 Docker center-panel；Docker 镜像只作为容器化回滚材料。
-- 每次应用项目保留现行 artifact 外加三枚可用回滚 artifact；Qingzhou 保留三枚最新 `qingzhou:*` 镜像，不把它们误报为 active production。
+- 每次应用项目保留现行 artifact 外加三枚可用回滚 artifact；Qingzhou 保留三枚最新定制 `qingzhou:kreeper-*` 或 `qingzhou:rollback-*` 镜像，不把它们误报为 active production；其他 `qingzhou:*` 临时 tag 与未被容器引用的官方 `ghcr.io/mllt992/qing-zhou:*` 应用镜像应清除。
 - 统一清理入口 `/Users/hinaw/Documents/Codex/2026-09-17/oci/oci-retention-cleanup.sh` 默认 dry-run，复核后才 `--apply`；不得执行 volume prune、`docker compose down -v` 或覆盖更新后的 SQLite 数据。
 - 清理前后必须核对 `qingzhou.service`、`qingzhou-sing-box.service`、`:8882`、active 二进制 hash、`qingzhou_qingzhou-data` 和 `/opt/qingzhou/backups/`。
 
