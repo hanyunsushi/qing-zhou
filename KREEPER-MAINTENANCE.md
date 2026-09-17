@@ -110,7 +110,7 @@ git push origin main
 
 ### OCI artifact 保留
 
-2026-09-18 已清理三枚退役 Docker 镜像及无引用数据卷。常规模式仅保留现有 QingZhou 回滚镜像中的最新至多三枚，允许镜像数量为零和退役数据卷不存在，不会重建这些资源；宿主机回滚备份仍保留。
+2026-09-17 已清理三枚退役 Docker 镜像及无引用数据卷。常规模式仅保留现有 QingZhou 回滚镜像中的最新至多三枚，允许镜像数量为零和退役数据卷不存在，不会重建这些资源；宿主机回滚备份仍保留。
 
 - 当前 OCI 正式运行态是宿主 systemd 二进制，不是 Docker center-panel；Docker 镜像不是 active production。
 - 统一清理入口 `/Users/hinaw/Documents/Codex/2026-09-17/oci/oci-retention-cleanup.sh` 默认仍按 dry-run → `--apply` 清理常规镜像并保留三枚 QingZhou 回滚镜像。若确认容器化 QingZhou 回滚不再需要，使用 `--purge-qingzhou`（同样先 dry-run）单独检查两个服务、本机健康端点及所有容器引用，再删除全部 `qingzhou:*`、`ghcr.io/mllt992/qing-zhou:*` 镜像和无引用的 `qingzhou_qingzhou-data`；该模式不会执行 `builder prune` 或处理 Sub2API、网站资源。
