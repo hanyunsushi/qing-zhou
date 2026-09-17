@@ -44,8 +44,7 @@ ARG TARGETARCH
 RUN apk add --no-cache ca-certificates tzdata \
  && adduser -D -u 10001 qingzhou \
  && mkdir -p /data \
- && mkdir -p /data/probe \
- && chown -R qingzhou:qingzhou /data
+ && chown qingzhou:qingzhou /data
 COPY --from=builder /out/qingzhou-${TARGETARCH} /usr/local/bin/qingzhou
 COPY --from=builder /out/probe /opt/qingzhou/probe
 # 断言 ELF e_machine 与镜像架构一致，避免再把 amd64 二进制拷进 arm64 镜像（#27）
@@ -58,7 +57,7 @@ RUN got=$(dd if=/usr/local/bin/qingzhou bs=1 skip=18 count=2 2>/dev/null | od -A
     [ "$got" = "$want" ] || { echo "qingzhou ELF e_machine=$got want=$want ($TARGETARCH)"; exit 1; }
 ENV QZ_LISTEN=0.0.0.0:8081 \
     QZ_DB=/data/qingzhou.db \
-    QZ_PROBE_DIR=/data/probe
+    QZ_PROBE_DIR=/opt/qingzhou/probe
 EXPOSE 8081
 VOLUME ["/data"]
 USER qingzhou

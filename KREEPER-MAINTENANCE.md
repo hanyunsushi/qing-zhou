@@ -18,7 +18,6 @@
 | 功能 | 配置 | 主要源码与测试 |
 | --- | --- | --- |
 | 只输出模板策略组 | Clash 模板 `x-qingzhou-template-groups: true` | [clash.go](internal/subconv/clash.go)、[分组测试](internal/subconv/clash_template_groups_test.go) |
-| 可写探针目录 | `QZ_PROBE_DIR=/data/probe` | [Dockerfile](Dockerfile)、[docker-compose.yml](docker-compose.yml) |
 | 上游账户余额 | 管理后台 → 运营 → 上游管理 | [upstreams.go](internal/api/upstreams.go)、[officialusage](internal/officialusage/officialusage.go)、[页面](frontend/src/views/AdminUpstreams.vue) |
 | 远端数据库备份 | 管理后台 → 系统设置 → 数据备份；R2/S3 兼容对象存储 | [backup manager](internal/backup/manager.go)、[API](internal/api/backup_remote.go)、[页面](frontend/src/views/AdminSettings.vue) |
 | 套餐自动续订 | 用户订阅卡片默认开启，按续期组统一设置 | [autorenew.go](internal/store/autorenew.go)、[user.go](internal/api/user.go)、[页面](frontend/src/views/UserSub.vue) |
@@ -150,3 +149,7 @@ Compose 是可选的容器化部署模板；当前生产升级应替换宿主机
 源码 `e876013` 移除了 Fork 独有的 `QZ_SINGBOX_LOCAL` 开关、禁用本机配置/统计/版本探测的分支及其专用测试，恢复 QingZhou 官方本机控制器路径。本次不删除官方远程 SSH 服务器管理，也不影响上游余额、远端备份、套餐续订、订阅显示名和节点排序等独立定制。ARM64 二进制 `v0.2.80-kreeper-e876013` 已部署到 `/opt/qingzhou/qingzhou`。
 
 发布前完整备份位于 `/opt/qingzhou/backups/remove-remote-only-e876013-20260917-230809/`。随后从生产环境文件删除无效的 `QZ_SINGBOX_LOCAL` 行，未修改数据库、`QZ_SECRET_KEY`、两个 systemd unit 或 `/etc/qingzhou-sing-box`。本机与公网 `/api/health` 均返回新版本；`qingzhou.service`、`qingzhou-sing-box.service` 均 active/enabled，`127.0.0.1:8081`、`*:8882`、`127.0.0.1:18082` 正常监听，最近服务错误为空。active 二进制 SHA-256 为 `6022692c35a91686a817f31a9aa68390633c778c0e0f8dff9c0763c52c29acc6`。
+
+### 2026-09-18 清理 Docker 探针目录适配
+
+Fork 移除了仅供 Docker 使用的 `/data/probe` 创建、写权限和 `QZ_PROBE_DIR=/data/probe` 覆盖，恢复官方镜像内置的 `/opt/qingzhou/probe` 路径。其余 Docker 镜像选择、回环端口、环境变量校验和 SSH 密钥挂载配置保持不变。OCI 正式运行态是宿主机 systemd，不使用 QingZhou 容器，因此本次没有替换二进制、重启服务或修改生产环境文件。

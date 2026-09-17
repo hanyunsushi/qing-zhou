@@ -12,6 +12,10 @@ collection are provided by QingZhou's official controller. The Docker Compose
 file is an optional containerized deployment template and does not replace the
 production service.
 
+The fork no longer carries a custom writable `/data/probe` Docker adaptation.
+Container builds use the upstream hosted-probe location `/opt/qingzhou/probe`;
+the host-service production path remains independent of this container setting.
+
 The shared retention workflow is
 `/Users/hinaw/Documents/Codex/2026-09-17/oci/oci-retention-cleanup.sh`. It keeps
 exactly the three newest custom `qingzhou:kreeper-*` or `qingzhou:rollback-*`
