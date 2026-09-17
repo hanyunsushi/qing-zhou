@@ -46,3 +46,9 @@ rollback directory is
 `/opt/qingzhou/backups/node-order-4b65fec-20260917-133155/`. Local and public
 health checks passed; `127.0.0.1:8081`, `*:8882`, and `127.0.0.1:18082` were
 listening, while the retired `:8881` listener was absent.
+
+The deployed binary is `v0.2.80-kreeper-5cf18bb` with SHA-256
+`73dd6afb9168c201be212b0a96ac7b087ae2b382395c38109125447cd5d95e83`; its
+rollback material is `/opt/qingzhou/backups/remote-backup-5cf18bb-20260917-094324/`.
+R2 credentials are not configured yet; complete the operator-side connection
+ test from the admin page after entering a dedicated key pair.

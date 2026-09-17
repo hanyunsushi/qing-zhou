@@ -58,3 +58,14 @@ contract tests cover the R2/S3 form, secret non-readback, schedule controls,
 history actions, and authenticated deletion. A production R2 upload remains a
 post-deployment operator check because credentials are intentionally not kept
 in source or documentation.
+
+The deployed binary is `v0.2.80-kreeper-5cf18bb` with SHA-256
+`73dd6afb9168c201be212b0a96ac7b087ae2b382395c38109125447cd5d95e83`.
+The rollout backup is
+`/opt/qingzhou/backups/remote-backup-5cf18bb-20260917-094324/`. The public
+health endpoint reported the new version and the protected backup route returned
+`401` without an admin session. Both services and all expected listeners were
+healthy with no recent service errors. Dedicated R2 credentials remain
+unconfigured, so the real upload test is pending. The OCI host has no `sqlite3`
+CLI; `PRAGMA integrity_check` was not run in this rollout and the database was
+not replaced.

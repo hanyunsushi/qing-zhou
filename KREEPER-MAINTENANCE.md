@@ -140,3 +140,9 @@ docker compose --env-file /opt/qingzhou/.env \
 Compose 仅用于需要远程 SSH 管理的独立中心面板。当前生产升级应替换宿主机 `/opt/qingzhou/qingzhou`，保持 `QZ_DB`、`QZ_SECRET_KEY`、`QZ_SINGBOX_LOCAL=true`、`QZ_SINGBOX_CONFIG=/etc/qingzhou-sing-box/config.json` 和 `QZ_SINGBOX_UNIT=qingzhou-sing-box.service` 不变，然后执行 `systemctl restart qingzhou`。回滚只恢复面板二进制和对应服务配置，不要用整库恢复覆盖用户新数据。
 
 面板内置更新器的默认来源仍是官方 `mllt992/qing-zhou`。不要把官方一键二进制更新当作定制版升级方式，否则会丢失定制；本 fork 使用“合并源码 → 测试 → 构建 → 部署”。生产运行状态应单独验证，不能由 Git HEAD 推断。
+
+### 2026-09-17 远端备份功能发布
+
+源码 `5cf18bb` 已构建为 Linux ARM64 版本 `v0.2.80-kreeper-5cf18bb` 并部署到 `/opt/qingzhou/qingzhou`。active 二进制 SHA-256 为 `73dd6afb9168c201be212b0a96ac7b087ae2b382395c38109125447cd5d95e83`；发布前备份位于 `/opt/qingzhou/backups/remote-backup-5cf18bb-20260917-094324/`，包含旧二进制、SQLite 数据库、环境文件、两个 systemd unit 和 `/etc/qingzhou-sing-box`。
+
+发布后公网 `/api/health` 返回 `v0.2.80-kreeper-5cf18bb`，未登录访问 `/api/admin/backups/config` 返回 `401`；`qingzhou.service`、`qingzhou-sing-box.service` 均 active，`8081`、`8882`、`18082` 正常监听，最近服务错误为空。生产尚未填写专用 R2 凭据，因此没有执行真实远端上传；OCI 主机未安装 `sqlite3` CLI，本轮未执行 `PRAGMA integrity_check`。
