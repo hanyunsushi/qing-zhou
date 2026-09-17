@@ -1,6 +1,6 @@
 ---
 title: QingZhou Deployment and Artifact Retention
-updated: 2026-09-17
+updated: 2026-09-18
 ---
 
 # QingZhou Deployment and Artifact Retention
@@ -18,7 +18,7 @@ the host-service production path remains independent of this container setting.
 
 The shared retention workflow is
 `/Users/hinaw/Documents/Codex/2026-09-17/oci/oci-retention-cleanup.sh`. Its normal
-mode retains the three newest custom `qingzhou:kreeper-*` or
+mode retains up to the three newest existing custom `qingzhou:kreeper-*` or
 `qingzhou:rollback-*` Docker images as optional containerized rollback material;
 they are never the active production artifact. When that rollback path is no
 longer needed, `--purge-qingzhou` uses the same dry-run → `--apply` flow to
@@ -28,6 +28,8 @@ container reference before deleting all `qingzhou:*` and
 `qingzhou_qingzhou-data` volume. It does not run a builder prune or touch
 Sub2API/website Docker resources, the host binary, `/opt/qingzhou/backups`, the
 SQLite database, sing-box configuration, service definitions, or secrets.
+Normal cleanup accepts zero remaining QingZhou images and an absent retired
+volume; it does not recreate either resource after the dedicated purge.
 
 Before a host-binary rollout, back up the binary, database, environment, service
 definitions, and `/etc/qingzhou-sing-box`; after restart verify `/api/health`,
