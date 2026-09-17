@@ -1,6 +1,6 @@
 ---
 title: System Overview
-updated: 2026-09-15
+updated: 2026-09-17
 ---
 
 # System Overview
@@ -19,6 +19,8 @@ The admin node order is stored in `nodes.sort_order` and applies globally across
 
 The implementation is covered by `internal/api/node_order_test.go` and `internal/store/source_order_test.go`.
 
+The admin node management view uses native drag-and-drop for node cards. Each drop is translated into the complete global node ID order and sent to `POST /api/admin/nodes/reorder`; the UI rolls back the optimistic order when the request fails. Because a node may appear in more than one group, group views are projections of the shared order rather than independent sortable lists.
+
 The upstream-management flow is independent of node telemetry:
 
 1. An administrator saves an OCI or Cloudflare profile in the Vue page.
@@ -28,3 +30,5 @@ The upstream-management flow is independent of node telemetry:
 5. The response returns only usage, configured allowance and derived remaining balance; no credential is serialized to the browser.
 
 See also: [Official Usage](../modules/official-usage.md), [Admin Upstreams](../apis/admin-upstreams.md).
+
+The admin monitor adds the combined `上游余额` card directly after the `面板本机` server card. OCI and Cloudflare are shown as draggable subcards, and their order is shared with 上游管理 through `settings.admin_upstream_balance_order`. The card is administrator-only and does not alter the public monitor payload.

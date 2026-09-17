@@ -1,5 +1,10 @@
 # Kreeper QingZhou 定制维护
 
+<!-- PROJECT-DOCS:START -->
+- 开始项目任务前先读取 `agent.md`。
+- 代码、配置、基础设施、验证、部署或发布事实发生有意义变化后，必须使用 `llm-wiki` 同步项目权威文档与 `.llm-wiki`；无文档影响时允许核对后 no-op。
+<!-- PROJECT-DOCS:END -->
+
 ## 仓库与分支
 
 - Fork：[hanyunsushi/qing-zhou](https://github.com/hanyunsushi/qing-zhou)，`origin/main` 是定制主线。
@@ -38,6 +43,8 @@ ACL4SSR 模板及订阅名称保存在运行时数据库，不在源码中硬编
 6. **套餐自动续订**：用户套餐默认开启，可按续期组开关；队列任务先处理手动排队份，再为到期且无排队份的套餐按当前商品价格和购买时长续订；余额、商品、库存、时长或购买权限不足时不扣款并保留开关重试。
 7. **订阅显示名清理**：Clash 响应的 `Content-Disposition` 使用站点名而不追加 `.yaml`，避免客户端显示 `站点名.yaml`；其他订阅格式仍保留 `.json`、`.conf`、`.txt`。
 8. **订阅节点排序修复**：订阅聚合不再把自建节点统一追加到外部节点之后；所有可访问节点按管理后台保存的全局 `sort_order` 输出。节点来源刷新按 `share_link` 保留已有节点的排序，新节点追加到当前最大排序值之后。
+9. **监控首页上游余额卡片**：管理员在“服务器监控”的“面板本机”右侧看到合并 OCI/Cloudflare 的上游余额卡片；数据直接调用上游刷新 API，公开监控页不加载供应商账户用量。卡片内子项支持拖动排序并每 15 分钟自动刷新。
+10. **余额与节点拖动排序**：上游管理页和监控首页共用设置键 `admin_upstream_balance_order` 保存 OCI/Cloudflare 顺序；节点管理卡片改为原生拖放，完整节点 ID 顺序仍通过 `/api/admin/nodes/reorder` 写入全局 `nodes.sort_order`。
 
 ### 生产部署合同
 
@@ -95,6 +102,13 @@ git push origin main
 出现冲突时先解决模板渲染和远程控制的合同，再运行测试；不能通过选择全量 ours/theirs 抹掉另一侧逻辑。发布前还要构建 Vue 前端和面板，使用真实订阅做 Mihomo 配置加载、代理下载、流量计数和 Sing-box 回归验证。合并 `upstream/main` 会纳入未发布开发提交；若只跟正式版，则明确选择经过确认的 release tag 合并。
 
 ## 构建与部署
+
+### OCI artifact 保留
+
+- 当前 OCI 正式运行态是宿主 systemd 二进制，不是 Docker center-panel；Docker 镜像只作为容器化回滚材料。
+- 每次应用项目保留现行 artifact 外加三枚可用回滚 artifact；Qingzhou 保留三枚最新 `qingzhou:*` 镜像，不把它们误报为 active production。
+- 统一清理入口 `/Users/hinaw/Documents/Codex/2026-09-17/oci/oci-retention-cleanup.sh` 默认 dry-run，复核后才 `--apply`；不得执行 volume prune、`docker compose down -v` 或覆盖更新后的 SQLite 数据。
+- 清理前后必须核对 `qingzhou.service`、`qingzhou-sing-box.service`、`:8882`、active 二进制 hash、`qingzhou_qingzhou-data` 和 `/opt/qingzhou/backups/`。
 
 Compose 的 `QZ_IMAGE` 必须指向从 fork 构建的镜像，不要使用官方 `latest` 覆盖定制。例如在已验证且干净的源码上构建 OCI ARM64 镜像：
 

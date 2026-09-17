@@ -1,6 +1,6 @@
 ---
 title: QingZhou Fork Wiki
-updated: 2026-09-16
+updated: 2026-09-17
 ---
 
 [Project Authority](../agent.md)
@@ -19,3 +19,4 @@ updated: 2026-09-16
 
 # Guides
 - [Validation](guides/validation.md) - local verification commands.
+- [Deployment and Artifact Retention](guides/deployment.md) - host-service rollout, Docker rollback images, and safe cleanup.

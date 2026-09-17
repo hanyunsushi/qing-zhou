@@ -15,6 +15,16 @@
 
     <n-spin :show="loading">
       <div class="upstream-grid">
+        <div
+          class="upstream-sort-item"
+          :class="{ dragging: draggingProvider === 'oci', 'drag-over': dragOverProvider === 'oci' }"
+          :style="{ order: upstreamOrder.indexOf('oci') }"
+          draggable="true"
+          @dragstart="handleProviderDragStart('oci', $event)"
+          @dragover.prevent="handleProviderDragOver('oci', $event)"
+          @drop.prevent="handleProviderDrop('oci')"
+          @dragend="handleProviderDragEnd"
+        >
         <n-card size="small" class="upstream-card" title="Oracle Cloud Infrastructure">
           <template #header-extra><n-tag :type="tagType(ociView.configured)" size="small" :bordered="false">{{ ociView.configured ? '已配置' : '未配置' }}</n-tag></template>
           <div class="balance-panel" :class="usageClass(ociUsage)">
@@ -55,7 +65,18 @@
             <n-button v-if="ociView.configured" tertiary type="error" @click="removeProvider('oci')">清除</n-button>
           </div>
         </n-card>
+        </div>
 
+        <div
+          class="upstream-sort-item"
+          :class="{ dragging: draggingProvider === 'cloudflare', 'drag-over': dragOverProvider === 'cloudflare' }"
+          :style="{ order: upstreamOrder.indexOf('cloudflare') }"
+          draggable="true"
+          @dragstart="handleProviderDragStart('cloudflare', $event)"
+          @dragover.prevent="handleProviderDragOver('cloudflare', $event)"
+          @drop.prevent="handleProviderDrop('cloudflare')"
+          @dragend="handleProviderDragEnd"
+        >
         <n-card size="small" class="upstream-card" title="Cloudflare">
           <template #header-extra><n-tag :type="tagType(cfView.configured)" size="small" :bordered="false">{{ cfView.configured ? '已配置' : '未配置' }}</n-tag></template>
           <div class="balance-panel" :class="usageClass(cfUsage)">
@@ -90,6 +111,7 @@
             <n-button v-if="cfView.configured" tertiary type="error" @click="removeProvider('cloudflare')">清除</n-button>
           </div>
         </n-card>
+        </div>
       </div>
 
       <n-card size="small" class="permission-card" title="供应商权限与口径">
@@ -150,6 +172,9 @@ const cfForm = reactive({ account_id: '', analytics_token: '', daily_request_lim
 
 const ociUsage = computed(() => usages.oci)
 const cfUsage = computed(() => usages.cloudflare)
+const upstreamOrder = ref<Provider[]>(['oci', 'cloudflare'])
+const draggingProvider = ref<Provider | null>(null)
+const dragOverProvider = ref<Provider | null>(null)
 
 function assignView(target: ProviderView, source?: ProviderView) {
   Object.assign(target, { provider: target.provider, configured: false, limit: target.provider === 'oci' ? 10_000_000_000_000 : 100_000 }, source || {})
@@ -164,14 +189,58 @@ function setForms() {
 async function load() {
   loading.value = true
   try {
-    const views = await apiGet<ProviderView[]>('/api/admin/upstreams') || []
+    const [views, settings] = await Promise.all([
+      apiGet<ProviderView[]>('/api/admin/upstreams'),
+      apiGet<Record<string, string>>('/api/admin/settings'),
+    ])
     assignView(ociView, views.find(v => v.provider === 'oci'))
     assignView(cfView, views.find(v => v.provider === 'cloudflare'))
     setForms()
+    upstreamOrder.value = normalizeProviderOrder(settings?.admin_upstream_balance_order)
     await Promise.all([ociView.configured ? refreshUsage('oci', true) : Promise.resolve(), cfView.configured ? refreshUsage('cloudflare', true) : Promise.resolve()])
   } catch (error: any) {
     message.error(error.message || '读取上游配置失败')
   } finally { loading.value = false }
+}
+
+function normalizeProviderOrder(raw: unknown): Provider[] {
+  const values = Array.isArray(raw) ? raw : String(raw || '').split(',')
+  const valid = values.filter((value): value is Provider => value === 'oci' || value === 'cloudflare')
+  return [...new Set<Provider>([...valid, 'oci', 'cloudflare'])]
+}
+function handleProviderDragStart(provider: Provider, event: DragEvent) {
+  draggingProvider.value = provider
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'move'
+    event.dataTransfer.setData('text/plain', provider)
+  }
+}
+function handleProviderDragOver(provider: Provider, event: DragEvent) {
+  if (!draggingProvider.value || draggingProvider.value === provider) return
+  if (event.dataTransfer) event.dataTransfer.dropEffect = 'move'
+  dragOverProvider.value = provider
+}
+async function handleProviderDrop(provider: Provider) {
+  const source = draggingProvider.value
+  dragOverProvider.value = null
+  if (!source || source === provider) return
+  const previous = [...upstreamOrder.value]
+  const next = [...previous]
+  const from = next.indexOf(source)
+  if (from < 0 || !next.includes(provider)) return
+  const target = next.indexOf(provider)
+  ;[next[from], next[target]] = [next[target], next[from]]
+  upstreamOrder.value = next
+  try {
+    await apiPut('/api/admin/settings', { admin_upstream_balance_order: next.join(',') })
+  } catch (error: any) {
+    upstreamOrder.value = previous
+    message.error(error.message || '保存余额卡片顺序失败')
+  }
+}
+function handleProviderDragEnd() {
+  draggingProvider.value = null
+  dragOverProvider.value = null
 }
 async function refreshUsage(provider: Provider, quiet = false) {
   refreshing[provider] = true
@@ -260,6 +329,10 @@ onUnmounted(() => {
 .upstream-head { margin-bottom: 14px; }
 .upstream-notice { margin-bottom: 16px; line-height: 1.75; }
 .upstream-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; }
+.upstream-sort-item { min-width: 0; order: 0; cursor: grab; transition: opacity .2s ease, transform .2s ease; }
+.upstream-sort-item:active { cursor: grabbing; }
+.upstream-sort-item.dragging { opacity: .45; transform: scale(.99); }
+.upstream-sort-item.drag-over { border-radius: var(--r-sm); box-shadow: 0 0 0 2px var(--accent-soft); }
 .upstream-card { min-width: 0; }
 .balance-panel { padding: 14px; margin-bottom: 14px; border: 1px solid var(--border); border-radius: var(--r-sm); background: var(--bg-soft); min-height: 122px; }
 .balance-panel.ready { background: linear-gradient(135deg, rgba(233, 242, 236, .78), var(--card)); border-color: rgba(76, 113, 85, .2); }
