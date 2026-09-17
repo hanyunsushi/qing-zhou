@@ -5,7 +5,7 @@
 #   2. docker compose up -d
 #   3. docker compose logs -f qingzhou   # 首启会打印随机管理员密码（若未设 QZ_ADMIN_PASS）
 #
-# 面板是「中心机」，通过 SSH 管理远程落地 sing-box —— 容器本身不需要跑 sing-box。
+# 面板可通过 SSH 管理远程落地 sing-box；运行在节点本机时也会管理本机 sing-box。
 
 services:
   qingzhou:
@@ -26,8 +26,6 @@ services:
       # 首次管理员（可选）。QZ_ADMIN_PASS 留空则首启生成随机密码并打印到日志一次
       QZ_ADMIN_USER: "${QZ_ADMIN_USER:?set QZ_ADMIN_USER in /opt/qingzhou/.env}"
       QZ_ADMIN_PASS: "${QZ_ADMIN_PASS:?set QZ_ADMIN_PASS in /opt/qingzhou/.env}"
-      # 中心面板只通过 SSH 管理受管服务器，不在本机落地 sing-box。
-      QZ_SINGBOX_LOCAL: "false"
       # 探针升级需要可写目录；数据库卷持久化它，避免容器重启丢失。
       QZ_PROBE_DIR: "/data/probe"
       # 反代在最前面时填其 IP/CIDR，日志/限流才拿到真实客户端 IP

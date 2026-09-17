@@ -7,8 +7,10 @@ updated: 2026-09-17
 
 OCI production is the host-service path: `/opt/qingzhou/qingzhou` under
 `qingzhou.service`, with `qingzhou-sing-box.service` owning the local node on
-`:8882`. The Docker Compose file is an optional center-panel/remote-SSH mode and
-does not replace the production service.
+`:8882`. Local `server_id=0` generation, reload, version probing, and traffic
+collection are provided by QingZhou's official controller. The Docker Compose
+file is an optional containerized deployment template and does not replace the
+production service.
 
 The shared retention workflow is
 `/Users/hinaw/Documents/Codex/2026-09-17/oci/oci-retention-cleanup.sh`. It keeps

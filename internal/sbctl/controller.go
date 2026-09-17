@@ -70,9 +70,8 @@ type remoteManager interface {
 
 // Controller orchestrates config regeneration and stats collection.
 type Controller struct {
-	localDisabled bool
-	st            ConfigStore
-	mgr           Applier
+	st  ConfigStore
+	mgr Applier
 
 	// Cached timestamp of the local sing-box version probe; see version.go.
 	localVerMu  sync.Mutex
@@ -595,8 +594,6 @@ func (c *Controller) invalidateRemoteCaches(serverID int64) {
 // applies it (validate + reload). Safe to call on every change; serialized.
 // When multi-server is configured, it iterates over all enabled remote servers
 // in addition to the local instance.
-func (c *Controller) SetLocalEnabled(enabled bool) { c.localDisabled = !enabled }
-
 func (c *Controller) Rebuild() error { return c.rebuild(false, true) }
 
 // rebuildPeriodic is the timer-driven pass. Restarts it causes are reported to
@@ -635,9 +632,7 @@ func (c *Controller) rebuild(periodic, forceHealth bool) error {
 	// and shares this file is a second writer, and the two only coexist while
 	// they generate the same bytes.
 	var panelCfg []byte
-	if c.localDisabled {
-		c.setStatus(0, "disabled", "中心面板：本机落地已禁用")
-	} else if cfg, err := c.st.BuildSingboxConfig(c.baseConfig, c.v2rayListen, byTag); err != nil {
+	if cfg, err := c.st.BuildSingboxConfig(c.baseConfig, c.v2rayListen, byTag); err != nil {
 		lastErr = fmt.Errorf("local build config: %w", err)
 		log.Printf("sbctl: local rebuild error: %v", err)
 		record(0, lastErr)
@@ -815,9 +810,6 @@ func (c *Controller) RebuildServer(serverID int64) error {
 	}
 
 	if serverID == 0 {
-		if c.localDisabled {
-			return fmt.Errorf("中心面板已禁用本机落地，请选择受管服务器")
-		}
 		// Local server (legacy server_id=0).
 		cfg, err := c.st.BuildSingboxConfig(c.baseConfig, c.v2rayListen, byTag)
 		if err != nil {
@@ -933,13 +925,11 @@ func (c *Controller) CollectStats(ctx context.Context) (int, error) {
 	}
 
 	var errs []error
-	if !c.localDisabled {
-		m, err := c.stats.QueryUserTraffic(ctx)
-		if err != nil {
-			errs = append(errs, fmt.Errorf("local stats: %w", err))
-		} else {
-			sources[store.LocalNodeID] = convert(m)
-		}
+	m, err := c.stats.QueryUserTraffic(ctx)
+	if err != nil {
+		errs = append(errs, fmt.Errorf("local stats: %w", err))
+	} else {
+		sources[store.LocalNodeID] = convert(m)
 	}
 	for _, rm := range c.remoteStats(ctx) {
 		if rm.err != nil {

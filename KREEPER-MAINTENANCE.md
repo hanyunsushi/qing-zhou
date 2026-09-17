@@ -10,7 +10,7 @@
 - Fork：[hanyunsushi/qing-zhou](https://github.com/hanyunsushi/qing-zhou)，`origin/main` 是定制主线。
 - 官方：[mllt992/qing-zhou](https://github.com/mllt992/qing-zhou)，`upstream/main` 只作为更新来源。
 - 官方基线：`29740b9`，包含 `v0.2.80` 之后的开发提交，不宣称这是新的正式 release。
-- 定制覆盖 Clash 输出、本机原生节点与部署配置、上游余额、套餐续订、订阅显示名和节点排序。
+- 定制覆盖 Clash 输出、上游余额、套餐续订、订阅显示名和节点排序；本机原生节点属于 QingZhou 官方能力。
 - Fork 的 GitHub `main` 是可维护源码；生产部署必须以实际运行态验收为准，不能由 Git HEAD 推断。
 
 ## 定制合同
@@ -18,7 +18,6 @@
 | 功能 | 配置 | 主要源码与测试 |
 | --- | --- | --- |
 | 只输出模板策略组 | Clash 模板 `x-qingzhou-template-groups: true` | [clash.go](internal/subconv/clash.go)、[分组测试](internal/subconv/clash_template_groups_test.go) |
-| 生产面板运行本机节点 | `QZ_SINGBOX_LOCAL=true`，宿主机 systemd 部署 | [main.go](main.go)、[controller.go](internal/sbctl/controller.go)、[network_test.go](internal/sbctl/network_test.go)、[version.go](internal/sbctl/version.go) |
 | 可写探针目录 | `QZ_PROBE_DIR=/data/probe` | [Dockerfile](Dockerfile)、[docker-compose.yml](docker-compose.yml) |
 | 上游账户余额 | 管理后台 → 运营 → 上游管理 | [upstreams.go](internal/api/upstreams.go)、[officialusage](internal/officialusage/officialusage.go)、[页面](frontend/src/views/AdminUpstreams.vue) |
 | 远端数据库备份 | 管理后台 → 系统设置 → 数据备份；R2/S3 兼容对象存储 | [backup manager](internal/backup/manager.go)、[API](internal/api/backup_remote.go)、[页面](frontend/src/views/AdminSettings.vue) |
@@ -37,20 +36,19 @@ ACL4SSR 模板及订阅名称保存在运行时数据库，不在源码中硬编
 ### 源码功能
 
 1. **模板自主管理 Clash 分组**：识别 `x-qingzhou-template-groups: true` 后由模板拥有策略组；按用户授权展开 `all`，不再额外注入原生节点选择、固定、故障转移、负载均衡和 AI 组；保留模板已有规则与最终 `MATCH`，空组回退 `DIRECT`，并处理组名与节点重名。
-2. **本机/远程 sing-box 控制开关**：支持 `QZ_SINGBOX_LOCAL=true` 的宿主机本机 systemd 管理，也保留 `QZ_SINGBOX_LOCAL=false` 的远程/中心面板部署路径；本机模式支持指定配置文件、systemd unit、V2Ray API 和探针目录。
-3. **OCI 上游官方用量**：直接调用 OCI Usage API，支持出站传输、免费层 SKU、UTC 日边界和 `GB Months` 单位，按官方已用量计算配置额度的参考余额，并提供测试覆盖。
-4. **Cloudflare 上游官方请求数**：直接调用 Account Analytics GraphQL，统计当前 UTC 日 Pages Functions 与 Workers 调用量，配置的每日上限仅用于展示参考余额；凭据在服务端加密保存。
-5. **上游管理界面和 API**：侧边栏“运营”中新增“上游管理”，支持 OCI/Cloudflare 配置、脱敏状态读取、刷新、删除、错误隔离和管理员专属访问。
-6. **远端数据库备份**：系统设置的数据备份分区支持 R2/S3 Endpoint、加密凭据、连接测试、默认每天 03:00 UTC 定时备份、按天/份数保留、手动触发、历史元数据、预签名下载和远端删除；备份基于 SQLite `VACUUM INTO`，不提供网页在线恢复。
-7. **套餐自动续订**：用户套餐默认开启，可按续期组开关；队列任务先处理手动排队份，再为到期且无排队份的套餐按当前商品价格和购买时长续订；余额、商品、库存、时长或购买权限不足时不扣款并保留开关重试。
-8. **订阅显示名清理**：Clash 响应的 `Content-Disposition` 使用站点名而不追加 `.yaml`，避免客户端显示 `站点名.yaml`；其他订阅格式仍保留 `.json`、`.conf`、`.txt`。
-9. **订阅节点排序修复**：订阅聚合不再把自建节点统一追加到外部节点之后；所有可访问节点按管理后台保存的全局 `sort_order` 输出。节点来源刷新按 `share_link` 保留已有节点的排序，新节点追加到当前最大排序值之后。
-10. **监控首页上游余额卡片**：管理员在“服务器监控”的“面板本机”右侧看到合并 OCI/Cloudflare 的上游余额卡片；数据直接调用上游刷新 API，公开监控页不加载供应商账户用量。卡片内子项支持拖动排序并每 15 分钟自动刷新。
-11. **余额与节点拖动排序**：上游管理页和监控首页共用设置键 `admin_upstream_balance_order` 保存 OCI/Cloudflare 顺序；节点管理卡片改为原生拖放，完整节点 ID 顺序仍通过 `/api/admin/nodes/reorder` 写入全局 `nodes.sort_order`。
+2. **OCI 上游官方用量**：直接调用 OCI Usage API，支持出站传输、免费层 SKU、UTC 日边界和 `GB Months` 单位，按官方已用量计算配置额度的参考余额，并提供测试覆盖。
+3. **Cloudflare 上游官方请求数**：直接调用 Account Analytics GraphQL，统计当前 UTC 日 Pages Functions 与 Workers 调用量，配置的每日上限仅用于展示参考余额；凭据在服务端加密保存。
+4. **上游管理界面和 API**：侧边栏“运营”中新增“上游管理”，支持 OCI/Cloudflare 配置、脱敏状态读取、刷新、删除、错误隔离和管理员专属访问。
+5. **远端数据库备份**：系统设置的数据备份分区支持 R2/S3 Endpoint、加密凭据、连接测试、默认每天 03:00 UTC 定时备份、按天/份数保留、手动触发、历史元数据、预签名下载和远端删除；备份基于 SQLite `VACUUM INTO`，不提供网页在线恢复。
+6. **套餐自动续订**：用户套餐默认开启，可按续期组开关；队列任务先处理手动排队份，再为到期且无排队份的套餐按当前商品价格和购买时长续订；余额、商品、库存、时长或购买权限不足时不扣款并保留开关重试。
+7. **订阅显示名清理**：Clash 响应的 `Content-Disposition` 使用站点名而不追加 `.yaml`，避免客户端显示 `站点名.yaml`；其他订阅格式仍保留 `.json`、`.conf`、`.txt`。
+8. **订阅节点排序修复**：订阅聚合不再把自建节点统一追加到外部节点之后；所有可访问节点按管理后台保存的全局 `sort_order` 输出。节点来源刷新按 `share_link` 保留已有节点的排序，新节点追加到当前最大排序值之后。
+9. **监控首页上游余额卡片**：管理员在“服务器监控”的“面板本机”右侧看到合并 OCI/Cloudflare 的上游余额卡片；数据直接调用上游刷新 API，公开监控页不加载供应商账户用量。卡片内子项支持拖动排序并每 15 分钟自动刷新。
+10. **余额与节点拖动排序**：上游管理页和监控首页共用设置键 `admin_upstream_balance_order` 保存 OCI/Cloudflare 顺序；节点管理卡片改为原生拖放，完整节点 ID 顺序仍通过 `/api/admin/nodes/reorder` 写入全局 `nodes.sort_order`。
 
 ### 生产部署合同
 
-1. **OCI 原生节点由 QingZhou 接管**：生产面板运行于宿主机 systemd，使用 `QZ_SINGBOX_LOCAL=true`，直接生成并重载 `/etc/qingzhou-sing-box/config.json`，统计读取本机 `127.0.0.1:18082`；`qingzhou-sing-box.service` 独占 `8882`。
+1. **OCI 原生节点由 QingZhou 接管**：本机 `server_id=0` 的配置生成、重载和统计是 QingZhou 官方原生能力；生产面板运行于宿主机 systemd，直接生成并重载 `/etc/qingzhou-sing-box/config.json`，统计读取本机 `127.0.0.1:18082`；`qingzhou-sing-box.service` 独占 `8882`。
 2. **旧 EdgeTunnel OCI 节点链路已退出**：旧 `sing-box.service` 已停用归档，`8881` 不再监听；EdgeTunnel 不再负责 OCI 节点导入、OCI 余额或旧节点输出。
 3. **中心面板 Compose 仅保留为可选路径**：不得用官方 `latest` 或普通 Compose 更新覆盖当前本机原生生产模式；升级必须备份二进制、数据库、环境文件、sing-box unit 和配置，再替换面板二进制并重启 `qingzhou`。
 
@@ -70,7 +68,7 @@ ACL4SSR 模板及订阅名称保存在运行时数据库，不在源码中硬编
 - Cloudflare：直接请求 Account Analytics GraphQL，累加当前 UTC 日的 Pages Functions 和 Workers 调用数。必须填写专用 `Account Analytics Read` Token，禁止复用 DNS/ACME Token；余额是面板配置的每日上限减去官方请求数。
 - 这两项都不得经由 EdgeTunnel、Cloudflare Worker KV、服务器 `tx_bytes` 或节点统计转发。第三方接口错误只显示在上游页面，不得影响管理概览和订阅服务。
 
-本机模式切换记录：生产面板已从 Docker 中心模式切换为宿主机 systemd 本机模式，运行 `/opt/qingzhou/qingzhou`，使用 `QZ_SINGBOX_LOCAL=true`、`QZ_SINGBOX_CONFIG=/etc/qingzhou-sing-box/config.json`、`QZ_SINGBOX_UNIT=qingzhou-sing-box.service`、`QZ_SINGBOX_V2RAY=127.0.0.1:18082`。生产数据库从原 Docker 数据卷复制到 `/opt/qingzhou/qingzhou.db`，原入站和 TLS 配置已迁到 `server_id=0`，节点地址由 `node_host_override` 指向 OCI 公网地址。QingZhou 已成功生成并重载本机原生 sing-box 配置；当前发布状态见下方 2026-09-17 记录。
+本机部署记录：生产面板已从 Docker 中心模式切换为宿主机 systemd 本机模式，运行 `/opt/qingzhou/qingzhou`，使用 `QZ_SINGBOX_CONFIG=/etc/qingzhou-sing-box/config.json`、`QZ_SINGBOX_UNIT=qingzhou-sing-box.service`、`QZ_SINGBOX_V2RAY=127.0.0.1:18082`。生产数据库从原 Docker 数据卷复制到 `/opt/qingzhou/qingzhou.db`，原入站和 TLS 配置已迁到 `server_id=0`，节点地址由 `node_host_override` 指向 OCI 公网地址。QingZhou 已成功生成并重载本机原生 sing-box 配置；本机节点路径使用官方控制器能力，不依赖额外的本机模式开关；当前发布状态见下方 2026-09-17 记录。
 
 EdgeTunnel 已在 2026-09-15 的 Pages Production 发布 `1296b77` 中移除 OCI 节点导入、OCI 余额/上报和旧订阅节点输出。OCI 主机上的旧 `sing-box.service` 已备份到 `/root/edgetunnel-singbox-retired-20260915/` 后停用并归档，`8881` 不再监听。QingZhou 原生节点继续由 `qingzhou-sing-box.service` 独占运行，监听 `8882`；不得恢复旧服务或引用旧 `/etc/sing-box` 配置。
 
@@ -137,7 +135,7 @@ docker compose --env-file /opt/qingzhou/.env \
   up -d --no-deps qingzhou
 ```
 
-Compose 仅用于需要远程 SSH 管理的独立中心面板。当前生产升级应替换宿主机 `/opt/qingzhou/qingzhou`，保持 `QZ_DB`、`QZ_SECRET_KEY`、`QZ_SINGBOX_LOCAL=true`、`QZ_SINGBOX_CONFIG=/etc/qingzhou-sing-box/config.json` 和 `QZ_SINGBOX_UNIT=qingzhou-sing-box.service` 不变，然后执行 `systemctl restart qingzhou`。回滚只恢复面板二进制和对应服务配置，不要用整库恢复覆盖用户新数据。
+Compose 是可选的容器化部署模板；当前生产升级应替换宿主机 `/opt/qingzhou/qingzhou`，保持 `QZ_DB`、`QZ_SECRET_KEY`、`QZ_SINGBOX_CONFIG=/etc/qingzhou-sing-box/config.json` 和 `QZ_SINGBOX_UNIT=qingzhou-sing-box.service` 不变，然后执行 `systemctl restart qingzhou`。回滚只恢复面板二进制和对应服务配置，不要用整库恢复覆盖用户新数据。
 
 面板内置更新器的默认来源仍是官方 `mllt992/qing-zhou`。不要把官方一键二进制更新当作定制版升级方式，否则会丢失定制；本 fork 使用“合并源码 → 测试 → 构建 → 部署”。生产运行状态应单独验证，不能由 Git HEAD 推断。
 
