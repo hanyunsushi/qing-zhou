@@ -63,6 +63,22 @@ rollback material is `/opt/qingzhou/backups/remote-backup-5cf18bb-20260917-09432
 R2 credentials are not configured yet; complete the operator-side connection
 test from the admin page after entering a dedicated key pair.
 
+## Disaster recovery archive release
+
+On 2026-09-17, commit `e75381d` was built as
+`v0.2.80-kreeper-e75381d` and deployed to the host service. The active binary
+SHA-256 is `d7cbee2e6acdc03a8a9f2b36862919ef2beead38a2bf0a1540aac9aad41d3fb1`;
+rollback material is `/opt/qingzhou/backups/disaster-recovery-e75381d-20260917-171516/`.
+
+The host sets `QZ_BACKUP_MANIFEST=/etc/qingzhou/recovery.json`. It is a server
+allowlist for the consistent SQLite snapshot, QingZhou environment/unit files,
+sing-box configuration and the current Cloudflare Tunnel configuration and
+credential. The package is intentionally not additionally encrypted and may
+contain secrets; only a verified private HTTPS object store is acceptable.
+R2 recovery access/MFA must be held independently from the server. The saved
+R2 connection test, a real `tar.gz` upload, remote download/hash/manifest
+verification and `PRAGMA integrity_check` of the extracted snapshot all passed.
+
 ## Remote-only mode removal
 
 On 2026-09-17, source commit `e876013` removed the fork-only

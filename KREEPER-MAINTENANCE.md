@@ -145,6 +145,14 @@ Compose 是可选的容器化部署模板；当前生产升级应替换宿主机
 
 发布后公网 `/api/health` 返回 `v0.2.80-kreeper-5cf18bb`，未登录访问 `/api/admin/backups/config` 返回 `401`；`qingzhou.service`、`qingzhou-sing-box.service` 均 active，`8081`、`8882`、`18082` 正常监听，最近服务错误为空。生产尚未填写专用 R2 凭据，因此没有执行真实远端上传；OCI 主机未安装 `sqlite3` CLI，本轮未执行 `PRAGMA integrity_check`。
 
+### 2026-09-17 完整灾备恢复包发布
+
+源码 `e75381d` 已构建为 Linux ARM64 版本 `v0.2.80-kreeper-e75381d` 并部署到 `/opt/qingzhou/qingzhou`；active 二进制 SHA-256 为 `d7cbee2e6acdc03a8a9f2b36862919ef2beead38a2bf0a1540aac9aad41d3fb1`。发布前一致性回滚快照与服务材料位于 `/opt/qingzhou/backups/disaster-recovery-e75381d-20260917-171516/`；其中数据库由 SQLite 备份 API 生成，不是运行中 WAL 文件的直接复制。
+
+生产环境通过 `QZ_BACKUP_MANIFEST=/etc/qingzhou/recovery.json` 启用服务器控制的灾备 allowlist：数据库快照、面板环境文件、QingZhou/sing-box/Cloudflare Tunnel 的 systemd 定义、sing-box 配置、当前 Tunnel 配置与凭据，以及可选 SSH 密钥目录。归档拒绝网页指定任意路径、符号链接、特殊文件、在线数据库路径和超限内容；源码与二进制仍由 Git 和匹配版本构建恢复。远端恢复包不额外加密，可能包含密钥，只能进入私有 HTTPS R2/S3 桶；访问凭据和 MFA 恢复方式必须独立于服务器保管。
+
+已将历史错误的 R2 Endpoint（包含 Bucket 路径）规范为账户 Endpoint，保留现有加密 Access Key/Secret；保存凭据的 `HeadBucket` 测试成功。一次真实灾备上传完成，记录为 `tar.gz`，大小 `335948` 字节并存有 SHA-256；随后从远端下载，核对整包 SHA-256、归档清单和每个文件哈希，并对解出的 SQLite 快照执行 `PRAGMA integrity_check`，均通过。部署后 `qingzhou.service`、`qingzhou-sing-box.service`、`cloudflared.service` 均 active；本机和公网健康接口均返回 `v0.2.80-kreeper-e75381d`，`127.0.0.1:8081`、`*:8882`、`127.0.0.1:18082` 正常监听，退役 `:8881` 未恢复。
+
 ### 2026-09-17 移除远程专用 sing-box 开关
 
 源码 `e876013` 移除了 Fork 独有的 `QZ_SINGBOX_LOCAL` 开关、禁用本机配置/统计/版本探测的分支及其专用测试，恢复 QingZhou 官方本机控制器路径。本次不删除官方远程 SSH 服务器管理，也不影响上游余额、远端备份、套餐续订、订阅显示名和节点排序等独立定制。ARM64 二进制 `v0.2.80-kreeper-e876013` 已部署到 `/opt/qingzhou/qingzhou`。

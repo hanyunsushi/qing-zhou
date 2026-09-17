@@ -11,7 +11,7 @@ tokens do not grant backup configuration access. The feature stores a SQLite
 
 | Method | Path | Purpose |
 | --- | --- | --- |
-| `GET` | `/api/admin/backups/config` | Return safe object-store configuration and a configured flag; never return `SecretAccessKey`. |
+| `GET` | `/api/admin/backups/config` | Return safe object-store configuration, a configured flag and server-controlled recovery mode; never return `SecretAccessKey`. |
 | `PUT` | `/api/admin/backups/config` | Validate and encrypt the R2/S3 profile; an empty secret keeps the existing secret. |
 | `POST` | `/api/admin/backups/config/test` | Test the supplied profile, or the stored profile when the secret is omitted. |
 | `GET` | `/api/admin/backups/schedule` | Return cron, enabled state, and retention defaults. |
@@ -35,6 +35,20 @@ retained. A zero retention value disables that respective limit. Failed deletes
 are kept in the local record list so an object-store outage does not silently
 forget remote data. The feature deliberately does not expose browser-driven
 restore, avoiding accidental overwrite of the production SQLite database.
+
+When `QZ_BACKUP_MANIFEST` names a valid server-controlled JSON allowlist, the
+same snapshot is packed as a `.tar.gz` recovery package with selected runtime
+files, per-file hashes/permissions, version metadata and a Chinese recovery
+guide. Required missing paths, symlinks/special files, direct online database
+paths and archive size/count limits fail closed. The package has **no additional
+client-side encryption**: it may contain environment secrets or private files,
+so operators must use a verified private HTTPS object store and keep access/MFA
+recovery material independent of the server. The browser never supplies file
+paths and never exposes archive contents.
+
+Records carry `format=sqlite` for legacy database-only uploads and `format=tar.gz`
+for recovery packages. This keeps existing database objects downloadable and
+deletable after disaster recovery mode is enabled.
 
 The `backup_s3_config` setting is included in the store's encrypted-setting
 allowlist and is protected by `QZ_SECRET_KEY`. Secrets must not appear in logs,

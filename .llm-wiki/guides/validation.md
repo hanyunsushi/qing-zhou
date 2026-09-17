@@ -53,19 +53,21 @@ git diff --check
 
 The focused backend tests cover encrypted secret storage and redacted reads,
 cron validation, successful snapshot upload and digest recording, upload
-failure, concurrent-run rejection, and retention deletion. The frontend source
+failure, concurrent-run rejection, retention deletion, recovery archive layout,
+missing required source rejection and symlink rejection. The frontend source
 contract tests cover the R2/S3 form, secret non-readback, schedule controls,
-history actions, and authenticated deletion. A production R2 upload remains a
-post-deployment operator check because credentials are intentionally not kept
-in source or documentation.
+history actions, authenticated deletion, recovery-mode messaging and format
+labels.
 
-The deployed binary is `v0.2.80-kreeper-5cf18bb` with SHA-256
-`73dd6afb9168c201be212b0a96ac7b087ae2b382395c38109125447cd5d95e83`.
+The deployed binary is `v0.2.80-kreeper-e75381d` with SHA-256
+`d7cbee2e6acdc03a8a9f2b36862919ef2beead38a2bf0a1540aac9aad41d3fb1`.
 The rollout backup is
-`/opt/qingzhou/backups/remote-backup-5cf18bb-20260917-094324/`. The public
-health endpoint reported the new version and the protected backup route returned
-`401` without an admin session. Both services and all expected listeners were
-healthy with no recent service errors. Dedicated R2 credentials remain
-unconfigured, so the real upload test is pending. The OCI host has no `sqlite3`
-CLI; `PRAGMA integrity_check` was not run in this rollout and the database was
-not replaced.
+`/opt/qingzhou/backups/disaster-recovery-e75381d-20260917-171516/`. The saved
+R2 `HeadBucket` test succeeded after normalizing its Endpoint. A real recovery
+archive uploaded successfully; an isolated remote download matched its recorded
+SHA-256 and manifest entries, and its extracted SQLite snapshot returned `ok`
+from `PRAGMA integrity_check`. Local/public health, the two QingZhou services,
+Cloudflare Tunnel and expected listeners were healthy; retired `:8881` remained
+absent. Administrator-page rendering was not browser-tested because the stored
+administrator password was not available to the deployment process and was not
+reset.
