@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"os"
@@ -12,6 +13,7 @@ import (
 
 	"qingzhou/frontend"
 	"qingzhou/internal/assets"
+	"qingzhou/internal/backup"
 	"qingzhou/internal/mailer"
 	"qingzhou/internal/sbctl"
 	"qingzhou/internal/store"
@@ -47,8 +49,9 @@ type API struct {
 	// no cost and no trace. See handleChangePassword.
 	pwRL *rateLimiter
 
-	sbctl   *sbctl.Controller // native sing-box orchestrator; nil if not enabled
-	updater *updater.Manager  // GitHub-release self-updater
+	sbctl        *sbctl.Controller // native sing-box orchestrator; nil if not enabled
+	updater      *updater.Manager  // GitHub-release self-updater
+	remoteBackup *backup.Manager
 
 	linkMu    sync.Mutex
 	linkCache map[int64]linkCacheEntry
@@ -156,6 +159,7 @@ func New(st *store.Store, secret []byte, mail *mailer.Mailer) *API {
 		// enough that nobody swapping addresses on purpose will notice.
 		subRL:             newRateLimiter(5, 10*time.Minute), // 5 address swaps / user / 10min
 		tgRL:              newRateLimiter(20, time.Minute),   // 20 bot commands / telegram user / min
+		remoteBackup:      backup.New(st),
 		linkCache:         make(map[int64]linkCacheEntry),
 		restartCh:         make(chan restartEvent, restartEventQueue),
 		opsCh:             make(chan string, opsMessageQueue),
@@ -193,6 +197,13 @@ func (a *API) notifyRuntimeIntervalsChanged() {
 	select {
 	case a.monitorIntervalCh <- struct{}{}:
 	default:
+	}
+}
+
+// StartRemoteBackups starts the optional R2/S3-compatible scheduled backup loop.
+func (a *API) StartRemoteBackups(ctx context.Context) {
+	if a.remoteBackup != nil {
+		a.remoteBackup.Start(ctx)
 	}
 }
 
@@ -308,6 +319,15 @@ func (a *API) Router() http.Handler {
 		ar.Get("/api/admin/settings/detect-node-host", a.handleDetectNodeHost)
 		ar.Post("/api/admin/rebuild", a.handleAdminRebuild)
 		ar.Get("/api/admin/backup", a.handleAdminBackup)
+		ar.Get("/api/admin/backups/config", a.handleAdminGetBackupConfig)
+		ar.Put("/api/admin/backups/config", a.handleAdminPutBackupConfig)
+		ar.Post("/api/admin/backups/config/test", a.handleAdminTestBackupConfig)
+		ar.Get("/api/admin/backups/schedule", a.handleAdminGetBackupSchedule)
+		ar.Put("/api/admin/backups/schedule", a.handleAdminPutBackupSchedule)
+		ar.Post("/api/admin/backups", a.handleAdminCreateRemoteBackup)
+		ar.Get("/api/admin/backups", a.handleAdminListRemoteBackups)
+		ar.Get("/api/admin/backups/{id}/download-url", a.handleAdminRemoteBackupDownload)
+		ar.Delete("/api/admin/backups/{id}", a.handleAdminDeleteRemoteBackup)
 		// Which sing-box each node runs, plus a per-node reinstall.
 		ar.Get("/api/admin/nodes/singbox", a.handleAdminNodeVersions)
 		ar.Post("/api/admin/nodes/singbox/refresh", a.handleAdminNodeVersionRefresh)
@@ -507,5 +527,11 @@ func serveInstallScript(w http.ResponseWriter, r *http.Request) {
 	_, _ = io.WriteString(w, assets.InstallScript())
 }
 
-// Close releases idle source connections after handlers and sync have drained.
-func (a *API) Close() { a.sourceClient.CloseIdleConnections() }
+// Close releases background backup workers and idle source connections after
+// handlers and sync have drained.
+func (a *API) Close() {
+	if a.remoteBackup != nil {
+		a.remoteBackup.Stop()
+	}
+	a.sourceClient.CloseIdleConnections()
+}

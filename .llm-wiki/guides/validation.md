@@ -38,3 +38,23 @@ On 2026-09-16, source commit `834cd3e` was built for Linux ARM64 and deployed as
 On 2026-09-17, source commit `4b65fec` was built for Linux ARM64 and deployed as `/opt/qingzhou/qingzhou` with version `v0.2.80-kreeper-4b65fec`. The active binary SHA-256 is `9b4dfec76b8523db32ce98c4a8a1fb07c6b9afabdcb489c3de559248135f66ff`; the previous binary, database, environment, service definitions and native sing-box configuration are backed up at `/opt/qingzhou/backups/node-order-4b65fec-20260917-133155/`.
 
 Local and public `/api/health` both returned `v0.2.80-kreeper-4b65fec`. `qingzhou.service` and `qingzhou-sing-box.service` were active and enabled, with the panel on `127.0.0.1:8081`, the native inbound on `:8882`, and the stats API on `127.0.0.1:18082`; the retired EdgeTunnel port `:8881` remained closed. No service errors were emitted during startup.
+
+## Remote backup checks
+
+The remote backup implementation is covered locally by:
+
+```bash
+go test ./internal/backup ./internal/api ./internal/store
+npm --prefix frontend test
+npm --prefix frontend run typecheck
+npm --prefix frontend run build
+git diff --check
+```
+
+The focused backend tests cover encrypted secret storage and redacted reads,
+cron validation, successful snapshot upload and digest recording, upload
+failure, concurrent-run rejection, and retention deletion. The frontend source
+contract tests cover the R2/S3 form, secret non-readback, schedule controls,
+history actions, and authenticated deletion. A production R2 upload remains a
+post-deployment operator check because credentials are intentionally not kept
+in source or documentation.

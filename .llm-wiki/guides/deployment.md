@@ -27,6 +27,18 @@ definitions, and `/etc/qingzhou-sing-box`; after restart verify `/api/health`,
 hash. Rollback restores the binary and matching service/configuration material,
 not a full database snapshot over newer user data.
 
+## Remote database backup
+
+The remote-backup feature is configured after deployment from `系统设置 → 数据备份`.
+Use a dedicated Cloudflare R2 API token/key pair or equivalent S3 credentials;
+do not reuse the Cloudflare DNS/ACME token. The UI saves the secret through the
+encrypted `backup_s3_config` setting, tests the bucket, and can enable the
+default daily `03:00` UTC schedule. Verify a manual run reaches `completed`,
+has a non-empty SHA-256 and size, and appears in the configured bucket. The
+service does not overwrite the active database during browser restore; recovery
+remains an operator-controlled SQLite replacement using the same
+`QZ_SECRET_KEY`.
+
 The 2026-09-17 host-service rollout built source `4b65fec` as
 `v0.2.80-kreeper-4b65fec`. The active binary hash is
 `9b4dfec76b8523db32ce98c4a8a1fb07c6b9afabdcb489c3de559248135f66ff`, and the

@@ -32,3 +32,13 @@ The upstream-management flow is independent of node telemetry:
 See also: [Official Usage](../modules/official-usage.md), [Admin Upstreams](../apis/admin-upstreams.md).
 
 The admin monitor adds the combined `上游余额` card directly after the `面板本机` server card. OCI and Cloudflare are shown as draggable subcards, and their order is shared with 上游管理 through `settings.admin_upstream_balance_order`. The card is administrator-only and does not alter the public monitor payload.
+
+## Remote database backups
+
+The administrator's `系统设置 → 数据备份` section supports local snapshot
+download plus optional Cloudflare R2/S3-compatible storage. The backend creates
+one SQLite `VACUUM INTO` snapshot, uploads it asynchronously, stores only
+metadata in SQLite, and applies cron/retention policy through the background
+backup manager. The complete object-store profile is encrypted under
+`QZ_SECRET_KEY`; read APIs redact the secret. Browser restore is intentionally
+not exposed.

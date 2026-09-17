@@ -19,6 +19,7 @@ var encKeys = map[string]bool{
 	"telegram_bot_token":         true,
 	"upstream_oci_config":        true,
 	"upstream_cloudflare_config": true,
+	"backup_s3_config":           true,
 }
 
 // SetSecretKey derives the AES key used to encrypt secret settings. Pass
