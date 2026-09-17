@@ -144,3 +144,9 @@ Compose 是可选的容器化部署模板；当前生产升级应替换宿主机
 源码 `5cf18bb` 已构建为 Linux ARM64 版本 `v0.2.80-kreeper-5cf18bb` 并部署到 `/opt/qingzhou/qingzhou`。active 二进制 SHA-256 为 `73dd6afb9168c201be212b0a96ac7b087ae2b382395c38109125447cd5d95e83`；发布前备份位于 `/opt/qingzhou/backups/remote-backup-5cf18bb-20260917-094324/`，包含旧二进制、SQLite 数据库、环境文件、两个 systemd unit 和 `/etc/qingzhou-sing-box`。
 
 发布后公网 `/api/health` 返回 `v0.2.80-kreeper-5cf18bb`，未登录访问 `/api/admin/backups/config` 返回 `401`；`qingzhou.service`、`qingzhou-sing-box.service` 均 active，`8081`、`8882`、`18082` 正常监听，最近服务错误为空。生产尚未填写专用 R2 凭据，因此没有执行真实远端上传；OCI 主机未安装 `sqlite3` CLI，本轮未执行 `PRAGMA integrity_check`。
+
+### 2026-09-17 移除远程专用 sing-box 开关
+
+源码 `e876013` 移除了 Fork 独有的 `QZ_SINGBOX_LOCAL` 开关、禁用本机配置/统计/版本探测的分支及其专用测试，恢复 QingZhou 官方本机控制器路径。本次不删除官方远程 SSH 服务器管理，也不影响上游余额、远端备份、套餐续订、订阅显示名和节点排序等独立定制。ARM64 二进制 `v0.2.80-kreeper-e876013` 已部署到 `/opt/qingzhou/qingzhou`。
+
+发布前完整备份位于 `/opt/qingzhou/backups/remove-remote-only-e876013-20260917-230809/`。随后从生产环境文件删除无效的 `QZ_SINGBOX_LOCAL` 行，未修改数据库、`QZ_SECRET_KEY`、两个 systemd unit 或 `/etc/qingzhou-sing-box`。本机与公网 `/api/health` 均返回新版本；`qingzhou.service`、`qingzhou-sing-box.service` 均 active/enabled，`127.0.0.1:8081`、`*:8882`、`127.0.0.1:18082` 正常监听，最近服务错误为空。active 二进制 SHA-256 为 `6022692c35a91686a817f31a9aa68390633c778c0e0f8dff9c0763c52c29acc6`。

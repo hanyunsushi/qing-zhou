@@ -53,4 +53,24 @@ The deployed binary is `v0.2.80-kreeper-5cf18bb` with SHA-256
 `73dd6afb9168c201be212b0a96ac7b087ae2b382395c38109125447cd5d95e83`; its
 rollback material is `/opt/qingzhou/backups/remote-backup-5cf18bb-20260917-094324/`.
 R2 credentials are not configured yet; complete the operator-side connection
- test from the admin page after entering a dedicated key pair.
+test from the admin page after entering a dedicated key pair.
+
+## Remote-only mode removal
+
+On 2026-09-17, source commit `e876013` removed the fork-only
+`QZ_SINGBOX_LOCAL` switch and restored QingZhou's official local controller
+path. The change removes the custom local-disable branch, its tests, and the
+environment entry; it does not remove official remote SSH server management or
+the independent upstream-balance, backup, renewal, subscription-name, and node
+ordering customizations. The ARM64 binary was deployed as
+`v0.2.80-kreeper-e876013`.
+
+The rollout backup is
+`/opt/qingzhou/backups/remove-remote-only-e876013-20260917-230809/`. The
+environment file was then cleaned of the obsolete `QZ_SINGBOX_LOCAL` line
+without changing the database, secret key, service definitions, or native
+sing-box configuration. Both local and public `/api/health` returned the new
+version; `qingzhou.service` and `qingzhou-sing-box.service` were active and
+enabled, `127.0.0.1:8081`, `*:8882`, and `127.0.0.1:18082` were listening, and
+the service error journal was empty. Active binary SHA-256:
+`6022692c35a91686a817f31a9aa68390633c778c0e0f8dff9c0763c52c29acc6`.
