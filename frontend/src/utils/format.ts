@@ -8,6 +8,16 @@ export function fmtBytes(n: number | null | undefined): string {
   return (n < 10 && i > 0 ? n.toFixed(2) : n < 100 && i > 0 ? n.toFixed(1) : Math.round(n).toString()) + ' ' + units[i]
 }
 
+export function fmtDecimalBytes(n: number | null | undefined): string {
+  if (n == null || n <= 0) return '0 B'
+  const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
+  let i = 0
+  n = Math.abs(n)
+  while (n >= 1000 && i < units.length - 1) { n /= 1000; i++ }
+  const value = Number.isInteger(n) ? n.toString() : n < 10 && i > 0 ? n.toFixed(2) : n < 100 && i > 0 ? n.toFixed(1) : Math.round(n).toString()
+  return value + ' ' + units[i]
+}
+
 export function fmtTotal(n: number | null | undefined): string {
   return fmtBytes(n)
 }

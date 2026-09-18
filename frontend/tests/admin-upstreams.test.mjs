@@ -10,6 +10,8 @@ const router = await readFile(new URL('../src/router/index.ts', import.meta.url)
 
 test('upstream management page keeps provider queries separate and exposes no saved credentials', () => {
   assert.match(source, /OCI Usage API/)
+  assert.match(source, /fmtDecimalBytes\(ociUsage\.remaining\)/)
+  assert.match(source, /fmtDecimalBytes\(ociForm\.monthly_limit_bytes\)/)
   assert.match(source, /Cloudflare Analytics GraphQL/)
   assert.match(source, /\/api\/admin\/upstreams\/\$\{provider\}\/refresh/)
   assert.match(source, /private_key_set/)

@@ -30,8 +30,8 @@
           <div class="balance-panel" :class="usageClass(ociUsage)">
             <template v-if="ociUsage?.success">
               <div class="balance-kicker">{{ ociUsage.period }}账户余额</div>
-              <div class="balance-value">{{ fmtBytes(ociUsage.remaining) }}</div>
-              <div class="balance-meta">账号总额 {{ fmtBytes(ociUsage.limit) }} − 官方已用 {{ fmtBytes(ociUsage.used) }}<template v-if="ociUsage.overage_detected"> · 已识别超额层级</template></div>
+              <div class="balance-value">{{ fmtDecimalBytes(ociUsage.remaining) }}</div>
+              <div class="balance-meta">账号总额 {{ fmtDecimalBytes(ociUsage.limit) }} − 官方已用 {{ fmtDecimalBytes(ociUsage.used) }}<template v-if="ociUsage.overage_detected"> · 已识别超额层级</template></div>
               <n-progress type="line" :percentage="usagePercent(ociUsage)" :show-indicator="false" :height="6" status="success" />
               <div class="balance-source">{{ ociUsage.source }} · 查询区间结束 {{ fmtUpdated(ociUsage.query_end) }} · 查询于 {{ fmtUpdated(ociUsage.updated_at) }}</div>
               <n-alert v-if="ociUsage.warning" type="warning" :bordered="false">{{ ociUsage.warning }}</n-alert>
@@ -56,7 +56,7 @@
             </n-form-item>
             <n-form-item label="月度上限（字节）">
               <n-input-number v-model:value="ociForm.monthly_limit_bytes" :min="1" :max="1000000000000000" :show-button="false" style="width:100%;" />
-              <div class="field-note">当前：{{ fmtBytes(ociForm.monthly_limit_bytes) }}。配置默认 10 TB/月（十进制）；请按账户实际额度确认。</div>
+              <div class="field-note">当前：{{ fmtDecimalBytes(ociForm.monthly_limit_bytes) }}。配置默认 10 TB/月（十进制）；请按账户实际额度确认。</div>
             </n-form-item>
           </n-form>
           <div class="provider-actions">
@@ -128,7 +128,7 @@
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { NAlert, NButton, NCard, NForm, NFormItem, NInput, NInputNumber, NProgress, NSpin, NTag, useDialog, useMessage } from 'naive-ui'
 import { apiDelete, apiGet, apiPost, apiPut } from '@/api'
-import { fmtBytes } from '@/utils/format'
+import { fmtBytes, fmtDecimalBytes } from '@/utils/format'
 
 type Provider = 'oci' | 'cloudflare'
 type ProviderView = {
