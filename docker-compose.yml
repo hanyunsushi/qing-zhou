@@ -20,7 +20,7 @@ services:
       # 容器内必须监听 0.0.0.0，否则端口映射不通
       QZ_LISTEN: "0.0.0.0:8081"
       # 面板对外访问地址（订阅链接、探针安装、邮件链接都用它）——改成你的域名/IP
-      QZ_PUBLIC_BASE: "https://qz.kreeper.cc"
+      QZ_PUBLIC_BASE: "https://proxy.kreeper.cc"
       # 敏感配置加密主密钥，务必改：openssl rand -hex 32
       QZ_SECRET_KEY: "${QZ_SECRET_KEY:?set QZ_SECRET_KEY in /opt/qingzhou/.env}"
       # 首次管理员（可选）。QZ_ADMIN_PASS 留空则首启生成随机密码并打印到日志一次

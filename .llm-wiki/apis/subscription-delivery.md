@@ -6,9 +6,8 @@ updated: 2026-09-18
 # Subscription Delivery
 
 The current public base is `https://proxy.kreeper.cc`. The historical
-`https://qz.kreeper.cc` hostname remains a supported compatibility ingress for
-existing subscription URLs; changing `settings.public_base` only changes newly
-generated links and does not invalidate stored tokens.
+`https://qz.kreeper.cc` hostname has been removed; changing
+`settings.public_base` controls the direct QingZhou links generated for users.
 
 QingZhou renders the authenticated subscription according to the requested format and sends a `Content-Disposition` header so Clash-family clients can use the site name instead of exposing the subscription token.
 

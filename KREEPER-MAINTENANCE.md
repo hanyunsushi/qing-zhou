@@ -7,9 +7,9 @@
 
 ## 2026-09-18 公开域名迁移
 
-- QingZhou 新公开基址为 `https://proxy.kreeper.cc`，运行时值保存在 SQLite `settings.public_base`；历史 `https://qz.kreeper.cc` 继续通过同一 OCI Cloudflare Tunnel 服务，不能删除。
-- EdgeTunnel 新域名为 `https://edge.kreeper.cc`。`proxy.kreeper.cc/sub*` 的兼容 Worker 负责区分查询参数形式的历史 Edge 订阅和路径形式的 QingZhou 订阅；该 Worker 不属于 QingZhou 源码，不修改节点或账户数据。
-- 域名切换前数据库备份为 `/opt/qingzhou/backups/public-base-proxy-20260918-020951.db`；验证时两个 QingZhou 域名均返回健康状态，旧、新订阅内容一致。
+- QingZhou 新公开基址为 `https://proxy.kreeper.cc`，运行时值保存在 SQLite `settings.public_base`；该域名由 OCI Cloudflare Tunnel 直接转发到面板，旧 `qz.kreeper.cc` 已删除。
+- EdgeTunnel 正式域名为 `https://edge.kreeper.cc`；迁移期间的 `proxy.kreeper.cc/sub*` 兼容 Worker 已删除，Edge 与 QingZhou 使用各自的原生订阅入口。
+- 域名切换前数据库备份为 `/opt/qingzhou/backups/public-base-proxy-20260918-020951.db`；最终验证以 `proxy.kreeper.cc` 直连健康接口和真实订阅为准，旧域名已不再作为兼容入口。
 
 ## 仓库与分支
 

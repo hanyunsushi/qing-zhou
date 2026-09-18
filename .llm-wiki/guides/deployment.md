@@ -15,17 +15,15 @@ production service.
 ## Public domains and compatibility
 
 The current QingZhou public base is `https://proxy.kreeper.cc`, stored in the
-runtime database as `settings.public_base`. The historical
-`https://qz.kreeper.cc` hostname remains routed through the same Cloudflare
-Tunnel to `127.0.0.1:8081` and must not be removed while old subscriptions are
-in use. Before the setting change, the database backup was
+runtime database as `settings.public_base`. It is routed directly through the
+OCI Cloudflare Tunnel to `127.0.0.1:8081`. The historical
+`https://qz.kreeper.cc` hostname has been removed. Before the setting change, the database backup was
 `/opt/qingzhou/backups/public-base-proxy-20260918-020951.db`.
 
-The EdgeTunnel Pages domain is `https://edge.kreeper.cc`. Its historical
-subscription form is kept compatible through a separate Worker route on
-`proxy.kreeper.cc/sub*`; path-form QingZhou subscriptions continue to resolve
-through the historical `qz` hostname. This routing is outside QingZhou source
-and must be verified together with both QingZhou hostnames after DNS changes.
+The EdgeTunnel Pages domain is `https://edge.kreeper.cc`. Edge subscriptions
+use that domain directly, while QingZhou subscriptions use
+`https://proxy.kreeper.cc` directly. No compatibility Worker or historical
+`qz` hostname is part of the production path.
 
 The fork does not carry a custom writable `/data/probe` Docker adaptation.
 Container builds use the upstream hosted-probe location `/opt/qingzhou/probe`;
