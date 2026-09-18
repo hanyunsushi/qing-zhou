@@ -31,6 +31,9 @@ test('upstream cards persist drag order and the public monitor keeps balance dat
   assert.match(monitor, /auth\.isAdmin \? apiList<any>\('\/api\/admin\/monitor\/servers'\)/)
   assert.match(monitor, /\/api\/admin\/upstreams\/\$\{provider\}\/refresh/)
   assert.match(monitor, /handleUpstreamDrop/)
+  assert.match(monitor, /fmtDecimalBytes\(item\.usage\?\.remaining \|\| 0\)/)
+  assert.match(monitor, /fmtDecimalBytes\(item\.usage\.limit\)/)
+  assert.match(monitor, /fmtDecimalBytes\(item\.usage\.used\)/)
 })
 
 test('node cards use drag-and-drop for the shared subscription order', () => {

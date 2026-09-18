@@ -324,7 +324,7 @@ import { NEmpty } from 'naive-ui'
 import { apiGet, apiList, apiPost, apiPut } from '@/api'
 import { useAuthStore } from '@/stores/auth'
 import { useConfigStore } from '@/stores/config'
-import { fmtBytes, fmtUptime, timeAgo, pct } from '@/utils/format'
+import { fmtBytes, fmtDecimalBytes, fmtUptime, timeAgo, pct } from '@/utils/format'
 import { useCountUp } from '@/utils/countup'
 import AppHeader from '@/components/AppHeader.vue'
 import * as echarts from 'echarts'
@@ -408,12 +408,12 @@ function upstreamUsageLevel(usage?: UpstreamUsage) {
   return percent >= 90 ? 'crit' : percent >= 70 ? 'warn' : 'ok'
 }
 function upstreamBalanceValue(item: { provider: UpstreamProvider; usage?: UpstreamUsage }) {
-  return item.provider === 'oci' ? fmtBytes(item.usage?.remaining || 0) : fmtRequests(item.usage?.remaining)
+  return item.provider === 'oci' ? fmtDecimalBytes(item.usage?.remaining || 0) : fmtRequests(item.usage?.remaining)
 }
 function upstreamBalanceMeta(item: { provider: UpstreamProvider; usage?: UpstreamUsage }) {
   if (!item.usage) return ''
   return item.provider === 'oci'
-    ? `总额 ${fmtBytes(item.usage.limit)} − 已用 ${fmtBytes(item.usage.used)}`
+    ? `总额 ${fmtDecimalBytes(item.usage.limit)} − 已用 ${fmtDecimalBytes(item.usage.used)}`
     : `已用 ${fmtRequests(item.usage.used)} / 上限 ${fmtRequests(item.usage.limit)}`
 }
 function fmtRequests(value?: number) { return new Intl.NumberFormat('zh-CN').format(value || 0) + ' 次' }
