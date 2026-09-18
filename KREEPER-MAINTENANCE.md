@@ -5,6 +5,12 @@
 - 代码、配置、基础设施、验证、部署或发布事实发生有意义变化后，必须使用 `llm-wiki` 同步项目权威文档与 `.llm-wiki`；无文档影响时允许核对后 no-op。
 <!-- PROJECT-DOCS:END -->
 
+## 2026-09-18 公开域名迁移
+
+- QingZhou 新公开基址为 `https://proxy.kreeper.cc`，运行时值保存在 SQLite `settings.public_base`；历史 `https://qz.kreeper.cc` 继续通过同一 OCI Cloudflare Tunnel 服务，不能删除。
+- EdgeTunnel 新域名为 `https://edge.kreeper.cc`。`proxy.kreeper.cc/sub*` 的兼容 Worker 负责区分查询参数形式的历史 Edge 订阅和路径形式的 QingZhou 订阅；该 Worker 不属于 QingZhou 源码，不修改节点或账户数据。
+- 域名切换前数据库备份为 `/opt/qingzhou/backups/public-base-proxy-20260918-020951.db`；验证时两个 QingZhou 域名均返回健康状态，旧、新订阅内容一致。
+
 ## 仓库与分支
 
 - Fork：[hanyunsushi/qing-zhou](https://github.com/hanyunsushi/qing-zhou)，`origin/main` 是定制主线。
