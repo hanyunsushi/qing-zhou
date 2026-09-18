@@ -5,6 +5,28 @@ updated: 2026-09-18
 
 # QingZhou Deployment and Artifact Retention
 
+## 2026-09-18 Decimal OCI allowance release
+
+Commit `adce9e9` is deployed as Linux ARM64 version
+`v0.2.80-kreeper-adce9e9` at `/opt/qingzhou/qingzhou`. The active binary
+SHA-256 is
+`cdfac1f71275d768c52ccff415e81221ad668971032c035b3307cdea9dd18563`.
+
+The OCI allowance is displayed in decimal units: the default
+`10_000_000_000_000` bytes is rendered as `10 TB`. The OCI balance card,
+account total, official usage, and monthly-limit hint use the decimal formatter;
+the existing user-plan byte formatter and Cloudflare request-count display are
+unchanged. The rollback directory is
+`/opt/qingzhou/backups/oci-quota-decimal-adce9e9-20260918-150019/` and contains
+the old binary, a consistent SQLite snapshot, environment files, both systemd
+units, and `/etc/qingzhou-sing-box`. The snapshot passed `PRAGMA integrity_check`.
+
+Post-deploy checks passed for local and public `/api/health`, with
+`qingzhou.service`, `qingzhou-sing-box.service`, and `cloudflared.service`
+active; `127.0.0.1:8081`, `*:8882`, and `127.0.0.1:18082` are listening. Only
+`qingzhou.service` was restarted; the database, credentials, node settings, and
+sing-box service were not replaced or restarted.
+
 OCI production is the host-service path: `/opt/qingzhou/qingzhou` under
 `qingzhou.service`, with `qingzhou-sing-box.service` owning the local node on
 `:8882`. Local `server_id=0` generation, reload, version probing, and traffic

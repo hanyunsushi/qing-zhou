@@ -1,6 +1,6 @@
 ---
 title: Official Usage Module
-updated: 2026-09-15
+updated: 2026-09-18
 ---
 
 # Official Usage Module
@@ -12,6 +12,12 @@ updated: 2026-09-15
 `FetchOCI` posts a signed request to `https://usageapi.{region}.oci.oraclecloud.com/20200107/usage`. RSA SHA-256 signing includes query parameters. The monthly query covers the current UTC month up to today's `00:00`, because OCI rejects a non-zero time precision for these boundaries. `query_end` is a request boundary, not proof of provider publication completeness or settlement. Pages use `limit` and `page` in the URL and follow `opc-next-page`; repeated cursors, more than 100 continuation tokens, oversized responses, and overflow fail without publishing a partial balance.
 
 The parser prioritizes the high-precision `attributedUsage` field and falls back to `computedQuantity` only when needed. Decimal quantities use rational arithmetic before per-item rounding to whole bytes. Unit aliases include `GB Months` and Oracle's published `Gigabyte outbound data transfer per month`; storage capacity, rates, and unknown units are not guessed. Inbound rows are excluded; ambiguous transfer rows, unknown transfer units, missing response items, and no matched transfer rows prevent a successful balance. A first-day empty query window is also unknown, not a full allowance.
+
+The admin OCI card renders the configured allowance and official usage with
+decimal byte units (`1000` bytes per KB, so `10_000_000_000_000` bytes is
+`10 TB`). This is a presentation-only formatter separate from the existing
+user-plan traffic formatter; it does not change the API values or usage
+calculation.
 
 Oracle can return `Outbound Data Transfer Zone 2` with unit `GB Months`; the parser treats that official outbound-transfer unit as decimal GB and preserves the high-precision `attributedUsage` value before converting to bytes. Oracle's price list names the free and overage rows as `First 10 TB / Month` and `Over 10 TB / Month`, with unit `Gigabyte outbound data transfer per month`. The parser accepts both official unit forms and marks a returned overage SKU. An overage row forces `remaining` to zero even if its returned overage quantity is smaller than the configured free allowance. `remaining = max(configured_monthly_limit - used, 0)` otherwise. The account total is the configured OCI allowance; OCI Usage API supplies the official used amount, not a universal balance field. The admin page refreshes both provider snapshots every 15 minutes and refreshes on foreground return. A non-zero official `GB Months` response is covered by `internal/officialusage/officialusage_test.go`.
 

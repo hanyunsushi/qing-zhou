@@ -1,5 +1,12 @@
 # Kreeper QingZhou 定制维护
 
+## 2026-09-18 OCI 免费额度十进制显示发布
+
+- 源码提交 `adce9e9` 已构建为 Linux ARM64 版本 `v0.2.80-kreeper-adce9e9` 并部署到 OCI 宿主 `/opt/qingzhou/qingzhou`；active 二进制 SHA-256 为 `cdfac1f71275d768c52ccff415e81221ad668971032c035b3307cdea9dd18563`。
+- OCI 免费额度统一按十进制字节显示：`10_000_000_000_000` bytes = `10 TB`；上游余额卡片、账号总额、官方已用和月度上限提示均使用十进制格式。用户套餐流量的原 `fmtBytes` 二进制格式未改变，Cloudflare 请求数也未改变。
+- 发布前回滚材料位于 `/opt/qingzhou/backups/oci-quota-decimal-adce9e9-20260918-150019/`，包含旧二进制、SQLite 一致性快照、环境文件、两个 systemd unit 和 `/etc/qingzhou-sing-box`；快照 `PRAGMA integrity_check` 为 `ok`。
+- 发布后 `qingzhou.service`、`qingzhou-sing-box.service` 和 `cloudflared.service` 均为 active；本机与 `https://proxy.kreeper.cc/api/health` 均返回 `v0.2.80-kreeper-adce9e9`，`127.0.0.1:8081`、`*:8882`、`127.0.0.1:18082` 正常监听。此次未重启 sing-box、未覆盖数据库、凭据或节点配置。
+
 <!-- PROJECT-DOCS:START -->
 - 开始项目任务前先读取 `agent.md`。
 - 代码、配置、基础设施、验证、部署或发布事实发生有意义变化后，必须使用 `llm-wiki` 同步项目权威文档与 `.llm-wiki`；无文档影响时允许核对后 no-op。
