@@ -1,5 +1,12 @@
 # Kreeper QingZhou 定制维护
 
+## 2026-09-18 首页上游余额卡十进制显示修复
+
+- 发现上一轮只修改了“上游管理”页面，首页“服务器监控”中的上游余额卡仍调用旧的二进制 `fmtBytes`；本轮源码提交 `98b6c6b` 已将首页 OCI 余额、总额和官方已用改为十进制 `fmtDecimalBytes`，服务器内存、磁盘、网速和用户流量显示保持原格式。
+- 源码已构建为 Linux ARM64 版本 `v0.2.80-kreeper-98b6c6b` 并部署到 `/opt/qingzhou/qingzhou`；active 二进制 SHA-256 为 `dbb7c8aad6e02d0dbfe0f0df9e9923e884041ab6e8270f6235a8c982af1c6d03`。
+- 发布前回滚材料位于 `/opt/qingzhou/backups/monitor-decimal-98b6c6b-20260918-153352/`，包含旧二进制、SQLite 一致性快照、环境文件、两个 systemd unit 和 `/etc/qingzhou-sing-box`；快照 `PRAGMA integrity_check` 为 `ok`。
+- 发布后本机与 `https://proxy.kreeper.cc/api/health` 均返回 `v0.2.80-kreeper-98b6c6b`，三个相关服务均为 active；公网首页引用的 `Monitor-B_zNuhQ8.js` 与本地构建 SHA-256 均为 `9235ed29c60af964f3a8ab47c7b8773f7118e6e2437a9603b2fa0b031d231a55`。
+
 ## 2026-09-18 OCI 免费额度十进制显示发布
 
 - 源码提交 `adce9e9` 已构建为 Linux ARM64 版本 `v0.2.80-kreeper-adce9e9` 并部署到 OCI 宿主 `/opt/qingzhou/qingzhou`；active 二进制 SHA-256 为 `cdfac1f71275d768c52ccff415e81221ad668971032c035b3307cdea9dd18563`。

@@ -5,6 +5,23 @@ updated: 2026-09-18
 
 # QingZhou Deployment and Artifact Retention
 
+## 2026-09-18 Homepage OCI balance-card release
+
+The previous decimal-unit change covered only `AdminUpstreams.vue`; the
+homepage server-monitor card in `Monitor.vue` still used the binary formatter.
+Commit `98b6c6b` changes only that card's OCI remaining, total, and official-used
+values to the decimal formatter. Server memory, disk, network, and user-plan
+traffic displays remain unchanged.
+
+The ARM64 host binary is `v0.2.80-kreeper-98b6c6b` with SHA-256
+`dbb7c8aad6e02d0dbfe0f0df9e9923e884041ab6e8270f6235a8c982af1c6d03`.
+Rollback material is at
+`/opt/qingzhou/backups/monitor-decimal-98b6c6b-20260918-153352/`; its SQLite
+snapshot passed `PRAGMA integrity_check`. Local and public health checks report
+the new version, all three related services are active, and the public
+`Monitor-B_zNuhQ8.js` chunk matches the local build SHA-256
+`9235ed29c60af964f3a8ab47c7b8773f7118e6e2437a9603b2fa0b031d231a55`.
+
 ## 2026-09-18 Decimal OCI allowance release
 
 Commit `adce9e9` is deployed as Linux ARM64 version
