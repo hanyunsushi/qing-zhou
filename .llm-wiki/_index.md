@@ -1,6 +1,6 @@
 ---
 title: QingZhou Fork Wiki
-updated: 2026-09-17
+updated: 2026-09-18
 ---
 
 [Project Authority](../agent.md)
@@ -13,6 +13,7 @@ updated: 2026-09-17
 - [Subscription Auto Renewal](modules/subscription-auto-renew.md) - queued-plan renewal and charging rules.
 
 # APIs
+- [Admin Site Settings](apis/admin-settings.md) - public branding configuration and validation boundary.
 - [Admin Upstreams](apis/admin-upstreams.md) - configuration and usage-refresh contract.
 - [Admin Remote Backups](apis/admin-backups.md) - R2/S3 configuration, scheduling, retention, and snapshot records.
 - [User Plans](apis/user-plans.md) - user plan state and automatic-renewal setting.

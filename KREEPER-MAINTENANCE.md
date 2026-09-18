@@ -26,6 +26,7 @@
 | 只输出模板策略组 | Clash 模板 `x-qingzhou-template-groups: true` | [clash.go](internal/subconv/clash.go)、[分组测试](internal/subconv/clash_template_groups_test.go) |
 | 上游账户余额 | 管理后台 → 运营 → 上游管理 | [upstreams.go](internal/api/upstreams.go)、[officialusage](internal/officialusage/officialusage.go)、[页面](frontend/src/views/AdminUpstreams.vue) |
 | 远端数据库备份 | 管理后台 → 系统设置 → 数据备份；R2/S3 兼容对象存储 | [backup manager](internal/backup/manager.go)、[API](internal/api/backup_remote.go)、[页面](frontend/src/views/AdminSettings.vue) |
+| 站点品牌图标 | 管理后台 → 系统设置 → 基本设置；站点名称右侧“修改图标” | [设置 API](internal/api/admin.go)、[公共配置](internal/api/auth.go)、[页面](frontend/src/views/AdminSettings.vue)、[品牌组件](frontend/src/components/BrandMark.vue) |
 | 套餐自动续订 | 用户订阅卡片默认开启，按续期组统一设置 | [autorenew.go](internal/store/autorenew.go)、[user.go](internal/api/user.go)、[页面](frontend/src/views/UserSub.vue) |
 | Clash 订阅显示名 | 站点名不再追加 `.yaml`；Sing-box、Surge、Base64 保留各自扩展名 | [subinfo.go](internal/api/subinfo.go)、[测试](internal/api/subinfo_test.go) |
 | Clash 节点排序 | 外部与自建节点统一按 `nodes.sort_order` 输出；订阅源刷新保留已有链接顺序 | [user.go](internal/api/user.go)、[nodes.go](internal/store/nodes.go)、[测试](internal/api/node_order_test.go)、[测试](internal/store/source_order_test.go) |
@@ -68,6 +69,12 @@ ACL4SSR 模板及订阅名称保存在运行时数据库，不在源码中硬编
 ## 上游账户余额
 
 “上游管理”位于侧边栏“运营”的“管理概览”上方。管理员可以在面板内分别保存 OCI API Key 配置和 Cloudflare Account Analytics Token；两份 JSON 配置使用现有 `QZ_SECRET_KEY` 加密层存进 `settings`，读取接口只返回 `*_set` 标记，绝不返回私钥或 Token。删除操作会直接删除整份加密配置。
+
+## 站点品牌图标
+
+在“系统设置 → 基本设置”中，`修改图标`与站点名称并列。管理员可上传不超过 `512 KiB` 的 PNG、JPEG 或 WebP；图标保存为公开的 `brand_icon_data_uri`，不是密钥，不能上传私密内容。后端会在提交整份设置前校验规范 Base64、大小和真实图片签名，拒绝 SVG、伪造 MIME 或损坏内容，并避免非法图标造成其他设置部分写入。
+
+客户端从公开 `/api/config` 读取该图标并统一应用到头部/侧边栏/登录页 Logo、浏览器标签页 favicon、`shortcut icon` 与 `apple-touch-icon`。恢复默认图标会清空该设置并回退内置 `/qingzhou-mark.svg`；不修改节点、订阅或任何凭据。
 
 - OCI：直接请求 Usage API，按账户配置的总额减去官方返回的出站已用量计算余额；生产账户实际返回 `Outbound Data Transfer Zone 2` / `GB Months`，已纳入解析。查询至当日 UTC `00:00` 不代表该区间已经完整入账；面板每 15 分钟自动刷新，切回页面立即刷新。详见 `.llm-wiki/modules/official-usage.md`。
 - Cloudflare：直接请求 Account Analytics GraphQL，累加当前 UTC 日的 Pages Functions 和 Workers 调用数。必须填写专用 `Account Analytics Read` Token，禁止复用 DNS/ACME Token；余额是面板配置的每日上限减去官方请求数。

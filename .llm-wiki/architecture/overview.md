@@ -1,11 +1,17 @@
 ---
 title: System Overview
-updated: 2026-09-17
+updated: 2026-09-18
 ---
 
 # System Overview
 
 QingZhou is a Go/SQLite service with a Vue 3 administrative UI. Admin routes are authenticated by JWT/cookie session and `requireAdmin`; the front-end uses the unified `{code,msg,data}` API envelope.
+
+The public bootstrap configuration also carries the non-sensitive site name,
+description and optional `brand_icon_data_uri`. The shared front-end config
+store updates the visible `BrandMark`, document title, favicon, shortcut icon
+and Apple touch icon together, so authenticated and unauthenticated views use
+one source of branding.
 
 ## Production node topology
 

@@ -1,6 +1,6 @@
 ---
 title: Validation Guide
-updated: 2026-09-17
+updated: 2026-09-18
 ---
 
 # Validation Guide
@@ -14,6 +14,19 @@ npm --prefix frontend run typecheck
 npm --prefix frontend run build
 git diff --check
 ```
+
+## Site branding
+
+Brand icon coverage is exercised by the API and front-end test suites. The API
+tests verify save-to-public-config round trips and reject unsupported SVG,
+invalid Base64 and MIME/signature mismatches without partially writing other
+settings. The front-end test verifies the basic-settings upload entry and the
+shared logo/favicon/Apple touch-icon update path.
+
+For an operator check after deployment, sign in as an administrator, open
+`系统设置 → 基本设置`, upload a PNG/JPEG/WebP image no larger than 512 KiB, save,
+then reload a public page and inspect the header/sidebar/login mark and browser
+tab. Use `恢复默认图标` and save to verify the `/qingzhou-mark.svg` fallback.
 
 The provider tests cover OCI signing (including PKCS#1 and PKCS#8 keys), OCI transfer-unit parsing, Cloudflare Pages/Workers aggregation, provider error handling, encrypted storage, credential masking, and administrator-only routing. Automatic-renewal tests cover default opt-in, line-wide switching, current-price charge/order/ledger creation, insufficient-funds retry and precedence of an already queued manual renewal. The front-end contract tests verify the page, direct refresh endpoint, sidebar order and automatic-renewal control.
 
