@@ -28,6 +28,22 @@ For an operator check after deployment, sign in as an administrator, open
 then reload a public page and inspect the header/sidebar/login mark and browser
 tab. Use `恢复默认图标` and save to verify the `/qingzhou-mark.svg` fallback.
 
+## Site branding deployment record
+
+On 2026-09-18, source commit `3fd12bb` was built for Linux ARM64 and deployed
+as `v0.2.80-kreeper-3fd12bb`. The active binary SHA-256 is
+`2339a92e8ce127064eda51634467348ea9fd3a2437e0d0b64a8be8f8402ba22d`; the
+pre-release binary, environment, service definitions, sing-box configuration
+and a consistent SQLite backup are retained in
+`/opt/qingzhou/backups/site-brand-3fd12bb-20260918-040237/`.
+
+After the restart, `qingzhou.service`, `qingzhou-sing-box.service` and
+`cloudflared.service` were active. Both local and public `/api/health` returned
+the deployed version; `127.0.0.1:8081`, `*:8882` and `127.0.0.1:18082` were
+listening while retired `:8881` remained absent. Public `/api/config` contained
+`brand_icon_data_uri` with the default empty value. The backup snapshot returned
+`ok` from `PRAGMA integrity_check`.
+
 The provider tests cover OCI signing (including PKCS#1 and PKCS#8 keys), OCI transfer-unit parsing, Cloudflare Pages/Workers aggregation, provider error handling, encrypted storage, credential masking, and administrator-only routing. Automatic-renewal tests cover default opt-in, line-wide switching, current-price charge/order/ledger creation, insufficient-funds retry and precedence of an already queued manual renewal. The front-end contract tests verify the page, direct refresh endpoint, sidebar order and automatic-renewal control.
 
 ## Production deployment record
