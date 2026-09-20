@@ -1,9 +1,9 @@
 # Kreeper QingZhou 定制维护
 
-## 2026-09-21 Clash 回国节点组隔离（待发布）
+## 2026-09-21 Clash 回国节点组隔离（已部署）
 
 - Clash/Mihomo 输出继续保留真实节点 `🏠🇨🇳中国-境外回国`，但从普通 `🚀 节点选择`、固定节点、故障转移、负载均衡和模板 `all` 展开结果中排除；该节点只出现在 `🇨🇳 中国节点` 组中，成员顺序仍为 `DIRECT`、回国节点。这样普通境外节点组的选择不会意外接管境外流量。
-- 变更位于 `internal/subconv/clash.go`，覆盖模板组和内置组；sing-box、Surge、节点授权和节点本身不变。 `go test ./...` 已通过，生产发布和订阅公网验收待完成。
+- 变更位于 `internal/subconv/clash.go`，覆盖模板组和内置组；sing-box、Surge、节点授权和节点本身不变。源码提交 `496708a` 已构建并发布为 `v0.2.80-kreeper-496708a`，active 二进制 SHA-256 为 `3ec9f930d1dd0837fea2a818a508e745c552a9f6d18a33d413f7b9c68c291b2a`，回滚材料位于 `/opt/qingzhou/backups/cn-return-isolate-496708a-20260921-015739/`。`go test ./...` 通过；公网健康、三个服务、三个端口和真实 Clash 订阅验收均通过。
 
 ## 2026-09-20 Clash 回国节点策略组支持（已部署，DNS 待补）
 
