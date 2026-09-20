@@ -1,7 +1,7 @@
 ---
 title: User Plans API
 updated: 2026-09-20
-source_commit: 834cd3e
+source_commit: 1083756
 ---
 
 # User Plans API
