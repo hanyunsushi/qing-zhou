@@ -4,7 +4,9 @@
 
 - 前两轮 OCI 卡片的十进制显示已按最新要求撤回。全站继续使用同一套 `fmtBytes`：按 `1024` 换算，但保留现有常用标签 `KB/MB/GB/TB/PB`；因此 `10_000_000_000_000` 字节显示约为 `9.09 TB`。
 - OCI 上游管理卡、首页“服务器监控”上游余额卡、套餐流量及其他服务器/用户流量展示均使用这套二进制换算；底层 API、数据库和 OCI 官方用量字节值不变。
-- 本轮源码改动待部署，部署时只替换 QingZhou 面板二进制，不重启 `qingzhou-sing-box.service`，不覆盖数据库、凭据、节点配置或服务定义。
+- 源码提交 `47cd5a3` 已构建为 Linux ARM64 版本 `v0.2.80-kreeper-47cd5a3` 并部署到 `/opt/qingzhou/qingzhou`；active 二进制 SHA-256 为 `1156979d0e6367a6213eb097023761a7a80aa5d48337100a38d51d465a15e339`。
+- 发布前回滚材料位于 `/opt/qingzhou/backups/binary-upstream-47cd5a3-20260920-100745/`，包含旧二进制、SQLite 一致性快照、环境文件、两个 systemd unit 和 `/etc/qingzhou-sing-box`；快照 `PRAGMA integrity_check` 为 `ok`。只重启了 `qingzhou.service`，未重启 sing-box，未覆盖数据库、凭据、节点配置或服务定义。
+- 发布后本机与 `https://proxy.kreeper.cc/api/health` 均返回 `v0.2.80-kreeper-47cd5a3`，`qingzhou.service`、`qingzhou-sing-box.service` 和 `cloudflared.service` 均为 active；`127.0.0.1:8081`、`*:8882`、`127.0.0.1:18082` 正常监听。
 
 ## 2026-09-18 首页上游余额卡十进制显示修复
 

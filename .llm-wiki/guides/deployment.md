@@ -16,6 +16,16 @@ This applies to the OCI upstream cards, the homepage server-monitor upstream
 card, user plans, and other server/user traffic views. API, database, and OCI
 official usage values remain raw bytes and are unchanged.
 
+Commit `47cd5a3` is deployed as Linux ARM64 version
+`v0.2.80-kreeper-47cd5a3` at `/opt/qingzhou/qingzhou`. The active binary
+SHA-256 is
+`1156979d0e6367a6213eb097023761a7a80aa5d48337100a38d51d465a15e339`.
+Rollback material is at
+`/opt/qingzhou/backups/binary-upstream-47cd5a3-20260920-100745/`; its SQLite
+snapshot passed `PRAGMA integrity_check`. Local and public health checks report
+the new version, all three related services are active, and only
+`qingzhou.service` was restarted.
+
 ## 2026-09-18 Homepage OCI balance-card release
 
 The previous decimal-unit change covered only `AdminUpstreams.vue`; the
