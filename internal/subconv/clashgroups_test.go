@@ -226,8 +226,12 @@ rules:
 		t.Fatalf("CN return group missing: %v", group)
 	}
 	members, _ := group["proxies"].([]any)
-	if len(members) != 2 || members[0] != "🏠🇨🇳中国-境外回国" || members[1] != "DIRECT" {
+	if len(members) != 2 || members[0] != "DIRECT" || members[1] != "🏠🇨🇳中国-境外回国" {
 		t.Fatalf("CN return group members = %v", members)
+	}
+	names := groupNames(doc)
+	if strings.Join(names, ",") != "🚀 节点选择,"+cnReturnGroup {
+		t.Fatalf("CN return group position = %v", names)
 	}
 	providers, _ := doc["rule-providers"].(map[string]any)
 	if providers[cnDomainProvider] == nil || providers[cnIPProvider] == nil {
@@ -253,6 +257,9 @@ proxy-groups:
   - name: 🇨🇳 中国节点
     type: select
     proxies: ["DIRECT"]
+  - name: ✈️ 节点选择
+    type: select
+    proxies: ["all"]
 rules: []
 `
 	doc := renderClashDoc(t, tpl, nodeLinks()...)
@@ -260,5 +267,9 @@ rules: []
 	members, _ := group["proxies"].([]any)
 	if len(members) != 2 || members[0] != "DIRECT" || members[1] != "🏠🇨🇳中国-境外回国" {
 		t.Fatalf("existing CN group was not augmented: %v", members)
+	}
+	names := groupNames(doc)
+	if strings.Join(names, ",") != "✈️ 节点选择,"+cnReturnGroup+",◎ 固定节点,⚡ 故障转移" {
+		t.Fatalf("existing CN group position = %v", names)
 	}
 }

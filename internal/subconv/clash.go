@@ -156,36 +156,40 @@ const (
 // manual selector and CN rules. Keeping this in the renderer means the same
 // setting works with both the built-in and administrator-supplied templates.
 func injectCNReturnRouting(doc map[string]any, nodeName string) {
-	rawGroups := doc["proxy-groups"]
-	groups := mapSlice(rawGroups)
-	found := false
+	groups := mapSlice(doc["proxy-groups"])
+	withoutCN := make([]map[string]any, 0, len(groups))
+	var cnGroup map[string]any
 	for _, group := range groups {
-		if name, _ := group["name"].(string); name != cnReturnGroup {
+		if name, _ := group["name"].(string); name == cnReturnGroup {
+			cnGroup = group
 			continue
 		}
-		found = true
-		appendUniqueString(group, "proxies", nodeName)
-		appendUniqueString(group, "proxies", "DIRECT")
-		break
+		withoutCN = append(withoutCN, group)
 	}
-	if !found {
-		group := map[string]any{
-			"name":    cnReturnGroup,
-			"type":    "select",
-			"proxies": []any{nodeName, "DIRECT"},
+	if cnGroup == nil {
+		cnGroup = map[string]any{
+			"name": cnReturnGroup,
+			"type": "select",
 		}
-		switch raw := rawGroups.(type) {
-		case []any:
-			raw = append(raw, group)
-			doc["proxy-groups"] = raw
-		case []map[string]any:
-			doc["proxy-groups"] = append(raw, group)
-		default:
-			doc["proxy-groups"] = []any{group}
-		}
-	} else {
-		doc["proxy-groups"] = rawGroups
 	}
+	setCNReturnMembers(cnGroup, nodeName)
+
+	// The China selector belongs next to the normal manual selector, not at the
+	// end of a long template. Keep the built-in selector first when present and
+	// support template-owned selectors such as "🚀 节点选择".
+	insertAt := len(withoutCN)
+	for i, group := range withoutCN {
+		name, _ := group["name"].(string)
+		if name == grpSelectClash || strings.Contains(name, "节点选择") {
+			insertAt = i + 1
+			break
+		}
+	}
+	ordered := make([]map[string]any, 0, len(withoutCN)+1)
+	ordered = append(ordered, withoutCN[:insertAt]...)
+	ordered = append(ordered, cnGroup)
+	ordered = append(ordered, withoutCN[insertAt:]...)
+	doc["proxy-groups"] = ordered
 
 	providers, _ := doc["rule-providers"].(map[string]any)
 	if providers == nil {
@@ -219,34 +223,36 @@ func injectCNReturnRouting(doc map[string]any, nodeName string) {
 	// Keep private-network and ad rules ahead of the CN selectors, then place
 	// the selectors before all administrator rules so an old CN,DIRECT entry
 	// cannot steal traffic from the opt-in return path.
-	insertAt := 0
-	for insertAt < len(rules) {
-		rule, _ := rules[insertAt].(string)
+	ruleInsertAt := 0
+	for ruleInsertAt < len(rules) {
+		rule, _ := rules[ruleInsertAt].(string)
 		upper := strings.ToUpper(strings.TrimSpace(rule))
 		if strings.HasPrefix(upper, "GEOSITE,PRIVATE,") ||
 			strings.HasPrefix(upper, "GEOIP,PRIVATE,") ||
 			strings.HasPrefix(upper, "GEOSITE,CATEGORY-ADS-ALL,") {
-			insertAt++
+			ruleInsertAt++
 			continue
 		}
 		break
 	}
 	kept := make([]any, 0, len(rules)+len(cnRules))
-	kept = append(kept, rules[:insertAt]...)
+	kept = append(kept, rules[:ruleInsertAt]...)
 	kept = append(kept, cnRules...)
-	kept = append(kept, rules[insertAt:]...)
+	kept = append(kept, rules[ruleInsertAt:]...)
 	doc["rules"] = kept
 }
 
-func appendUniqueString(group map[string]any, key, value string) {
-	items, _ := group[key].([]any)
+func setCNReturnMembers(group map[string]any, nodeName string) {
+	items, _ := group["proxies"].([]any)
+	members := []any{"DIRECT", nodeName}
 	for _, item := range items {
-		if item == value {
-			group[key] = items
-			return
+		name, ok := item.(string)
+		if !ok || name == "DIRECT" || name == nodeName {
+			continue
 		}
+		members = append(members, item)
 	}
-	group[key] = append(items, value)
+	group["proxies"] = members
 }
 
 var clashDomesticDNS = []any{
