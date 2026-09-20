@@ -202,3 +202,60 @@ rules: []
 		t.Errorf("empty group was left empty: %v", proxies)
 	}
 }
+
+func TestClashCNReturnRoutingIsTemplateOptIn(t *testing.T) {
+	tpl := `
+x-qingzhou-template-groups: true
+x-qingzhou-cn-return-node: CN-Mac-CF
+proxy-groups:
+  - name: 🚀 节点选择
+    type: select
+    proxies: ["all", "DIRECT"]
+rules:
+  - GEOSITE,private,DIRECT
+  - GEOSITE,category-ads-all,REJECT
+  - GEOSITE,CN,DIRECT
+  - MATCH,🚀 节点选择
+`
+	doc := renderClashDoc(t, tpl, nodeLinks()...)
+	if _, ok := doc["x-qingzhou-cn-return-node"]; ok {
+		t.Fatal("private template key leaked into rendered config")
+	}
+	group := groupByName(doc, cnReturnGroup)
+	if group == nil || group["type"] != "select" {
+		t.Fatalf("CN return group missing: %v", group)
+	}
+	members, _ := group["proxies"].([]any)
+	if len(members) != 2 || members[0] != "CN-Mac-CF" || members[1] != "DIRECT" {
+		t.Fatalf("CN return group members = %v", members)
+	}
+	providers, _ := doc["rule-providers"].(map[string]any)
+	if providers[cnDomainProvider] == nil || providers[cnIPProvider] == nil {
+		t.Fatalf("CN return providers missing: %v", providers)
+	}
+	rules, _ := doc["rules"].([]any)
+	if len(rules) < 6 || rules[0] != "GEOSITE,private,DIRECT" ||
+		rules[1] != "GEOSITE,category-ads-all,REJECT" ||
+		rules[2] != "RULE-SET,"+cnDomainProvider+","+cnReturnGroup ||
+		rules[3] != "RULE-SET,"+cnIPProvider+","+cnReturnGroup+",no-resolve" ||
+		rules[4] != "GEOSITE,CN,"+cnReturnGroup {
+		t.Fatalf("CN return rule order = %v", rules)
+	}
+}
+
+func TestClashCNReturnRoutingAugmentsExistingGroup(t *testing.T) {
+	tpl := `
+x-qingzhou-cn-return-node: CN-Mac-CF
+proxy-groups:
+  - name: 🇨🇳 中国节点
+    type: select
+    proxies: ["DIRECT"]
+rules: []
+`
+	doc := renderClashDoc(t, tpl, nodeLinks()...)
+	group := groupByName(doc, cnReturnGroup)
+	members, _ := group["proxies"].([]any)
+	if len(members) != 2 || members[0] != "DIRECT" || members[1] != "CN-Mac-CF" {
+		t.Fatalf("existing CN group was not augmented: %v", members)
+	}
+}

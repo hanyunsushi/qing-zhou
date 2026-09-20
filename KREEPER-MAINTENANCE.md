@@ -1,5 +1,11 @@
 # Kreeper QingZhou 定制维护
 
+## 2026-09-20 Clash 回国节点策略组支持（未部署）
+
+- QingZhou Fork 新增模板私有键 `x-qingzhou-cn-return-node`。管理员在「系统设置 → Clash 模板（YAML）」中填入实际节点名（例如 `CN-Mac-CF`）后，所有格式为 Clash/Mihomo 的同一订阅会自动增加 `🇨🇳 中国节点` 手动选择组；不新增套餐、不新增订阅，节点继续沿用原有授权。
+- 渲染器使用 Loyalsoldier `clash-rules` 的 `direct.txt` 和 `cncidr.txt` 作为中国域名/IP规则集，并在现有私有网段/广告规则之后、其他管理员规则之前插入规则；同时保留 `GEOSITE,CN` 与 `GEOIP,CN` 兜底。这样用户只需在 `🇨🇳 中国节点` 组内选择 `CN-Mac-CF`，其他策略组不变。
+- 私有键会从输出中删除，不会泄露到客户端配置；未填写时渲染行为保持不变。提交前已通过 `go test ./internal/subconv`，尚未部署生产二进制，也未修改生产 SQLite 的 `sub_clash_template`。
+
 ## 2026-09-20 OCI 默认额度修正为二进制 10 TB
 
 - OCI 面板默认月度上限已从历史的 `10_000_000_000_000` 字节修正为 `10_995_116_277_760` 字节，即 `10 × 1024^4`；界面继续显示 `10 TB`，不改用 `TiB` 标签。

@@ -43,6 +43,11 @@ func clashWithProfile(proxies []*Proxy, template string, profile RoutingProfile,
 	if err := yaml.Unmarshal([]byte(template), &doc); err != nil {
 		doc = map[string]any{}
 	}
+	cnReturnNode, _ := doc["x-qingzhou-cn-return-node"].(string)
+	delete(doc, "x-qingzhou-cn-return-node")
+	if strings.TrimSpace(cnReturnNode) != "" {
+		injectCNReturnRouting(doc, strings.TrimSpace(cnReturnNode))
+	}
 	templateGroupsOnly, _ := doc["x-qingzhou-template-groups"].(bool)
 	delete(doc, "x-qingzhou-template-groups")
 	customNames := map[string]bool{}
@@ -137,6 +142,100 @@ func clashWithProfile(proxies []*Proxy, template string, profile RoutingProfile,
 
 	b, err := yaml.Marshal(doc)
 	return string(b), err
+}
+
+const (
+	cnReturnGroup    = "🇨🇳 中国节点"
+	cnDomainProvider = "qz-cn-domain"
+	cnIPProvider     = "qz-cn-ip"
+)
+
+// injectCNReturnRouting turns on the opt-in "回国" path declared by the
+// private template key x-qingzhou-cn-return-node. The node remains an
+// ordinary QingZhou node; only the generated Clash policy gets a dedicated
+// manual selector and CN rules. Keeping this in the renderer means the same
+// setting works with both the built-in and administrator-supplied templates.
+func injectCNReturnRouting(doc map[string]any, nodeName string) {
+	groups := mapSlice(doc["proxy-groups"])
+	found := false
+	for _, group := range groups {
+		if name, _ := group["name"].(string); name != cnReturnGroup {
+			continue
+		}
+		found = true
+		appendUniqueString(group, "proxies", nodeName)
+		appendUniqueString(group, "proxies", "DIRECT")
+		break
+	}
+	if !found {
+		groups = append(groups, map[string]any{
+			"name":    cnReturnGroup,
+			"type":    "select",
+			"proxies": []any{nodeName, "DIRECT"},
+		})
+	}
+	doc["proxy-groups"] = groups
+
+	providers, _ := doc["rule-providers"].(map[string]any)
+	if providers == nil {
+		providers = map[string]any{}
+		doc["rule-providers"] = providers
+	}
+	providers[cnDomainProvider] = map[string]any{
+		"type":     "http",
+		"behavior": "domain",
+		"format":   "yaml",
+		"url":      "https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/direct.txt",
+		"path":     "./ruleset/qz-cn-domain.yaml",
+		"interval": 86400,
+	}
+	providers[cnIPProvider] = map[string]any{
+		"type":     "http",
+		"behavior": "ipcidr",
+		"format":   "yaml",
+		"url":      "https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/cncidr.txt",
+		"path":     "./ruleset/qz-cn-ip.yaml",
+		"interval": 86400,
+	}
+
+	rules, _ := doc["rules"].([]any)
+	cnRules := []any{
+		"RULE-SET," + cnDomainProvider + "," + cnReturnGroup,
+		"RULE-SET," + cnIPProvider + "," + cnReturnGroup + ",no-resolve",
+		"GEOSITE,CN," + cnReturnGroup,
+		"GEOIP,CN," + cnReturnGroup + ",no-resolve",
+	}
+	// Keep private-network and ad rules ahead of the CN selectors, then place
+	// the selectors before all administrator rules so an old CN,DIRECT entry
+	// cannot steal traffic from the opt-in return path.
+	insertAt := 0
+	for insertAt < len(rules) {
+		rule, _ := rules[insertAt].(string)
+		upper := strings.ToUpper(strings.TrimSpace(rule))
+		if strings.HasPrefix(upper, "GEOSITE,PRIVATE,") ||
+			strings.HasPrefix(upper, "GEOIP,PRIVATE,") ||
+			strings.HasPrefix(upper, "GEOSITE,CATEGORY-ADS-ALL,") {
+			insertAt++
+			continue
+		}
+		break
+	}
+	kept := make([]any, 0, len(rules)+len(cnRules))
+	kept = append(kept, rules[:insertAt]...)
+	kept = append(kept, cnRules...)
+	kept = append(kept, rules[insertAt:]...)
+	doc["rules"] = kept
+}
+
+func appendUniqueString(group map[string]any, key, value string) {
+	items, _ := group[key].([]any)
+	for _, item := range items {
+		if item == value {
+			group[key] = items
+			return
+		}
+	}
+	group[key] = append(items, value)
 }
 
 var clashDomesticDNS = []any{

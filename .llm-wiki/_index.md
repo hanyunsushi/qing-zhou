@@ -11,6 +11,7 @@ updated: 2026-09-20
 # Modules
 - [Official Usage](modules/official-usage.md) - direct OCI and Cloudflare provider adapters.
 - [Subscription Auto Renewal](modules/subscription-auto-renew.md) - queued-plan renewal and charging rules.
+- [Subscription Routing](modules/subscription-routing.md) - opt-in Clash CN return-node group and provider rules.
 
 # APIs
 - [Admin Site Settings](apis/admin-settings.md) - public branding configuration and validation boundary.
