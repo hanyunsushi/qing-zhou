@@ -29,4 +29,4 @@ x-qingzhou-cn-return-node: 🏠🇨🇳中国-境外回国
 
 ## 边界
 
-该功能只影响 Clash/Mihomo 输出；sing-box 模板、节点安全策略、套餐授权和节点排序不变。生产启用前必须确认节点名称、节点可达性和两个 GitHub provider 在目标客户端可下载。
+该功能只影响 Clash/Mihomo 输出；sing-box 模板、节点安全策略、套餐授权和节点排序不变。生产启用后仍需确认节点名称、节点可达性和两个 GitHub provider 在目标客户端可下载。当前生产节点已写入 QingZhou，Tunnel ingress 和 connector 已正常，但 `cn-return.kreeper.cc` 尚未有公开 DNS 记录，因此公网握手验收尚未完成。
