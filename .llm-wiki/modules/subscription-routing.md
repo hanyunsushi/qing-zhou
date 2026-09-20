@@ -18,14 +18,14 @@ x-qingzhou-cn-return-node: 🏠🇨🇳中国-境外回国
 
 ## 生成结果
 
-渲染器会生成固定名称 `🇨🇳 中国节点` 的 `select` 组，并把它放在普通节点选择组之后；成员顺序固定为 `DIRECT`、配置的节点，因此新订阅默认国内直连。用户手动选择回国节点后才会改变中国规则的出口。私有键会从客户端输出中移除。它还加入两个远程 provider：
+渲染器会生成固定名称 `🇨🇳 中国节点` 的 `select` 组，并把它放在普通节点选择组之后；成员顺序固定为 `DIRECT`、配置的节点，因此新订阅默认国内直连。配置的回国节点会从普通节点选择、固定、故障转移、负载均衡和模板 `all` 展开结果中排除，只保留在该中国组中。用户手动选择回国节点后才会改变中国规则的出口。私有键会从客户端输出中移除。它还加入两个远程 provider：
 
 - `https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/direct.txt`：中国域名列表。
 - `https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/cncidr.txt`：中国 IP 段列表。
 
 规则顺序为私有网段/广告规则、CN 域名/IP provider、`GEOSITE,CN`/`GEOIP,CN` 兜底、其余管理员规则和最终 MATCH。这样历史模板中的 `CN,DIRECT` 不会先于回国规则命中。
 
-用户在 Clash 中选择 `🇨🇳 中国节点 → 🏠🇨🇳中国-境外回国` 后，中国网站走该节点；其他规则仍使用原来的策略组。选择 `DIRECT` 只改变中国规则，其他策略组不受影响。
+用户在 Clash 中选择 `🇨🇳 中国节点 → 🏠🇨🇳中国-境外回国` 后，中国网站走该节点；其他规则仍使用原来的策略组。选择 `DIRECT` 只改变中国规则，其他策略组不受影响。普通 `🚀 节点选择` 中不会再出现回国节点，避免误选后让境外流量经中国出口。
 
 ## 边界
 

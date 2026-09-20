@@ -273,3 +273,34 @@ rules: []
 		t.Fatalf("existing CN group position = %v", names)
 	}
 }
+
+func TestClashCNReturnNodeOnlyAppearsInChinaGroup(t *testing.T) {
+	tpl := `
+x-qingzhou-cn-return-node: 🏠🇨🇳中国-境外回国
+proxy-groups:
+  - name: 🚀 节点选择
+    type: select
+    proxies: ["all", "🏠🇨🇳中国-境外回国"]
+  - name: 手动测速
+    type: url-test
+    proxies: ["all", "🏠🇨🇳中国-境外回国"]
+rules: []
+`
+	doc := renderClashDoc(t, tpl, nodeLinks()...)
+	china, _ := groupByName(doc, cnReturnGroup)["proxies"].([]any)
+	if len(china) != 2 || china[0] != "DIRECT" || china[1] != "🏠🇨🇳中国-境外回国" {
+		t.Fatalf("China group = %v", china)
+	}
+	for _, name := range []string{grpSelectClash, "手动测速", grpFixedClash, grpFallbackClash} {
+		group := groupByName(doc, name)
+		if group == nil {
+			continue
+		}
+		members, _ := group["proxies"].([]any)
+		for _, member := range members {
+			if member == "🏠🇨🇳中国-境外回国" {
+				t.Fatalf("return node leaked into %s: %v", name, members)
+			}
+		}
+	}
+}

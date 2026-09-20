@@ -1,9 +1,18 @@
 ---
 title: QingZhou Deployment and Artifact Retention
-updated: 2026-09-20
+updated: 2026-09-21
 ---
 
 # QingZhou Deployment and Artifact Retention
+
+## 2026-09-21 China return group isolation
+
+The Clash renderer keeps `🏠🇨🇳中国-境外回国` as a real proxy but removes it
+from the normal selector, fixed selector, health/fallback/load-balance groups,
+and template `all` expansions. It is present only in `🇨🇳 中国节点`, whose
+members remain `DIRECT` followed by the return node. This prevents a manual
+choice in the ordinary foreign-node selector from routing unrelated traffic
+through the domestic egress.
 
 ## 2026-09-20 China return selector default
 

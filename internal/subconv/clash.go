@@ -87,7 +87,11 @@ func clashWithProfile(proxies []*Proxy, template string, profile RoutingProfile,
 		list[i] = c.m
 	}
 	doc["proxies"] = list
-	sg := buildStrategyGroups(kept)
+	clashNodes := kept
+	if strings.TrimSpace(cnReturnNode) != "" {
+		clashNodes = filterClashNodes(kept, cnReturnNode)
+	}
+	sg := buildStrategyGroups(clashNodes)
 	primary := grpSelectClash
 	if templateGroupsOnly {
 		groups := mapSlice(doc["proxy-groups"])
@@ -100,7 +104,10 @@ func clashWithProfile(proxies []*Proxy, template string, profile RoutingProfile,
 		}
 		doc["proxy-groups"] = groups
 	} else {
-		doc["proxy-groups"] = mergeClashGroups(doc["proxy-groups"], clashGroups(sg), kept)
+		doc["proxy-groups"] = mergeClashGroups(doc["proxy-groups"], clashGroups(sg), clashNodes)
+	}
+	if strings.TrimSpace(cnReturnNode) != "" {
+		isolateClashNode(doc, cnReturnNode)
 	}
 	var catchAll []any
 	if templateGroupsOnly {
@@ -142,6 +149,56 @@ func clashWithProfile(proxies []*Proxy, template string, profile RoutingProfile,
 
 	b, err := yaml.Marshal(doc)
 	return string(b), err
+}
+
+// filterClashNodes keeps the return node as a real proxy but excludes it from
+// every generated/general-purpose group. injectCNReturnRouting adds it back
+// only to the dedicated China selector, so choosing a normal group cannot
+// accidentally send traffic through the domestic egress.
+func filterClashNodes(nodes []*Proxy, excludedName string) []*Proxy {
+	out := make([]*Proxy, 0, len(nodes))
+	for _, node := range nodes {
+		if node.Name == excludedName {
+			continue
+		}
+		out = append(out, node)
+	}
+	return out
+}
+
+func isolateClashNode(doc map[string]any, nodeName string) {
+	groups := mapSlice(doc["proxy-groups"])
+	for _, group := range groups {
+		if name, _ := group["name"].(string); name == cnReturnGroup {
+			continue
+		}
+		switch members := group["proxies"].(type) {
+		case []any:
+			filtered := make([]any, 0, len(members))
+			for _, member := range members {
+				if member == nodeName {
+					continue
+				}
+				filtered = append(filtered, member)
+			}
+			if len(filtered) == 0 {
+				filtered = append(filtered, "DIRECT")
+			}
+			group["proxies"] = filtered
+		case []string:
+			filtered := make([]string, 0, len(members))
+			for _, member := range members {
+				if member != nodeName {
+					filtered = append(filtered, member)
+				}
+			}
+			if len(filtered) == 0 {
+				filtered = append(filtered, "DIRECT")
+			}
+			group["proxies"] = filtered
+		}
+	}
+	doc["proxy-groups"] = groups
 }
 
 const (
