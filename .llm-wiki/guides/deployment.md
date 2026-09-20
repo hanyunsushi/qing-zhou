@@ -9,22 +9,25 @@ updated: 2026-09-18
 
 The decimal OCI presentation from the 2026-09-18 releases is superseded. All
 frontend byte displays now use the shared `fmtBytes` formatter: divide by 1024
-while retaining the existing `KB/MB/GB/TB/PB` labels. Therefore
-`10_000_000_000_000` bytes is displayed as approximately `9.09 TB`.
+while retaining the existing `KB/MB/GB/TB/PB` labels. The panel's default OCI
+allowance is `10_995_116_277_760` bytes (`10 × 1024^4`) and is displayed as
+`10 TB`. Previously saved `10_000_000_000_000`-byte legacy defaults are
+normalized automatically; explicit non-default limits are preserved.
 
 This applies to the OCI upstream cards, the homepage server-monitor upstream
 card, user plans, and other server/user traffic views. API, database, and OCI
 official usage values remain raw bytes and are unchanged.
 
-Commit `47cd5a3` is deployed as Linux ARM64 version
-`v0.2.80-kreeper-47cd5a3` at `/opt/qingzhou/qingzhou`. The active binary
+Commit `dc22079` is deployed as Linux ARM64 version
+`v0.2.80-kreeper-dc22079` at `/opt/qingzhou/qingzhou`. The active binary
 SHA-256 is
-`1156979d0e6367a6213eb097023761a7a80aa5d48337100a38d51d465a15e339`.
+`975aa76a7e2e2e24ad47a8e5c940327e422c437c2778ae33eb2bef320108c4ad`.
 Rollback material is at
-`/opt/qingzhou/backups/binary-upstream-47cd5a3-20260920-100745/`; its SQLite
-snapshot passed `PRAGMA integrity_check`. Local and public health checks report
-the new version, all three related services are active, and only
-`qingzhou.service` was restarted.
+`/opt/qingzhou/backups/binary-oci-binary-quota-dc22079-20260920-024455/`; its
+SQLite snapshot passed `PRAGMA integrity_check`. Local and public health checks
+return the new version, `qingzhou.service`, `qingzhou-sing-box.service`, and
+`cloudflared.service` are active, ports `8081`, `8882`, and `18082` are
+listening, and only `qingzhou.service` was restarted.
 
 ## 2026-09-18 Homepage OCI balance-card release
 
