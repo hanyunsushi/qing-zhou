@@ -316,6 +316,7 @@ func (a *API) handleDashboard(w http.ResponseWriter, r *http.Request) {
 			// finite now, so zero means zero and this can never be true.
 			"unlimited": false,
 		},
+		"edge_requests": edgeRequestView(buckets),
 		// Plans stay per-bucket so the UI can show every active/queued份 with its
 		// own quota and expiry; there is deliberately no single "current plan" —
 		// several can be live at once and a queued repeat purchase means one of
@@ -681,16 +682,18 @@ func (a *API) handleUserPlanAutoRenew(w http.ResponseWriter, r *http.Request) {
 }
 
 type planView struct {
-	ID           int64  `json:"id"`
-	Kind         string `json:"kind"`
-	PackageID    int64  `json:"package_id"`
-	QueueKey     string `json:"queue_key,omitempty"`
-	Name         string `json:"name"`
-	TrafficLimit int64  `json:"traffic_limit"`
-	Used         int64  `json:"used"`
-	Remaining    int64  `json:"remaining"`
-	ExpiryAt     int64  `json:"expiry_at"`
-	Status       string `json:"status"` // active | queued | expired | exhausted
+	ID               int64  `json:"id"`
+	Kind             string `json:"kind"`
+	PackageID        int64  `json:"package_id"`
+	QueueKey         string `json:"queue_key,omitempty"`
+	Name             string `json:"name"`
+	TrafficLimit     int64  `json:"traffic_limit"`
+	Used             int64  `json:"used"`
+	Remaining        int64  `json:"remaining"`
+	EdgeRequestLimit int64  `json:"edge_request_limit"`
+	EdgeRequestsUsed int64  `json:"edge_requests_used"`
+	ExpiryAt         int64  `json:"expiry_at"`
+	Status           string `json:"status"` // active | queued | expired | exhausted
 	// ActivateBy is a queued plan's estimated LATEST activation time (unix): the
 	// current head's expiry plus the durations of the queued份 ahead of it. It may
 	// activate sooner if the head's traffic runs out first. 0 = unknown (the head
@@ -865,6 +868,7 @@ func buildPlanViews(buckets []*store.Bucket, pkgNames map[int64]string) []planVi
 		}
 		pv := planView{ID: b.ID, Kind: b.Kind, PackageID: b.PackageID, QueueKey: b.QueueKey, Name: name, TrafficLimit: b.TrafficLimit,
 			Used: b.Used(), ExpiryAt: b.ExpiryAt, Remaining: 0, CreatedAt: b.CreatedAt, OrderID: b.OrderID,
+			EdgeRequestLimit: b.EdgeRequestLimit, EdgeRequestsUsed: b.EdgeRequestsUsed,
 			DurationDays: b.DurationDays, AutoRenew: b.AutoRenew, StartedAt: startedAt(b)}
 		if b.TrafficLimit > 0 {
 			if rem := b.TrafficLimit - b.Used(); rem > 0 {
@@ -879,7 +883,7 @@ func buildPlanViews(buckets []*store.Bucket, pkgNames map[int64]string) []planVi
 			pv.ActivateBy = acts[b.ID]
 		case !b.NotExpired(now):
 			pv.Status = "expired"
-		case !b.HasQuota():
+		case !b.HasQuota() || !b.HasEdgeQuota():
 			pv.Status = "exhausted"
 		default:
 			pv.Status = "active"
@@ -1191,7 +1195,7 @@ func (a *API) computeNodeEntries(u *store.User) []nodeEntry {
 	for _, n := range nodes {
 		switch n.Type {
 		case "external":
-			add(subconv.WithLinkRemark(n.ShareLink, n.Remark), n.GroupID, gname[n.GroupID], "", 0, false, n.IsAI, n.SortOrder, n.ID)
+			add(subconv.WithLinkRemark(rewriteEdgeTunnelLink(n.ShareLink, u.ID), n.Remark), n.GroupID, gname[n.GroupID], "", 0, false, n.IsAI, n.SortOrder, n.ID)
 		case "self_built":
 			if n.InboundTag != "" {
 				if n.RouteUpstreamInboundID == 0 {

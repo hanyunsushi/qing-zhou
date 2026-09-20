@@ -16,9 +16,10 @@ import (
 // reset inside its period: a 90-day option that kept the 30-day quota would be a
 // worse deal, not a longer one.
 type PlanOption struct {
-	Days         int64 `json:"days"`
-	PricePoints  int64 `json:"price_points"`
-	TrafficBytes int64 `json:"traffic_bytes"`
+	Days             int64 `json:"days"`
+	PricePoints      int64 `json:"price_points"`
+	TrafficBytes     int64 `json:"traffic_bytes"`
+	EdgeRequestLimit int64 `json:"edge_request_limit"`
 }
 
 type Package struct {
@@ -28,29 +29,30 @@ type Package struct {
 	// QueueKey groups plans that renew one another. Blank means this package is
 	// its own line ("pkg:<id>"). Two different products may deliberately share a
 	// key, e.g. an old-price and a new-price edition of the same service.
-	QueueKey     string       `json:"queue_key"`
-	Description  string       `json:"description"`
-	Highlights   []string     `json:"highlights"` // selling-point bullets shown in the shop
-	PricePoints  int64        `json:"price_points"`
-	TrafficBytes int64        `json:"traffic_bytes"`
-	DurationDays int64        `json:"duration_days"`
-	Options      []PlanOption `json:"options"` // selectable durations; empty = single-duration package
-	Stock        int64        `json:"stock"`   // -1 = unlimited
-	Enabled      bool         `json:"enabled"`
-	SortOrder    int64        `json:"sort_order"`
-	CreatedAt    int64        `json:"created_at"`
-	GroupIDs     []int64      `json:"group_ids,omitempty"`      // plan↔node-groups: which nodes it grants (not a column)
-	UserGroupIDs []int64      `json:"user_group_ids,omitempty"` // package↔user-groups: who may buy it; empty = public (not a column)
-	Subscribers  int64        `json:"subscribers,omitempty"`    // users currently on this plan (not a column)
+	QueueKey         string       `json:"queue_key"`
+	Description      string       `json:"description"`
+	Highlights       []string     `json:"highlights"` // selling-point bullets shown in the shop
+	PricePoints      int64        `json:"price_points"`
+	TrafficBytes     int64        `json:"traffic_bytes"`
+	EdgeRequestLimit int64        `json:"edge_request_limit"`
+	DurationDays     int64        `json:"duration_days"`
+	Options          []PlanOption `json:"options"` // selectable durations; empty = single-duration package
+	Stock            int64        `json:"stock"`   // -1 = unlimited
+	Enabled          bool         `json:"enabled"`
+	SortOrder        int64        `json:"sort_order"`
+	CreatedAt        int64        `json:"created_at"`
+	GroupIDs         []int64      `json:"group_ids,omitempty"`      // plan↔node-groups: which nodes it grants (not a column)
+	UserGroupIDs     []int64      `json:"user_group_ids,omitempty"` // package↔user-groups: who may buy it; empty = public (not a column)
+	Subscribers      int64        `json:"subscribers,omitempty"`    // users currently on this plan (not a column)
 }
 
-const pkgCols = `id, type, name, queue_key, description, highlights, price_points, traffic_bytes,
+const pkgCols = `id, type, name, queue_key, description, highlights, price_points, traffic_bytes, edge_request_limit,
 	duration_days, duration_options, stock, enabled, sort_order, created_at`
 
 func scanPackage(sc scanner) (*Package, error) {
 	var p Package
 	var highlights, options string
-	err := sc.Scan(&p.ID, &p.Type, &p.Name, &p.QueueKey, &p.Description, &highlights, &p.PricePoints, &p.TrafficBytes,
+	err := sc.Scan(&p.ID, &p.Type, &p.Name, &p.QueueKey, &p.Description, &highlights, &p.PricePoints, &p.TrafficBytes, &p.EdgeRequestLimit,
 		&p.DurationDays, &options, &p.Stock, &p.Enabled, &p.SortOrder, &p.CreatedAt)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, nil
@@ -108,6 +110,7 @@ func (p *Package) applyDefaultOption() {
 	p.DurationDays = first.Days
 	p.PricePoints = first.PricePoints
 	p.TrafficBytes = first.TrafficBytes
+	p.EdgeRequestLimit = first.EdgeRequestLimit
 }
 
 // ErrOptionNotFound means the requested duration is not (or is no longer) on sale
@@ -145,6 +148,7 @@ func (p *Package) forDuration(days int64) (*Package, error) {
 			eff.DurationDays = o.Days
 			eff.PricePoints = o.PricePoints
 			eff.TrafficBytes = o.TrafficBytes
+			eff.EdgeRequestLimit = o.EdgeRequestLimit
 			return &eff, nil
 		}
 	}
@@ -288,9 +292,9 @@ func (s *Store) ListPackagesForUser(userID int64) ([]*Package, error) {
 func (s *Store) CreatePackage(p Package) (int64, error) {
 	p.applyDefaultOption()
 	res, err := s.db.Exec(`INSERT INTO packages
-		(type, name, queue_key, description, highlights, price_points, traffic_bytes, duration_days, duration_options, stock, enabled, sort_order, created_at)
-		VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-		p.Type, p.Name, strings.TrimSpace(p.QueueKey), p.Description, encodeHighlights(p.Highlights), p.PricePoints, p.TrafficBytes,
+		(type, name, queue_key, description, highlights, price_points, traffic_bytes, edge_request_limit, duration_days, duration_options, stock, enabled, sort_order, created_at)
+		VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+		p.Type, p.Name, strings.TrimSpace(p.QueueKey), p.Description, encodeHighlights(p.Highlights), p.PricePoints, p.TrafficBytes, p.EdgeRequestLimit,
 		p.DurationDays, encodeOptions(p.Options), p.Stock, boolToInt(p.Enabled), p.SortOrder, time.Now().Unix())
 	if err != nil {
 		return 0, err
@@ -307,9 +311,9 @@ func (s *Store) UpdatePackage(p Package) error {
 	defer tx.Rollback()
 	key := strings.TrimSpace(p.QueueKey)
 	if _, err := tx.Exec(`UPDATE packages SET
-		type=?, name=?, queue_key=?, description=?, highlights=?, price_points=?, traffic_bytes=?,
+		type=?, name=?, queue_key=?, description=?, highlights=?, price_points=?, traffic_bytes=?, edge_request_limit=?,
 		duration_days=?, duration_options=?, stock=?, enabled=?, sort_order=? WHERE id=?`,
-		p.Type, p.Name, key, p.Description, encodeHighlights(p.Highlights), p.PricePoints, p.TrafficBytes,
+		p.Type, p.Name, key, p.Description, encodeHighlights(p.Highlights), p.PricePoints, p.TrafficBytes, p.EdgeRequestLimit,
 		p.DurationDays, encodeOptions(p.Options), p.Stock, boolToInt(p.Enabled), p.SortOrder, p.ID); err != nil {
 		return err
 	}

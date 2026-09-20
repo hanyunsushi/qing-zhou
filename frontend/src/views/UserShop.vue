@@ -35,7 +35,7 @@
                   :class="{ on: chosenDays[pkg.id] === o.days }"
                   @click="chosenDays[pkg.id] = o.days">
             <span class="d">{{ o.days }} 天</span>
-            <span class="p">{{ o.price_points }} 积分</span>
+            <span class="p">{{ o.price_points }} 积分 · Edge {{ o.edge_request_limit ? Number(o.edge_request_limit).toLocaleString() + ' 次' : '不限' }}</span>
             <span v-if="saveHint(pkg, o)" class="off">{{ saveHint(pkg, o) }}</span>
           </button>
         </div>
@@ -122,7 +122,7 @@ function typeMeta(type: string) {
 const chosenDays = ref<Record<number, number>>({})
 function optOf(pkg: any) {
   const opts = pkg.options || []
-  if (!opts.length) return { days: pkg.duration_days, price_points: pkg.price_points, traffic_bytes: pkg.traffic_bytes }
+  if (!opts.length) return { days: pkg.duration_days, price_points: pkg.price_points, traffic_bytes: pkg.traffic_bytes, edge_request_limit: pkg.edge_request_limit || 0 }
   return opts.find((o: any) => o.days === chosenDays.value[pkg.id]) || opts[0]
 }
 function priceOf(pkg: any): number { return optOf(pkg).price_points || 0 }
@@ -146,6 +146,9 @@ function specsOf(pkg: any) {
   const s: { label: string; value: string }[] = []
   if (pkg.type === 'traffic' || pkg.type === 'plan') {
     s.push({ label: '流量', value: fmtTotal(opt.traffic_bytes) })
+  }
+  if (pkg.type === 'plan') {
+    s.push({ label: 'Edge 请求', value: opt.edge_request_limit ? `${Number(opt.edge_request_limit).toLocaleString()} 次` : '不限' })
   }
   s.push({ label: '有效期', value: opt.days ? `${opt.days} 天` : '永久' })
   return s

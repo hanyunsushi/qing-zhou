@@ -253,6 +253,9 @@ func (a *API) Router() http.Handler {
 	r.Get("/api/monitor/public", a.handleMonitorPublic)
 	r.Get("/api/monitor/public/sparklines", a.handleMonitorPublicSparklines)
 	r.Get("/api/monitor/heatmap", a.handleMonitorPublicHeatmap)
+	// EdgeTunnel authenticates this callback with QZ_EDGE_USAGE_TOKEN rather
+	// than a browser session, and the store applies each batch idempotently.
+	r.Post("/api/internal/edge/usage", a.handleEdgeUsage)
 
 	// Authenticated (any logged-in user)
 	r.Group(func(pr chi.Router) {

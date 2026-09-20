@@ -20,7 +20,7 @@
       <div class="sub-stat"><span>生效套餐</span><b>{{ activePlanCount }}</b><small>排队 {{ queuedPlanCount }} 份</small></div>
       <div class="sub-stat"><span>可用节点</span><b>{{ enabledNodeCount }} / {{ nodes.length }}</b><small>禁用 {{ disabledNodeCount }} 个</small></div>
       <div class="sub-stat"><span>代理入口</span><b>{{ proxies.length }}</b><small>HTTP / SOCKS5 / HTTPS</small></div>
-      <div class="sub-stat"><span>订阅状态</span><b>{{ sub.url ? '已就绪' : '未生成' }}</b><small>{{ sub.url ? '支持 4 种导入格式' : '购买或分配套餐后生成' }}</small></div>
+      <div class="sub-stat"><span>Edge 请求次数</span><b>{{ edgeRequests.unlimited ? '不限' : edgeRequests.remaining.toLocaleString() + ' 次' }}</b><small>已用 {{ edgeRequests.used.toLocaleString() }} 次</small></div>
     </div>
 
     <!-- 订阅链接 -->
@@ -403,6 +403,7 @@ const routingProfileNote = computed(() => routingProfile.value === 'cn_direct'
   : 'AI 和所有公网流量都走代理，仅局域网保持直连。')
 // 我的套餐：后端按套餐独立计量（可能多份并存、含排队份），全部列出，不合并
 const plans = ref<any[]>([])
+const edgeRequests = ref({ used: 0, total: 0, remaining: 0, unlimited: false })
 const activePlanCount = computed(() => plans.value.filter(p => p.status === 'active').length)
 const queuedPlanCount = computed(() => plans.value.filter(p => p.status === 'queued').length)
 const enabledNodeCount = computed(() => nodes.value.filter(n => !n.disabled).length)
@@ -515,8 +516,9 @@ function segRange(p: any): string {
 // 一段用掉了多少。排队中的还没开始计量，只报待用额度。
 function segUsage(p: any): string {
   if (p.status === 'queued') return '待用流量 ' + fmtTotal(p.traffic_limit)
-  if (p.traffic_limit <= 0) return `已用 ${fmtBytes(p.used)} / 0 B · 剩 0 B`
-  return `已用 ${fmtBytes(p.used)} / ${fmtTotal(p.traffic_limit)} · 剩 ${fmtBytes(p.remaining < 0 ? 0 : p.remaining)}`
+  const edge = p.edge_request_limit ? ` · Edge 已用 ${Number(p.edge_requests_used || 0).toLocaleString()} / ${Number(p.edge_request_limit).toLocaleString()} 次` : ''
+  if (p.traffic_limit <= 0) return `已用 ${fmtBytes(p.used)} / 0 B · 剩 0 B${edge}`
+  return `已用 ${fmtBytes(p.used)} / ${fmtTotal(p.traffic_limit)} · 剩 ${fmtBytes(p.remaining < 0 ? 0 : p.remaining)}${edge}`
 }
 function planPct(p: any) { return p.status === 'queued' ? 0 : pct(p.used, p.traffic_limit) }
 const planStatus = planStatusMeta
@@ -838,7 +840,11 @@ watch([showQr, selectedSubscriptionURL], async ([visible, url]) => {
 
 onMounted(async () => {
   try { sub.value = await apiGet('/api/user/subscription') || {} } catch (e: any) { message.error('订阅信息加载失败：' + (e?.message || '请稍后重试')) }
-  try { plans.value = await apiList('/api/user/plans') } catch {}
+  try {
+    const data = await apiGet('/api/user/dashboard')
+    edgeRequests.value = data?.edge_requests || edgeRequests.value
+    plans.value = data?.plans || await apiList('/api/user/plans')
+  } catch { try { plans.value = await apiList('/api/user/plans') } catch {} }
   try { await loadProxies() } catch {}
   loadingNodes.value = true
   try { nodes.value = await apiList('/api/user/nodes') } catch {} finally { loadingNodes.value = false }

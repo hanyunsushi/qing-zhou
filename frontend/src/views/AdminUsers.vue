@@ -70,6 +70,14 @@
             <div class="uc-note" :title="trafficNote(u)">{{ trafficNote(u) }}</div>
           </div>
 
+          <div class="uc-block">
+            <div class="uc-row">
+              <span class="uc-k">Edge 请求次数</span>
+              <span class="uc-v">{{ edgeRequestMain(u) }}</span>
+            </div>
+            <div class="uc-note" :title="edgeRequestNote(u)">{{ edgeRequestNote(u) }}</div>
+          </div>
+
           <!-- 套餐：卡片只报「有几份、在用哪几个、什么时候要续」，明细在套餐面板 -->
           <button class="uc-block uc-plans" type="button" @click="openPlans(u)">
             <div class="uc-row">
@@ -129,6 +137,11 @@
             <span class="pm-label">累计用量</span>
             <b class="pm-val">{{ fmtBytes(counts.totalUsed) }}</b>
             <i class="pm-hint">含已结束的份与流量包{{ freeUsedText }}</i>
+          </div>
+          <div class="pm-stat">
+            <span class="pm-label">Edge 请求次数</span>
+            <b class="pm-val">{{ plansUser ? edgeRequestMain(plansUser) : '—' }}</b>
+            <i class="pm-hint">{{ plansUser ? edgeRequestNote(plansUser) : '' }}</i>
           </div>
         </div>
 
@@ -419,6 +432,16 @@ function trafficNote(u: any) {
   const pool = u.plan_summary?.pool_limit || 0
   if (pool > 0) parts.push(`含流量包 ${fmtBytes(pool - (u.plan_summary.pool_used || 0))}`)
   return parts.join(' · ') || '暂无可用额度'
+}
+function edgeRequestMain(u: any) {
+  const t = u?.edge_requests
+  if (!t) return '—'
+  return t.unlimited ? '不限' : `${Number(t.remaining || 0).toLocaleString()} 次`
+}
+function edgeRequestNote(u: any) {
+  const t = u?.edge_requests
+  if (!t) return '次数数据读取失败'
+  return `已用 ${Number(t.used || 0).toLocaleString()} 次` + (t.unlimited ? '' : ` / ${Number(t.total || 0).toLocaleString()} 次`)
 }
 function barWidth(u: any) {
   if (meteredOf(u)) return Math.min(usedPctOf(u), 100) + '%'

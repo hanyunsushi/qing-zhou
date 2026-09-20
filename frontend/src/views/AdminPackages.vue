@@ -28,13 +28,14 @@
           </div>
           <div class="lc-meta" style="color:var(--text-2);">
             <span class="kv">{{ fmtTotal(p.traffic_bytes) }}</span>
+            <span v-if="p.type === 'plan'" class="kv">Edge {{ p.edge_request_limit ? p.edge_request_limit.toLocaleString() + ' 次' : '不限' }}</span>
             <span v-if="p.duration_days" class="kv">{{ p.duration_days }}天</span>
             <span v-if="p.type === 'plan' && p.queue_key" class="kv">续期组 <b>{{ p.queue_key }}</b></span>
           </div>
           <!-- 多时长套餐：把每档时长的价格摊开，免得只看到默认那档 -->
           <div v-if="p.options?.length > 1" class="lc-opts">
             <span v-for="(o, i) in p.options" :key="o.days" class="opt-chip" :class="{ def: i === 0 }">
-              {{ o.days }}天 · {{ o.price_points }}分 · {{ fmtTotal(o.traffic_bytes) }}
+              {{ o.days }}天 · {{ o.price_points }}分 · {{ fmtTotal(o.traffic_bytes) }} · Edge {{ o.edge_request_limit ? o.edge_request_limit.toLocaleString() + ' 次' : '不限' }}
             </span>
           </div>
           <div v-if="p.user_group_ids?.length" class="lc-meta" style="color:var(--text-3);">
@@ -85,12 +86,13 @@
         <n-form-item v-if="form.type==='plan'" label="时长/价格">
           <div style="width:100%;">
             <div class="opt-head">
-              <span>天数</span><span>流量 (GB)</span><span>积分</span><span />
+              <span>天数</span><span>流量 (GB)</span><span>积分</span><span>Edge 请求次数</span><span />
             </div>
             <div v-for="(o, i) in form.options" :key="i" class="opt-row">
               <n-input-number v-model:value="o.days" :min="1" :show-button="false" placeholder="30" />
               <n-input-number v-model:value="o.traffic_gb" :min="0.01" :show-button="false" placeholder="100" />
               <n-input-number v-model:value="o.price" :min="0" :show-button="false" placeholder="100" />
+              <n-input-number v-model:value="o.edge_requests" :min="0" :show-button="false" placeholder="0 = 不限" />
               <n-button quaternary size="small" :disabled="form.options.length <= 1"
                         title="删除该档" @click="removeOption(i)">✕</n-button>
             </div>
@@ -158,8 +160,8 @@ const saving = ref(false)
 const reordering = ref(false)
 const showForm = ref(false)
 const editing = ref<any>(null)
-type OptRow = { days: number | null; traffic_gb: number | null; price: number | null }
-const form = reactive({ name: '', type: 'traffic', queue_key: '', description: '', highlights: [] as string[], traffic_gb: 100, days: 30, price: 100, stock: -1, options: [] as OptRow[], group_ids: [] as number[], user_group_ids: [] as number[] })
+type OptRow = { days: number | null; traffic_gb: number | null; price: number | null; edge_requests: number | null }
+const form = reactive({ name: '', type: 'traffic', queue_key: '', description: '', highlights: [] as string[], traffic_gb: 100, days: 30, price: 100, edge_requests: 0, stock: -1, options: [] as OptRow[], group_ids: [] as number[], user_group_ids: [] as number[] })
 
 const GB = 1024 * 1024 * 1024
 
@@ -174,9 +176,10 @@ function addOption(days?: number) {
       days,
       traffic_gb: Math.round((first.traffic_gb || 0) * k * 100) / 100,
       price: Math.round((first.price || 0) * k),
+      edge_requests: first.edge_requests || 0,
     })
   } else {
-    form.options.push({ days: days || null, traffic_gb: first?.traffic_gb ?? 100, price: first?.price ?? 0 })
+    form.options.push({ days: days || null, traffic_gb: first?.traffic_gb ?? 100, price: first?.price ?? 0, edge_requests: first?.edge_requests ?? 0 })
   }
 }
 function removeOption(i: number) {
@@ -198,8 +201,8 @@ function userGroupNames(ids: number[]) {
 // 切成「订阅计划」时表格里是原来的数，而不是空的。
 function optRowsOf(pkg?: any): OptRow[] {
   const opts = Array.isArray(pkg?.options) ? pkg.options : []
-  if (opts.length) return opts.map((o: any) => ({ days: o.days, traffic_gb: (o.traffic_bytes || 0) / GB, price: o.price_points || 0 }))
-  return [{ days: pkg?.duration_days || 30, traffic_gb: pkg ? (pkg.traffic_bytes || 0) / GB : 100, price: pkg?.price_points ?? 100 }]
+  if (opts.length) return opts.map((o: any) => ({ days: o.days, traffic_gb: (o.traffic_bytes || 0) / GB, price: o.price_points || 0, edge_requests: o.edge_request_limit || 0 }))
+  return [{ days: pkg?.duration_days || 30, traffic_gb: pkg ? (pkg.traffic_bytes || 0) / GB : 100, price: pkg?.price_points ?? 100, edge_requests: pkg?.edge_request_limit || 0 }]
 }
 
 function openForm(pkg?: any) {
@@ -209,12 +212,12 @@ function openForm(pkg?: any) {
       name: pkg.name, type: pkg.type, queue_key: pkg.queue_key || '', description: pkg.description || '',
       highlights: Array.isArray(pkg.highlights) ? [...pkg.highlights] : [],
       traffic_gb: (pkg.traffic_bytes || 0) / GB, days: pkg.duration_days || 0,
-      price: pkg.price_points || 0, stock: pkg.stock ?? -1,
+      price: pkg.price_points || 0, edge_requests: pkg.edge_request_limit || 0, stock: pkg.stock ?? -1,
       options: optRowsOf(pkg),
       group_ids: pkg.group_ids || [], user_group_ids: pkg.user_group_ids || [],
     })
   } else {
-    Object.assign(form, { name: '', type: 'traffic', queue_key: '', description: '', highlights: [], traffic_gb: 100, days: 30, price: 100, stock: -1, options: optRowsOf(), group_ids: [], user_group_ids: [] })
+    Object.assign(form, { name: '', type: 'traffic', queue_key: '', description: '', highlights: [], traffic_gb: 100, days: 30, price: 100, edge_requests: 0, stock: -1, options: optRowsOf(), group_ids: [], user_group_ids: [] })
   }
   showForm.value = true
 }
@@ -222,11 +225,11 @@ function openForm(pkg?: any) {
 async function handleSave() {
   saving.value = true
   try {
-    const { traffic_gb, days, price, options, ...rest } = form
+    const { traffic_gb, days, price, edge_requests, options, ...rest } = form
     const isPlan = form.type === 'plan'
     // 计划的价格/流量/天数都来自档位表；单档不写 options，存成普通套餐。
     const opts = isPlan
-      ? options.map(o => ({ days: o.days || 0, price_points: o.price || 0, traffic_bytes: Math.round((o.traffic_gb || 0) * GB) }))
+      ? options.map(o => ({ days: o.days || 0, price_points: o.price || 0, traffic_bytes: Math.round((o.traffic_gb || 0) * GB), edge_request_limit: o.edge_requests || 0 }))
       : []
     const first = opts[0]
     const body = {
@@ -236,6 +239,7 @@ async function handleSave() {
       traffic_bytes: isPlan ? (first?.traffic_bytes || 0) : Math.round(traffic_gb * GB),
       duration_days: isPlan ? (first?.days || 0) : days,
       price_points: isPlan ? (first?.price_points || 0) : price,
+      edge_request_limit: isPlan ? (first?.edge_request_limit || 0) : (edge_requests || 0),
     }
     if (editing.value) await apiPut(`/api/admin/packages/${editing.value.id}`, body)
     else await apiPost('/api/admin/packages', body)
@@ -309,7 +313,7 @@ onMounted(load)
 /* 时长档位表：三列等宽 + 删除按钮，列头只写一次 */
 .opt-head, .opt-row {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 28px;
+  grid-template-columns: 0.8fr 1fr 0.8fr 1.25fr 28px;
   gap: 6px;
   align-items: center;
 }

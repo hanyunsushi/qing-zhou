@@ -97,6 +97,7 @@ CREATE TABLE IF NOT EXISTS packages (
   highlights    TEXT    NOT NULL DEFAULT '',   -- JSON array of selling-point bullets
   price_points  INTEGER NOT NULL DEFAULT 0,
   traffic_bytes INTEGER NOT NULL DEFAULT 0,
+  edge_request_limit INTEGER NOT NULL DEFAULT 0, -- 0 = unlimited Edge requests
   device_add    INTEGER NOT NULL DEFAULT 0, -- unused; see device_addons below
   duration_days INTEGER NOT NULL DEFAULT 0,
   duration_options TEXT NOT NULL DEFAULT '', -- JSON array of selectable durations; '' = single duration
@@ -413,6 +414,8 @@ CREATE TABLE IF NOT EXISTS user_plans (
   client_uuid    TEXT    NOT NULL DEFAULT '',
   client_secret  TEXT    NOT NULL DEFAULT '',
   traffic_limit  INTEGER NOT NULL DEFAULT 0,
+  edge_request_limit INTEGER NOT NULL DEFAULT 0, -- 0 = unlimited Edge requests
+  edge_requests_used INTEGER NOT NULL DEFAULT 0,
   used_up        INTEGER NOT NULL DEFAULT 0,
   used_down      INTEGER NOT NULL DEFAULT 0,
   expiry_at      INTEGER NOT NULL DEFAULT 0,        -- 0 = never
@@ -443,6 +446,17 @@ CREATE TABLE IF NOT EXISTS plan_identities (
   created_at       INTEGER NOT NULL,
   updated_at       INTEGER NOT NULL,
   PRIMARY KEY (user_id, package_id)
+);
+
+-- Idempotency ledger for the 15-minute EdgeTunnel usage callbacks. Request
+-- counters themselves live on user_plans so a queue handoff starts a fresh
+-- allowance without resetting historical batches.
+CREATE TABLE IF NOT EXISTS edge_request_batches (
+  batch_id     TEXT PRIMARY KEY,
+  source       TEXT NOT NULL,
+  period_start INTEGER NOT NULL DEFAULT 0,
+  period_end   INTEGER NOT NULL DEFAULT 0,
+  created_at   INTEGER NOT NULL
 );
 
 -- Protocol credentials accepted temporarily after a credential/model upgrade.
@@ -869,6 +883,7 @@ func (s *Store) Migrate() error {
 		// '' keeps the package single-duration, priced by its own columns — which is
 		// exactly what every pre-existing row is.
 		`ALTER TABLE packages ADD COLUMN duration_options TEXT NOT NULL DEFAULT ''`,
+		`ALTER TABLE packages ADD COLUMN edge_request_limit INTEGER NOT NULL DEFAULT 0`,
 		`ALTER TABLE sb_inbounds ADD COLUMN server_id INTEGER NOT NULL DEFAULT 0`,
 		// Relay chaining: an inbound with upstream_inbound_id != 0 forwards its
 		// traffic to that landing inbound instead of exiting directly. relay_secret
@@ -1028,6 +1043,8 @@ func (s *Store) Migrate() error {
 		// default preserves existing subscriptions and makes new purchases opt out
 		// only when the user explicitly disables automatic renewal.
 		`ALTER TABLE user_plans ADD COLUMN auto_renew INTEGER NOT NULL DEFAULT 1`,
+		`ALTER TABLE user_plans ADD COLUMN edge_request_limit INTEGER NOT NULL DEFAULT 0`,
+		`ALTER TABLE user_plans ADD COLUMN edge_requests_used INTEGER NOT NULL DEFAULT 0`,
 		// A proxy_username must be globally unique (it becomes a stats identity);
 		// partial index so the many empty defaults don't collide.
 		`CREATE UNIQUE INDEX IF NOT EXISTS idx_user_plans_proxy_username ON user_plans(proxy_username) WHERE proxy_username <> ''`,

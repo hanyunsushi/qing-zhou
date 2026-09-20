@@ -1,12 +1,18 @@
 ---
 title: User Plans API
-updated: 2026-09-16
+updated: 2026-09-20
 source_commit: 834cd3e
 ---
 
 # User Plans API
 
 All endpoints require a logged-in browser session and reject API-token authentication.
+
+Plan packages may define `edge_request_limit`; each duration option carries its
+own value. `0` means unlimited. A purchased or manually assigned plan snapshots
+the selected limit into its bucket, so later package edits do not rewrite an
+existing entitlement. Active plan views expose `edge_request_limit` and
+`edge_requests_used`; the dashboard exposes the aggregate `edge_requests` view.
 
 ## List plans
 

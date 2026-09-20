@@ -14,6 +14,13 @@
 - 发布前回滚材料位于 `/opt/qingzhou/backups/binary-upstream-47cd5a3-20260920-100745/`，包含旧二进制、SQLite 一致性快照、环境文件、两个 systemd unit 和 `/etc/qingzhou-sing-box`；快照 `PRAGMA integrity_check` 为 `ok`。只重启了 `qingzhou.service`，未重启 sing-box，未覆盖数据库、凭据、节点配置或服务定义。
 - 发布后本机与 `https://proxy.kreeper.cc/api/health` 均返回 `v0.2.80-kreeper-47cd5a3`，`qingzhou.service`、`qingzhou-sing-box.service` 和 `cloudflared.service` 均为 active；`127.0.0.1:8081`、`*:8882`、`127.0.0.1:18082` 正常监听。
 
+## 2026-09-20 EdgeTunnel 请求次数对接（源码已实现，尚未部署）
+
+- QingZhou 对匹配 `edge.kreeper.cc` 的外部节点按用户改写 Edge 凭据，并在 VLESS、Trojan、Hysteria2、AnyTLS、TUIC、SS 和 VMess 链接中写入 `edge_user`；VMess 的协议 `id` 同步改写。
+- `EdgeUUIDForUser` 使用用户 ID 的前 48 位、RFC 4122 版本/变体位和 HMAC-SHA256 前 8 字节；HMAC 输入为 `edge:` 加 8 字节大端用户 ID。EdgeTunnel Worker 已用同一算法校验，避免因 UUID 保留位或文本/二进制编码差异导致用户无法入账。
+- `/api/internal/edge/usage` 按 `batch_id` 幂等接收 15 分钟批次，按当前生效套餐扣减次数，返回超额用户；套餐与时长选项的 `edge_request_limit=0` 表示不限。
+- 全量 Go、前端测试、类型检查和构建均通过；生产环境变量 `QZ_EDGE_SECRET`、`QZ_EDGE_USAGE_TOKEN` 与 EdgeTunnel 对应变量尚未配置，本轮不部署。
+
 ## 2026-09-18 首页上游余额卡十进制显示修复
 
 - 发现上一轮只修改了“上游管理”页面，首页“服务器监控”中的上游余额卡仍调用旧的二进制 `fmtBytes`；本轮源码提交 `98b6c6b` 已将首页 OCI 余额、总额和官方已用改为十进制 `fmtDecimalBytes`，服务器内存、磁盘、网速和用户流量显示保持原格式。
@@ -58,6 +65,7 @@
 | 套餐自动续订 | 用户订阅卡片默认开启，按续期组统一设置 | [autorenew.go](internal/store/autorenew.go)、[user.go](internal/api/user.go)、[页面](frontend/src/views/UserSub.vue) |
 | Clash 订阅显示名 | 站点名不再追加 `.yaml`；Sing-box、Surge、Base64 保留各自扩展名 | [subinfo.go](internal/api/subinfo.go)、[测试](internal/api/subinfo_test.go) |
 | Clash 节点排序 | 外部与自建节点统一按 `nodes.sort_order` 输出；订阅源刷新保留已有链接顺序 | [user.go](internal/api/user.go)、[nodes.go](internal/store/nodes.go)、[测试](internal/api/node_order_test.go)、[测试](internal/store/source_order_test.go) |
+| Edge 请求次数回传 | 按用户改写 Edge 外部节点凭据；15 分钟批量回传、幂等入账和套餐次数上限 | [edge.go](internal/api/edge.go)、[edge_usage.go](internal/api/edge_usage.go)、[测试](internal/api/edge_test.go) |
 
 模板开关只控制 Clash 输出。不开启时保留官方分组逻辑；开启后 `all` 按用户授权节点展开，不注入原生选择/固定/故障转移/AI 组及 AI 规则。模板已有的 MATCH 保持最后一条；没有 MATCH 时使用模板首组作为兜底。空节点组回退 DIRECT，模板组名与节点重名时节点被去重。Sing-box 输出和服务端节点安全不受影响。
 
@@ -79,6 +87,7 @@ ACL4SSR 模板及订阅名称保存在运行时数据库，不在源码中硬编
 8. **订阅节点排序修复**：订阅聚合不再把自建节点统一追加到外部节点之后；所有可访问节点按管理后台保存的全局 `sort_order` 输出。节点来源刷新按 `share_link` 保留已有节点的排序，新节点追加到当前最大排序值之后。
 9. **监控首页上游余额卡片**：管理员在“服务器监控”的“面板本机”右侧看到合并 OCI/Cloudflare 的上游余额卡片；数据直接调用上游刷新 API，公开监控页不加载供应商账户用量。卡片内子项支持拖动排序并每 15 分钟自动刷新。
 10. **余额与节点拖动排序**：上游管理页和监控首页共用设置键 `admin_upstream_balance_order` 保存 OCI/Cloudflare 顺序；节点管理卡片改为原生拖放，完整节点 ID 顺序仍通过 `/api/admin/nodes/reorder` 写入全局 `nodes.sort_order`。
+11. **Edge 请求次数回传**：匹配 `edge.kreeper.cc` 的外部节点按用户生成带 HMAC 的 `edge_user` UUID；EdgeTunnel 对 WebSocket、gRPC 和 XHTTP 请求按一次计数，15 分钟批量回传 QingZhou，套餐的 `edge_request_limit` 控制每用户次数，`0` 表示不限。此功能不改变 OCI 字节统计，也不在每个代理请求中调用 QingZhou。
 
 ### 生产部署合同
 

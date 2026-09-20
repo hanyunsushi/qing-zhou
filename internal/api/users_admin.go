@@ -82,7 +82,7 @@ func adminPlanRollupOf(buckets []*store.Bucket) adminPlanRollup {
 			continue
 		case b.Status == "queued":
 			s.Queued++
-		case !b.NotExpired(now) || !b.HasQuota():
+		case !b.NotExpired(now) || !b.HasQuota() || !b.HasEdgeQuota():
 			s.Finished++
 		default:
 			s.Active++
@@ -162,6 +162,7 @@ func adminUserViewWithWindow(u *store.User, groupIDs []int64, buckets []*store.B
 			"free_used": freeUsed,
 		}
 		v["plan_summary"] = adminPlanRollupOf(buckets)
+		v["edge_requests"] = edgeRequestView(buckets)
 	}
 	return v
 }

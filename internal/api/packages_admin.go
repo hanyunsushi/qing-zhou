@@ -39,6 +39,12 @@ func validatePackage(p *store.Package) string {
 	if p.TrafficBytes <= 0 {
 		return "流量必须大于 0"
 	}
+	if p.Type != "plan" && p.EdgeRequestLimit != 0 {
+		return "只有订阅计划支持 Edge 请求次数上限"
+	}
+	if p.EdgeRequestLimit < 0 {
+		return "Edge 请求次数上限不能为负（0 表示不限）"
+	}
 	if p.DurationDays < 0 {
 		return "有效期不能为负"
 	}
@@ -84,6 +90,9 @@ func validateOptions(p *store.Package) string {
 		}
 		if o.TrafficBytes <= 0 {
 			return "每个时长选项的流量必须大于 0"
+		}
+		if o.EdgeRequestLimit < 0 {
+			return "每个时长选项的 Edge 请求次数上限不能为负（0 表示不限）"
 		}
 	}
 	return ""
