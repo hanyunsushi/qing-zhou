@@ -5,6 +5,21 @@ updated: 2026-09-20
 
 # QingZhou Deployment and Artifact Retention
 
+## 2026-09-20 China return selector default
+
+Source `82a741e` is deployed as Linux ARM64
+`v0.2.80-kreeper-82a741e` at `/opt/qingzhou/qingzhou`. The active binary
+SHA-256 is `905021ee4a4756b1fccfbbbf14f4cb3542e71ec2caeb61a91e90ef212b7af544`.
+The `🇨🇳 中国节点` Clash selector now follows the normal node selector and
+defaults to `DIRECT`; `🏠🇨🇳中国-境外回国` remains available as the second manual
+choice. Rollback material is at
+`/opt/qingzhou/backups/cn-return-direct-82a741e-20260920-122438/`.
+
+Only `qingzhou.service` was restarted. The database snapshot passed
+`PRAGMA integrity_check`; `qingzhou.service`, `qingzhou-sing-box.service` and
+`cloudflared.service` are active. Local and public `/api/health` return the new
+version, and ports `8081`, `8882` and `18082` remain listening.
+
 ## 2026-09-20 Daily Edge quota release
 
 Source `19b76b2` is deployed as Linux ARM64

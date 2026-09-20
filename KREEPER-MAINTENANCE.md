@@ -6,6 +6,7 @@
 - 渲染器使用 Loyalsoldier `clash-rules` 的 `direct.txt` 和 `cncidr.txt` 作为中国域名/IP规则集，并在现有私有网段/广告规则之后、其他管理员规则之前插入规则；同时保留 `GEOSITE,CN` 与 `GEOIP,CN` 兜底。这样用户只需在 `🇨🇳 中国节点` 组内选择 `🏠🇨🇳中国-境外回国`，其他策略组不变。
 - 私有键会从输出中删除，不会泄露到客户端配置；未填写时渲染行为保持不变。源码提交 `e6e1343` 已构建为 ARM64 `v0.2.80-kreeper-e6e1343` 并部署到 `/opt/qingzhou/qingzhou`，active SHA-256 为 `0a5fc2eb9f4e13373d66a887ccc3aafeae4608b9be0383159a61b167ce28d34d`。生产节点 ID 为 `971`，数据库备份位于 `/opt/qingzhou/backups/cn-return-db-20260920-092649/`，二进制回滚包位于 `/opt/qingzhou/backups/cn-return-e6e1343-20260920-093153/`。
 - 本机 Mac sing-box 使用受限回环 `127.0.0.1:18080` 的 VLESS+WebSocket 入站；专用 Tunnel `mac-cn-return`（ID `31fb9cb1-d82c-41c2-95d3-01b26cb55a83`）已配置 `cn-return.kreeper.cc` ingress，连接器由 macOS LaunchAgent `com.cloudflare.mac-cn-return` 持久化并保持 healthy。Cloudflare 权威 DNS 当前仍对 `cn-return.kreeper.cc` 返回 NXDOMAIN，DNS 写权限不足是公网连通验收的唯一阻塞；补 DNS 后需重新验证 TLS、WebSocket、Clash 节点握手和中国出口 IP。
+- 后续修正已将 `🇨🇳 中国节点` 放在普通节点选择组之后，并固定成员顺序为 `DIRECT`、`🏠🇨🇳中国-境外回国`；因此新渲染订阅默认国内直连，用户仍可手动切换该组到回国节点。源码 `82a741e` 已构建并发布为 `v0.2.80-kreeper-82a741e`，active 二进制 SHA-256 为 `905021ee4a4756b1fccfbbbf14f4cb3542e71ec2caeb61a91e90ef212b7af544`，回滚材料位于 `/opt/qingzhou/backups/cn-return-direct-82a741e-20260920-122438/`；公网健康接口已返回新版本，三个服务均 active。
 
 ## 2026-09-20 OCI 默认额度修正为二进制 10 TB
 

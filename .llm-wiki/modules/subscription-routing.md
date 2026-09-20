@@ -18,7 +18,7 @@ x-qingzhou-cn-return-node: 🏠🇨🇳中国-境外回国
 
 ## 生成结果
 
-渲染器会生成固定名称 `🇨🇳 中国节点` 的 `select` 组，成员为配置的节点和 `DIRECT`，并从客户端输出中移除私有键。它还加入两个远程 provider：
+渲染器会生成固定名称 `🇨🇳 中国节点` 的 `select` 组，并把它放在普通节点选择组之后；成员顺序固定为 `DIRECT`、配置的节点，因此新订阅默认国内直连。用户手动选择回国节点后才会改变中国规则的出口。私有键会从客户端输出中移除。它还加入两个远程 provider：
 
 - `https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/direct.txt`：中国域名列表。
 - `https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/cncidr.txt`：中国 IP 段列表。
