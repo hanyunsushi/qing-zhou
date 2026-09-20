@@ -1,9 +1,19 @@
 ---
 title: QingZhou Deployment and Artifact Retention
-updated: 2026-09-18
+updated: 2026-09-20
 ---
 
 # QingZhou Deployment and Artifact Retention
+
+## 2026-09-20 Edge usage callback configuration
+
+QingZhou production is paired with the EdgeTunnel Pages production secrets
+`EDGE_QZ_SECRET`, `EDGE_QZ_USAGE_TOKEN` and
+`EDGE_QZ_USAGE_URL=https://proxy.kreeper.cc/api/internal/edge/usage`.
+QingZhou uses the matching `QZ_EDGE_SECRET`, `QZ_EDGE_USAGE_TOKEN` and
+`QZ_EDGE_USAGE_URL` values. The running panel version is
+`v0.2.80-kreeper-68f7055`. A signed empty-batch request returned `400`, which
+confirmed authentication and endpoint reachability without recording usage.
 
 ## 2026-09-20 Binary byte display correction
 

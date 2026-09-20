@@ -14,12 +14,13 @@
 - 发布前回滚材料位于 `/opt/qingzhou/backups/binary-upstream-47cd5a3-20260920-100745/`，包含旧二进制、SQLite 一致性快照、环境文件、两个 systemd unit 和 `/etc/qingzhou-sing-box`；快照 `PRAGMA integrity_check` 为 `ok`。只重启了 `qingzhou.service`，未重启 sing-box，未覆盖数据库、凭据、节点配置或服务定义。
 - 发布后本机与 `https://proxy.kreeper.cc/api/health` 均返回 `v0.2.80-kreeper-47cd5a3`，`qingzhou.service`、`qingzhou-sing-box.service` 和 `cloudflared.service` 均为 active；`127.0.0.1:8081`、`*:8882`、`127.0.0.1:18082` 正常监听。
 
-## 2026-09-20 EdgeTunnel 请求次数对接（源码已实现，尚未部署）
+## 2026-09-20 EdgeTunnel 请求次数对接（已部署）
 
 - QingZhou 对匹配 `edge.kreeper.cc` 的外部节点按用户改写 Edge 凭据，并在 VLESS、Trojan、Hysteria2、AnyTLS、TUIC、SS 和 VMess 链接中写入 `edge_user`；VMess 的协议 `id` 同步改写。
 - `EdgeUUIDForUser` 使用用户 ID 的前 48 位、RFC 4122 版本/变体位和 HMAC-SHA256 前 8 字节；HMAC 输入为 `edge:` 加 8 字节大端用户 ID。EdgeTunnel Worker 已用同一算法校验，避免因 UUID 保留位或文本/二进制编码差异导致用户无法入账。
 - `/api/internal/edge/usage` 按 `batch_id` 幂等接收 15 分钟批次，按当前生效套餐扣减次数，返回超额用户；套餐与时长选项的 `edge_request_limit=0` 表示不限。
-- 全量 Go、前端测试、类型检查和构建均通过；生产环境变量 `QZ_EDGE_SECRET`、`QZ_EDGE_USAGE_TOKEN` 与 EdgeTunnel 对应变量尚未配置，本轮不部署。
+- 全量 Go、前端测试、类型检查和构建均通过；生产环境已配置 `QZ_EDGE_SECRET`、`QZ_EDGE_USAGE_TOKEN` 和 `QZ_EDGE_USAGE_URL`，运行版本为 `v0.2.80-kreeper-68f7055`。
+- EdgeTunnel Pages Production 已配置 `EDGE_QZ_SECRET`、`EDGE_QZ_USAGE_TOKEN` 和 `EDGE_QZ_USAGE_URL=https://proxy.kreeper.cc/api/internal/edge/usage`。真实签名空批次请求返回 `400`，认证链路与接口可达性已核验，未产生用量记录。
 
 ## 2026-09-18 首页上游余额卡十进制显示修复
 
