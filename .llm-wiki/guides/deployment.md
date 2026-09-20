@@ -5,6 +5,29 @@ updated: 2026-09-20
 
 # QingZhou Deployment and Artifact Retention
 
+## 2026-09-20 Daily Edge quota release
+
+Source `19b76b2` is deployed as Linux ARM64
+`v0.2.80-kreeper-19b76b2` at `/opt/qingzhou/qingzhou`. The active binary
+SHA-256 is `73564ab342afeab3d251dbf6d2e3ad4458b95c5b7470bc628bc5636c7312ed0b`.
+Rollback material is at
+`/opt/qingzhou/backups/edge-daily-19b76b2-20260920-072024/`; it includes the
+previous binary, database files, environment file, systemd units and native
+sing-box configuration. The panel uses the existing host-service path and only
+`qingzhou.service` was restarted.
+
+Local and public health checks return `v0.2.80-kreeper-19b76b2`. The three
+related services are active and ports `8081`, `8882` and `18082` are listening.
+`edge_request_limit` is now a per-UTC-day limit; `edge_usage_day` scopes the
+current-day counter, while the ordinary package `duration_days/expiry_at`
+continues to control the shared traffic and plan validity period.
+
+Follow-up source `b5c4d95` fixes user/admin plan-state checks after the UTC day
+changes. It is deployed as `v0.2.80-kreeper-b5c4d95` with active binary
+SHA-256 `1308641fe1454701c273bdb290f088ccf1490a5277627ef8c04bf3be4e06976a`.
+Rollback material is at
+`/opt/qingzhou/backups/edge-daily-b5c4d95-20260920-073326/`.
+
 ## 2026-09-20 Edge usage callback configuration
 
 QingZhou production is paired with the EdgeTunnel Pages production secrets

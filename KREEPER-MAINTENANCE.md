@@ -21,6 +21,9 @@
 - `/api/internal/edge/usage` 按 `batch_id` 幂等接收 15 分钟批次，按批次 `usage_day`（UTC 日期）扣减每日次数，返回当日超额用户；套餐与时长选项的 `edge_request_limit=0` 表示不限。套餐原有 `duration_days/expiry_at` 仍统一控制流量和套餐有效期，每日 Edge 超限不会推进排队套餐。
 - 全量 Go、前端测试、类型检查和构建均通过；生产环境已配置 `QZ_EDGE_SECRET`、`QZ_EDGE_USAGE_TOKEN` 和 `QZ_EDGE_USAGE_URL`，运行版本为 `v0.2.80-kreeper-68f7055`。
 - EdgeTunnel Pages Production 已配置 `EDGE_QZ_SECRET`、`EDGE_QZ_USAGE_TOKEN` 和 `EDGE_QZ_USAGE_URL=https://proxy.kreeper.cc/api/internal/edge/usage`。真实签名空批次请求返回 `400`，认证链路与接口可达性已核验，未产生用量记录。
+- 源码 `19b76b2` 已构建为 Linux ARM64 `v0.2.80-kreeper-19b76b2` 并部署到 `/opt/qingzhou/qingzhou`；active 二进制 SHA-256 为 `73564ab342afeab3d251dbf6d2e3ad4458b95c5b7470bc628bc5636c7312ed0b`。发布备份位于 `/opt/qingzhou/backups/edge-daily-19b76b2-20260920-072024/`，包含旧二进制、数据库文件、环境文件、systemd 配置和 sing-box 配置。
+- 发布后本机与公网 `/api/health` 均返回 `v0.2.80-kreeper-19b76b2`；三个相关服务均 active，`8081`、`8882`、`18082` 正常监听，未产生启动错误。
+- 随后提交 `b5c4d95` 修正跨 UTC 日后的套餐状态判断，部署为 `v0.2.80-kreeper-b5c4d95`；active 二进制 SHA-256 为 `1308641fe1454701c273bdb290f088ccf1490a5277627ef8c04bf3be4e06976a`，备份位于 `/opt/qingzhou/backups/edge-daily-b5c4d95-20260920-073326/`。本机与公网健康检查、三个服务、三个监听端口和错误日志均正常。
 
 ## 2026-09-18 首页上游余额卡十进制显示修复
 
