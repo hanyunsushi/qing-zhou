@@ -156,7 +156,8 @@ const (
 // manual selector and CN rules. Keeping this in the renderer means the same
 // setting works with both the built-in and administrator-supplied templates.
 func injectCNReturnRouting(doc map[string]any, nodeName string) {
-	groups := mapSlice(doc["proxy-groups"])
+	rawGroups := doc["proxy-groups"]
+	groups := mapSlice(rawGroups)
 	found := false
 	for _, group := range groups {
 		if name, _ := group["name"].(string); name != cnReturnGroup {
@@ -168,13 +169,23 @@ func injectCNReturnRouting(doc map[string]any, nodeName string) {
 		break
 	}
 	if !found {
-		groups = append(groups, map[string]any{
+		group := map[string]any{
 			"name":    cnReturnGroup,
 			"type":    "select",
 			"proxies": []any{nodeName, "DIRECT"},
-		})
+		}
+		switch raw := rawGroups.(type) {
+		case []any:
+			raw = append(raw, group)
+			doc["proxy-groups"] = raw
+		case []map[string]any:
+			doc["proxy-groups"] = append(raw, group)
+		default:
+			doc["proxy-groups"] = []any{group}
+		}
+	} else {
+		doc["proxy-groups"] = rawGroups
 	}
-	doc["proxy-groups"] = groups
 
 	providers, _ := doc["rule-providers"].(map[string]any)
 	if providers == nil {

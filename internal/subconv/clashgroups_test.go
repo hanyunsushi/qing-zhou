@@ -241,6 +241,9 @@ rules:
 		rules[4] != "GEOSITE,CN,"+cnReturnGroup {
 		t.Fatalf("CN return rule order = %v", rules)
 	}
+	if rules[len(rules)-1] != "MATCH,🚀 节点选择" {
+		t.Fatalf("existing catch-all moved unexpectedly: %v", rules)
+	}
 }
 
 func TestClashCNReturnRoutingAugmentsExistingGroup(t *testing.T) {
