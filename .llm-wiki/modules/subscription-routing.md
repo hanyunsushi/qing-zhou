@@ -11,7 +11,7 @@ QingZhou 的 Clash/Mihomo renderer 支持一个模板级 opt-in，用于在统�
 在管理员的「系统设置 → Clash 模板（YAML）」中加入：
 
 ```yaml
-x-qingzhou-cn-return-node: CN-Mac-CF
+x-qingzhou-cn-return-node: 🏠🇨🇳中国-境外回国
 ```
 
 其中值必须与 QingZhou 节点管理中的实际节点名完全一致。节点仍需加入用户能够访问的原有节点组。
@@ -25,7 +25,7 @@ x-qingzhou-cn-return-node: CN-Mac-CF
 
 规则顺序为私有网段/广告规则、CN 域名/IP provider、`GEOSITE,CN`/`GEOIP,CN` 兜底、其余管理员规则和最终 MATCH。这样历史模板中的 `CN,DIRECT` 不会先于回国规则命中。
 
-用户在 Clash 中选择 `🇨🇳 中国节点 → CN-Mac-CF` 后，中国网站走该节点；其他规则仍使用原来的策略组。选择 `DIRECT` 只改变中国规则，其他策略组不受影响。
+用户在 Clash 中选择 `🇨🇳 中国节点 → 🏠🇨🇳中国-境外回国` 后，中国网站走该节点；其他规则仍使用原来的策略组。选择 `DIRECT` 只改变中国规则，其他策略组不受影响。
 
 ## 边界
 

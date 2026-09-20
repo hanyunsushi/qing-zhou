@@ -206,7 +206,7 @@ rules: []
 func TestClashCNReturnRoutingIsTemplateOptIn(t *testing.T) {
 	tpl := `
 x-qingzhou-template-groups: true
-x-qingzhou-cn-return-node: CN-Mac-CF
+x-qingzhou-cn-return-node: 🏠🇨🇳中国-境外回国
 proxy-groups:
   - name: 🚀 节点选择
     type: select
@@ -226,7 +226,7 @@ rules:
 		t.Fatalf("CN return group missing: %v", group)
 	}
 	members, _ := group["proxies"].([]any)
-	if len(members) != 2 || members[0] != "CN-Mac-CF" || members[1] != "DIRECT" {
+	if len(members) != 2 || members[0] != "🏠🇨🇳中国-境外回国" || members[1] != "DIRECT" {
 		t.Fatalf("CN return group members = %v", members)
 	}
 	providers, _ := doc["rule-providers"].(map[string]any)
@@ -245,7 +245,7 @@ rules:
 
 func TestClashCNReturnRoutingAugmentsExistingGroup(t *testing.T) {
 	tpl := `
-x-qingzhou-cn-return-node: CN-Mac-CF
+x-qingzhou-cn-return-node: 🏠🇨🇳中国-境外回国
 proxy-groups:
   - name: 🇨🇳 中国节点
     type: select
@@ -255,7 +255,7 @@ rules: []
 	doc := renderClashDoc(t, tpl, nodeLinks()...)
 	group := groupByName(doc, cnReturnGroup)
 	members, _ := group["proxies"].([]any)
-	if len(members) != 2 || members[0] != "DIRECT" || members[1] != "CN-Mac-CF" {
+	if len(members) != 2 || members[0] != "DIRECT" || members[1] != "🏠🇨🇳中国-境外回国" {
 		t.Fatalf("existing CN group was not augmented: %v", members)
 	}
 }
