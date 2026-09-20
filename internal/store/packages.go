@@ -10,7 +10,8 @@ import (
 )
 
 // PlanOption is one purchasable duration of a plan package — "30 天 / 100GB /
-// 500 分". A package with options sells the same subscription at several lengths
+// 500 分". EdgeRequestLimit is a daily Edge request limit. A package with
+// options sells the same subscription at several lengths
 // so the buyer picks one at checkout instead of the admin publishing a separate
 // package per length. Traffic is per-option because a bucket's quota does not
 // reset inside its period: a 90-day option that kept the 30-day quota would be a
@@ -19,7 +20,7 @@ type PlanOption struct {
 	Days             int64 `json:"days"`
 	PricePoints      int64 `json:"price_points"`
 	TrafficBytes     int64 `json:"traffic_bytes"`
-	EdgeRequestLimit int64 `json:"edge_request_limit"`
+	EdgeRequestLimit int64 `json:"edge_request_limit"` // per UTC day; 0 = unlimited
 }
 
 type Package struct {

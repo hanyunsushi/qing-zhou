@@ -17,7 +17,7 @@ API or written to the database.
   "batch_id": "uuid-or-opaque-id",
   "period_start": 0,
   "period_end": 0,
-  "items": [{"external_id": "123", "requests": 42}]
+  "items": [{"external_id": "123", "usage_day": "2026-09-20", "requests": 42}]
 }
 ```
 
@@ -27,7 +27,12 @@ empty/duplicate user ids, non-positive counts and oversized values are rejected.
 
 Counts are applied to the user's active plan buckets in id order. A plan's
 `edge_request_limit=0` means unlimited for compatibility; a positive limit is
-copied from the package or selected duration option when the bucket is created.
+the daily UTC request allowance copied from the package or selected duration
+option when the bucket is created. `edge_requests_used` is the current day's
+counter, tagged by the internal `edge_usage_day` column and reset lazily at the
+next UTC date. The normal package `duration_days/expiry_at` remains the shared
+traffic and plan validity period; daily Edge exhaustion never advances a
+queued plan.
 The response returns `blocked_external_ids` for users whose finite active
 allowance is exhausted:
 

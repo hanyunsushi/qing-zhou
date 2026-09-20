@@ -72,7 +72,7 @@
 
           <div class="uc-block">
             <div class="uc-row">
-              <span class="uc-k">Edge 请求次数</span>
+              <span class="uc-k">每日 Edge 请求</span>
               <span class="uc-v">{{ edgeRequestMain(u) }}</span>
             </div>
             <div class="uc-note" :title="edgeRequestNote(u)">{{ edgeRequestNote(u) }}</div>
@@ -139,7 +139,7 @@
             <i class="pm-hint">含已结束的份与流量包{{ freeUsedText }}</i>
           </div>
           <div class="pm-stat">
-            <span class="pm-label">Edge 请求次数</span>
+            <span class="pm-label">每日 Edge 请求</span>
             <b class="pm-val">{{ plansUser ? edgeRequestMain(plansUser) : '—' }}</b>
             <i class="pm-hint">{{ plansUser ? edgeRequestNote(plansUser) : '' }}</i>
           </div>
@@ -441,7 +441,7 @@ function edgeRequestMain(u: any) {
 function edgeRequestNote(u: any) {
   const t = u?.edge_requests
   if (!t) return '次数数据读取失败'
-  return `已用 ${Number(t.used || 0).toLocaleString()} 次` + (t.unlimited ? '' : ` / ${Number(t.total || 0).toLocaleString()} 次`)
+  return `今日已用 ${Number(t.used || 0).toLocaleString()} 次` + (t.unlimited ? '' : ` / 每日 ${Number(t.total || 0).toLocaleString()} 次`)
 }
 function barWidth(u: any) {
   if (meteredOf(u)) return Math.min(usedPctOf(u), 100) + '%'

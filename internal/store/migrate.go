@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS packages (
   highlights    TEXT    NOT NULL DEFAULT '',   -- JSON array of selling-point bullets
   price_points  INTEGER NOT NULL DEFAULT 0,
   traffic_bytes INTEGER NOT NULL DEFAULT 0,
-  edge_request_limit INTEGER NOT NULL DEFAULT 0, -- 0 = unlimited Edge requests
+  edge_request_limit INTEGER NOT NULL DEFAULT 0, -- daily limit; 0 = unlimited Edge requests
   device_add    INTEGER NOT NULL DEFAULT 0, -- unused; see device_addons below
   duration_days INTEGER NOT NULL DEFAULT 0,
   duration_options TEXT NOT NULL DEFAULT '', -- JSON array of selectable durations; '' = single duration
@@ -414,8 +414,9 @@ CREATE TABLE IF NOT EXISTS user_plans (
   client_uuid    TEXT    NOT NULL DEFAULT '',
   client_secret  TEXT    NOT NULL DEFAULT '',
   traffic_limit  INTEGER NOT NULL DEFAULT 0,
-  edge_request_limit INTEGER NOT NULL DEFAULT 0, -- 0 = unlimited Edge requests
-  edge_requests_used INTEGER NOT NULL DEFAULT 0,
+  edge_request_limit INTEGER NOT NULL DEFAULT 0, -- daily limit; 0 = unlimited Edge requests
+  edge_requests_used INTEGER NOT NULL DEFAULT 0, -- usage for edge_usage_day
+  edge_usage_day TEXT NOT NULL DEFAULT '',        -- UTC day (YYYY-MM-DD)
   used_up        INTEGER NOT NULL DEFAULT 0,
   used_down      INTEGER NOT NULL DEFAULT 0,
   expiry_at      INTEGER NOT NULL DEFAULT 0,        -- 0 = never
@@ -1045,6 +1046,7 @@ func (s *Store) Migrate() error {
 		`ALTER TABLE user_plans ADD COLUMN auto_renew INTEGER NOT NULL DEFAULT 1`,
 		`ALTER TABLE user_plans ADD COLUMN edge_request_limit INTEGER NOT NULL DEFAULT 0`,
 		`ALTER TABLE user_plans ADD COLUMN edge_requests_used INTEGER NOT NULL DEFAULT 0`,
+		`ALTER TABLE user_plans ADD COLUMN edge_usage_day TEXT NOT NULL DEFAULT ''`,
 		// A proxy_username must be globally unique (it becomes a stats identity);
 		// partial index so the many empty defaults don't collide.
 		`CREATE UNIQUE INDEX IF NOT EXISTS idx_user_plans_proxy_username ON user_plans(proxy_username) WHERE proxy_username <> ''`,

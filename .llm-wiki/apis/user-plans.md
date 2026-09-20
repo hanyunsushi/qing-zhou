@@ -8,11 +8,13 @@ source_commit: 1083756
 
 All endpoints require a logged-in browser session and reject API-token authentication.
 
-Plan packages may define `edge_request_limit`; each duration option carries its
-own value. `0` means unlimited. A purchased or manually assigned plan snapshots
-the selected limit into its bucket, so later package edits do not rewrite an
-existing entitlement. Active plan views expose `edge_request_limit` and
-`edge_requests_used`; the dashboard exposes the aggregate `edge_requests` view.
+Plan packages may define `edge_request_limit` as a daily UTC Edge request limit;
+each duration option carries its own daily value. `0` means unlimited. A
+purchased or manually assigned plan snapshots the selected limit into its
+bucket, so later package edits do not rewrite an existing entitlement. Active
+plan views expose `edge_request_limit` and the current-day `edge_requests_used`;
+the dashboard exposes the aggregate `edge_requests` view. The ordinary package
+`duration_days/expiry_at` remains the shared traffic and plan validity period.
 
 ## List plans
 

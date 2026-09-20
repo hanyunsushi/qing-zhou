@@ -20,7 +20,7 @@
       <div class="sub-stat"><span>生效套餐</span><b>{{ activePlanCount }}</b><small>排队 {{ queuedPlanCount }} 份</small></div>
       <div class="sub-stat"><span>可用节点</span><b>{{ enabledNodeCount }} / {{ nodes.length }}</b><small>禁用 {{ disabledNodeCount }} 个</small></div>
       <div class="sub-stat"><span>代理入口</span><b>{{ proxies.length }}</b><small>HTTP / SOCKS5 / HTTPS</small></div>
-      <div class="sub-stat"><span>Edge 请求次数</span><b>{{ edgeRequests.unlimited ? '不限' : edgeRequests.remaining.toLocaleString() + ' 次' }}</b><small>已用 {{ edgeRequests.used.toLocaleString() }} 次</small></div>
+      <div class="sub-stat"><span>每日 Edge 请求</span><b>{{ edgeRequests.unlimited ? '不限' : edgeRequests.remaining.toLocaleString() + ' 次' }}</b><small>今日已用 {{ edgeRequests.used.toLocaleString() }} 次</small></div>
     </div>
 
     <!-- 订阅链接 -->
@@ -516,7 +516,7 @@ function segRange(p: any): string {
 // 一段用掉了多少。排队中的还没开始计量，只报待用额度。
 function segUsage(p: any): string {
   if (p.status === 'queued') return '待用流量 ' + fmtTotal(p.traffic_limit)
-  const edge = p.edge_request_limit ? ` · Edge 已用 ${Number(p.edge_requests_used || 0).toLocaleString()} / ${Number(p.edge_request_limit).toLocaleString()} 次` : ''
+  const edge = p.edge_request_limit ? ` · 每日 Edge 已用 ${Number(p.edge_requests_used || 0).toLocaleString()} / ${Number(p.edge_request_limit).toLocaleString()} 次` : ''
   if (p.traffic_limit <= 0) return `已用 ${fmtBytes(p.used)} / 0 B · 剩 0 B${edge}`
   return `已用 ${fmtBytes(p.used)} / ${fmtTotal(p.traffic_limit)} · 剩 ${fmtBytes(p.remaining < 0 ? 0 : p.remaining)}${edge}`
 }

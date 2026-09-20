@@ -92,15 +92,13 @@ func usableExpr(alias string) string {
 	return `(` + a + `status='active'
 		AND (` + a + `expiry_at=0 OR ` + a + `expiry_at>strftime('%s','now'))
 		AND ` + a + `traffic_limit>0
-		AND ` + a + `used_up+` + a + `used_down<` + a + `traffic_limit
-		AND (` + a + `edge_request_limit=0 OR ` + a + `edge_requests_used<` + a + `edge_request_limit))`
+		AND ` + a + `used_up+` + a + `used_down<` + a + `traffic_limit)`
 }
 
 const usableHeadPredicate = `h.kind='plan' AND h.status='active'
 	AND (h.expiry_at=0 OR h.expiry_at>?)
 	AND h.traffic_limit>0
-	AND h.used_up+h.used_down<h.traffic_limit
-	AND (h.edge_request_limit=0 OR h.edge_requests_used<h.edge_request_limit)`
+	AND h.used_up+h.used_down<h.traffic_limit`
 
 // StatusRetired marks a plan bucket that has finished its turn and handed the
 // renewal line's slot to the next份.
@@ -705,8 +703,9 @@ type Bucket struct {
 	ClientUUID       string `json:"-"`
 	ClientSecret     string `json:"-"`
 	TrafficLimit     int64  `json:"traffic_limit"`
-	EdgeRequestLimit int64  `json:"edge_request_limit"`
-	EdgeRequestsUsed int64  `json:"edge_requests_used"`
+	EdgeRequestLimit int64  `json:"edge_request_limit"` // per UTC day
+	EdgeRequestsUsed int64  `json:"edge_requests_used"` // current UTC day
+	EdgeUsageDay     string `json:"-"`
 	UsedUp           int64  `json:"used_up"`
 	UsedDown         int64  `json:"used_down"`
 	ExpiryAt         int64  `json:"expiry_at"`
@@ -768,9 +767,10 @@ func (b *Bucket) Used() int64 { return b.UsedUp + b.UsedDown }
 // A zero limit is an empty bucket, never an implicit unlimited entitlement.
 func (b *Bucket) HasQuota() bool { return b.TrafficLimit > 0 && b.Used() < b.TrafficLimit }
 
-// HasEdgeQuota reports whether this bucket can still serve EdgeTunnel requests.
-// A zero limit is the legacy/unlimited value; it is intentionally independent
-// from byte quota because OCI/native traffic and Edge requests are separate.
+// HasEdgeQuota reports whether this bucket can still serve EdgeTunnel requests
+// for the current day. A zero limit is the legacy/unlimited value; it is
+// intentionally independent from byte quota because OCI/native traffic and Edge
+// requests are separate. The callback applies the UTC-day reset before use.
 func (b *Bucket) HasEdgeQuota() bool {
 	return b.EdgeRequestLimit == 0 || b.EdgeRequestsUsed < b.EdgeRequestLimit
 }
@@ -780,7 +780,9 @@ func (b *Bucket) NotExpired(now int64) bool { return b.ExpiryAt == 0 || b.Expiry
 
 // Active reports whether the bucket can currently carry traffic. A pool is only
 // active when it has a positive, non-exhausted balance (an empty pool is inert);
-// a plan is active while not expired and not over quota; a free bucket is always
+// a plan is active while not expired and not over traffic quota; its daily Edge
+// request limit is enforced separately by the Edge callback and must not disable
+// the native subscription or advance the traffic queue; a free bucket is always
 // active — it is the unmetered free-group allowance and has no limit to exhaust.
 func (b *Bucket) Active(now int64) bool {
 	switch b.Kind {
@@ -789,7 +791,7 @@ func (b *Bucket) Active(now int64) bool {
 	case KindFree:
 		return true
 	}
-	return b.NotExpired(now) && b.HasQuota() && b.HasEdgeQuota()
+	return b.NotExpired(now) && b.HasQuota()
 }
 
 // bucketCols selects a bucket with its credentials already resolved.
@@ -809,7 +811,7 @@ func (b *Bucket) Active(now int64) bool {
 const bucketCols = `p.id, p.user_id, p.kind, p.package_id, p.queue_key, p.name,
 	COALESCE(i.client_name, p.client_name),
 	COALESCE(u.client_uuid,''), COALESCE(u.client_secret,''),
-	p.traffic_limit, p.edge_request_limit, p.edge_requests_used, p.used_up, p.used_down, p.expiry_at, p.last_online_at, p.order_id,
+	p.traffic_limit, p.edge_request_limit, p.edge_requests_used, p.edge_usage_day, p.used_up, p.used_down, p.expiry_at, p.last_online_at, p.order_id,
 	p.created_at, p.updated_at,
 	CASE WHEN COALESCE(i.proxy_username,'')<>'' THEN i.proxy_username ELSE p.proxy_username END,
 	CASE WHEN COALESCE(i.proxy_username,'')<>'' THEN i.proxy_password ELSE p.proxy_password END,
@@ -827,7 +829,7 @@ const bucketFrom = ` FROM user_plans p
 func scanBucket(sc scanner) (*Bucket, error) {
 	var b Bucket
 	err := sc.Scan(&b.ID, &b.UserID, &b.Kind, &b.PackageID, &b.QueueKey, &b.Name, &b.ClientName, &b.ClientUUID,
-		&b.ClientSecret, &b.TrafficLimit, &b.EdgeRequestLimit, &b.EdgeRequestsUsed, &b.UsedUp, &b.UsedDown, &b.ExpiryAt, &b.LastOnlineAt,
+		&b.ClientSecret, &b.TrafficLimit, &b.EdgeRequestLimit, &b.EdgeRequestsUsed, &b.EdgeUsageDay, &b.UsedUp, &b.UsedDown, &b.ExpiryAt, &b.LastOnlineAt,
 		&b.OrderID, &b.CreatedAt, &b.UpdatedAt,
 		&b.ProxyUsername, &b.ProxyPassword, &b.ProxyExpiresAt, &b.Status, &b.DurationDays, &b.AutoRenew)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -1166,10 +1168,10 @@ func insertBucket(ex execer, b *Bucket) (int64, error) {
 	}
 	res, err := ex.Exec(`INSERT INTO user_plans
 		(user_id, kind, package_id, queue_key, name, client_name,
-		traffic_limit, edge_request_limit, edge_requests_used, used_up, used_down, expiry_at, last_online_at, order_id, status, duration_days, auto_renew, created_at, updated_at)
-		VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+		traffic_limit, edge_request_limit, edge_requests_used, edge_usage_day, used_up, used_down, expiry_at, last_online_at, order_id, status, duration_days, auto_renew, created_at, updated_at)
+		VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
 		b.UserID, b.Kind, b.PackageID, b.QueueKey, b.Name, b.ClientName,
-		b.TrafficLimit, b.EdgeRequestLimit, b.EdgeRequestsUsed, b.UsedUp, b.UsedDown, b.ExpiryAt, b.LastOnlineAt, b.OrderID, status, b.DurationDays, b.AutoRenew, b.CreatedAt, now)
+		b.TrafficLimit, b.EdgeRequestLimit, b.EdgeRequestsUsed, b.EdgeUsageDay, b.UsedUp, b.UsedDown, b.ExpiryAt, b.LastOnlineAt, b.OrderID, status, b.DurationDays, b.AutoRenew, b.CreatedAt, now)
 	if err != nil {
 		return 0, err
 	}

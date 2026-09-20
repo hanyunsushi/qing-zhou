@@ -23,11 +23,14 @@ func edgeUsageView(t store.EdgeRequestTotals) J {
 func edgeRequestView(buckets []*store.Bucket) J {
 	var out store.EdgeRequestTotals
 	now := time.Now().Unix()
+	today := time.Now().UTC().Format("2006-01-02")
 	for _, b := range buckets {
 		if b.Kind != "plan" || b.Status != "active" || !b.NotExpired(now) {
 			continue
 		}
-		out.Used += b.EdgeRequestsUsed
+		if b.EdgeUsageDay == today {
+			out.Used += b.EdgeRequestsUsed
+		}
 		if b.EdgeRequestLimit == 0 {
 			out.Unlimited = true
 		} else {

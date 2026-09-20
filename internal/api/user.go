@@ -866,9 +866,13 @@ func buildPlanViews(buckets []*store.Bucket, pkgNames map[int64]string) []planVi
 				name = live
 			}
 		}
+		edgeUsed := b.EdgeRequestsUsed
+		if b.EdgeUsageDay != time.Now().UTC().Format("2006-01-02") {
+			edgeUsed = 0
+		}
 		pv := planView{ID: b.ID, Kind: b.Kind, PackageID: b.PackageID, QueueKey: b.QueueKey, Name: name, TrafficLimit: b.TrafficLimit,
 			Used: b.Used(), ExpiryAt: b.ExpiryAt, Remaining: 0, CreatedAt: b.CreatedAt, OrderID: b.OrderID,
-			EdgeRequestLimit: b.EdgeRequestLimit, EdgeRequestsUsed: b.EdgeRequestsUsed,
+			EdgeRequestLimit: b.EdgeRequestLimit, EdgeRequestsUsed: edgeUsed,
 			DurationDays: b.DurationDays, AutoRenew: b.AutoRenew, StartedAt: startedAt(b)}
 		if b.TrafficLimit > 0 {
 			if rem := b.TrafficLimit - b.Used(); rem > 0 {

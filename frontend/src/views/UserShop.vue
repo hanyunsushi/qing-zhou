@@ -35,7 +35,7 @@
                   :class="{ on: chosenDays[pkg.id] === o.days }"
                   @click="chosenDays[pkg.id] = o.days">
             <span class="d">{{ o.days }} 天</span>
-            <span class="p">{{ o.price_points }} 积分 · Edge {{ o.edge_request_limit ? Number(o.edge_request_limit).toLocaleString() + ' 次' : '不限' }}</span>
+            <span class="p">{{ o.price_points }} 积分 · 每日 Edge {{ o.edge_request_limit ? Number(o.edge_request_limit).toLocaleString() + ' 次' : '不限' }}</span>
             <span v-if="saveHint(pkg, o)" class="off">{{ saveHint(pkg, o) }}</span>
           </button>
         </div>
@@ -148,7 +148,7 @@ function specsOf(pkg: any) {
     s.push({ label: '流量', value: fmtTotal(opt.traffic_bytes) })
   }
   if (pkg.type === 'plan') {
-    s.push({ label: 'Edge 请求', value: opt.edge_request_limit ? `${Number(opt.edge_request_limit).toLocaleString()} 次` : '不限' })
+    s.push({ label: '每日 Edge 请求', value: opt.edge_request_limit ? `${Number(opt.edge_request_limit).toLocaleString()} 次` : '不限' })
   }
   s.push({ label: '有效期', value: opt.days ? `${opt.days} 天` : '永久' })
   return s

@@ -28,14 +28,14 @@
           </div>
           <div class="lc-meta" style="color:var(--text-2);">
             <span class="kv">{{ fmtTotal(p.traffic_bytes) }}</span>
-            <span v-if="p.type === 'plan'" class="kv">Edge {{ p.edge_request_limit ? p.edge_request_limit.toLocaleString() + ' 次' : '不限' }}</span>
+            <span v-if="p.type === 'plan'" class="kv">每日 Edge {{ p.edge_request_limit ? p.edge_request_limit.toLocaleString() + ' 次' : '不限' }}</span>
             <span v-if="p.duration_days" class="kv">{{ p.duration_days }}天</span>
             <span v-if="p.type === 'plan' && p.queue_key" class="kv">续期组 <b>{{ p.queue_key }}</b></span>
           </div>
           <!-- 多时长套餐：把每档时长的价格摊开，免得只看到默认那档 -->
           <div v-if="p.options?.length > 1" class="lc-opts">
             <span v-for="(o, i) in p.options" :key="o.days" class="opt-chip" :class="{ def: i === 0 }">
-              {{ o.days }}天 · {{ o.price_points }}分 · {{ fmtTotal(o.traffic_bytes) }} · Edge {{ o.edge_request_limit ? o.edge_request_limit.toLocaleString() + ' 次' : '不限' }}
+              {{ o.days }}天 · {{ o.price_points }}分 · {{ fmtTotal(o.traffic_bytes) }} · 每日 Edge {{ o.edge_request_limit ? o.edge_request_limit.toLocaleString() + ' 次' : '不限' }}
             </span>
           </div>
           <div v-if="p.user_group_ids?.length" class="lc-meta" style="color:var(--text-3);">
@@ -86,13 +86,13 @@
         <n-form-item v-if="form.type==='plan'" label="时长/价格">
           <div style="width:100%;">
             <div class="opt-head">
-              <span>天数</span><span>流量 (GB)</span><span>积分</span><span>Edge 请求次数</span><span />
+              <span>套餐天数</span><span>流量 (GB)</span><span>积分</span><span>每日 Edge 次数</span><span />
             </div>
             <div v-for="(o, i) in form.options" :key="i" class="opt-row">
               <n-input-number v-model:value="o.days" :min="1" :show-button="false" placeholder="30" />
               <n-input-number v-model:value="o.traffic_gb" :min="0.01" :show-button="false" placeholder="100" />
               <n-input-number v-model:value="o.price" :min="0" :show-button="false" placeholder="100" />
-              <n-input-number v-model:value="o.edge_requests" :min="0" :show-button="false" placeholder="0 = 不限" />
+              <n-input-number v-model:value="o.edge_requests" :min="0" :show-button="false" placeholder="每日次数，0 = 不限" />
               <n-button quaternary size="small" :disabled="form.options.length <= 1"
                         title="删除该档" @click="removeOption(i)">✕</n-button>
             </div>

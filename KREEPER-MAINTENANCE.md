@@ -18,7 +18,7 @@
 
 - QingZhou 对匹配 `edge.kreeper.cc` 的外部节点按用户改写 Edge 凭据，并在 VLESS、Trojan、Hysteria2、AnyTLS、TUIC、SS 和 VMess 链接中写入 `edge_user`；VMess 的协议 `id` 同步改写。
 - `EdgeUUIDForUser` 使用用户 ID 的前 48 位、RFC 4122 版本/变体位和 HMAC-SHA256 前 8 字节；HMAC 输入为 `edge:` 加 8 字节大端用户 ID。EdgeTunnel Worker 已用同一算法校验，避免因 UUID 保留位或文本/二进制编码差异导致用户无法入账。
-- `/api/internal/edge/usage` 按 `batch_id` 幂等接收 15 分钟批次，按当前生效套餐扣减次数，返回超额用户；套餐与时长选项的 `edge_request_limit=0` 表示不限。
+- `/api/internal/edge/usage` 按 `batch_id` 幂等接收 15 分钟批次，按批次 `usage_day`（UTC 日期）扣减每日次数，返回当日超额用户；套餐与时长选项的 `edge_request_limit=0` 表示不限。套餐原有 `duration_days/expiry_at` 仍统一控制流量和套餐有效期，每日 Edge 超限不会推进排队套餐。
 - 全量 Go、前端测试、类型检查和构建均通过；生产环境已配置 `QZ_EDGE_SECRET`、`QZ_EDGE_USAGE_TOKEN` 和 `QZ_EDGE_USAGE_URL`，运行版本为 `v0.2.80-kreeper-68f7055`。
 - EdgeTunnel Pages Production 已配置 `EDGE_QZ_SECRET`、`EDGE_QZ_USAGE_TOKEN` 和 `EDGE_QZ_USAGE_URL=https://proxy.kreeper.cc/api/internal/edge/usage`。真实签名空批次请求返回 `400`，认证链路与接口可达性已核验，未产生用量记录。
 
@@ -88,7 +88,7 @@ ACL4SSR 模板及订阅名称保存在运行时数据库，不在源码中硬编
 8. **订阅节点排序修复**：订阅聚合不再把自建节点统一追加到外部节点之后；所有可访问节点按管理后台保存的全局 `sort_order` 输出。节点来源刷新按 `share_link` 保留已有节点的排序，新节点追加到当前最大排序值之后。
 9. **监控首页上游余额卡片**：管理员在“服务器监控”的“面板本机”右侧看到合并 OCI/Cloudflare 的上游余额卡片；数据直接调用上游刷新 API，公开监控页不加载供应商账户用量。卡片内子项支持拖动排序并每 15 分钟自动刷新。
 10. **余额与节点拖动排序**：上游管理页和监控首页共用设置键 `admin_upstream_balance_order` 保存 OCI/Cloudflare 顺序；节点管理卡片改为原生拖放，完整节点 ID 顺序仍通过 `/api/admin/nodes/reorder` 写入全局 `nodes.sort_order`。
-11. **Edge 请求次数回传**：匹配 `edge.kreeper.cc` 的外部节点按用户生成带 HMAC 的 `edge_user` UUID；EdgeTunnel 对 WebSocket、gRPC 和 XHTTP 请求按一次计数，15 分钟批量回传 QingZhou，套餐的 `edge_request_limit` 控制每用户次数，`0` 表示不限。此功能不改变 OCI 字节统计，也不在每个代理请求中调用 QingZhou。
+11. **Edge 请求次数回传**：匹配 `edge.kreeper.cc` 的外部节点按用户生成带 HMAC 的 `edge_user` UUID；EdgeTunnel 对 WebSocket、gRPC 和 XHTTP 请求按一次计数，15 分钟批量回传 QingZhou，套餐的 `edge_request_limit` 控制每个 UTC 日的用户次数，`0` 表示不限。每日超限不会消耗流量有效期或推进排队套餐。此功能不改变 OCI 字节统计，也不在每个代理请求中调用 QingZhou。
 
 ### 生产部署合同
 
