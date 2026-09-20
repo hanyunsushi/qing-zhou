@@ -378,8 +378,9 @@ let timer: ReturnType<typeof setInterval> | null = null
 
 const upstreamDefaults: UpstreamProvider[] = ['oci', 'cloudflare']
 const upstreamOrder = ref<UpstreamProvider[]>([...upstreamDefaults])
+const defaultOCIMonthlyLimitBytes = 10 * 1024 ** 4
 const upstreamViews = reactive<Record<UpstreamProvider, UpstreamView>>({
-  oci: { provider: 'oci', configured: false, limit: 10_000_000_000_000 },
+  oci: { provider: 'oci', configured: false, limit: defaultOCIMonthlyLimitBytes },
   cloudflare: { provider: 'cloudflare', configured: false, limit: 100_000 },
 })
 const upstreamUsages = reactive<Partial<Record<UpstreamProvider, UpstreamUsage>>>({})

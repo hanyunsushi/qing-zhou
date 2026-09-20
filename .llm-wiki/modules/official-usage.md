@@ -15,9 +15,15 @@ The parser prioritizes the high-precision `attributedUsage` field and falls back
 
 The admin OCI card renders the configured allowance and official usage with the
 shared binary formatter: values are divided by `1024` while the existing
-`KB/MB/GB/TB/PB` labels are retained. Thus `10_000_000_000_000` bytes is shown
-as approximately `9.09 TB`. This is presentation-only and does not change the
-API values or usage calculation.
+`KB/MB/GB/TB/PB` labels are retained. The default panel allowance is
+`10_995_116_277_760` bytes (`10 × 1024^4`) and is shown as `10 TB`. Previously
+saved `10_000_000_000_000`-byte legacy defaults are normalized to this value;
+explicit non-default limits are preserved. Oracle's public material confirms a
+10 TB monthly outbound tier but does not establish whether its billing unit is
+decimal or binary, so this byte value is the panel's consistent accounting
+convention, not a claim about Oracle's undisclosed billing conversion. This is
+presentation and panel-quota behavior; OCI API usage-unit conversion remains
+based on the unit returned by OCI.
 
 Oracle can return `Outbound Data Transfer Zone 2` with unit `GB Months`; the parser treats that official outbound-transfer unit as decimal GB and preserves the high-precision `attributedUsage` value before converting to bytes. Oracle's price list names the free and overage rows as `First 10 TB / Month` and `Over 10 TB / Month`, with unit `Gigabyte outbound data transfer per month`. The parser accepts both official unit forms and marks a returned overage SKU. An overage row forces `remaining` to zero even if its returned overage quantity is smaller than the configured free allowance. `remaining = max(configured_monthly_limit - used, 0)` otherwise. The account total is the configured OCI allowance; OCI Usage API supplies the official used amount, not a universal balance field. The admin page refreshes both provider snapshots every 15 minutes and refreshes on foreground return. A non-zero official `GB Months` response is covered by `internal/officialusage/officialusage_test.go`.
 

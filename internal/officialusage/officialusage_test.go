@@ -109,6 +109,15 @@ func TestFetchOCIPaginatesAndPrefersAttributedUsage(t *testing.T) {
 	}
 }
 
+func TestOCIDefaultQuotaUsesBinaryTenTB(t *testing.T) {
+	if DefaultOCIMonthlyLimitBytes != 10_995_116_277_760 {
+		t.Fatalf("default OCI quota = %d, want 10995116277760", DefaultOCIMonthlyLimitBytes)
+	}
+	if got := NormalizeOCIConfig(OCIConfig{MonthlyLimitBytes: 10_000_000_000_000}).MonthlyLimitBytes; got != DefaultOCIMonthlyLimitBytes {
+		t.Fatalf("legacy OCI quota normalized to %d, want %d", got, DefaultOCIMonthlyLimitBytes)
+	}
+}
+
 func TestFetchOCIRejectsUnrecognizedTransferUnit(t *testing.T) {
 	key := testPrivateKey(t, false)
 	client := testClient(func(*http.Request) (*http.Response, error) {
@@ -129,10 +138,10 @@ func TestFetchOCIParsesOracleOutboundGBMonths(t *testing.T) {
 	})
 	usage := FetchOCI(context.Background(), client, OCIConfig{
 		TenancyOCID: "tenancy", UserOCID: "user", Fingerprint: "aa:bb", Region: "ap-tokyo-1", PrivateKey: key,
-		MonthlyLimitBytes: 10_000_000_000_000,
+		MonthlyLimitBytes: DefaultOCIMonthlyLimitBytes,
 	}, time.Date(2026, 9, 16, 8, 30, 0, 0, time.UTC))
 	want := int64(172_233_401_500)
-	if !usage.Success || usage.Used != want || usage.Remaining != 9_827_766_598_500 {
+	if !usage.Success || usage.Used != want || usage.Remaining != DefaultOCIMonthlyLimitBytes-want {
 		t.Fatalf("unexpected Oracle GB Months usage %#v", usage)
 	}
 }
@@ -202,7 +211,7 @@ func TestFetchOCIOverageMakesFreeBalanceZero(t *testing.T) {
 	client := testClient(func(*http.Request) (*http.Response, error) {
 		return jsonResponse(200, `{"items":[{"service":"Networking","skuName":"Outbound Data Transfer - Originating in APAC - First 10 TB / Month","unit":"Gigabyte outbound data transfer per month","attributedUsage":"9999"},{"service":"Networking","skuName":"Outbound Data Transfer - Originating in APAC - Over 10 TB / Month","unit":"Gigabyte outbound data transfer per month","attributedUsage":"1"}]}`), nil
 	})
-	config := OCIConfig{TenancyOCID: "tenancy", UserOCID: "user", Fingerprint: "aa:bb", Region: "ap-tokyo-1", PrivateKey: testPrivateKey(t, false), MonthlyLimitBytes: 10_000_000_000_000}
+	config := OCIConfig{TenancyOCID: "tenancy", UserOCID: "user", Fingerprint: "aa:bb", Region: "ap-tokyo-1", PrivateKey: testPrivateKey(t, false), MonthlyLimitBytes: DefaultOCIMonthlyLimitBytes}
 	usage := FetchOCI(context.Background(), client, config, time.Date(2026, 9, 15, 0, 0, 0, 0, time.UTC))
 	if !usage.Success || !usage.OverageDetected || usage.Remaining != 0 || usage.Used != 10_000_000_000_000 {
 		t.Fatalf("unexpected OCI overage usage %#v", usage)

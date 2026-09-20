@@ -28,8 +28,9 @@ import (
 )
 
 const (
-	DefaultOCIMonthlyLimitBytes int64 = 10_000_000_000_000
+	DefaultOCIMonthlyLimitBytes int64 = 10 * 1024 * 1024 * 1024 * 1024
 	DefaultCFDailyRequestLimit  int64 = 100_000
+	legacyOCIMonthlyLimitBytes  int64 = 10_000_000_000_000
 )
 
 // OCIConfig is the minimum OCI API-key profile required by the Usage API.
@@ -73,16 +74,18 @@ type Usage struct {
 	Error                    string `json:"error,omitempty"`
 }
 
-func (c OCIConfig) normalized() OCIConfig {
+func NormalizeOCIConfig(c OCIConfig) OCIConfig {
 	c.TenancyOCID = strings.TrimSpace(c.TenancyOCID)
 	c.UserOCID = strings.TrimSpace(c.UserOCID)
 	c.Fingerprint = strings.TrimSpace(c.Fingerprint)
 	c.Region = strings.ToLower(strings.TrimSpace(c.Region))
-	if c.MonthlyLimitBytes <= 0 {
+	if c.MonthlyLimitBytes <= 0 || c.MonthlyLimitBytes == legacyOCIMonthlyLimitBytes {
 		c.MonthlyLimitBytes = DefaultOCIMonthlyLimitBytes
 	}
 	return c
 }
+
+func (c OCIConfig) normalized() OCIConfig { return NormalizeOCIConfig(c) }
 
 func (c CloudflareConfig) normalized() CloudflareConfig {
 	c.AccountID = strings.TrimSpace(c.AccountID)

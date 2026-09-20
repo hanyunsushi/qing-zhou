@@ -164,10 +164,12 @@ const dialog = useDialog()
 const loading = ref(false)
 const saving = reactive<Record<Provider, boolean>>({ oci: false, cloudflare: false })
 const refreshing = reactive<Record<Provider, boolean>>({ oci: false, cloudflare: false })
-const ociView = reactive<ProviderView>({ provider: 'oci', configured: false, limit: 10_000_000_000_000 })
+const defaultOCIMonthlyLimitBytes = 10 * 1024 ** 4
+const legacyOCIMonthlyLimitBytes = 10 * 1000 ** 4
+const ociView = reactive<ProviderView>({ provider: 'oci', configured: false, limit: defaultOCIMonthlyLimitBytes })
 const cfView = reactive<ProviderView>({ provider: 'cloudflare', configured: false, limit: 100_000 })
 const usages = reactive<Partial<Record<Provider, Usage>>>({})
-const ociForm = reactive({ tenancy_ocid: '', user_ocid: '', fingerprint: '', region: '', private_key: '', monthly_limit_bytes: 10_000_000_000_000 })
+const ociForm = reactive({ tenancy_ocid: '', user_ocid: '', fingerprint: '', region: '', private_key: '', monthly_limit_bytes: defaultOCIMonthlyLimitBytes })
 const cfForm = reactive({ account_id: '', analytics_token: '', daily_request_limit: 100_000 })
 
 const ociUsage = computed(() => usages.oci)
@@ -177,12 +179,16 @@ const draggingProvider = ref<Provider | null>(null)
 const dragOverProvider = ref<Provider | null>(null)
 
 function assignView(target: ProviderView, source?: ProviderView) {
-  Object.assign(target, { provider: target.provider, configured: false, limit: target.provider === 'oci' ? 10_000_000_000_000 : 100_000 }, source || {})
+  const defaultLimit = target.provider === 'oci' ? defaultOCIMonthlyLimitBytes : 100_000
+  const normalized = source && target.provider === 'oci' && (source.limit === legacyOCIMonthlyLimitBytes || source.limit <= 0)
+    ? { ...source, limit: defaultLimit }
+    : source
+  Object.assign(target, { provider: target.provider, configured: false, limit: defaultLimit }, normalized || {})
 }
 function setForms() {
   Object.assign(ociForm, {
     tenancy_ocid: ociView.tenancy_ocid || '', user_ocid: ociView.user_ocid || '', fingerprint: ociView.fingerprint || '', region: ociView.region || '',
-    private_key: '', monthly_limit_bytes: ociView.limit || 10_000_000_000_000,
+    private_key: '', monthly_limit_bytes: ociView.limit || defaultOCIMonthlyLimitBytes,
   })
   Object.assign(cfForm, { account_id: cfView.account_id || '', analytics_token: '', daily_request_limit: cfView.limit || 100_000 })
 }
@@ -299,7 +305,7 @@ function removeProvider(provider: Provider) {
         delete usages[provider]
         if (provider === 'oci') {
           assignView(ociView)
-          Object.assign(ociForm, { tenancy_ocid: '', user_ocid: '', fingerprint: '', region: '', private_key: '', monthly_limit_bytes: 10_000_000_000_000 })
+          Object.assign(ociForm, { tenancy_ocid: '', user_ocid: '', fingerprint: '', region: '', private_key: '', monthly_limit_bytes: defaultOCIMonthlyLimitBytes })
         } else {
           assignView(cfView)
           Object.assign(cfForm, { account_id: '', analytics_token: '', daily_request_limit: 100_000 })

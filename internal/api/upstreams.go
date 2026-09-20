@@ -81,6 +81,7 @@ func (a *API) handleAdminPutUpstream(w http.ResponseWriter, r *http.Request) {
 			Fingerprint: input.Fingerprint, Region: input.Region,
 			PrivateKey: privateKey, MonthlyLimitBytes: input.MonthlyLimitBytes,
 		}
+		config = officialusage.NormalizeOCIConfig(config)
 		if err := config.Validate(); err != nil {
 			fail(w, http.StatusBadRequest, err.Error())
 			return
@@ -202,14 +203,11 @@ func upstreamSetting(provider string) (string, bool) {
 }
 
 func ociView(config officialusage.OCIConfig) upstreamView {
-	limit := config.MonthlyLimitBytes
-	if limit <= 0 {
-		limit = officialusage.DefaultOCIMonthlyLimitBytes
-	}
+	config = officialusage.NormalizeOCIConfig(config)
 	return upstreamView{
 		Provider: "oci", Configured: config.Configured(), TenancyOCID: config.TenancyOCID,
 		UserOCID: config.UserOCID, Fingerprint: config.Fingerprint, Region: config.Region,
-		Limit: limit, PrivateKeySet: strings.TrimSpace(config.PrivateKey) != "",
+		Limit: config.MonthlyLimitBytes, PrivateKeySet: strings.TrimSpace(config.PrivateKey) != "",
 	}
 }
 
