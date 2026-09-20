@@ -772,7 +772,10 @@ func (b *Bucket) HasQuota() bool { return b.TrafficLimit > 0 && b.Used() < b.Tra
 // intentionally independent from byte quota because OCI/native traffic and Edge
 // requests are separate. The callback applies the UTC-day reset before use.
 func (b *Bucket) HasEdgeQuota() bool {
-	return b.EdgeRequestLimit == 0 || b.EdgeRequestsUsed < b.EdgeRequestLimit
+	if b.EdgeRequestLimit == 0 || b.EdgeUsageDay != time.Now().UTC().Format(edgeUsageDayLayout) {
+		return true
+	}
+	return b.EdgeRequestsUsed < b.EdgeRequestLimit
 }
 
 // NotExpired reports whether the bucket is still within its time window.

@@ -97,6 +97,13 @@ func TestApplyEdgeUsageBatchResetsAtUtcDayBoundary(t *testing.T) {
 	if totals.Total != 3 || totals.Used != 1 || totals.Remaining != 2 {
 		t.Fatalf("daily totals = %+v, want 3/1/2", totals)
 	}
+	buckets, err := st.ListBuckets(uid)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(buckets) == 0 || !buckets[0].HasEdgeQuota() {
+		t.Fatal("stale previous-day usage must not keep the current plan exhausted")
+	}
 }
 
 func TestDailyEdgeExhaustionDoesNotAdvanceQueuedPlan(t *testing.T) {
