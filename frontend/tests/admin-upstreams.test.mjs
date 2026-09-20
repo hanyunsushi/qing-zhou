@@ -10,8 +10,8 @@ const router = await readFile(new URL('../src/router/index.ts', import.meta.url)
 
 test('upstream management page keeps provider queries separate and exposes no saved credentials', () => {
   assert.match(source, /OCI Usage API/)
-  assert.match(source, /fmtDecimalBytes\(ociUsage\.remaining\)/)
-  assert.match(source, /fmtDecimalBytes\(ociForm\.monthly_limit_bytes\)/)
+  assert.match(source, /fmtBytes\(ociUsage\.remaining\)/)
+  assert.match(source, /fmtBytes\(ociForm\.monthly_limit_bytes\)/)
   assert.match(source, /Cloudflare Analytics GraphQL/)
   assert.match(source, /\/api\/admin\/upstreams\/\$\{provider\}\/refresh/)
   assert.match(source, /private_key_set/)
@@ -31,9 +31,9 @@ test('upstream cards persist drag order and the public monitor keeps balance dat
   assert.match(monitor, /auth\.isAdmin \? apiList<any>\('\/api\/admin\/monitor\/servers'\)/)
   assert.match(monitor, /\/api\/admin\/upstreams\/\$\{provider\}\/refresh/)
   assert.match(monitor, /handleUpstreamDrop/)
-  assert.match(monitor, /fmtDecimalBytes\(item\.usage\?\.remaining \|\| 0\)/)
-  assert.match(monitor, /fmtDecimalBytes\(item\.usage\.limit\)/)
-  assert.match(monitor, /fmtDecimalBytes\(item\.usage\.used\)/)
+  assert.match(monitor, /fmtBytes\(item\.usage\?\.remaining \|\| 0\)/)
+  assert.match(monitor, /fmtBytes\(item\.usage\.limit\)/)
+  assert.match(monitor, /fmtBytes\(item\.usage\.used\)/)
 })
 
 test('node cards use drag-and-drop for the shared subscription order', () => {

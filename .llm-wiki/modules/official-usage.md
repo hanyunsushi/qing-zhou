@@ -13,11 +13,11 @@ updated: 2026-09-18
 
 The parser prioritizes the high-precision `attributedUsage` field and falls back to `computedQuantity` only when needed. Decimal quantities use rational arithmetic before per-item rounding to whole bytes. Unit aliases include `GB Months` and Oracle's published `Gigabyte outbound data transfer per month`; storage capacity, rates, and unknown units are not guessed. Inbound rows are excluded; ambiguous transfer rows, unknown transfer units, missing response items, and no matched transfer rows prevent a successful balance. A first-day empty query window is also unknown, not a full allowance.
 
-The admin OCI card renders the configured allowance and official usage with
-decimal byte units (`1000` bytes per KB, so `10_000_000_000_000` bytes is
-`10 TB`). This is a presentation-only formatter separate from the existing
-user-plan traffic formatter; it does not change the API values or usage
-calculation.
+The admin OCI card renders the configured allowance and official usage with the
+shared binary formatter: values are divided by `1024` while the existing
+`KB/MB/GB/TB/PB` labels are retained. Thus `10_000_000_000_000` bytes is shown
+as approximately `9.09 TB`. This is presentation-only and does not change the
+API values or usage calculation.
 
 Oracle can return `Outbound Data Transfer Zone 2` with unit `GB Months`; the parser treats that official outbound-transfer unit as decimal GB and preserves the high-precision `attributedUsage` value before converting to bytes. Oracle's price list names the free and overage rows as `First 10 TB / Month` and `Over 10 TB / Month`, with unit `Gigabyte outbound data transfer per month`. The parser accepts both official unit forms and marks a returned overage SKU. An overage row forces `remaining` to zero even if its returned overage quantity is smaller than the configured free allowance. `remaining = max(configured_monthly_limit - used, 0)` otherwise. The account total is the configured OCI allowance; OCI Usage API supplies the official used amount, not a universal balance field. The admin page refreshes both provider snapshots every 15 minutes and refreshes on foreground return. A non-zero official `GB Months` response is covered by `internal/officialusage/officialusage_test.go`.
 

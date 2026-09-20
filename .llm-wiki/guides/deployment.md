@@ -5,6 +5,17 @@ updated: 2026-09-18
 
 # QingZhou Deployment and Artifact Retention
 
+## 2026-09-20 Binary byte display correction
+
+The decimal OCI presentation from the 2026-09-18 releases is superseded. All
+frontend byte displays now use the shared `fmtBytes` formatter: divide by 1024
+while retaining the existing `KB/MB/GB/TB/PB` labels. Therefore
+`10_000_000_000_000` bytes is displayed as approximately `9.09 TB`.
+
+This applies to the OCI upstream cards, the homepage server-monitor upstream
+card, user plans, and other server/user traffic views. API, database, and OCI
+official usage values remain raw bytes and are unchanged.
+
 ## 2026-09-18 Homepage OCI balance-card release
 
 The previous decimal-unit change covered only `AdminUpstreams.vue`; the
@@ -29,11 +40,9 @@ Commit `adce9e9` is deployed as Linux ARM64 version
 SHA-256 is
 `cdfac1f71275d768c52ccff415e81221ad668971032c035b3307cdea9dd18563`.
 
-The OCI allowance is displayed in decimal units: the default
-`10_000_000_000_000` bytes is rendered as `10 TB`. The OCI balance card,
-account total, official usage, and monthly-limit hint use the decimal formatter;
-the existing user-plan byte formatter and Cloudflare request-count display are
-unchanged. The rollback directory is
+The OCI allowance was displayed in decimal units in this historical release;
+that presentation was superseded on 2026-09-20 by the shared binary formatter.
+The rollback directory is
 `/opt/qingzhou/backups/oci-quota-decimal-adce9e9-20260918-150019/` and contains
 the old binary, a consistent SQLite snapshot, environment files, both systemd
 units, and `/etc/qingzhou-sing-box`. The snapshot passed `PRAGMA integrity_check`.
