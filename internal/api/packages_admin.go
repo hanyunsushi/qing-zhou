@@ -308,7 +308,10 @@ func (a *API) handleAdminForceSyncPackages(w http.ResponseWriter, r *http.Reques
 		fail(w, http.StatusInternalServerError, "强制推送失败")
 		return
 	}
-	a.onQueuePromoted(result.UserIDs...)
+	for _, userID := range result.UserIDs {
+		a.invalidateLinks(userID)
+	}
+	a.sbRebuildLog()
 	ok(w, J{
 		"users":   result.Users,
 		"buckets": result.Buckets,

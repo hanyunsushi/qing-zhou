@@ -16,8 +16,8 @@ type PackageSyncResult struct {
 // ForceSyncPlanPackages copies the currently published plan defaults into every
 // non-retired user plan bucket that still points at an existing plan package.
 // Metering counters are reset, but purchase/order history, validity timestamps,
-// and queue state are preserved. Expired heads may promote their queued successor
-// in the same transaction, just like the normal queue maintenance path.
+// and queue state are preserved. Normal queue advancement remains owned by the
+// existing read/ticker paths rather than this destructive maintenance action.
 func (s *Store) ForceSyncPlanPackages() (PackageSyncResult, error) {
 	var out PackageSyncResult
 	now := time.Now().Unix()
@@ -107,9 +107,6 @@ func (s *Store) ForceSyncPlanPackages() (PackageSyncResult, error) {
 	}
 
 	for userID := range userSet {
-		if _, err := advanceUserQueues(tx, userID, now); err != nil {
-			return out, err
-		}
 		if _, _, _, _, err := recomputeUserAggregate(tx, userID, now); err != nil {
 			return out, err
 		}
