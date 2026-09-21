@@ -46,3 +46,51 @@ func TestForceSyncPlanPackagesRefreshesDefinitionsAndResetsUsage(t *testing.T) {
 		t.Fatalf("counters were not reset: %+v", b)
 	}
 }
+
+func TestForceSyncPlanPackagesPreservesQueueState(t *testing.T) {
+	st := newRefundStore(t)
+	uid := mkUser(t, st, "sync-queue-user")
+	pkg := mkPlan(t, st, "套餐", 100, 100, 30)
+	buy(t, st, uid, pkg)
+	buy(t, st, uid, pkg)
+
+	pkg.Name = "更新后的套餐"
+	pkg.TrafficBytes = 250 * giB
+	if err := st.UpdatePackage(*pkg); err != nil {
+		t.Fatal(err)
+	}
+	result, err := st.ForceSyncPlanPackages()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Users != 1 || result.Buckets != 2 || result.Active != 1 || result.Queued != 1 {
+		t.Fatalf("result = %+v", result)
+	}
+
+	rows, err := st.db.Query(`SELECT status, name, traffic_limit FROM user_plans
+		WHERE user_id=? AND kind='plan' ORDER BY id`, uid)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer rows.Close()
+	wantStatuses := []string{"active", "queued"}
+	for i, wantStatus := range wantStatuses {
+		var status, name string
+		var traffic int64
+		if !rows.Next() {
+			t.Fatalf("missing bucket %d", i)
+		}
+		if err := rows.Scan(&status, &name, &traffic); err != nil {
+			t.Fatal(err)
+		}
+		if status != wantStatus || name != "更新后的套餐" || traffic != 250*giB {
+			t.Fatalf("bucket %d = status %q name %q traffic %d", i, status, name, traffic)
+		}
+	}
+	if rows.Next() {
+		t.Fatal("unexpected extra bucket")
+	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
+}
