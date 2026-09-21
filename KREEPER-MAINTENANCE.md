@@ -4,7 +4,7 @@
 
 - 用户控制台“流量用量”卡片新增当前 UTC 日 Edge 次数额度展示，复用 `/api/user/dashboard` 的 `edge_requests` 汇总，不改变 OCI/原生流量统计。
 - 套餐管理页在创建套餐左侧新增“强制推送”。管理员二次确认后，`POST /api/admin/packages/force-sync` 将所有仍持有且套餐仍存在的非退休计划桶同步到当前套餐定义；多时长按原桶时长匹配，已删除时长回退第一档；流量和 Edge 当日已用清零，购买记录、积分、有效期、队列状态和历史报表保留。该操作不会自动推进或重排队列，提交后清理受影响用户的订阅缓存并异步安排节点配置刷新；流量包已合并到通用流量池，不属于可回写的套餐桶。
-- 功能源码提交 `8fded8f`、队列回归测试提交 `70d1023` 和发布文档提交 `c0b46be` 已推送 Fork；已构建并部署 `v0.2.80-kreeper-c0b46be` 到 OCI 宿主 `/opt/qingzhou/qingzhou`，active SHA-256 为 `71a013cb483e5bcea6cdcf8d2a5d4e5bd8b432e349ceaa2ccbe380ac3068e893`。回滚材料位于 `/opt/qingzhou/backups/edge-quota-force-sync-c0b46be-20260921-025700/`，数据库快照完整性为 `ok`；仅重启 `qingzhou.service`，三个服务、三个监听端口、本机/公网健康接口和公网新前端资源均验收通过。
+- 功能源码提交 `8fded8f`、队列回归测试提交 `70d1023` 和源码基线 `c0b46be` 已推送 Fork；部署记录由提交 `2767cef` 同步。已构建并部署 `v0.2.80-kreeper-c0b46be` 到 OCI 宿主 `/opt/qingzhou/qingzhou`，active SHA-256 为 `71a013cb483e5bcea6cdcf8d2a5d4e5bd8b432e349ceaa2ccbe380ac3068e893`。回滚材料位于 `/opt/qingzhou/backups/edge-quota-force-sync-c0b46be-20260921-025700/`，数据库快照完整性为 `ok`；仅重启 `qingzhou.service`，三个服务、三个监听端口、本机/公网健康接口和公网新前端资源均验收通过。
 
 ## 2026-09-21 Clash 回国节点组隔离（已部署）
 
