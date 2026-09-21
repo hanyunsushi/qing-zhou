@@ -105,6 +105,11 @@
             </div>
           </div>
           <div class="ring-foot">{{ ringFoot }}</div>
+          <div class="edge-quota">
+            <div class="edge-quota-head"><span>Edge 每日次数</span><b>{{ edgeQuotaValue }}</b></div>
+            <div class="edge-quota-track"><i :style="{ width: edgeQuotaPct + '%' }" /></div>
+            <div class="edge-quota-foot">{{ edgeQuotaFoot }}</div>
+          </div>
         </div>
         <n-space vertical size="small" style="margin-top:14px;">
           <n-button block secondary @click="router.push('/sub')">
@@ -180,6 +185,18 @@ const greeting = computed(() => {
 // ---- 流量口径 ----
 // 所有流量额度都是有限数字；total=0 就是没有额度。
 const traffic = computed(() => dash.value.traffic || {})
+const edgeRequests = computed(() => dash.value.edge_requests || {})
+const edgeQuotaValue = computed(() => edgeRequests.value.unlimited ? '不限' : `${Number(edgeRequests.value.remaining || 0).toLocaleString()} 次`)
+const edgeQuotaPct = computed(() => {
+  const total = Number(edgeRequests.value.total || 0)
+  if (!total || edgeRequests.value.unlimited) return 0
+  return Math.min(100, Math.max(0, Math.round(Number(edgeRequests.value.used || 0) / total * 1000) / 10))
+})
+const edgeQuotaFoot = computed(() => {
+  if (edgeRequests.value.unlimited) return `今日已用 ${Number(edgeRequests.value.used || 0).toLocaleString()} 次 · 不限额`
+  const total = Number(edgeRequests.value.total || 0)
+  return total ? `今日已用 ${Number(edgeRequests.value.used || 0).toLocaleString()} / ${total.toLocaleString()} 次` : '暂无 Edge 日次数额度'
+})
 // metered = 存在可以算百分比的额度。没有它，环形图和进度条都无意义。
 const metered = computed(() => (traffic.value.total || 0) > 0)
 const usedPct = computed(() => pct(traffic.value.used, traffic.value.total))
@@ -351,6 +368,12 @@ a{color:var(--accent-strong)}
 .ring-inf{font-size:30px}
 .ring-label{font-size:11px;color:var(--text-3);margin-top:4px}
 .ring-foot{font-size:12px;color:var(--text-2);margin-top:10px;text-align:center}
+.edge-quota{width:100%;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:12px}
+.edge-quota-head,.edge-quota-foot{display:flex;justify-content:space-between;gap:8px;color:var(--text-2)}
+.edge-quota-head b{color:var(--text);font-variant-numeric:tabular-nums}
+.edge-quota-track{height:4px;margin:7px 0 6px;border-radius:2px;background:var(--bg-soft);overflow:hidden}
+.edge-quota-track i{display:block;height:100%;background:#bf9540;border-radius:2px;transition:width .6s cubic-bezier(.22,1,.36,1)}
+.edge-quota-foot{font-size:11px;color:var(--text-3)}
 .usage-card :deep(.n-space){gap:6px!important}
 
 /* 趋势页脚汇总 */

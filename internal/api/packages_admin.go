@@ -299,6 +299,24 @@ func (a *API) handleAdminEnablePackage(w http.ResponseWriter, r *http.Request) {
 	ok(w, nil)
 }
 
+// POST /api/admin/packages/force-sync — copy current plan definitions into all
+// held plan buckets and reset traffic/Edge counters. This is deliberately a
+// separate, explicit action from creating a package.
+func (a *API) handleAdminForceSyncPackages(w http.ResponseWriter, r *http.Request) {
+	result, err := a.st.ForceSyncPlanPackages()
+	if err != nil {
+		fail(w, http.StatusInternalServerError, "强制推送失败")
+		return
+	}
+	a.onQueuePromoted(result.UserIDs...)
+	ok(w, J{
+		"users":   result.Users,
+		"buckets": result.Buckets,
+		"active":  result.Active,
+		"queued":  result.Queued,
+	})
+}
+
 // POST /api/admin/users/{id}/points {amount, note}
 func (a *API) handleAdminRecharge(w http.ResponseWriter, r *http.Request) {
 	uid := atoi(chi.URLParam(r, "id"))

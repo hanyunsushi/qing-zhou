@@ -1,7 +1,7 @@
 ---
 title: User Plans API
-updated: 2026-09-20
-source_commit: 1083756
+updated: 2026-09-21
+source_commit: working-tree
 ---
 
 # User Plans API
@@ -15,6 +15,22 @@ bucket, so later package edits do not rewrite an existing entitlement. Active
 plan views expose `edge_request_limit` and the current-day `edge_requests_used`;
 the dashboard exposes the aggregate `edge_requests` view. The ordinary package
 `duration_days/expiry_at` remains the shared traffic and plan validity period.
+
+The user dashboard's `流量用量` card renders the aggregate `edge_requests` view
+as a separate current-UTC-day Edge quota meter; it does not change traffic
+accounting.
+
+## Force-sync package entitlements
+
+`POST /api/admin/packages/force-sync` is an administrator-only destructive
+maintenance action. After confirmation, every non-retired plan bucket whose
+package still exists is copied from the current package definition. For
+multi-duration packages, the bucket's existing duration is matched to the
+current option and falls back to the first option if that duration was removed.
+Traffic usage and current-day Edge request counters are reset to zero; order
+history, points, expiry, queue state and historical usage reports are retained.
+The response reports affected users and buckets, and the API schedules the
+normal sing-box rebuild/link-cache invalidation for affected users.
 
 ## List plans
 

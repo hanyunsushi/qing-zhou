@@ -351,6 +351,7 @@ func (a *API) Router() http.Handler {
 		ar.Post("/api/admin/users/{id}/reset-node-creds", a.handleAdminResetNodeCreds)
 		ar.Get("/api/admin/packages", a.handleAdminListPackages)
 		ar.Post("/api/admin/packages", a.handleAdminCreatePackage)
+		ar.Post("/api/admin/packages/force-sync", a.handleAdminForceSyncPackages)
 		ar.Post("/api/admin/packages/reorder", a.handleAdminReorderPackages)
 		ar.Put("/api/admin/packages/{id}", a.handleAdminUpdatePackage)
 		ar.Post("/api/admin/packages/{id}/retire", a.handleAdminRetirePackage)

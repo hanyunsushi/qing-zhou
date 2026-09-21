@@ -2,7 +2,10 @@
   <div>
     <div class="page-head">
       <div><h2 class="page-title">套餐管理</h2><p class="page-sub">商品规格、时长阶梯、库存、权限与上下架状态</p></div>
-      <div class="page-actions"><n-button type="primary" @click="openForm()">创建套餐</n-button></div>
+      <div class="page-actions">
+        <n-button type="warning" :loading="syncing" @click="forceSyncPackages">强制推送</n-button>
+        <n-button type="primary" @click="openForm()">创建套餐</n-button>
+      </div>
     </div>
     <div class="resource-overview">
       <div class="resource-metric"><b>{{ packages.length }}</b><span>全部套餐</span></div>
@@ -158,6 +161,7 @@ const userGroups = ref<any[]>([])
 const loading = ref(false)
 const saving = ref(false)
 const reordering = ref(false)
+const syncing = ref(false)
 const showForm = ref(false)
 const editing = ref<any>(null)
 type OptRow = { days: number | null; traffic_gb: number | null; price: number | null; edge_requests: number | null }
@@ -245,6 +249,27 @@ async function handleSave() {
     else await apiPost('/api/admin/packages', body)
     message.success('保存成功'); showForm.value = false; editing.value = null; await load()
   } catch (e: any) { message.error(e.message) } finally { saving.value = false }
+}
+
+function forceSyncPackages() {
+  dialog.warning({
+    title: '确认强制推送',
+    content: '这会把所有用户仍持有的订阅套餐同步为当前最新定义，并清零流量与 Edge 日次数已用量。购买记录、积分、有效期和排队状态保留。操作不可撤销，确定继续？',
+    positiveText: '确认推送并重置额度',
+    negativeText: '取消',
+    onPositiveClick: async () => {
+      syncing.value = true
+      try {
+        const result = await apiPost<any>('/api/admin/packages/force-sync')
+        message.success(`已推送 ${result?.users || 0} 位用户、${result?.buckets || 0} 份套餐`)
+        await load()
+      } catch (e: any) {
+        message.error(e.message || '强制推送失败')
+      } finally {
+        syncing.value = false
+      }
+    },
+  })
 }
 
 // 调整套餐在商城/列表中的展示顺序：把第 idx 个套餐前移(-1)/后移(+1)一位，
