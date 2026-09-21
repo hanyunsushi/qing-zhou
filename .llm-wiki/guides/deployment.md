@@ -5,6 +5,25 @@ updated: 2026-09-21
 
 # QingZhou Deployment and Artifact Retention
 
+## 2026-09-21 Edge quota and package force-sync release
+
+Source commit `c0b46be` was built as Linux ARM64
+`v0.2.80-kreeper-c0b46be` and deployed to `/opt/qingzhou/qingzhou`. The active
+binary SHA-256 is
+`71a013cb483e5bcea6cdcf8d2a5d4e5bd8b432e349ceaa2ccbe380ac3068e893`.
+Rollback material is at
+`/opt/qingzhou/backups/edge-quota-force-sync-c0b46be-20260921-025700/`; its
+SQLite snapshot returned `ok` from `PRAGMA integrity_check` and includes the
+previous binary, environment, service definitions and native sing-box
+configuration. Only `qingzhou.service` was restarted.
+
+Local and public `/api/health` both return `v0.2.80-kreeper-c0b46be`.
+`qingzhou.service`, `qingzhou-sing-box.service` and `cloudflared.service` are
+active, with `127.0.0.1:8081`, `*:8882` and `127.0.0.1:18082` listening.
+The public `AdminPackages` and `UserDashboard` chunks contain the new
+force-sync and Edge-quota UI, and an unauthenticated force-sync request returns
+`401` without changing data.
+
 ## 2026-09-21 China return group isolation
 
 The Clash renderer keeps `🏠🇨🇳中国-境外回国` as a real proxy but removes it

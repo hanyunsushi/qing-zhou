@@ -1,6 +1,6 @@
 ---
 title: Validation Guide
-updated: 2026-09-18
+updated: 2026-09-21
 ---
 
 # Validation Guide
@@ -14,6 +14,20 @@ npm --prefix frontend run typecheck
 npm --prefix frontend run build
 git diff --check
 ```
+
+## Edge quota and package force-sync release
+
+The release gate passed `go test ./...`, the 23 front-end contract tests,
+`npm run typecheck`, `npm run build`, and `git diff --check`. Source
+`c0b46be` was deployed as `v0.2.80-kreeper-c0b46be`; the active ARM64 binary
+hash is
+`71a013cb483e5bcea6cdcf8d2a5d4e5bd8b432e349ceaa2ccbe380ac3068e893`.
+The rollback SQLite snapshot at
+`/opt/qingzhou/backups/edge-quota-force-sync-c0b46be-20260921-025700/` passed
+`PRAGMA integrity_check`. Local/public health, all three services, and ports
+`8081`, `8882`, `18082` passed. Public feature chunks were fetched and checked
+for the force-sync and Edge-quota markers; the unauthenticated admin route
+returned `401` as expected.
 
 ## Site branding
 
