@@ -21,6 +21,11 @@ Cloudscape system through the custom `cloudscape-design-system` skill.
 - Monitor summary cards are展示卡片. Their悬浮效果 uses no base shadow, while
   hover/focus adds only `0 8px 28px rgba(0, 0, 0, 0.08)` and preserves the
   paper surface, border, position and opacity.
+- The application sidebar uses the Cloudflare Docs sidebar treatment: a `300px`
+  rail with a right border, `16px` horizontal navigation padding, `32px` menu
+  rows, `8px` corners, muted `13px/500` links, neutral hover/selected surfaces,
+  and an inset focus outline. Existing menu data, routes and mobile drawer
+  behavior remain unchanged.
 
 ## Color rules
 

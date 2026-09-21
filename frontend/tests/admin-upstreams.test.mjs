@@ -43,3 +43,12 @@ test('node cards use drag-and-drop for the shared subscription order', () => {
   assert.doesNotMatch(nodes, /前移（订阅\/列表更靠前）/)
   assert.doesNotMatch(nodes, /@click="moveNodeInGroup/)
 })
+
+test('sidebar uses the Cloudflare documentation sidebar treatment', () => {
+  assert.match(layout, /\/\* 侧边栏 \*\//)
+  assert.match(layout, /\.app-sider \{[\s\S]*?width: 300px;[\s\S]*?border-right: 1px solid var\(--border\);/)
+  assert.match(layout, /\.sidebar-menu \{[\s\S]*?padding: 20px 16px 48px;/)
+  assert.match(layout, /:deep\(\.n-menu-item-content\) \{[\s\S]*?min-height: 32px;[\s\S]*?padding: 4px 12px !important;/)
+  assert.match(layout, /:deep\(\.n-menu-item-content:hover::before\),[\s\S]*?:deep\(\.n-menu-item-content--selected::before\)[\s\S]*?background: var\(--bg-soft\) !important;/)
+  assert.match(layout, /:deep\(\.n-menu-item-content--selected::after\) \{ display: none; \}/)
+})
