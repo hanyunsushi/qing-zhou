@@ -1,7 +1,7 @@
 ---
 title: User Plans API
 updated: 2026-09-21
-source_commit: 4692d20
+source_commit: 8fded8f
 ---
 
 # User Plans API
@@ -29,8 +29,11 @@ multi-duration packages, the bucket's existing duration is matched to the
 current option and falls back to the first option if that duration was removed.
 Traffic usage and current-day Edge request counters are reset to zero; order
 history, points, expiry, queue state and historical usage reports are retained.
-The response reports affected users and buckets, and the API schedules the
-normal sing-box rebuild/link-cache invalidation for affected users.
+The action does not promote or reorder queues. The response reports affected
+users and buckets, and the API schedules the normal sing-box rebuild/link-cache
+invalidation for affected users. Traffic-package purchases are merged into the
+shared traffic pool rather than retained as package-specific buckets, so this
+action targets plan buckets only.
 
 ## List plans
 
