@@ -18,9 +18,9 @@ Cloudscape system through the custom `cloudscape-design-system` skill.
   from ordinary UI colors.
 - Existing page-scoped styles may refine presentation, but must not restore the
   retired blue-gradient, glass-surface or decorative lift treatment.
-- Monitor summary cards follow the Sub2API channel-status card contract: the
-  base card has no shadow, and hover/focus adds only `0 8px 28px rgba(0, 0, 0,
-  0.08)` while preserving the paper surface, border, position and opacity.
+- Monitor summary cards are展示卡片. Their悬浮效果 uses no base shadow, while
+  hover/focus adds only `0 8px 28px rgba(0, 0, 0, 0.08)` and preserves the
+  paper surface, border, position and opacity.
 
 ## Color rules
 
