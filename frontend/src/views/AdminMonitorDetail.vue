@@ -126,7 +126,7 @@ const trafficStatus = computed(() => {
 })
 
 function pctClass(v: number) { return v >= 90 ? 'crit' : v >= 70 ? 'warn' : 'ok' }
-function pctColor(v: number) { return v >= 90 ? '#c2685c' : v >= 70 ? '#bf9540' : '#6f8f76' }
+function pctColor(v: number) { return v >= 90 ? '#d91515' : v >= 70 ? '#b84b00' : '#037f0c' }
 function back() { router.push({ name: 'admin-monitor' }) }
 
 async function loadServer() {
@@ -200,8 +200,8 @@ onUnmounted(() => {
 .detail-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
 .page-title { font-size: 20px; margin: 0; display: flex; align-items: center; gap: 8px; }
 .status-beacon { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
-.status-beacon.online { background: #10b981; box-shadow: 0 0 8px rgba(16,185,129,.5); }
-.status-beacon.offline { background: #ef4444; }
+.status-beacon.online { background: var(--success); box-shadow: none; }
+.status-beacon.offline { background: var(--danger); }
 
 .asset-strip { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
 .chip { padding: 3px 10px; border-radius: 7px; background: var(--bg-soft); font-size: 12px; color: var(--text-2); }

@@ -47,7 +47,7 @@ const fillWidth = computed(() =>
 const fillColor = computed(() => {
   if (bucket.value === 'finished') return 'var(--text-3)'
   if (props.plan.traffic_limit <= 0) return 'var(--text-3)'
-  return usedPct.value > 90 ? '#c2685c' : usedPct.value > 70 ? '#bf9540' : '#6f8f76'
+  return usedPct.value > 90 ? '#d91515' : usedPct.value > 70 ? '#b84b00' : '#037f0c'
 })
 
 const amountText = computed(() => {
@@ -82,7 +82,7 @@ function sourceLabel(p: any) {
 .bar-fill { height: 100%; border-radius: 3px; transition: width .6s cubic-bezier(.22, 1, .36, 1), background .3s ease; }
 .pi-queued-bar {
   height: 5px; border-radius: 3px; margin-top: 6px;
-  background: repeating-linear-gradient(45deg, var(--border), var(--border) 4px, transparent 4px, transparent 8px);
+  border: 1px dashed var(--border-strong); background: var(--bg-soft);
 }
 .pi-foot { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
 .pi-foot .spacer { flex: 1; }

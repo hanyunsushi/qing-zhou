@@ -109,7 +109,7 @@ async function confirm() {
 .rr b { color: var(--text-1); font-weight: 600; }
 .mode-row { margin-top: 4px; }
 .total { margin-top: 6px; padding-top: 10px; border-top: 1px solid var(--border, #eee); font-size: 14px; }
-.total b { color: #10b981; font-size: 16px; }
+.total b { color: var(--success); font-size: 16px; }
 .ratio { color: var(--text-3); font-size: 12px; font-weight: 400; }
-.warn { margin: 8px 0 0; font-size: 12px; color: var(--warning, #d97706); }
+.warn { margin: 8px 0 0; font-size: 12px; color: var(--warn); }
 </style>

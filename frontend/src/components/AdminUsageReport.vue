@@ -183,10 +183,9 @@ import { fmtBytes } from '@/utils/format'
 
 const message = useMessage()
 
-// 与 AdminOverview 同一套暖中性色板，跨页视觉一致。
-const C = { up: '#6f8f76', down: '#5e7a99', gold: '#bf9540', red: '#c2685c', gray: '#9aa0a6' }
-const PALETTE = ['#5e7a99', '#6f8f76', '#bf9540', '#c2685c', '#8d7fa8', '#7f9ea8', '#a89a7f', '#9aa0a6',
-                 '#7b93b3', '#85a58c']
+const C = { up: '#2ea597', down: '#688ae8', gold: '#e07941', red: '#c33d69', gray: '#8c8c94' }
+const PALETTE = ['#688ae8', '#c33d69', '#2ea597', '#8456ce', '#e07941', '#3759ce', '#962249', '#096f64',
+                 '#6237a7', '#a84401']
 const UNATTRIBUTED = '未记录套餐（升级前）'
 
 const presets = [
@@ -328,14 +327,14 @@ const rankEl = ref<HTMLElement | null>(null)
 const charts: Record<string, echarts.ECharts> = {}
 
 const axisStyle = {
-  axisLine: { lineStyle: { color: '#e5e5e5' } },
+  axisLine: { lineStyle: { color: '#dedee3' } },
   axisTick: { show: false },
-  axisLabel: { color: '#767676', fontSize: 11 },
+  axisLabel: { color: '#5f6b6d', fontSize: 11 },
 }
 const byteAxis = {
-  type: 'value', splitLine: { lineStyle: { color: '#f1f1f1' } }, ...axisStyle,
+  type: 'value', splitLine: { lineStyle: { color: '#dedee3' } }, ...axisStyle,
   axisLine: { show: false },
-  axisLabel: { color: '#767676', fontSize: 11, formatter: (v: number) => fmtBytes(v) },
+  axisLabel: { color: '#5f6b6d', fontSize: 11, formatter: (v: number) => fmtBytes(v) },
 }
 
 function draw(key: string, el: HTMLElement | null, option: any, onClick?: (p: any) => void) {
@@ -642,7 +641,7 @@ onUnmounted(() => {
 
 .ratio { display: flex; align-items: center; gap: 8px; min-width: 120px; }
 .ratio-bar { flex: 1; height: 5px; background: var(--bg-soft); border-radius: 3px; overflow: hidden; }
-.ratio-bar i { display: block; height: 100%; background: #5e7a99; border-radius: 3px; }
+.ratio-bar i { display: block; height: 100%; background: #688ae8; border-radius: 3px; }
 .ratio-num { color: var(--text-3); font-size: 11px; min-width: 38px; text-align: right; }
 @media (max-width: 700px) {
   .table-mode { order: 3; margin-left: 0; }

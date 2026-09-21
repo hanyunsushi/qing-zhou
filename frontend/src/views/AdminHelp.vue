@@ -398,17 +398,17 @@ onMounted(load)
 .metric-copy > span { margin-top: 1px; color: var(--text); font-size: 12.5px; font-weight: 600; }
 .metric-copy small { display: block; margin-top: 2px; color: var(--text-3); font-size: 11px; font-weight: 400; }
 
-.document-panel { border: 1px solid var(--border); border-radius: 16px; background: var(--card); box-shadow: var(--shadow-sm); overflow: hidden; }
+.document-panel { border: 1px solid var(--border); border-radius: var(--r); background: var(--card); box-shadow: var(--shadow-sm); overflow: hidden; }
 .document-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 16px 18px; border-bottom: 1px solid var(--border); background: color-mix(in srgb, var(--bg-soft) 64%, var(--card)); }
 .toolbar-copy { display: flex; align-items: baseline; gap: 10px; white-space: nowrap; }
 .toolbar-copy h3 { margin: 0; color: var(--text); font-size: 15px; font-weight: 650; }
 .toolbar-copy span { color: var(--text-3); font-size: 12px; }
 .toolbar-controls { display: flex; align-items: center; justify-content: flex-end; gap: 10px; width: min(100%, 560px); }
 .search-input { width: min(300px, 100%); }
-.status-switch { display: inline-flex; padding: 3px; border: 1px solid var(--border); border-radius: 9px; background: var(--bg-soft); }
+.status-switch { display: inline-flex; padding: 3px; border: 1px solid var(--border); border-radius: var(--r); background: var(--bg-soft); }
 .status-switch button { height: 28px; padding: 0 11px; border: 0; border-radius: 6px; background: transparent; color: var(--text-2); font-family: inherit; font-size: 12px; font-weight: 500; line-height: 1; white-space: nowrap; cursor: pointer; }
 .status-switch button:hover { color: var(--text); }
-.status-switch button.active { background: var(--card); color: var(--accent); box-shadow: 0 1px 3px rgba(28,48,70,.12); font-weight: 650; }
+.status-switch button.active { background: var(--card); color: var(--accent); box-shadow: var(--shadow-sm); font-weight: 650; }
 
 .document-list { min-height: 120px; }
 .document-row { display: grid; grid-template-columns: 58px minmax(0, 1fr) auto; align-items: center; gap: 16px; padding: 17px 18px; border-bottom: 1px solid var(--border); transition: background-color .18s ease; }

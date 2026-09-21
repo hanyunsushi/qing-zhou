@@ -234,7 +234,7 @@ onMounted(async () => {
   padding: 18px 18px 16px;
   transition: box-shadow .18s ease, transform .18s ease, border-color .18s ease;
 }
-.shop-card:hover { box-shadow: var(--shadow); border-color: #d8d8d8; transform: translateY(-2px); }
+.shop-card:hover { box-shadow: var(--shadow); border-color: var(--accent); background: var(--accent-subtle); }
 .shop-card.dim { opacity: .78; }
 
 .sc-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }

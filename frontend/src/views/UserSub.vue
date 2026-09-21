@@ -105,7 +105,7 @@
                 <n-tag :type="planStatus(line.segs[0]).type" size="small" bordered>{{ planStatus(line.segs[0]).label }}</n-tag>
               </div>
             </div>
-            <n-progress v-if="line.segs[0].status !== 'queued'" type="line" :percentage="planPct(line.segs[0])" :color="planPct(line.segs[0])>90?'#b6413a':'#4f8366'" />
+            <n-progress v-if="line.segs[0].status !== 'queued'" type="line" :percentage="planPct(line.segs[0])" :color="planPct(line.segs[0])>90?'#d91515':'#037f0c'" />
             <div v-else class="pl-stripe"></div>
             <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3);margin-top:4px;gap:8px;">
               <span>{{ segUsage(line.segs[0]) }}</span>
@@ -142,7 +142,7 @@
                   <n-tag :type="planStatus(p).type" size="tiny" bordered>{{ planStatus(p).label }}</n-tag>
                 </div>
                 <n-progress v-if="p.status !== 'queued'" type="line" :percentage="planPct(p)" :height="5"
-                            :color="planPct(p)>90?'#b6413a':'#4f8366'" />
+                            :color="planPct(p)>90?'#d91515':'#037f0c'" />
                 <div v-else class="pl-stripe"></div>
                 <div class="pl-use">{{ segUsage(p) }}</div>
               </div>
@@ -666,9 +666,9 @@ const nodeGroups = computed(() => {
 
 function latencyColor(ms: number) {
   if (ms < 0) return 'var(--text-3)'
-  if (ms < 150) return '#10b981'
-  if (ms < 400) return '#bf9540'
-  return '#ef4444'
+  if (ms < 150) return '#037f0c'
+  if (ms < 400) return '#e07941'
+  return '#d91515'
 }
 
 // 一段链路的胶囊。这些 vnode 由 n-data-table 渲染，拿不到本组件 scoped 样式的
@@ -863,7 +863,7 @@ onMounted(async () => {
 .routing-choice-note, .routing-compat-note { color: var(--text-3); font-size: 11px; line-height: 1.6; }
 .routing-compat-note { margin-top: 5px; }
 .sub-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
-.sub-stat { min-width: 0; padding: 12px 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--card); box-shadow: var(--shadow-sm); }
+.sub-stat { min-width: 0; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--r); background: var(--card); box-shadow: var(--shadow-sm); }
 .sub-stat span, .sub-stat small { display: block; color: var(--text-3); font-size: 11px; }
 .sub-stat b { display: block; margin: 3px 0 2px; color: var(--text); font-size: 18px; line-height: 1.2; font-variant-numeric: tabular-nums; }
 .sub-action-row { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin-top: 11px; }
@@ -871,7 +871,7 @@ onMounted(async () => {
 .sub-action-label { width: 58px; flex: 0 0 58px; color: var(--text-3); font-size: 11px; }
 .sub-security-note { margin: 8px 0 0 65px; color: var(--text-3); font-size: 11px; line-height: 1.65; }
 .plan-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
-.plan-row { padding: 12px; background: var(--bg-soft); border-radius: 10px; min-width: 0; }
+.plan-row { padding: 12px; background: var(--bg-soft); border-radius: var(--r); min-width: 0; }
 .plan-row.queued { opacity: .72; border: 1px dashed var(--border); background: transparent; }
 .plan-more { margin-top: 8px; }
 .plan-more :deep(.n-button) { color: var(--text-3); font-size: 12px; }
@@ -889,7 +889,7 @@ onMounted(async () => {
 .pl-seg::before { content: ''; position: absolute; left: 4px; top: 14px; bottom: 0; width: 1px; background: var(--border); }
 .pl-seg:last-child::before { display: none; }
 .pl-dot { position: absolute; left: 0; top: 4px; width: 9px; height: 9px; border-radius: 50%; background: var(--border); }
-.pl-seg.now .pl-dot { background: #6f8f76; box-shadow: 0 0 0 3px rgba(111, 143, 118, .16); }
+.pl-seg.now .pl-dot { background: var(--success); box-shadow: 0 0 0 3px rgba(3, 127, 12, .16); }
 .pl-seg.q .pl-dot { background: transparent; border: 1px dashed var(--text-3); }
 .pl-seg.fin { opacity: .62; }
 .pl-when { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 5px; }
@@ -897,10 +897,10 @@ onMounted(async () => {
 .pl-range { font-size: 12px; color: var(--text-2); }
 .pl-len { font-size: 11px; color: var(--text-3); border: 1px solid var(--border); border-radius: 999px; padding: 0 6px; }
 .pl-use { font-size: 11px; color: var(--text-3); margin-top: 4px; }
-.pl-stripe { height: 6px; border-radius: 3px; background: repeating-linear-gradient(45deg, var(--border), var(--border) 4px, transparent 4px, transparent 8px); }
+.pl-stripe { height: 6px; border: 1px dashed var(--border-strong); border-radius: 3px; background: var(--bg-soft); }
 .pl-more { margin: -2px 0 8px; color: var(--text-3); }
 /* 通用账号是这张卡片里唯一要抄走的东西，加一道左边线把它和下面的节点行分开 */
-.px-acct { margin-bottom: 10px; padding: 10px 12px; background: var(--bg-soft); border-radius: 10px; border-left: 3px solid var(--primary, #63e2b7); }
+.px-acct { margin-bottom: 10px; padding: 10px 12px; background: var(--bg-soft); border-radius: var(--r); border-left: 3px solid var(--accent); }
 .px-acct .pxrow { margin-top: 8px; }
 /* 节点详情里的套餐账号：缩进一块，读起来是「这个节点还有另一套账号」而不是又一
    组并列字段 */
@@ -910,7 +910,7 @@ onMounted(async () => {
 .pxsub { font-size: 12px; color: var(--text-2); flex: 1; }
 .px-choose { margin-top: 10px; }
 /* 窄屏上标题和正文竖着堆，别把正文挤成一条 */
-.px-choose-body { margin-top: 8px; padding: 10px 12px; background: var(--bg-soft); border-radius: 10px; }
+.px-choose-body { margin-top: 8px; padding: 10px 12px; background: var(--bg-soft); border-radius: var(--r); }
 .pc-row { display: flex; gap: 10px; font-size: 12px; line-height: 1.7; margin-bottom: 6px; }
 .pc-k { flex: 0 0 72px; color: var(--text-2); font-weight: 650; }
 .pc-v { flex: 1; color: var(--text-2); }
@@ -919,7 +919,7 @@ onMounted(async () => {
   .pc-row { flex-direction: column; gap: 2px; }
   .pc-k { flex: none; }
 }
-.proxy-row { margin-bottom: 8px; padding: 10px 12px; background: var(--bg-soft); border-radius: 10px; }
+.proxy-row { margin-bottom: 8px; padding: 10px 12px; background: var(--bg-soft); border-radius: var(--r); }
 .proxy-row:last-child { margin-bottom: 0; }
 /* 一行放不下时按钮整体换行，地址不被挤成省略号 */
 .px-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -960,9 +960,9 @@ onMounted(async () => {
 .qz-hop b { font-weight: 600; }
 .qz-hop-proto { font-size: 10px; opacity: .75; letter-spacing: .3px; }
 /* 入口=蓝、中转=紫、出口=橙、互联网=灰，与管理端链路拓扑的配色一致 */
-.qz-hop-entry { background: rgba(32, 128, 240, .12); color: #2080f0; }
-.qz-hop-relay { background: rgba(139, 92, 246, .14); color: #7c53d8; }
-.qz-hop-egress { background: rgba(217, 119, 6, .14); color: #c2751a; }
+.qz-hop-entry { background: var(--accent-soft); color: var(--accent-strong); }
+.qz-hop-relay { background: #f1edff; color: #6237a7; }
+.qz-hop-egress { background: #fff1e8; color: var(--warn); }
 .qz-hop-ext { background: rgba(120, 120, 120, .14); color: var(--text-2, #666); }
 .qz-hop-inet { background: transparent; color: var(--text-3, #999); padding-left: 0; }
 .qz-arrow { font-size: 11px; color: var(--text-3, #999); white-space: nowrap; }

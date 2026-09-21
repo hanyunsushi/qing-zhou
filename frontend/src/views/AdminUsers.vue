@@ -448,7 +448,7 @@ function barWidth(u: any) {
   return '0%'
 }
 function barColor(p: number) {
-  return p > 90 ? '#c2685c' : p > 70 ? '#bf9540' : '#6f8f76'
+  return p > 90 ? '#d91515' : p > 70 ? '#b84b00' : '#037f0c'
 }
 
 // ---- 套餐摘要 ----
@@ -491,11 +491,11 @@ function expiringSoon(u: any) {
 // ---- 概览 / 筛选 ----
 const stats = computed(() => [
   { key: 'all', label: '全部用户', value: users.value.length, color: '' },
-  { key: 'online', label: '在线', value: onlineCount.value, color: '#6f8f76' },
+  { key: 'online', label: '在线', value: onlineCount.value, color: '#037f0c' },
   { key: 'unfetched', label: '从未拉取订阅', value: users.value.filter((u: any) => !u.sub_last_fetched_at).length, color: '#767676' },
   { key: 'noplan', label: '无生效套餐', value: users.value.filter(needsPlan).length, color: '#767676' },
-  { key: 'expiring', label: '7 天内到期', value: users.value.filter(expiringSoon).length, color: '#bf9540' },
-  { key: 'banned', label: '已封禁', value: users.value.filter((u: any) => u.status === 'banned').length, color: '#c2685c' },
+  { key: 'expiring', label: '7 天内到期', value: users.value.filter(expiringSoon).length, color: '#b84b00' },
+  { key: 'banned', label: '已封禁', value: users.value.filter((u: any) => u.status === 'banned').length, color: '#d91515' },
 ])
 const emptyText = computed(() => {
   if (search.value) return '没有匹配的用户'
@@ -987,7 +987,7 @@ onMounted(load)
   font: inherit; color: inherit; cursor: pointer;
   transition: border-color .16s, box-shadow .16s, transform .16s;
 }
-.ss-item:hover { border-color: #d5d5d5; box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+.ss-item:hover { border-color: var(--accent); box-shadow: var(--shadow-sm); background: var(--accent-subtle); }
 .ss-item.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
 .ss-item:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 2px; }
 .ss-val { font-size: 20px; font-weight: 720; line-height: 1.1; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
@@ -999,7 +999,7 @@ onMounted(load)
   background: var(--card); border: 1px solid var(--border); border-radius: var(--r-sm);
   transition: box-shadow .18s, border-color .18s;
 }
-.user-card:hover { box-shadow: var(--shadow); border-color: #d5d5d5; }
+.user-card:hover { box-shadow: var(--shadow); border-color: var(--accent); background: var(--accent-subtle); }
 .uc-head { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .uc-avatar {
   width: 36px; height: 36px; flex-shrink: 0; border-radius: 10px;
@@ -1015,7 +1015,7 @@ onMounted(load)
   margin-top: 2px; font-size: 11.5px; color: var(--text-2);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.dot-live { width: 7px; height: 7px; border-radius: 50%; background: #6f8f76; flex-shrink: 0; animation: pulse 2s ease-in-out infinite; }
+.dot-live { width: 7px; height: 7px; border-radius: 50%; background: var(--success); flex-shrink: 0; animation: pulse 2s ease-in-out infinite; }
 
 .uc-block {
   display: block; width: 100%; text-align: left; font: inherit; color: inherit;
@@ -1043,8 +1043,8 @@ onMounted(load)
 
 /* 状态小片 */
 .chip { font-style: normal; font-size: 10.5px; font-weight: 650; padding: 1px 7px; border-radius: 20px; white-space: nowrap; }
-.chip.ok { background: #6f8f761f; color: #4e6b55; }
-.chip.q { background: #5e7a991f; color: #4c6480; }
+.chip.ok { background: var(--success-soft); color: var(--success); }
+.chip.q { background: var(--accent-soft); color: var(--accent-strong); }
 .chip.fin { background: #7676761a; color: var(--text-3); }
 .chip.none { background: transparent; color: var(--text-3); font-weight: 500; padding-left: 0; }
 

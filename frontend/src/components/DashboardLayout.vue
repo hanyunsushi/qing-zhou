@@ -294,17 +294,16 @@ onUnmounted(() => window.removeEventListener('keydown', focusSearch))
 .layout-header {
   height: 64px; display: grid; grid-template-columns: minmax(140px, 1fr) minmax(280px, 480px) minmax(140px, 1fr);
   align-items: center; gap: 24px; padding: 0 24px;
-  background: rgba(245, 247, 249, .74);
-  border-bottom: 1px solid rgba(28,48,70,.055);
-  backdrop-filter: blur(22px) saturate(1.18);
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
   position: sticky; top: 0; z-index: 10;
 }
 .header-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .header-title { font-weight: 650; font-size: 16px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .header-search { position: relative; width: 100%; }
 .header-search-icon { position: absolute; left: 13px; top: 50%; z-index: 2; transform: translateY(-50%); color: var(--text-2); pointer-events: none; }
-.header-search :deep(.n-input) { height: 36px; border-radius: 999px !important; box-shadow: var(--shadow-sm); transition: box-shadow .3s var(--ease-standard), background .3s var(--ease-standard) !important; }
-.header-search :deep(.n-input.n-input--focus) { background: rgba(255,255,255,.97) !important; box-shadow: 0 8px 24px rgba(34,75,108,.1), 0 0 0 1px rgba(23,105,165,.12); }
+.header-search :deep(.n-input) { height: 36px; border-radius: var(--r) !important; box-shadow: none; transition: box-shadow .18s var(--ease-standard), background .18s var(--ease-standard) !important; }
+.header-search :deep(.n-input.n-input--focus) { background: var(--card) !important; box-shadow: var(--focus-ring); }
 .header-search :deep(.n-input-wrapper) { padding-left: 39px !important; padding-right: 68px !important; }
 .header-search :deep(.n-input__input-el) { padding: 0 !important; }
 .header-search kbd {
@@ -321,9 +320,9 @@ onUnmounted(() => window.removeEventListener('keydown', focusSearch))
 .account-button:hover { background: rgba(255,255,255,.72) !important; color: var(--text) !important; }
 .user-avatar {
   width: 27px; height: 27px; flex: 0 0 27px; box-sizing: border-box; display: inline-grid; place-items: center; border-radius: 50%;
-  background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(242,246,249,.92));
-  color: #496274; border: 1px solid var(--border-strong);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 2px 5px rgba(38,58,76,.08);
+  background: var(--bg-soft);
+  color: var(--text-2); border: 1px solid var(--border);
+  box-shadow: none;
 }
 .user-avatar svg { width: 16px; height: 16px; display: block; }
 .account-name { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }

@@ -154,7 +154,7 @@
 
             <div v-if="trafficAnalysis.limit_bytes > 0" class="quota-overview">
               <div><span>周期额度消耗</span><b>{{ trafficPercent.toFixed(1) }}%</b></div>
-              <n-progress type="line" :percentage="Math.min(trafficPercent, 100)" :show-indicator="false" :height="8" :color="trafficPercent >= 90 ? '#c2685c' : trafficPercent >= 70 ? '#bf9540' : '#5c8b70'" />
+              <n-progress type="line" :percentage="Math.min(trafficPercent, 100)" :show-indicator="false" :height="8" :color="trafficPercent >= 90 ? '#d91515' : trafficPercent >= 70 ? '#b84b00' : '#037f0c'" />
               <p v-if="trafficAnalysis.projection.available">
                 按近期速度，周期结束预计使用 {{ fmtBytes(trafficAnalysis.projection.projected_cycle_total_bytes) }}。
                 <template v-if="trafficAnalysis.projection.estimated_exhaustion_at && trafficAnalysis.projection.estimated_exhaustion_at < trafficAnalysis.next_reset">预计 {{ fmtDateTime(trafficAnalysis.projection.estimated_exhaustion_at) }} 用尽额度。</template>
@@ -355,14 +355,14 @@ function renderTrafficChart(){
   trafficChart.value.setOption({
     animationDuration:500,
     tooltip:{trigger:'axis',valueFormatter:(v:any)=>fmtBytes(Number(v)||0)},
-    legend:{top:0,data:['IN','OUT','计费量'],textStyle:{color:'#6b7785',fontSize:11}},
+    legend:{top:0,data:['IN','OUT','计费量'],textStyle:{color:'#5f6b6d',fontSize:11}},
     grid:{left:12,right:12,top:38,bottom:8,containLabel:true},
-    xAxis:{type:'category',data:rows.map((d:any)=>d.date.slice(5)),axisTick:{show:false},axisLine:{lineStyle:{color:'#dfe4ea'}},axisLabel:{color:'#7b8794'}},
-    yAxis:{type:'value',axisLabel:{formatter:(v:number)=>fmtBytes(v)},splitLine:{lineStyle:{color:'rgba(80,100,120,.09)'}}},
+    xAxis:{type:'category',data:rows.map((d:any)=>d.date.slice(5)),axisTick:{show:false},axisLine:{lineStyle:{color:'#dedee3'}},axisLabel:{color:'#5f6b6d'}},
+    yAxis:{type:'value',axisLabel:{formatter:(v:number)=>fmtBytes(v),color:'#5f6b6d'},splitLine:{lineStyle:{color:'#dedee3'}}},
     series:[
-      {name:'IN',type:'bar',stack:'physical',data:rows.map((d:any)=>d.rx),itemStyle:{color:'#72a7c7',borderRadius:[3,3,0,0]}},
-      {name:'OUT',type:'bar',stack:'physical',data:rows.map((d:any)=>d.tx),itemStyle:{color:'#7fb69b',borderRadius:[3,3,0,0]}},
-      {name:'计费量',type:'line',data:rows.map((d:any)=>d.total),smooth:.28,symbolSize:6,lineStyle:{width:2,color:'#b38439'},itemStyle:{color:'#b38439'}},
+      {name:'IN',type:'bar',stack:'physical',data:rows.map((d:any)=>d.rx),itemStyle:{color:'#688ae8',borderRadius:[3,3,0,0]}},
+      {name:'OUT',type:'bar',stack:'physical',data:rows.map((d:any)=>d.tx),itemStyle:{color:'#2ea597',borderRadius:[3,3,0,0]}},
+      {name:'计费量',type:'line',data:rows.map((d:any)=>d.total),smooth:.28,symbolSize:6,lineStyle:{width:2,color:'#e07941'},itemStyle:{color:'#e07941'}},
     ],
   },true)
   trafficChart.value.resize()
@@ -462,7 +462,7 @@ onUnmounted(() => trafficChart.value?.dispose())
 .traffic-summary-card { min-width:0; padding:13px 14px; border:1px solid var(--border); border-radius:12px; background:var(--bg-soft); }
 .traffic-summary-card span,.traffic-summary-card small { display:block; color:var(--text-3); font-size:10px; }
 .traffic-summary-card b { display:block; margin:4px 0 2px; color:var(--text); font-size:18px; font-variant-numeric:tabular-nums; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.traffic-summary-card.capacity { background:linear-gradient(145deg,rgba(91,145,112,.12),rgba(91,145,112,.04)); }
+.traffic-summary-card.capacity { background:var(--success-soft); }
 .quota-overview { margin-top:12px; padding:13px 14px; border:1px solid var(--border); border-radius:12px; }
 .quota-overview>div { display:flex; justify-content:space-between; margin-bottom:7px; font-size:12px; }
 .quota-overview p { margin:7px 0 0; color:var(--text-3); font-size:11px; line-height:1.6; }
@@ -481,7 +481,7 @@ onUnmounted(() => trafficChart.value?.dispose())
 .source-main>div:first-child { display:flex; justify-content:space-between; gap:12px; font-size:12px; }
 .source-main>div:first-child span { color:var(--text-2); font-variant-numeric:tabular-nums; }
 .source-track { height:5px; margin:5px 0; border-radius:4px; overflow:hidden; background:var(--bg); }
-.source-track i { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,#6e9fbe,#75aa8f); }
+.source-track i { display:block; height:100%; border-radius:inherit; background:var(--chart-1); }
 .source-main small { color:var(--text-3); font-size:10px; }
 @media(max-width:700px){ .traffic-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr));} .traffic-chart{height:230px;} }
 </style>

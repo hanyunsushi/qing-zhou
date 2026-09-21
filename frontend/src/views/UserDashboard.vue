@@ -50,7 +50,7 @@
 
       <StatCard
         label="生效中套餐" :value="activeCount + ' 份'" :sub="planSub"
-        :badge="queuedCount ? '排队 ' + queuedCount : ''" badge-color="#5e7a99"
+        :badge="queuedCount ? '排队 ' + queuedCount : ''" badge-color="#688ae8"
         clickable :delay="60" @click="router.push('/sub')"
       />
 
@@ -203,7 +203,7 @@ const usedPct = computed(() => pct(traffic.value.used, traffic.value.total))
 const usedBadge = computed(() => metered.value && usedPct.value > 0 ? '已用 ' + usedPct.value + '%' : '')
 const ringColor = computed(() => {
   if (!metered.value) return '#b8b8b8'
-  return usedPct.value > 90 ? '#c2685c' : usedPct.value > 70 ? '#bf9540' : '#6f8f76'
+  return usedPct.value > 90 ? '#d91515' : usedPct.value > 70 ? '#b84b00' : '#037f0c'
 })
 
 const remainingText = computed(() => {
@@ -338,7 +338,7 @@ a{color:var(--accent-strong)}
 .alert-enter-from,.alert-leave-to{opacity:0;transform:translateY(-6px)}
 .onboarding-strip{display:grid;grid-template-columns:minmax(220px,1.25fr) repeat(3,minmax(160px,1fr));gap:8px;margin:0 0 16px;padding:10px;border:1px solid var(--border);border-radius:14px;background:color-mix(in srgb,var(--card) 86%,var(--bg-soft));box-shadow:var(--shadow-sm)}
 .onboarding-copy{display:flex;flex-direction:column;justify-content:center;padding:4px 8px}.onboarding-copy b{font-size:13px}.onboarding-copy span{margin-top:2px;color:var(--text-3);font-size:11.5px;line-height:1.5}
-.onboarding-strip button{display:flex;align-items:center;gap:9px;padding:8px 9px;border:0;border-radius:10px;background:var(--card);color:inherit;text-align:left;font:inherit;cursor:pointer;transition:transform .2s var(--ease-emphasized),box-shadow .2s ease}.onboarding-strip button:hover{transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+.onboarding-strip button{display:flex;align-items:center;gap:9px;padding:8px 9px;border:0;border-radius:var(--r);background:var(--card);color:inherit;text-align:left;font:inherit;cursor:pointer;transition:background-color .18s ease,box-shadow .18s ease}.onboarding-strip button:hover{background:var(--accent-subtle);box-shadow:var(--shadow-sm)}
 .onboarding-strip button i{display:grid;place-items:center;flex:none;width:26px;height:26px;border-radius:8px;background:#e8ecef;color:#4f5b65;font-size:11px;font-style:normal;font-weight:700}.onboarding-strip button span{display:flex;min-width:0;flex-direction:column}.onboarding-strip button b{font-size:12px}.onboarding-strip button small{overflow:hidden;color:var(--text-3);font-size:10.5px;white-space:nowrap;text-overflow:ellipsis}
 
 /* KPI */
@@ -372,7 +372,7 @@ a{color:var(--accent-strong)}
 .edge-quota-head,.edge-quota-foot{display:flex;justify-content:space-between;gap:8px;color:var(--text-2)}
 .edge-quota-head b{color:var(--text);font-variant-numeric:tabular-nums}
 .edge-quota-track{height:4px;margin:7px 0 6px;border-radius:2px;background:var(--bg-soft);overflow:hidden}
-.edge-quota-track i{display:block;height:100%;background:#bf9540;border-radius:2px;transition:width .6s cubic-bezier(.22,1,.36,1)}
+.edge-quota-track i{display:block;height:100%;background:var(--warn);border-radius:2px;transition:width .6s cubic-bezier(.22,1,.36,1)}
 .edge-quota-foot{font-size:11px;color:var(--text-3)}
 .usage-card :deep(.n-space){gap:6px!important}
 
@@ -382,8 +382,8 @@ a{color:var(--accent-strong)}
 .tf-item b{color:var(--text);font-weight:650;font-variant-numeric:tabular-nums}
 .tf-peak{margin-left:auto;color:var(--text-3)}
 .dot{width:8px;height:8px;border-radius:2px;display:inline-block}
-.dot.up{background:#6f8f76}
-.dot.down{background:#5e7a99}
+.dot.up{background:var(--success)}
+.dot.down{background:#688ae8}
 
 .empty{text-align:center;color:var(--text-3);padding:40px 0;font-size:13px}
 

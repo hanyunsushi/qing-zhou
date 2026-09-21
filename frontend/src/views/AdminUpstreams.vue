@@ -341,8 +341,8 @@ onUnmounted(() => {
 .upstream-sort-item.drag-over { border-radius: var(--r-sm); box-shadow: 0 0 0 2px var(--accent-soft); }
 .upstream-card { min-width: 0; }
 .balance-panel { padding: 14px; margin-bottom: 14px; border: 1px solid var(--border); border-radius: var(--r-sm); background: var(--bg-soft); min-height: 122px; }
-.balance-panel.ready { background: linear-gradient(135deg, rgba(233, 242, 236, .78), var(--card)); border-color: rgba(76, 113, 85, .2); }
-.balance-panel.failed { background: linear-gradient(135deg, rgba(250, 236, 234, .75), var(--card)); border-color: rgba(168, 86, 75, .18); }
+.balance-panel.ready { background: var(--success-soft); border-color: var(--success); }
+.balance-panel.failed { background: var(--danger-soft); border-color: var(--danger); }
 .balance-kicker, .balance-source, .secret-state, .field-note { font-size: 12px; color: var(--text-3); line-height: 1.65; }
 .balance-value { margin: 4px 0 1px; font-size: 28px; line-height: 1.18; font-weight: 720; letter-spacing: -.025em; color: var(--text); font-variant-numeric: tabular-nums; }
 .balance-meta { margin-bottom: 8px; font-size: 12.5px; color: var(--text-2); font-variant-numeric: tabular-nums; }

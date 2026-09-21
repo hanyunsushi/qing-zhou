@@ -92,9 +92,8 @@ function handleNav(key: string) {
   justify-content: space-between;
   height: 64px;
   padding: 0 clamp(16px, 4vw, 48px);
-  background: rgba(245, 247, 249, .72);
-  border-bottom: 1px solid rgba(28,48,70,.06);
-  backdrop-filter: blur(22px) saturate(1.18);
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
   z-index: 100;

@@ -219,13 +219,13 @@ const barEl = ref<HTMLElement | null>(null)
 let pie: echarts.ECharts | null = null
 let bar: echarts.ECharts | null = null
 
-const PIE = ['#6f8f76', '#5e7a99', '#bf9540', '#c2685c', '#8d7fa8', '#7f9ea8', '#a89a7f', '#9aa0a6']
-const C = { up: '#6f8f76', down: '#c2685c', gold: '#bf9540', info: '#5e7a99' }
+const PIE = ['#688ae8', '#c33d69', '#2ea597', '#8456ce', '#e07941', '#3759ce', '#962249', '#096f64']
+const C = { up: '#2ea597', down: '#c33d69', gold: '#e07941', info: '#688ae8' }
 
 const axisStyle = {
-  axisLine: { lineStyle: { color: '#e5e5e5' } },
+  axisLine: { lineStyle: { color: '#dedee3' } },
   axisTick: { show: false },
-  axisLabel: { color: '#767676', fontSize: 11 },
+  axisLabel: { color: '#5f6b6d', fontSize: 11 },
 }
 
 function pieOption() {
@@ -240,13 +240,13 @@ function pieOption() {
     .map(([name, value], i) => ({ name, value, itemStyle: { color: PIE[i % PIE.length] } }))
     .sort((a, b) => b.value - a.value)
   if (!data.length) return {
-    title: { text: '暂无数据', left: 'center', top: 'center', textStyle: { color: '#767676', fontSize: 13, fontWeight: 400 } },
+    title: { text: '暂无数据', left: 'center', top: 'center', textStyle: { color: '#5f6b6d', fontSize: 13, fontWeight: 400 } },
     series: [],
   }
   return {
     tooltip: { trigger: 'item', formatter: (p: any) => `${p.name}<br/>${p.value} 积分 (${p.percent}%)` },
     legend: { type: 'scroll', orient: 'vertical', right: 0, top: 'center',
-      textStyle: { color: '#595959', fontSize: 11 }, itemWidth: 9, itemHeight: 9, icon: 'roundRect' },
+      textStyle: { color: '#414d4f', fontSize: 11 }, itemWidth: 9, itemHeight: 9, icon: 'roundRect' },
     series: [{
       type: 'pie', radius: ['45%', '70%'], center: ['35%', '50%'], avoidLabelOverlap: true,
       itemStyle: { borderColor: '#fff', borderWidth: 2 },
@@ -279,10 +279,10 @@ function barOption() {
   }
   const hasData = days.some(d => d.net !== 0 || d.refund !== 0)
   if (!hasData) return {
-    title: { text: '近 30 天暂无消费', left: 'center', top: 'center', textStyle: { color: '#767676', fontSize: 13, fontWeight: 400 } },
+    title: { text: '近 30 天暂无消费', left: 'center', top: 'center', textStyle: { color: '#5f6b6d', fontSize: 13, fontWeight: 400 } },
     grid: { left: 8, right: 12, top: 20, bottom: 4, containLabel: true },
     xAxis: { type: 'category', data: days.map(d => d.label), ...axisStyle },
-    yAxis: { type: 'value', splitLine: { lineStyle: { color: '#f1f1f1' } }, ...axisStyle, axisLine: { show: false } },
+    yAxis: { type: 'value', splitLine: { lineStyle: { color: '#dedee3' } }, ...axisStyle, axisLine: { show: false } },
     series: [],
   }
   return {
@@ -296,7 +296,7 @@ function barOption() {
       },
     },
     xAxis: { type: 'category', data: days.map(d => d.label), ...axisStyle },
-    yAxis: { type: 'value', splitLine: { lineStyle: { color: '#f1f1f1' } }, ...axisStyle, axisLine: { show: false } },
+    yAxis: { type: 'value', splitLine: { lineStyle: { color: '#dedee3' } }, ...axisStyle, axisLine: { show: false } },
     series: [{
       type: 'bar', barMaxWidth: 10,
       data: days.map(d => ({
@@ -389,15 +389,15 @@ onUnmounted(() => {
   padding: 12px 14px; margin-bottom: 8px;
   animation: riseIn .45s cubic-bezier(.22,1,.36,1) backwards;
   animation-delay: calc(var(--i, 0) * 45ms);
-  transition: box-shadow .18s ease, transform .18s ease, border-color .18s ease;
+  transition: box-shadow .18s ease, border-color .18s ease, background-color .18s ease;
 }
-.order-item:hover { box-shadow: var(--shadow); transform: translateY(-2px); border-color: #d5d5d5; }
+.order-item:hover { box-shadow: var(--shadow); border-color: var(--accent); background: var(--accent-subtle); }
 
 .oi-ic {
   width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0;
   display: grid; place-items: center; font-size: 15px; font-weight: 750;
 }
-.oi-ic.plan { background: #eef4ef; color: #4d7256; }
+.oi-ic.plan { background: var(--success-soft); color: var(--success); }
 .oi-ic.traffic { background: #eef1f5; color: #4a6a88; }
 .oi-ic.other { background: #f6f1e7; color: #a17a2e; }
 .oi-ic.other { background: #f2f2f2; color: var(--text-2); }

@@ -6,37 +6,37 @@
     <!-- 汇总卡 -->
     <div class="sum-grid">
       <div class="sum-card">
-        <div class="sum-ic" style="background:#e9f0eb;color:#5c7c63;">
+        <div class="sum-ic" style="background:var(--success-soft);color:var(--success);">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
         </div>
         <div><span class="sum-val">{{ dash.total_servers || 0 }}</span><span class="sum-lab">服务器</span></div>
       </div>
       <div class="sum-card">
-        <div class="sum-ic" style="background:#ecfdf5;color:#10b981;">
+        <div class="sum-ic" style="background:var(--success-soft);color:var(--success);">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
         </div>
         <div><span class="sum-val" style="color:#059669;">{{ dash.online || 0 }}</span><span class="sum-lab">在线</span></div>
       </div>
       <div class="sum-card">
-        <div class="sum-ic" style="background:#fef2f2;color:#ef4444;">
+        <div class="sum-ic" style="background:var(--danger-soft);color:var(--danger);">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
         </div>
         <div><span class="sum-val" style="color:#dc2626;">{{ dash.offline || 0 }}</span><span class="sum-lab">离线</span></div>
       </div>
       <div class="sum-card">
-        <div class="sum-ic" style="background:#e8eef5;color:#5e7a99;">
+        <div class="sum-ic" style="background:var(--accent-soft);color:var(--accent);">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
         </div>
         <div><span class="sum-val">{{ fmtBytes(dash.summary?.total_mem_used) }}</span><span class="sum-lab">内存已用 / {{ fmtBytes(dash.summary?.total_mem_total) }}</span></div>
       </div>
       <div class="sum-card">
-        <div class="sum-ic" style="background:#f7efda;color:#bf9540;">
+        <div class="sum-ic" style="background:#fff1e8;color:var(--warn);">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
         </div>
         <div><span class="sum-val">{{ fmtBytes(dash.summary?.total_disk_used) }}</span><span class="sum-lab">磁盘已用 / {{ fmtBytes(dash.summary?.total_disk_total) }}</span></div>
       </div>
       <div class="sum-card">
-        <div class="sum-ic" style="background:#fef3c7;color:#d97706;">
+        <div class="sum-ic" style="background:#fff1e8;color:var(--warn);">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         </div>
         <div><span class="sum-val" style="color:var(--warn);">{{ dash.alerts_unread || 0 }}</span><span class="sum-lab">未读告警</span></div>
@@ -373,7 +373,7 @@ function trafficIncomplete(s: any) {
   const t = s.month_traffic
   return !t?.calibrated && t?.sample_count > 0 && t.coverage_start > (s.traffic_cycle_start || 0) + 3600
 }
-function pctColor(v: number) { return v >= 90 ? '#c2685c' : v >= 70 ? '#bf9540' : '#6f8f76' }
+function pctColor(v: number) { return v >= 90 ? '#d91515' : v >= 70 ? '#b84b00' : '#037f0c' }
 
 // 热力图分类：绿/黄/红
 // 旧版 cell 热力图已替换为 ECharts 时间热力图（Y=机器, X=时间桶），见 loadHeatmap。
@@ -792,8 +792,8 @@ onUnmounted(() => {
 
 /* 汇总卡 */
 .sum-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
-.sum-card { min-height: 76px; box-sizing: border-box; display: flex; align-items: center; gap: 11px; padding: 13px 14px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-sm); }
-.sum-ic { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; flex: 0 0 36px; }
+.sum-card { min-height: 76px; box-sizing: border-box; display: flex; align-items: center; gap: 11px; padding: 13px 14px; background: var(--card); border: 1px solid var(--border); border-radius: var(--r); box-shadow: var(--shadow-sm); }
+.sum-ic { width: 36px; height: 36px; border-radius: var(--r); display: grid; place-items: center; flex: 0 0 36px; }
 .sum-card > div:not(.sum-ic) { display: flex; flex-direction: column; justify-content: center; gap: 2px; min-width: 0; }
 .sum-val { font-size: 19px; font-weight: 720; line-height: 1.12; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .sum-lab { font-size: 11px; line-height: 1.25; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -804,7 +804,7 @@ onUnmounted(() => {
 .hm-dot.ok { background: #63a887; } .hm-dot.warn { background: #d2a34c; } .hm-dot.crit { background: #c96d67; } .hm-dot.none { background: #b9c2cc; }
 .heat-chart { width: 100%; height: 58px; min-height: 0; }
 .heat-chart:empty { display: none; }
-.range-switch { display:inline-flex; align-items:center; gap:0; padding:3px; border:1px solid rgba(28,48,70,.09); border-radius:8px; background:#eef1f4; }
+.range-switch { display:inline-flex; align-items:center; gap:0; padding:3px; border:1px solid var(--border); border-radius:var(--r); background:var(--bg-subtle); }
 .range-switch button { min-width:30px; padding:3px 8px; border:0; border-radius:5px; background:transparent; color:var(--text-3); font:600 11px/1.5 var(--ff); cursor:pointer; transition:background .18s var(--ease-standard), color .18s var(--ease-standard), box-shadow .18s var(--ease-standard); }
 .range-switch button:hover { color:var(--text); }
 .range-switch button.active { background:#fff; color:var(--text); box-shadow:0 1px 2px rgba(30,45,60,.1); }
@@ -846,8 +846,8 @@ onUnmounted(() => {
 }
 .srv-head { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; min-width: 0; }
 .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
-.dot.online { background: #10b981; box-shadow: 0 0 8px rgba(16,185,129,.5); }
-.dot.offline { background: #ef4444; }
+.dot.online { background: var(--success); }
+.dot.offline { background: var(--danger); }
 .srv-name {
   font-weight: 650;
   cursor: pointer;

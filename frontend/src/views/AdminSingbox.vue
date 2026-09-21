@@ -1786,7 +1786,7 @@ async function load() {
 .page-title { font-size: 21px; margin-bottom: 16px; }
 .sb-overview { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin-bottom:18px; }
 .sb-overview button { display:flex; align-items:center; gap:10px; min-width:0; padding:11px 12px; border:1px solid var(--border); border-radius:12px; background:var(--card); color:inherit; text-align:left; font:inherit; box-shadow:var(--shadow-xs); cursor:pointer; transition:transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease, border-color .2s ease; }
-.sb-overview button:hover { transform:translateY(-2px); border-color:var(--border-strong); box-shadow:var(--shadow-sm); }
+.sb-overview button:hover { border-color:var(--accent); background:var(--accent-subtle); box-shadow:var(--shadow-sm); }
 .sb-overview button > span:last-child { display:flex; min-width:0; flex-direction:column; }
 .sb-overview b { color:var(--text); font-size:18px; line-height:1.15; letter-spacing:-.02em; }
 .sb-overview small { overflow:hidden; margin-top:3px; color:var(--text-3); font-size:10.5px; white-space:nowrap; text-overflow:ellipsis; }

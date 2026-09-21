@@ -1,5 +1,12 @@
 # Kreeper QingZhou 定制维护
 
+## 2026-09-21 Cloudscape 视觉系统适配
+
+- QingZhou 前端保留现有 Vue 3、Naive UI 组件树、路由、侧栏层级、页面顺序和业务交互；视觉层按 AWS Cloudscape 规范做 Vue 等价适配，不直接安装或混用 Cloudscape React 组件。
+- 全局 token 位于 `frontend/src/styles/global.css`，Naive UI 语义主题位于 `frontend/src/App.vue`，ECharts 图表使用独立的 Cloudscape 数据可视化色板；主交互蓝、成功/警告/错误状态、边框、表面、阴影、8px 控件圆角和可见键盘焦点环保持统一。
+- 已移除本轮范围内的玻璃背景、装饰性渐变、悬浮抬升、发光状态和旧蓝绿色硬编码；页面级卡片、筛选器、登录框、监控、上游管理、套餐、用户、节点、订单、积分和帮助界面均复用统一 token。布局、组件类型、组件位置和业务逻辑不变。
+- 本轮交付包含 `frontend/tests/cloudscape-visual-system.test.mjs`，验证 token、Naive UI 映射和代表性图表色板。验证命令为 `npm test`、`npm run typecheck`、`npm run build` 和 `git diff --check`。
+
 ## 2026-09-21 Edge 日次数展示与套餐强制推送（已部署）
 
 - 用户控制台“流量用量”卡片新增当前 UTC 日 Edge 次数额度展示，复用 `/api/user/dashboard` 的 `edge_requests` 汇总，不改变 OCI/原生流量统计。

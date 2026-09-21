@@ -234,7 +234,7 @@ onMounted(load)
 
 <style scoped>
 /* 分段筛选 */
-.seg { display: inline-flex; background: #eef1f4; border: 1px solid rgba(28,48,70,.09); border-radius: 8px; padding: 3px; }
+.seg { display: inline-flex; background: var(--bg-subtle); border: 1px solid var(--border); border-radius: var(--r); padding: 3px; }
 .seg-btn {
   display: inline-flex; align-items: center; gap: 5px;
   border: none; background: none; cursor: pointer;

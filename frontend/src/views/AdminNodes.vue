@@ -883,54 +883,53 @@ async function load() {
   -webkit-line-clamp: 2; -webkit-box-orient: vertical;
 }
 :deep(.n-drawer-content-body) { display: flex; flex-direction: column; }
-.group-card { margin-bottom: 16px; border-radius: 12px; }
+.group-card { margin-bottom: 16px; border-radius: var(--r); }
 .group-card :deep(.n-card-header) { padding-bottom: 10px; }
 .group-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 .group-desc { color: var(--text-2); font-size: 12px; margin: -2px 0 12px; }
 .form-tip { font-size: 12px; color: var(--text-3, #999); margin-top: 5px; line-height: 1.5; }
 
 /* 全局入口选择器：先说明目标分组，再按物理入口选择，不伪装成“复制节点”。 */
-.reuse-intro { margin-bottom: 13px; padding: 11px 12px; border-radius: 9px; background: var(--bg-soft); color: var(--text-2); font-size: 12px; }
+.reuse-intro { margin-bottom: 13px; padding: 11px 12px; border-radius: var(--r); background: var(--bg-soft); color: var(--text-2); font-size: 12px; }
 .reuse-intro > span { margin-right: 7px; color: var(--text-3); }
 .reuse-intro > b { color: var(--text); font-size: 13px; }
 .reuse-intro p { margin: 5px 0 0; line-height: 1.5; }
 .reuse-list { display: flex; flex-direction: column; gap: 8px; max-height: 430px; margin-top: 12px; overflow-y: auto; }
 .reuse-entry {
   display: flex; align-items: center; gap: 12px; width: 100%; padding: 11px 12px;
-  border: 1px solid var(--border); border-radius: 10px; background: var(--card);
+  border: 1px solid var(--border); border-radius: var(--r); background: var(--card);
   color: inherit; text-align: left; font: inherit; cursor: pointer;
-  transition: border-color .18s ease, background .18s ease, transform .18s ease;
+  transition: border-color .18s ease, background .18s ease;
 }
-.reuse-entry:hover { border-color: rgba(32, 128, 240, .38); background: rgba(32, 128, 240, .035); transform: translateY(-1px); }
+.reuse-entry:hover { border-color: var(--accent); background: var(--accent-subtle); }
 .reuse-entry-main { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 3px; }
 .reuse-entry-head { display: flex; align-items: center; gap: 7px; min-width: 0; }
 .reuse-entry-head > b { overflow: hidden; color: var(--text); font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
 .reuse-proto, .reuse-current { flex: none; padding: 1px 6px; border-radius: 999px; font-size: 10px; font-weight: 600; }
-.reuse-proto { background: rgba(32, 128, 240, .09); color: #2080f0; }
+.reuse-proto { background: var(--accent-soft); color: var(--accent-strong); }
 .reuse-current { background: rgba(24, 160, 88, .1); color: #168a4c; }
 .reuse-machine { overflow: hidden; color: var(--text-2); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
 .reuse-tag { overflow: hidden; color: var(--text-3); font: 10.5px/1.35 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-overflow: ellipsis; white-space: nowrap; }
 .reuse-groups { color: var(--text-3); font-size: 10.5px; }
-.reuse-pick { display: inline-flex; flex: none; align-items: center; gap: 5px; color: #2080f0; font-size: 12px; font-weight: 600; }
+.reuse-pick { display: inline-flex; flex: none; align-items: center; gap: 5px; color: var(--accent-strong); font-size: 12px; font-weight: 600; }
 .reuse-pick i { font-style: normal; transition: transform .18s ease; }
 .reuse-entry:hover .reuse-pick i { transform: translateX(2px); }
 
 /* 节点卡片：链路是主体，操作退到卡片底部。 */
-.list-card { gap: 9px; border-radius: 10px; }
+.list-card { gap: 9px; border-radius: var(--r); }
 .route-preview {
-  margin-top: 1px; padding: 10px 10px 8px; border-radius: 9px;
-  background: rgba(32, 128, 240, 0.045); border: 1px solid rgba(32, 128, 240, 0.1);
+  margin-top: 1px; padding: 10px 10px 8px; border-radius: var(--r);
+  background: var(--accent-subtle); border: 1px solid var(--accent-soft);
 }
 .route-track { display: flex; align-items: center; min-width: 0; overflow-x: auto; scrollbar-width: none; }
 .route-track::-webkit-scrollbar { display: none; }
 .route-step { display: flex; align-items: center; gap: 7px; min-width: 0; flex: 1 1 78px; color: var(--text-2); }
 .route-step:last-child { flex: 0 1 76px; }
-.route-dot { width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; background: #2080f0; box-shadow: 0 0 0 3px rgba(32, 128, 240, 0.12); }
-.route-step.landing .route-dot { background: #f0a020; box-shadow: 0 0 0 3px rgba(240, 160, 32, 0.13); }
-.route-step.egress .route-dot { background: #7c3aed; box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12); }
-.route-step.external .route-dot { background: #8b5cf6; box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.12); }
-.route-step.inet .route-dot { background: #18a058; box-shadow: 0 0 0 3px rgba(24, 160, 88, 0.12); }
-.route-step.broken .route-dot { background: #d03050; box-shadow: 0 0 0 3px rgba(208, 48, 80, 0.12); }
+.route-dot { width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; background: var(--accent); }
+.route-step.landing .route-dot { background: var(--warn); }
+.route-step.egress .route-dot, .route-step.external .route-dot { background: var(--chart-4); }
+.route-step.inet .route-dot { background: var(--success); }
+.route-step.broken .route-dot { background: var(--danger); }
 .route-copy { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
 .route-copy small { color: var(--text-3, #999); font-size: 10px; font-weight: 500; }
 .route-copy b { color: var(--text); font-size: 11.5px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

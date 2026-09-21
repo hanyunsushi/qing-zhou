@@ -167,15 +167,9 @@ watch(() => props.show, (v) => {
 <style scoped>
 :global(.login-modal) {
   overflow: hidden;
-  background: rgba(255,255,255,.93) !important;
-  backdrop-filter: blur(24px) saturate(1.12);
-  animation: loginIn .5s var(--ease-emphasized) both;
+  background: var(--card) !important;
+  animation: none;
 }
-:global(.login-modal::before) {
-  content: ''; position: absolute; inset: 0 0 auto; height: 96px; pointer-events: none;
-  background: radial-gradient(circle at 18% 0, rgba(71,155,207,.11), transparent 70%);
-}
-@keyframes loginIn { from { opacity: 0; transform: translateY(10px) scale(.975); filter: blur(3px); } }
 .login-brand { position: relative; text-align: center; margin-bottom: 18px; }
 .login-brand-inner { display: inline-flex; align-items: center; gap: 11px; text-align: left; }
 .login-logo {

@@ -15,8 +15,8 @@ const el = ref<HTMLElement | null>(null)
 let chart: echarts.ECharts | null = null
 let ro: ResizeObserver | null = null
 
-const UP = '#6f8f76'
-const DOWN = '#5e7a99'
+const UP = '#2ea597'
+const DOWN = '#688ae8'
 
 function draw() {
   if (!el.value || !el.value.clientWidth) return
@@ -45,7 +45,7 @@ function draw() {
     grid: { left: 8, right: 12, top: 26, bottom: 4, containLabel: true },
     tooltip: {
       trigger: 'axis',
-      axisPointer: { type: 'line', lineStyle: { color: '#c9c9c9' } },
+      axisPointer: { type: 'line', lineStyle: { color: '#8c8c94' } },
       borderWidth: 0,
       textStyle: { fontSize: 12 },
       // 堆叠图的重点是当天总量，但 ECharts 只会逐条列出分量——手写一行合计。
@@ -58,18 +58,17 @@ function draw() {
     },
     legend: {
       data: ['上行', '下行'], right: 0, top: 0, icon: 'roundRect', itemWidth: 9, itemHeight: 9,
-      textStyle: { color: '#595959', fontSize: 11 },
+      textStyle: { color: '#414d4f', fontSize: 11 },
     },
     xAxis: {
       type: 'category', boundaryGap: false, data: x,
-      axisLine: { lineStyle: { color: '#e5e5e5' } }, axisTick: { show: false },
-      // 30 天档位标签会挤成一团，交给 ECharts 按可用宽度自己抽稀
-      axisLabel: { color: '#767676', fontSize: 11, hideOverlap: true },
+      axisLine: { lineStyle: { color: '#dedee3' } }, axisTick: { show: false },
+      axisLabel: { color: '#5f6b6d', fontSize: 11, hideOverlap: true },
     },
     yAxis: {
-      type: 'value', splitLine: { lineStyle: { color: '#f1f1f1' } },
+      type: 'value', splitLine: { lineStyle: { color: '#dedee3' } },
       axisLine: { show: false }, axisTick: { show: false },
-      axisLabel: { color: '#767676', fontSize: 11, formatter: (v: number) => fmtBytes(v) },
+      axisLabel: { color: '#5f6b6d', fontSize: 11, formatter: (v: number) => fmtBytes(v) },
     },
     series: [mk('上行', 'up', UP), mk('下行', 'down', DOWN)],
   }, true)

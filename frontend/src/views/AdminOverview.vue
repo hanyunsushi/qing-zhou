@@ -238,9 +238,8 @@ import AdminUsageReport from '@/components/AdminUsageReport.vue'
 const message = useMessage()
 const usageReport = ref<any>(null)
 
-// 图表配色沿用全站的暖中性色板（global.css 的 --info/--warn 等），不引入高饱和色。
-const C = { up: '#6f8f76', down: '#5e7a99', gold: '#bf9540', red: '#c2685c', gray: '#9aa0a6' }
-const PIE = ['#5e7a99', '#6f8f76', '#bf9540', '#c2685c', '#8d7fa8', '#7f9ea8', '#a89a7f', '#9aa0a6']
+const C = { up: '#2ea597', down: '#688ae8', gold: '#e07941', red: '#c33d69', gray: '#8c8c94' }
+const PIE = ['#688ae8', '#c33d69', '#2ea597', '#8456ce', '#e07941', '#3759ce', '#962249', '#096f64']
 
 const ranges = [{ v: '7d', l: '7天' }, { v: '14d', l: '14天' }, { v: '30d', l: '30天' }, { v: '90d', l: '90天' }]
 const range = ref('14d')
@@ -309,7 +308,7 @@ const distItems = computed(() => [
 
 // ---- 迷你趋势线（KPI 卡内联，不值得为它开一个 echarts 实例）----
 const Spark = defineComponent({
-  props: { data: { type: Array as () => number[], required: true }, color: { type: String, default: '#5e7a99' } },
+  props: { data: { type: Array as () => number[], required: true }, color: { type: String, default: '#688ae8' } },
   setup(props) {
     return () => {
       const d = props.data.filter(n => Number.isFinite(n))
@@ -336,9 +335,9 @@ const charts: Record<string, echarts.ECharts> = {}
 
 const baseGrid = { left: 8, right: 12, top: 28, bottom: 4, containLabel: true }
 const axisStyle = {
-  axisLine: { lineStyle: { color: '#e5e5e5' } },
+  axisLine: { lineStyle: { color: '#dedee3' } },
   axisTick: { show: false },
-  axisLabel: { color: '#767676', fontSize: 11 },
+  axisLabel: { color: '#5f6b6d', fontSize: 11 },
 }
 
 function draw(key: string, el: HTMLElement | null, option: any) {
@@ -367,13 +366,13 @@ function trafficOption() {
     tooltip: {
       trigger: 'axis',
       valueFormatter: (v: number) => fmtBytes(v),
-      axisPointer: { type: 'line', lineStyle: { color: '#c9c9c9' } },
+      axisPointer: { type: 'line', lineStyle: { color: '#8c8c94' } },
     },
     legend: { data: ['上行', '下行'], right: 0, top: 0, icon: 'roundRect',
-      itemWidth: 9, itemHeight: 9, textStyle: { color: '#595959', fontSize: 11 } },
+      itemWidth: 9, itemHeight: 9, textStyle: { color: '#414d4f', fontSize: 11 } },
     xAxis: { type: 'category', boundaryGap: false, data: x, ...axisStyle },
-    yAxis: { type: 'value', splitLine: { lineStyle: { color: '#f1f1f1' } }, ...axisStyle,
-      axisLine: { show: false }, axisLabel: { color: '#767676', fontSize: 11, formatter: (v: number) => fmtBytes(v) } },
+    yAxis: { type: 'value', splitLine: { lineStyle: { color: '#dedee3' } }, ...axisStyle,
+      axisLine: { show: false }, axisLabel: { color: '#5f6b6d', fontSize: 11, formatter: (v: number) => fmtBytes(v) } },
     series: [mk('上行', 'up', C.up), mk('下行', 'down', C.down)],
   }
 }
@@ -384,10 +383,10 @@ function barsOption(data: any[], series: { name: string; key: string; color: str
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, ...(fmt ? { valueFormatter: fmt } : {}) },
     legend: series.length > 1
       ? { data: series.map(s => s.name), right: 0, top: 0, icon: 'roundRect', itemWidth: 9, itemHeight: 9,
-          textStyle: { color: '#595959', fontSize: 11 } }
+          textStyle: { color: '#414d4f', fontSize: 11 } }
       : { show: false },
     xAxis: { type: 'category', data: data.map((d: any) => (d.date || '').slice(5)), ...axisStyle },
-    yAxis: { type: 'value', splitLine: { lineStyle: { color: '#f1f1f1' } }, ...axisStyle, axisLine: { show: false } },
+    yAxis: { type: 'value', splitLine: { lineStyle: { color: '#dedee3' } }, ...axisStyle, axisLine: { show: false } },
     series: series.map(s => ({
       name: s.name, type: 'bar', stack: undefined, barMaxWidth: 14,
       itemStyle: { color: s.color, borderRadius: [3, 3, 0, 0] },
@@ -399,11 +398,11 @@ function barsOption(data: any[], series: { name: string; key: string; color: str
 function pkgPieOption() {
   const src = packages.value.filter(p => p.revenue > 0)
   if (!src.length) return { title: { text: '暂无成交', left: 'center', top: 'center',
-    textStyle: { color: '#767676', fontSize: 13, fontWeight: 400 } }, series: [] }
+    textStyle: { color: '#5f6b6d', fontSize: 13, fontWeight: 400 } }, series: [] }
   return {
     tooltip: { trigger: 'item', formatter: (p: any) => `${p.name}<br/>${p.value} 积分 (${p.percent}%)` },
     legend: { type: 'scroll', orient: 'vertical', right: 0, top: 'center',
-      textStyle: { color: '#595959', fontSize: 11 }, itemWidth: 9, itemHeight: 9, icon: 'roundRect' },
+      textStyle: { color: '#414d4f', fontSize: 11 }, itemWidth: 9, itemHeight: 9, icon: 'roundRect' },
     series: [{
       type: 'pie', radius: ['48%', '72%'], center: ['34%', '50%'], avoidLabelOverlap: true,
       itemStyle: { borderColor: '#fff', borderWidth: 2 },
@@ -416,17 +415,17 @@ function pkgPieOption() {
 function pkgBarOption() {
   const src = [...packages.value].filter(p => p.traffic > 0).sort((a, b) => b.traffic - a.traffic).slice(0, 8).reverse()
   if (!src.length) return { title: { text: '暂无流量', left: 'center', top: 'center',
-    textStyle: { color: '#767676', fontSize: 13, fontWeight: 400 } }, series: [] }
+    textStyle: { color: '#5f6b6d', fontSize: 13, fontWeight: 400 } }, series: [] }
   return {
     grid: { left: 8, right: 56, top: 10, bottom: 4, containLabel: true },
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: (v: number) => fmtBytes(v) },
-    xAxis: { type: 'value', splitLine: { lineStyle: { color: '#f1f1f1' } }, ...axisStyle,
+    xAxis: { type: 'value', splitLine: { lineStyle: { color: '#dedee3' } }, ...axisStyle,
       axisLine: { show: false }, axisLabel: { show: false } },
     yAxis: { type: 'category', data: src.map(p => p.name), ...axisStyle },
     series: [{
       type: 'bar', barMaxWidth: 16, itemStyle: { color: C.down, borderRadius: [0, 4, 4, 0] },
       data: src.map(p => p.traffic),
-      label: { show: true, position: 'right', color: '#595959', fontSize: 11,
+      label: { show: true, position: 'right', color: '#414d4f', fontSize: 11,
         formatter: (p: any) => fmtBytes(p.value) },
     }],
   }
@@ -563,10 +562,10 @@ function trafficOptionFor(rows: any[]) {
     grid: { left: 8, right: 12, top: 22, bottom: 4, containLabel: true },
     tooltip: { trigger: 'axis', valueFormatter: (v: number) => fmtBytes(v) },
     legend: { data: ['上行', '下行'], right: 0, top: 0, icon: 'roundRect', itemWidth: 9, itemHeight: 9,
-      textStyle: { color: '#595959', fontSize: 11 } },
+      textStyle: { color: '#414d4f', fontSize: 11 } },
     xAxis: { type: 'category', boundaryGap: false, data: rows.map(d => (d.date || '').slice(5)), ...axisStyle },
-    yAxis: { type: 'value', splitLine: { lineStyle: { color: '#f1f1f1' } }, ...axisStyle,
-      axisLine: { show: false }, axisLabel: { color: '#767676', fontSize: 11, formatter: (v: number) => fmtBytes(v) } },
+    yAxis: { type: 'value', splitLine: { lineStyle: { color: '#dedee3' } }, ...axisStyle,
+      axisLine: { show: false }, axisLabel: { color: '#5f6b6d', fontSize: 11, formatter: (v: number) => fmtBytes(v) } },
     series: [
       { name: '上行', type: 'line', smooth: 0.35, showSymbol: false, lineStyle: { width: 1.5, color: C.up },
         areaStyle: { color: C.up + '22' }, data: rows.map(d => d.up || 0) },
@@ -659,7 +658,7 @@ onUnmounted(() => {
 .online-item { display: flex; align-items: center; gap: 6px; font-size: 13px; padding: 3px 0; }
 .on-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .on-time { font-size: 11px; color: var(--text-3); }
-.dot { width: 7px; height: 7px; border-radius: 50%; background: #6f8f76; flex-shrink: 0; display: inline-block; }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--success); flex-shrink: 0; display: inline-block; }
 .dot.off { background: #d5d5d5; }
 
 /* 分布 */
@@ -691,8 +690,8 @@ onUnmounted(() => {
 .tbl td.bad, .tbl .bad { color: #a8564b; }
 .pkg-name, .u-name { font-weight: 600; color: var(--text); }
 .mini-bar { display: inline-block; width: 54px; height: 5px; border-radius: 3px; background: #ececec; overflow: hidden; vertical-align: middle; margin-right: 6px; }
-.mini-bar i { display: block; height: 100%; background: #5e7a99; border-radius: 3px; }
-.mini-bar i.hot { background: #c2685c; }
+.mini-bar i { display: block; height: 100%; background: #688ae8; border-radius: 3px; }
+.mini-bar i.hot { background: #c33d69; }
 
 .filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
 .filters .spacer { flex: 1; }
