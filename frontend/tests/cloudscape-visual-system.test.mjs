@@ -26,3 +26,10 @@ test('Cloudscape chart palette is applied to representative user and admin chart
     assert.match(source, /#dedee3/)
   }
 })
+
+test('monitor summary cards use the Sub2API channel-card hover contract', () => {
+  const source = read('src/views/Monitor.vue')
+  assert.match(source, /\.summary-card \{[\s\S]*?box-shadow: none; transition: box-shadow \.25s ease; transform: none; opacity: 1;/)
+  assert.match(source, /\.summary-card:hover, \.summary-card:focus-visible \{[\s\S]*?background: var\(--card\);[\s\S]*?box-shadow: 0 8px 28px rgba\(0, 0, 0, 0\.08\);[\s\S]*?transform: none;/)
+  assert.match(source, /Sub2API 渠道状态卡片合同/)
+})

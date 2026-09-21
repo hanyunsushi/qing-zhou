@@ -802,13 +802,20 @@ onUnmounted(() => {
 .summary-card {
   position: relative; overflow: hidden; display: flex; align-items: center; gap: 12px; padding: 15px 16px;
   background: var(--card); border: 1px solid var(--border); border-radius: var(--r);
-  box-shadow: var(--shadow-sm); transition: box-shadow .18s var(--ease-standard), border-color .18s var(--ease-standard); min-width: 0;
+  box-shadow: none; transition: box-shadow .25s ease; transform: none; opacity: 1; min-width: 0;
   animation: summaryIn .68s var(--ease-emphasized) both;
 }
 .summary-card:nth-child(2) { animation-delay: 45ms; } .summary-card:nth-child(3) { animation-delay: 90ms; }
 .summary-card:nth-child(4) { animation-delay: 135ms; } .summary-card:nth-child(5) { animation-delay: 180ms; } .summary-card:nth-child(6) { animation-delay: 225ms; }
 @keyframes summaryIn { from { opacity: 0; transform: translateY(9px) scale(.985); filter: blur(3px); } to { opacity: 1; transform: none; filter: none; } }
-.summary-card:hover { box-shadow: var(--shadow); border-color: var(--accent); background: var(--accent-subtle); }
+/* Sub2API 渠道状态卡片合同：悬停只增加阴影，纸面、边框和位置保持不变。 */
+.summary-card:hover, .summary-card:focus-visible {
+  border-color: var(--border);
+  background: var(--card);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+  transform: none;
+  opacity: 1;
+}
 .summary-icon { width: 42px; height: 42px; border-radius: var(--r); display: grid; place-items: center; flex-shrink: 0; border: 1px solid var(--border); box-shadow: none; }
 .summary-icon.i-server, .summary-icon.i-cpu, .summary-icon.i-mem, .summary-icon.i-disk { background: var(--accent-soft); color: var(--accent-strong); }
 .summary-icon.i-up { background: var(--success-soft); color: var(--success); }
