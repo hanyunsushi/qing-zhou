@@ -1,7 +1,7 @@
 ---
 title: Edge Usage Callback API
-updated: 2026-09-25
-source_commit: 1083756
+updated: 2026-09-27
+source_commit: deployed-edge-host-match
 ---
 
 # Edge Usage Callback API
@@ -58,3 +58,11 @@ version-nibble segment by 16 when decoding it; treating it as a full byte
 corrupts user ids after the low byte range. VMess protocol ids and the
 `edge_user` query parameter are rewritten together; other supported Edge link
 schemes carry the same query parameter.
+
+QingZhou identifies an Edge node by the configured Edge hostname (default
+`edge.kreeper.cc`) in either the share URL hostname or the transport's
+`host`/`sni`/`peer` parameter. This covers CDN links that dial a Cloudflare IP
+while sending the Worker hostname as WebSocket Host/SNI. VMess applies the same
+rule to its `add`/`host`/`sni`/`peer` fields. Without this match, the generated
+subscription contains only the shared upstream credential and no `edge_user`,
+so the Worker cannot count or report the request.

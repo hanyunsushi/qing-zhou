@@ -1,5 +1,12 @@
 # Kreeper QingZhou 定制维护
 
+## 2026-09-27 Edge 订阅凭据识别修复（已部署）
+
+- 根因：生产 Edge 节点拨号地址是 Cloudflare IP，`edge.kreeper.cc` 只在 VLESS 的传输 `host/sni` 参数中出现；旧逻辑只比较 URL 主机名，生成的订阅没有 `edge_user`，Worker 因而不会计数或回传。
+- 修复：`internal/api/edge.go` 同时检查 URL 主机名与 `host`/`sni`/`peer`；VMess 同时检查 `add`/`host`/`sni`/`peer`。Edge UUID、15 分钟批次、额度扣减和其他订阅格式不变；新增 VLESS/VMess 回归测试。
+- `go test ./...` 通过。生产 ARM64 面板已替换为 `v0.2.84-kreeper-edgefix-20260927`，二进制 SHA-256 为 `f8564b6953b864b7978b96020b272d179642ba1e68e686bac953ebc93109c9f5`；回滚目录为 `/opt/qingzhou/backups/edge-host-match-20260927-025658/`。仅重启 `qingzhou.service`，未改数据库、env、服务定义、sing-box 或 Tunnel。
+- 部署后真实订阅复核：11 条 `edge.kreeper.cc` 节点全部带 `edge_user`，此前为 0 条；面板/API 健康返回新版本，服务 active。代理产生真实请求后，首次批量回传仍有最多 15 分钟延迟，再核对 `edge_request_batches` 和用户“今日已用”。
+
 ## 2026-09-27 fork 前端 chunk 优化、Release 与生产部署（已发布）
 
 - 前端新增共享 tree-shakable ECharts 注册表，图表页面只注册实际使用的图表与组件；生产构建首屏主包约 `300.72 KB`，ECharts 独立异步包约 `567.24 KB`（gzip `189.79 KB`）。500 KB 提示属于异步图表包 warning，不阻塞构建。

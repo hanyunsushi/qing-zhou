@@ -15,7 +15,27 @@ func edgeTunnelHost() string {
 	if host == "" {
 		host = "edge.kreeper.cc"
 	}
-	return strings.ToLower(host)
+	return strings.ToLower(strings.TrimSuffix(host, "."))
+}
+
+// isEdgeTunnelURL accepts the common CDN form where the dial address is an
+// IP, while the actual Worker hostname is carried by the transport Host/SNI.
+// Matching only URL.Hostname() leaves those nodes on the shared upstream UUID
+// and prevents the Worker from seeing edge_user at all.
+func isEdgeTunnelURL(u *url.URL) bool {
+	if u == nil {
+		return false
+	}
+	if strings.EqualFold(strings.TrimSuffix(u.Hostname(), "."), edgeTunnelHost()) {
+		return true
+	}
+	q := u.Query()
+	for _, key := range []string{"host", "sni", "peer"} {
+		if strings.EqualFold(strings.TrimSuffix(strings.TrimSpace(q.Get(key)), "."), edgeTunnelHost()) {
+			return true
+		}
+	}
+	return false
 }
 
 func rewriteEdgeTunnelLink(raw string, userID int64) string {
@@ -31,7 +51,7 @@ func rewriteEdgeTunnelLink(raw string, userID int64) string {
 		return rewriteEdgeVMess(raw, edgeUUID)
 	}
 	u, err := url.Parse(raw)
-	if err != nil || !strings.EqualFold(u.Hostname(), edgeTunnelHost()) || u.User == nil {
+	if err != nil || !isEdgeTunnelURL(u) || u.User == nil {
 		return raw
 	}
 	switch strings.ToLower(u.Scheme) {
@@ -85,8 +105,14 @@ func rewriteEdgeVMess(raw, edgeUUID string) string {
 	if json.Unmarshal(decoded, &profile) != nil {
 		return raw
 	}
-	server, _ := profile["add"].(string)
-	if !strings.EqualFold(server, edgeTunnelHost()) {
+	matched := false
+	for _, key := range []string{"add", "host", "sni", "peer"} {
+		if value, _ := profile[key].(string); strings.EqualFold(strings.TrimSuffix(strings.TrimSpace(value), "."), edgeTunnelHost()) {
+			matched = true
+			break
+		}
+	}
+	if !matched {
 		return raw
 	}
 	profile["id"] = edgeUUID

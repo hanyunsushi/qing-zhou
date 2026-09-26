@@ -22,7 +22,17 @@ func TestRewriteEdgeTunnelLinkAddsSignedUserToProtocols(t *testing.T) {
 		t.Fatalf("vless credential = %s / %s, want %s", vless.User.Username(), vless.Query().Get("edge_user"), want)
 	}
 
-	profile := map[string]any{"add": "edge.example", "id": "old-id", "net": "ws"}
+	// CDN endpoints commonly dial a resolved IP while carrying the Worker
+	// hostname in the WebSocket Host/SNI fields. That form must be metered too.
+	ipVLESS, err := url.Parse(rewriteEdgeTunnelLink("vless://origin-pass@172.67.75.53:443?type=ws&host=edge.example&sni=edge.example#edge", 42))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if ipVLESS.User.Username() != want || ipVLESS.Query().Get("edge_user") != want {
+		t.Fatalf("IP-backed vless credential = %s / %s, want %s", ipVLESS.User.Username(), ipVLESS.Query().Get("edge_user"), want)
+	}
+
+	profile := map[string]any{"add": "172.67.75.53", "host": "edge.example", "sni": "edge.example", "id": "old-id", "net": "ws"}
 	body, err := json.Marshal(profile)
 	if err != nil {
 		t.Fatal(err)
