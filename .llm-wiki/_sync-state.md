@@ -6,7 +6,7 @@ updated: 2026-09-27
 # Working-tree audit
 
 - 2026-09-27 chunk 优化：新增共享 tree-shakable ECharts 注册表，9 个图表页面只注册实际使用的图表和组件；构建首屏主包约 `300.72 KB`，ECharts 独立异步包约 `567.24 KB`（gzip `189.79 KB`），保留已知非阻塞的大 chunk warning。
-- 2026-09-27 发布门禁：前端 95 项测试、类型检查、生产构建、`go test ./...`、`go test -race ./...`、`go vet ./...` 与 `git diff --check` 通过；本地 fork Release 尚未创建，待提交和推送后验证 GitHub Actions 资产。
+- 2026-09-27 发布门禁与 Release：前端 95 项测试、类型检查、生产构建、`go test ./...`、`go test -race ./...`、`go vet ./...` 与 `git diff --check` 通过；提交 `4799d22`、标签 `v0.2.84-kreeper-20260927` 和 GitHub Actions `36257004993` 已验证，Release 资产已上传。
 
 - Repository root: `/Users/hinaw/qing-zhou-fork`.
 - Git metadata is unavailable: `.git` points to `/Users/hinaw/qing-zhou/.git/worktrees/qingzhou-kreeper-production`, and that path does not exist. No commit or diff baseline was inferred.

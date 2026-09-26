@@ -1,9 +1,10 @@
 # Kreeper QingZhou 定制维护
 
-## 2026-09-27 fork 前端 chunk 优化（待发布）
+## 2026-09-27 fork 前端 chunk 优化与 Release（已发布）
 
 - 前端新增共享 tree-shakable ECharts 注册表，图表页面只注册实际使用的图表与组件；生产构建首屏主包约 `300.72 KB`，ECharts 独立异步包约 `567.24 KB`（gzip `189.79 KB`）。500 KB 提示属于异步图表包 warning，不阻塞构建。
-- 发布门禁已通过：前端 95 项测试、类型检查和构建，Go 全量测试、race、vet 与 `git diff --check` 均通过。当前仅准备 fork 源码 Release，未改变生产宿主服务。
+- 发布门禁已通过：前端 95 项测试、类型检查和构建，Go 全量测试、race、vet 与 `git diff --check` 均通过。提交 `4799d22` 已推送到 fork，并发布为 `v0.2.84-kreeper-20260927`。
+- GitHub Actions `36257004993` 成功上传 `qingzhou-linux-{amd64,arm64}`、`probe-linux-{amd64,arm64}`、`sing-box-linux-{amd64,arm64}` 和 `SHA256SUMS.txt`；Release URL 为 `https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.84-kreeper-20260927`。fork 未配置 Release signing key，资产未签名；本轮未改变生产宿主服务。
 
 ## 2026-09-26 前端资源内嵌修复发布（已部署）
 
