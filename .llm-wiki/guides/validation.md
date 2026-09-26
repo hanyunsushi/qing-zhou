@@ -15,6 +15,14 @@ npm --prefix frontend run build
 git diff --check
 ```
 
+## 2026-09-26 Authentik OIDC Issuer fix
+
+The focused OAuth suite and `go test ./... -count=1` passed. The focused source
+diff also passed `git diff --check`; an unrelated pre-existing trailing-space
+warning remains in `frontend/src/views/AdminSingbox.vue` and was not changed.
+The live OCI check confirmed Authentik discovery `200`, local/public health
+`200`, and local/public OAuth start `200` with PKCE S256 authorization URLs.
+
 ## Edge quota and package force-sync release
 
 The release gate passed `go test ./...`, the 23 front-end contract tests,

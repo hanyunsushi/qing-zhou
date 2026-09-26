@@ -385,6 +385,16 @@ func TestOAuthConfigurationAndTransport(t *testing.T) {
 	}
 }
 
+func TestOAuthIssuerValidationPreservesTrailingSlash(t *testing.T) {
+	c := oauthConfig{Issuer: " https://issuer.example/application/o/demo/ ", RedirectURL: "https://panel.example/api/auth/oauth2/callback", ClientID: "client"}
+	if err := c.validate(); err != nil {
+		t.Fatalf("valid issuer rejected: %v", err)
+	}
+	if c.Issuer != "https://issuer.example/application/o/demo/" {
+		t.Fatalf("issuer slash normalization changed OIDC identity: %q", c.Issuer)
+	}
+}
+
 func TestOAuthExplicitBinding(t *testing.T) {
 	for _, mode := range []string{"success", "password", "session", "already_bound"} {
 		t.Run(mode, func(t *testing.T) {

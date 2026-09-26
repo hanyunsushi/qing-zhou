@@ -5,6 +5,28 @@ updated: 2026-09-21
 
 # QingZhou Deployment and Artifact Retention
 
+## 2026-09-26 Authentik OIDC Issuer fix
+
+The OAuth start path returned `502` because configuration validation removed the
+trailing slash from the Issuer before `go-oidc` compared it with Authentik's
+discovery `issuer`. The fix preserves the configured Issuer string (after
+whitespace trimming) and adds a regression test; endpoint same-origin, HTTPS,
+PKCE S256, and safe egress checks remain unchanged.
+
+Production runs `v0.2.80-kreeper-oidcfix-20260926` with ARM64 binary SHA-256
+`5b56faed2eee3af3937fcaf2c433bc7ceeb0d1846a80aaba8eb77a2b6c5d3990`.
+Rollback material is at
+`/opt/qingzhou/backups/oauth-issuer-fix-20260926-101438/`, and the pre-edit
+database backup is `/opt/qingzhou/backups/oauth-issuer-before-20260926-095327.db`.
+Only `qingzhou.service` was restarted; sing-box, Cloudflare Tunnel, and user
+data were not replaced.
+
+Local and public `/api/health` return the new version. Local and public
+`POST /api/auth/oauth2/start` return `200` with an Authentik authorization URL
+and a per-flow `__Host-qz_oauth_*` cookie. `qingzhou.service`,
+`qingzhou-sing-box.service`, and `cloudflared.service` are active and the
+expected listeners remain available.
+
 ## 2026-09-21 Edge quota and package force-sync release
 
 Source commit `c0b46be` was built as Linux ARM64
@@ -161,6 +183,12 @@ The EdgeTunnel Pages domain is `https://edge.kreeper.cc`. Edge subscriptions
 use that domain directly, while QingZhou subscriptions use
 `https://proxy.kreeper.cc` directly. No compatibility Worker or historical
 `qz` hostname is part of the production path.
+
+The Edge user credential is a cross-runtime contract: QingZhou packs a 60-bit
+user id around the UUIDv4 version/variant bits and the Worker decodes the
+version nibble with base 16. Keep both implementations in lockstep before
+publishing either side; a byte-multiplier mismatch routes usage to the wrong
+`external_id` and leaves the user's daily counter unchanged.
 
 The fork does not carry a custom writable `/data/probe` Docker adaptation.
 Container builds use the upstream hosted-probe location `/opt/qingzhou/probe`;

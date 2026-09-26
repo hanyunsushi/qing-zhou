@@ -60,7 +60,9 @@ func oauthURL(raw string) (*url.URL, error) {
 }
 func (c *oauthConfig) validate() error {
 	c.Name = strings.TrimSpace(c.Name)
-	c.Issuer = strings.TrimRight(strings.TrimSpace(c.Issuer), "/")
+	// OIDC issuer URLs are compared byte-for-byte with discovery metadata;
+	// preserve a provider's trailing slash because it is part of the issuer.
+	c.Issuer = strings.TrimSpace(c.Issuer)
 	c.ClientID = strings.TrimSpace(c.ClientID)
 	c.RedirectURL = strings.TrimSpace(c.RedirectURL)
 	if c.Name == "" {
