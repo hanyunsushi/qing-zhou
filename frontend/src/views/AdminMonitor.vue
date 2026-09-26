@@ -3,40 +3,40 @@
     <h2 class="page-title">监控管理</h2>
     <p class="page-sub">服务器监控与告警</p>
 
-    <!-- 汇总卡 -->
+    <!-- 汇总卡：展示卡片 -->
     <div class="sum-grid">
       <div class="sum-card">
-        <div class="sum-ic" style="background:var(--success-soft);color:var(--success);">
+        <div class="sum-ic">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
         </div>
         <div><span class="sum-val">{{ dash.total_servers || 0 }}</span><span class="sum-lab">服务器</span></div>
       </div>
       <div class="sum-card">
-        <div class="sum-ic" style="background:var(--success-soft);color:var(--success);">
+        <div class="sum-ic">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
         </div>
         <div><span class="sum-val" style="color:#059669;">{{ dash.online || 0 }}</span><span class="sum-lab">在线</span></div>
       </div>
       <div class="sum-card">
-        <div class="sum-ic" style="background:var(--danger-soft);color:var(--danger);">
+        <div class="sum-ic">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
         </div>
         <div><span class="sum-val" style="color:#dc2626;">{{ dash.offline || 0 }}</span><span class="sum-lab">离线</span></div>
       </div>
       <div class="sum-card">
-        <div class="sum-ic" style="background:var(--accent-soft);color:var(--accent);">
+        <div class="sum-ic">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
         </div>
         <div><span class="sum-val">{{ fmtBytes(dash.summary?.total_mem_used) }}</span><span class="sum-lab">内存已用 / {{ fmtBytes(dash.summary?.total_mem_total) }}</span></div>
       </div>
       <div class="sum-card">
-        <div class="sum-ic" style="background:#fff1e8;color:var(--warn);">
+        <div class="sum-ic">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
         </div>
         <div><span class="sum-val">{{ fmtBytes(dash.summary?.total_disk_used) }}</span><span class="sum-lab">磁盘已用 / {{ fmtBytes(dash.summary?.total_disk_total) }}</span></div>
       </div>
       <div class="sum-card">
-        <div class="sum-ic" style="background:#fff1e8;color:var(--warn);">
+        <div class="sum-ic">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         </div>
         <div><span class="sum-val" style="color:var(--warn);">{{ dash.alerts_unread || 0 }}</span><span class="sum-lab">未读告警</span></div>
@@ -44,15 +44,16 @@
     </div>
 
     <!-- 热力图 -->
-    <n-card size="small" style="margin-bottom:16px;">
+    <n-card class="heatmap-card" size="small" style="margin-bottom:16px;">
       <template #header><span class="card-h">可用性热力图</span></template>
       <template #header-extra>
-        <n-space :size="4" align="center">
-          <span class="range-switch">
+        <div class="heatmap-header-controls">
+          <!-- 路由切换组件：热力图时间范围改变监控查询维度。 -->
+          <span class="range-switch route-switch">
             <button v-for="r in heatRanges" :key="r.value" type="button" :class="{ active: heatRange===r.value }" @click="loadHeatmap(r.value)">{{ r.label }}</button>
           </span>
           <span class="hm-legend"><i class="hm-dot ok" />正常 <i class="hm-dot warn" />高负载 <i class="hm-dot crit" />严重 <i class="hm-dot none" />无数据</span>
-        </n-space>
+        </div>
       </template>
       <div ref="heatEl" class="heat-chart" />
       <n-empty v-if="!heatLoading && !heatData?.servers?.length" size="small" description="暂无探针服务器" style="padding:16px 0;" />
@@ -90,6 +91,7 @@
 
     <!-- 搜索筛选 -->
     <div class="filter-bar">
+      <!-- 填写框 -->
       <n-input v-model:value="q" placeholder="搜索名称/位置/提供商" size="small" clearable style="max-width:220px;" />
       <n-select v-model:value="fStatus" :options="statusOpts" size="small" placeholder="状态" clearable style="width:120px;" />
       <n-select v-model:value="fLoc" :options="locOpts" size="small" placeholder="位置" clearable style="width:140px;" filterable />
@@ -193,7 +195,8 @@
         <div v-else class="no-data">暂无数据</div>
 
         <div class="mini-chart-box">
-          <div class="range-switch mini-range">
+          <!-- 路由切换组件：单机趋势时间范围改变图表查询维度。 -->
+          <div class="range-switch mini-range route-switch">
             <button v-for="r in ranges" :key="r.value" type="button" :class="{ active: chartRange[s.id]===r.value }" @click="loadChart(s.id, r.value)">{{ r.label }}</button>
           </div>
           <div :ref="(el:any) => setChartRef(s.id, el)" class="mini-chart" />
@@ -266,7 +269,7 @@
           <n-form-item label="备注"><n-input v-model:value="assetForm.notes" type="textarea" :rows="2" /></n-form-item>
           <n-form-item v-if="!assetServer.local" label="启用探针"><n-switch v-model:value="assetForm.probe_enabled" /></n-form-item>
         </n-form>
-        <n-button type="primary" block :loading="saving" @click="handleSaveAsset">保存</n-button>
+        <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleSaveAsset">保存</n-button>
       </n-drawer-content>
     </n-drawer>
   </div>
@@ -280,7 +283,7 @@ import {
 } from 'naive-ui'
 import { apiGet, apiList, apiPost, apiPut } from '@/api'
 import { fmtBytes, fmtDateTime, fmtUptime, pct, toLocalDatetimeInput } from '@/utils/format'
-import * as echarts from 'echarts'
+import * as echarts from '@/utils/echarts'
 
 const message = useMessage()
 const router = useRouter()
@@ -790,24 +793,31 @@ onUnmounted(() => {
 .page-sub { color: var(--text-2); margin-bottom: 18px; }
 .card-h { font-weight: 650; font-size: 14px; }
 
-/* 汇总卡 */
+/* 展示卡片 */
 .sum-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
-.sum-card { min-height: 76px; box-sizing: border-box; display: flex; align-items: center; gap: 11px; padding: 13px 14px; background: var(--card); border: 1px solid var(--border); border-radius: var(--r); box-shadow: var(--shadow-sm); }
-.sum-ic { width: 36px; height: 36px; border-radius: var(--r); display: grid; place-items: center; flex: 0 0 36px; }
+.sum-card { min-height: 76px; box-sizing: border-box; display: flex; align-items: center; gap: 11px; padding: 13px 14px; background: var(--card); border: 1px solid var(--border); border-radius: var(--r); box-shadow: none; transition: box-shadow .25s ease; transform: none; opacity: 1; }
+/* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 */
+.sum-card:hover, .sum-card:focus-visible { border-color: var(--border); background: var(--card); box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08); transform: none; opacity: 1; }
+  /* 卡片 SVG：与首页摘要图标及帮助文档统计卡统一使用中性前景和灰色底框。 */
+.sum-ic { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; flex: 0 0 36px; background: var(--bg-subtle); color: var(--text-2); }
 .sum-card > div:not(.sum-ic) { display: flex; flex-direction: column; justify-content: center; gap: 2px; min-width: 0; }
 .sum-val { font-size: 19px; font-weight: 720; line-height: 1.12; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .sum-lab { font-size: 11px; line-height: 1.25; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* 热力图 */
-.hm-legend { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-3); margin-left: 8px; }
+.heatmap-header-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; min-width: 0; }
+.hm-legend { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 6px; min-width: 0; font-size: 11px; color: var(--text-3); margin-left: 0; }
 .hm-dot { width: 8px; height: 8px; border-radius: 3px; display: inline-block; margin-left: 6px; box-shadow: inset 0 0 0 1px rgba(31,43,55,.05); }
 .hm-dot.ok { background: #63a887; } .hm-dot.warn { background: #d2a34c; } .hm-dot.crit { background: #c96d67; } .hm-dot.none { background: #b9c2cc; }
 .heat-chart { width: 100%; height: 58px; min-height: 0; }
 .heat-chart:empty { display: none; }
 .range-switch { display:inline-flex; align-items:center; gap:0; padding:3px; border:1px solid var(--border); border-radius:var(--r); background:var(--bg-subtle); }
+.range-switch.route-switch { position:relative; isolation:isolate; min-height:40px; padding:4px; border:0; border-radius:16px !important; box-shadow:none; }
+.range-switch.route-switch::before { position:absolute; z-index:0; top:4px; bottom:4px; left:0; width:var(--route-indicator-w, 0px); border-radius:12px; content:''; pointer-events:none; background:var(--card); box-shadow:none; transform:translateX(var(--route-indicator-x, 4px)); transition:transform .24s cubic-bezier(.215,.61,.355,1), width .24s cubic-bezier(.215,.61,.355,1); }
 .range-switch button { min-width:30px; padding:3px 8px; border:0; border-radius:5px; background:transparent; color:var(--text-3); font:600 11px/1.5 var(--ff); cursor:pointer; transition:background .18s var(--ease-standard), color .18s var(--ease-standard), box-shadow .18s var(--ease-standard); }
+.range-switch.route-switch button { position:relative; z-index:1; display:inline-flex; align-items:center; justify-content:center; box-sizing:border-box; min-height:32px; padding:6px 10px; line-height:20px; border-radius:12px; }
 .range-switch button:hover { color:var(--text); }
-.range-switch button.active { background:#fff; color:var(--text); box-shadow:0 1px 2px rgba(30,45,60,.1); }
+.range-switch button.active { background:transparent; color:var(--text); box-shadow:none; }
 .range-switch button:focus-visible { outline:0; box-shadow:inset 0 0 0 2px rgba(29,39,51,.16); }
 .mini-range { width:max-content; margin-bottom:6px; }
 
@@ -879,6 +889,18 @@ onUnmounted(() => {
 .mini-chart { height: 160px; }
 
 @media (max-width: 768px) {
+  .heatmap-card :deep(.n-card-header) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    align-items: start;
+  }
+  .heatmap-card :deep(.n-card-header__main),
+  .heatmap-card :deep(.n-card-header__extra) {
+    width: 100%;
+    min-width: 0;
+  }
+  .heatmap-header-controls { justify-content: flex-start; }
   .card-grid { grid-template-columns: 1fr; }
   .sum-grid { grid-template-columns: repeat(2, 1fr); }
   .asset-form-hint { margin-left: 0; }

@@ -157,7 +157,7 @@ func (a *API) handleRegister(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		link := a.publicBase(r) + "/api/auth/verify?token=" + token
-		a.deliver(req.Email, "验证你的邮箱 - 轻舟", verifyEmailHTML(link), link)
+		a.deliver(req.Email, "验证你的邮箱 - Kreeproxy", verifyEmailHTML(link), link)
 		ok(w, J{"need_verify": true, "message": "注册成功，请查收验证邮件后激活账号"})
 		return
 	}
@@ -302,6 +302,7 @@ func (a *API) handleDashboard(w http.ResponseWriter, r *http.Request) {
 	u = a.refreshAfterPromotion(u, a.advanceQueueOnRead(u.ID))
 	buckets, _ := a.st.ListBuckets(u.ID)
 	pkgNames, _ := a.st.PackageNames()
+	now := time.Now().Unix()
 	tr := dashboardTraffic(buckets)
 	ok(w, J{
 		"username": u.Username,
@@ -316,12 +317,12 @@ func (a *API) handleDashboard(w http.ResponseWriter, r *http.Request) {
 			// finite now, so zero means zero and this can never be true.
 			"unlimited": false,
 		},
-		"edge_requests": edgeRequestView(buckets),
+		"edge_requests": edgeRequestViewAt(buckets, now),
 		// Plans stay per-bucket so the UI can show every active/queued份 with its
 		// own quota and expiry; there is deliberately no single "current plan" —
 		// several can be live at once and a queued repeat purchase means one of
 		// them isn't actually in use yet.
-		"plans":     buildPlanViews(buckets, pkgNames),
+		"plans":     buildPlanViewsAt(buckets, pkgNames, now),
 		"expiry_at": u.ExpiryAt,
 	})
 }
@@ -850,8 +851,12 @@ func startedAt(b *store.Bucket) int64 {
 }
 
 func buildPlanViews(buckets []*store.Bucket, pkgNames map[int64]string) []planView {
-	now := time.Now().Unix()
+	return buildPlanViewsAt(buckets, pkgNames, time.Now().Unix())
+}
+
+func buildPlanViewsAt(buckets []*store.Bucket, pkgNames map[int64]string, now int64) []planView {
 	acts := queueActivations(buckets, now)
+	today := time.Unix(now, 0).UTC().Format("2006-01-02")
 	out := []planView{}
 	for _, b := range buckets {
 		if b.Kind == store.KindFree {
@@ -867,7 +872,7 @@ func buildPlanViews(buckets []*store.Bucket, pkgNames map[int64]string) []planVi
 			}
 		}
 		edgeUsed := b.EdgeRequestsUsed
-		if b.EdgeUsageDay != time.Now().UTC().Format("2006-01-02") {
+		if b.EdgeUsageDay != today {
 			edgeUsed = 0
 		}
 		pv := planView{ID: b.ID, Kind: b.Kind, PackageID: b.PackageID, QueueKey: b.QueueKey, Name: name, TrafficLimit: b.TrafficLimit,
@@ -887,7 +892,7 @@ func buildPlanViews(buckets []*store.Bucket, pkgNames map[int64]string) []planVi
 			pv.ActivateBy = acts[b.ID]
 		case !b.NotExpired(now):
 			pv.Status = "expired"
-		case !b.HasQuota() || !b.HasEdgeQuota():
+		case !b.HasQuota() || !b.HasEdgeQuotaAt(now):
 			pv.Status = "exhausted"
 		default:
 			pv.Status = "active"
@@ -975,7 +980,7 @@ func (a *API) handleSub(w http.ResponseWriter, r *http.Request) {
 	singboxTpl, _ := a.st.GetSetting("sub_singbox_template")
 	siteName, _ := a.st.GetSetting("site_name")
 	if strings.TrimSpace(siteName) == "" {
-		siteName = "轻舟"
+		siteName = "Kreeproxy"
 	}
 	// Explicit ?format= wins; otherwise auto-detect from the client User-Agent
 	// so Clash/sing-box/Surge each get a native config out of the box.

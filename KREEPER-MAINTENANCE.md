@@ -1,13 +1,184 @@
 # Kreeper QingZhou 定制维护
 
+## 2026-09-27 fork 前端 chunk 优化（待发布）
+
+- 前端新增共享 tree-shakable ECharts 注册表，图表页面只注册实际使用的图表与组件；生产构建首屏主包约 `300.72 KB`，ECharts 独立异步包约 `567.24 KB`（gzip `189.79 KB`）。500 KB 提示属于异步图表包 warning，不阻塞构建。
+- 发布门禁已通过：前端 95 项测试、类型检查和构建，Go 全量测试、race、vet 与 `git diff --check` 均通过。当前仅准备 fork 源码 Release，未改变生产宿主服务。
+
+## 2026-09-26 前端资源内嵌修复发布（已部署）
+
+- 根因是发布二进制构建前未执行 `frontend/npx vite build`，`frontend/dist` 只有占位文件，`go:embed` 因此没有可用 SPA 资源；运行时会返回“前端资源缺失”。按项目构建合同先生成 Vite 产物，再重新编译 Go 二进制。
+- 稳定源码基线为 `293613b`，生产版本 `v0.2.80-kreeper-oidcfix-embedded-20260926`，Linux ARM64 二进制 SHA-256 为 `8a0570b43f176a8ab9addb9b11936b3e67f565e0fd3eeb770416a9b6f2ffab58`。本次只补齐内嵌前端资源，不改变 OAuth、数据库或节点逻辑。
+- 发布前回滚材料位于 `/opt/qingzhou/backups/embedded-frontend-20260926-105638/`，包含旧二进制、SQLite 数据库、环境文件、systemd 服务定义、Cloudflare Tunnel 配置和 `/etc/qingzhou-sing-box`。仅重启 `qingzhou.service`，未重启 sing-box、Cloudflare Tunnel 或覆盖用户数据。
+- 发布后本机与公网主页、`/api/health`、实际 hashed JS/CSS 资源均返回 `200`；公网 OAuth 启动仍返回 `200`、Auth URL 和 PKCE S256。`qingzhou.service`、`qingzhou-sing-box.service`、`cloudflared.service` active，三者重启次数均为 `0`。
+
+## 2026-09-26 Authentik OIDC Issuer 尾斜杠修复（已部署）
+
+- 根因是 OAuth 配置校验用 `TrimRight("/")` 改写 OIDC Issuer；Authentik discovery 返回的 issuer 包含末尾 `/`，`go-oidc` 要求两者逐字一致，因此 `/api/auth/oauth2/start` 在发现阶段稳定返回 502。修复仅保留用户填写的 Issuer 路径语义，并增加末尾 `/` 回归测试；HTTPS、同源端点、PKCE S256 和 SSRF 防护不变。
+- 生产配置已保留为标准 Issuer `https://oidc.kreeper.cc/application/o/kreeproxy/`。修复源码提交 `293613b`；生产版本 `v0.2.80-kreeper-oidcfix-20260926`，ARM64 二进制 SHA-256 为 `5b56faed2eee3af3937fcaf2c433bc7ceeb0d1846a80aaba8eb77a2b6c5d3990`。
+- 发布前回滚材料位于 `/opt/qingzhou/backups/oauth-issuer-fix-20260926-101438/`，包含旧二进制、SQLite 数据库、环境文件、systemd 服务定义、Cloudflare Tunnel 配置和 `/etc/qingzhou-sing-box`；另有配置修复前数据库备份 `/opt/qingzhou/backups/oauth-issuer-before-20260926-095327.db`。仅重启 `qingzhou.service`，未重启 sing-box、Cloudflare Tunnel 或覆盖用户数据。
+- 发布后本机与公网 `/api/health` 均返回 `v0.2.80-kreeper-oidcfix-20260926`；本机和公网 `POST /api/auth/oauth2/start` 均返回 `200`、生成 Authentik authorization URL 和独立 `__Host-qz_oauth_*` 状态 Cookie。`qingzhou.service`、`qingzhou-sing-box.service`、`cloudflared.service` 均 active，`127.0.0.1:8081`、`*:8882`、`127.0.0.1:18082`、`127.0.0.1:19000` 正常监听，发布后 qingzhou 错误日志为空。
+
+## 2026-09-23 订阅页顶部操作按钮统一（本地未部署）
+
+- 顶部“订单记录”与“去商城”分别复用控制台顶部普通按钮和强调按钮的几何、文字、描边及悬浮/聚焦/按下状态。
+- 按钮状态由 `global.css` 的共享语义类单点维护；左侧“控制台”入口、按钮内容和路由不变。
+
+## 2026-09-23 订阅范围下拉选中颜色（本地未部署）
+
+- 订阅管理页“原生配置代理范围”选择框的选中项及选中 hover/focus 背景使用按钮强调蓝，选中文字与勾选使用白色；局部覆盖，不影响其他下拉菜单和订阅链接行为。
+
+## 2026-09-23 趋势切换留白与账户头像点击态（本地未部署）
+
+- 控制台流量趋势标题和范围切换间保持 `16px` 间距。
+- 账户下拉触发器鼠标点击不再铺圆形背景，头像图标底固定 `8px` 方角；键盘 focus-visible 焦点环保留。
+
+## 2026-09-23 控制台趋势切换圆角（本地未部署）
+
+- “7天 / 30天”路由切换组件外轨为 `16px`、选中面为 `12px`；外轨显式覆盖全局 `[class*="-switch"]` 的 `18px !important` 圆角兜底。不改变尺寸、颜色或查询行为。
+
+## 2026-09-23 控制台按钮悬浮状态（本地未部署）
+
+- “订阅管理”及引导区三个普通按钮常态文字更浅，悬浮/聚焦后提升至中性深色；引导按钮的 ring 使用透明 spacer，保持与“订阅管理”相同的可见 2px 描边，不再被白色内层遮细。
+- 全局 Naive UI 主按钮悬浮统一为浅亮蓝 `#298fff`（`--accent-button-hover`）；“去商城”背景和描边同步使用该值。深色 `--accent-hover` 保留给链接等非按钮交互。
+- 移除引导区原先蓝色 hover 背景与投影；文本、SVG、布局和点击行为不变。
+- 组件规则见 `frontend/src/views/UserDashboard.vue`，状态契约与回归断言见 Cloudscape Visual System。
+
+## 2026-09-23 二级切换路由与填写框边界（本地未部署）
+
+- 登录、节点管理、sing-box 配置和管理概览统一复用 `n-tabs.route-switch-2`，活动线由页签自身绘制并保持导航滚动层可见。
+- 登录填写框保留全局外置聚焦高亮；表单项内容轨道允许可见溢出并预留左右空间，避免弹窗容器裁切阴影。
+
+## 2026-09-23 顶栏悬浮下拉菜单圆角（本地未部署）
+
+- “控制台”“管理”和账户三个顶栏按钮及菜单项悬浮面为 14px，菜单外框为 18px；菜单项伪元素四边各内缩 3px，另计 1px 菜单边框，构成 4px 同心内缩。按钮 4px focus ring 外缘与 18px 菜单框对应。规则详见 Cloudscape Visual System，且属于 QingZhou 适配而非 AWS 官方 token。
+
+## 2026-09-23 侧边栏层级线对齐（本地未部署）
+
+- 子菜单层级线改为独立伪元素并对齐子项 SVG 中心线 `20px`，不再贴在子菜单轨道最左侧；不改变菜单层级、宽度或路由。
+
+## 2026-09-23 登录弹窗视觉边界（本地未部署）
+
+- 登录/抽屉全视口遮罩固定为直角，避免全局圆角兜底作用于 `.n-modal-mask` 或 `.n-drawer-mask`。
+- 登录卡片不裁切外置 focus ring；登录品牌名与顶栏品牌名使用统一显示字体角色。
+
+## 2026-09-22 Apple 浅色系统蓝按钮强调色（本地未部署）
+
+- 全局按钮主强调色切换为 Apple 浅色模式系统蓝 `#007AFF`，同步 CSS `--accent` 和 Naive UI `primaryColor`；悬停/按下状态保留原有深色层级。未部署。
+
+## 2026-09-22 填写框与搜索框聚焦动画（本地未部署）
+
+- 输入框、数字输入框、选择框、侧栏筛选和顶部搜索框保留原有中性悬浮样式，仅给聚焦态边框、背景和 focus ring 增加刷新按钮同样的 `0.18s` 过渡。未部署。
+
+## 2026-09-22 侧边栏菜单归类层级（本地未部署）
+
+- 一级归类使用静态菜单分组，不显示 SVG、箭头或层级竖线；账户设置与管理后台归入信息分组。
+- 管理后台的运营、节点服务、内容系统作为三级归类并保留图标与展开箭头；Naive UI 菜单箭头按实际 `.n-submenu > .n-menu-item > .n-menu-item-content` DOM 层级切换方向，侧栏宽度约束为 100% 轨道，避免展开导致内容横向伸缩。
+
+## 2026-09-22 侧边栏嵌套宽度与状态色（本地未部署）
+
+- `.n-submenu-children` 保持父轨道 `100%` 宽度，以固定 `16px` 左内轨和层级线表达层级，使用 `overflow-x: clip` 限制横向溢出并允许纵向内容完整显示，避免管理后台展开/收起时筛选框、悬浮面和选中面改变宽度。
+- 二级/三级菜单选中 SVG 使用 `var(--accent)`，一级静态分组标题恢复不透明的 Cloudflare 中性色。未部署。
+
+## 2026-09-22 侧栏父轨道硬约束（本地未部署）
+
+- 侧栏及 Naive UI 菜单树固定为 `300px` 父轨道并禁止横向溢出，展开三级子树不会改变筛选框、选中背景和侧栏外框宽度；图标色跟随实际按钮主色 `#007aff`。未部署。
+
+## 2026-09-22 控制台操作按钮几何（本地未部署）
+
+- “订阅管理”按普通按钮处理，采用 Sub2 账号管理页刷新按钮的紧凑 `32px/8px` 几何与透明描边；“去商城”按强调按钮处理，保留现有蓝色，仅统一尺寸和圆角。文本、SVG、路由和业务行为不变。
+
+## 2026-09-22 控制台操作按钮状态（本地未部署）
+
+- 两个控制台按钮按 Sub2 的 ring 状态链统一：常态 1px ring，悬浮/聚焦通过独立的 spacer、边框宽度和边框颜色变量扩为 2px ring；普通按钮文字提升为正文色且背景保持透明，强调按钮背景和 ring 同步从 `var(--accent)` 过渡到 `var(--accent-hover)`，禁用态不套用悬浮状态。不改变尺寸、文本、SVG、路由或业务行为。
+
+## 2026-09-22 侧栏收起宽度与高亮面（本地未部署）
+
+- 菜单树增加 inline-size containment 和固定图标/内容/箭头网格，收起管理后台不会再由隐藏子树的 intrinsic width 撑宽侧栏。
+- 高亮面使用贴合轨道的 `::before`，固定 Cloudflare 的 `8px` 圆角；选中/子级激活 SVG 强制使用 `var(--accent)`。未部署。
+
+## 2026-09-22 侧栏滚动轨道稳定宽度（本地未部署）
+
+- `.sidebar-menu` 预留 `scrollbar-gutter: stable`，避免管理后台展开/收起时滚动条出现或消失而令筛选框、悬浮面、选中面和图标列横向伸缩；菜单行仍保持 Cloudflare `8px` 圆角与 32px 行高。
+
+## 2026-09-22 Teleport 侧栏高亮覆盖（本地未部署）
+
+- 移动 Drawer Teleport 到 `body` 后继续复用桌面菜单树；菜单几何由组件 scoped 规则单点维护，`global.css` 仅承担通用圆角/宽度兜底，避免重复状态规则互相覆盖。
+
+## 2026-09-22 侧栏组件重复规则清理（本地未部署）
+
+- 删除 `DashboardLayout.vue` 中重复的 `:global(.sidebar-menu .n-*)` 菜单规则，仅保留 Drawer 外壳所需的跨 Teleport 规则；桌面与移动菜单视觉契约不变。
+- 删除搜索建议中重复的“账户设置”条目，避免同一路由出现两次。
+
+## 2026-09-22 路由切换与控制台按钮悬浮（本地未部署）
+
+- 用户控制台、订单管理和管理概览时间范围统一使用 Sub2 路由切换几何：`16px` 外框、`12px` 选项与跟随面、4px 内轨、`0.24s` 跟随过渡，离开后回到当前项。
+- “订阅管理”普通按钮与“去商城”强调按钮新增 Sub2 式描边扩展 hover/focus ring 和按下位移；普通按钮保持透明中性面，强调按钮保持当前蓝色。文字、SVG、路由不变。
+
+## 2026-09-22 侧栏全局圆角覆盖（本地未部署）
+
+- 根因是全局 `[class*="-item"]` 圆角兜底匹配 `.n-menu-item-content` 并以 `!important` 覆盖组件级 CF 几何规则。
+- `global.css` 末尾新增侧栏专用例外，锁定 CF 的 `8px` 高亮圆角、父/子轨道 `100%`、子菜单纵向可见、16px 图标列 + 8px 文字间距和按钮蓝选中 SVG；路由与菜单数据不变。
+
+## 2026-09-22 管理概览切换路由修正（本地未部署）
+
+- 管理概览的“切换路由2”不再依赖 Naive UI `n-tabs-bar` 在滚动层内绘制活动线，改由活动页签自身绘制下划线，避免切换到“趋势”时左侧指示线被 `.n-tabs-nav-scroll-wrapper` 或 `.v-x-scroll` 裁切。
+- 用户分析页签链路补齐 `n-tabs-pane-wrapper`、Naive UI 卡片/Spin 容器的 `min-width: 0` 和 `max-width: 100%`，宽表只在 `.tbl-wrap` 内横向滚动，不再把整个管理概览页面撑宽。
+- 顶部时间范围“路由切换组件”统一使用 Sub2 几何：外框 `16px`、选项与跟随面 `12px`、4px 内轨；本轮只改前端样式和维护测试，未部署、未改变颜色、路由、数据请求或业务逻辑。
+- 验证入口：`npm test`、`npm run typecheck`、`npm run build`、`git diff --check`。
+
+## 2026-09-22 移动端侧边栏统一（本地未部署）
+
+- 桌面侧边栏和移动端 Drawer 统一复用 `sidebar-surface`，共享 Cloudflare 风格的变量、白灰背景、文字色、`300px` 宽度、品牌区高度、菜单行、层级线、圆角和原生滚动规则。
+- 移动端 Drawer 不再使用独立的圆角/阴影面板；抽屉内部与桌面侧边栏一致由 `.sidebar-menu` 承担纵向滚动，避免移动端滚动条和背景与桌面版分离。
+- 本轮仅修改侧边栏 DOM 外壳与样式测试，未改变路由、菜单数据或移动端抽屉交互；未部署。
+
+## 2026-09-22 侧边栏菜单几何修正（本地未部署）
+
+- 修正 Naive UI `.n-submenu .n-menu-item-content` 的高优先级 `height: var(--n-item-height)` 覆盖：菜单项和父项统一为 `32px`，使用 `border-box` 与 `6px 12px` 内边距，避免悬浮背景跨入相邻菜单项。
+- 二级菜单不再因父项按 `32px` 排版、子项被撑成 `42px` 而由 `.n-submenu-children` 裁掉底部；“积分明细”等子菜单的悬浮表面保持完整。路由、菜单数据、移动 Drawer 结构不变。
+- 本项目权威视觉明确为 AWS Cloudscape/Cloudflare 侧栏适配；不使用 Kreeper & Co/Anthropic 设计系统。
+
+## 2026-09-22 二级菜单层级线间距修正（本地未部署）
+
+- 二级菜单 `.n-submenu-children` 的左内轨从 `8px` 调整为 `16px`，让层级竖线与悬浮/选中菜单面之间保持约 `8px` 独立留白；不改变一级菜单宽度、路由、菜单数据或选中逻辑。
+
+## 2026-09-22 控制台趋势切换与品牌字体修正（本地未部署）
+
+- 用户控制台“流量趋势”的 `7天/30天` 按“路由切换组件”处理，使用独立选中指示面、悬浮跟随、离开回选和键盘焦点；不改变趋势 API、范围值或数据加载行为。
+- 侧边栏 `Kreeproxy` 品牌字样改用 `var(--ff-heading)` 显示字体，固定为 `16px/20px` 并恢复零字距；控制台页面标题和趋势卡片标题分别收敛到 `24px/30px`、`16px/20px`，全局页面标题与 Naive UI 卡片标题也显式使用零字距，符合项目的 Cloudscape 字体刻度；不改变站点品牌数据或 Logo 资源。
+
+## 2026-09-22 侧边栏状态表面修正（本地未部署）
+
+- 侧边栏菜单项在共享 `.sidebar-menu` 边界强制使用 Cloudflare Docs 式 `8px` 圆角，隔离全局 `18px !important` 圆角兜底对 `*-item` 的覆盖；该规则同时覆盖桌面 rail 和 Teleport 到 `body` 的移动 Drawer。
+- 悬浮使用中性浅灰 `--sidebar-hover`，当前选中项使用更清晰的中性 `--sidebar-selected`，文字与图标仍按原有层级增强；不添加蓝色装饰边框，不改变路由、菜单数据或点击行为。
+- 已为桌面深层菜单和移动全局菜单状态添加回归断言；未部署。
+
 ## 2026-09-21 Cloudscape 视觉系统适配
 
+- 源码默认品牌已与生产设置一致：站点名 `Kreeproxy`，描述为“仅限个人在中国大陆以外地区依法依规使用”，公共 Logo 使用 `frontend/public/kreeproxy-brand.png`；该文件与生产 `brand_icon_data_uri` 解码后的 PNG SHA-256 一致。运行时数据库中的管理员设置仍优先于源码默认值，旧默认值 `轻舟`、旧 SVG 和空描述会在公开配置读取时归一化为生产品牌。
+- 侧边栏商城入口及 `/shop` 页面标题统一为“订阅套餐”，保留原路由 `/shop`、购买逻辑和订单路径不变。
+- 所有 Naive UI 输入框、输入数字框、选择框以及顶部/侧栏搜索框统一标注为“填写框”；常态/悬停边框使用 Sub2 的 `#d1cfc5`，聚焦使用 `#2c84db` 和 `0 0 0 3px rgba(44,132,219,.18)`，聚焦边框和光环使用 `0.18s` 过渡；已覆盖 Naive UI 悬浮层的整条 `border` 和默认 focus `box-shadow`，避免悬浮效果与聚焦效果叠加；不改变控件尺寸和业务行为，路由切换组件仍保留跟随悬浮动画。
 - QingZhou 前端保留现有 Vue 3、Naive UI 组件树、路由、侧栏层级、页面顺序和业务交互；视觉层按 AWS Cloudscape 规范做 Vue 等价适配，不直接安装或混用 Cloudscape React 组件。
-- 全局 token 位于 `frontend/src/styles/global.css`，Naive UI 语义主题位于 `frontend/src/App.vue`，ECharts 图表使用独立的 Cloudscape 数据可视化色板；主交互蓝、成功/警告/错误状态、边框、表面、阴影、8px 控件圆角和可见键盘焦点环保持统一。
+- 全局 token 位于 `frontend/src/styles/global.css`，Naive UI 语义主题位于 `frontend/src/App.vue`，ECharts 图表使用独立的 Cloudscape 数据可视化色板；排版遵循 AWS/Cloudscape 的 14px/20px 正文、28/36、24/30、20/24、16/20 标题层级、无负字距和清晰字重层级。英文正文使用可商用的 `Inter 18pt Light`，中文正文使用 `Resource Han Rounded CN`，标题继续使用 `Fraunces` + `Source Han Serif SC`，字体资源位于 `frontend/public/fonts/` 并附带 Inter 的 `OFL-1.1` 许可；数字继续使用 AWS 风格的等宽 `Amazon Ember Mono` 回退栈与 `tabular-nums`。
+- QingZhou 圆角以用户指定摘要卡的 18px 半径作为外层基准；嵌套曲线按 `内层半径 = 外层半径 - 总内缩` 对齐，阴影外缘约为 `控件半径 + spread`。顶栏采用按钮/菜单项 14px、菜单外框 18px，菜单项四边各内缩 3px 并计入1px外框。小尺寸 Logo 可单独使用 8px；侧边栏按 Cloudflare 独立使用 32px 行高、8px 圆角和 2px 行间距，状态点保持圆形。此为 QingZhou 适配规则，不代表 AWS 官方圆角 token。全局 token位于 `frontend/src/styles/global.css`，键盘 `:focus-visible` 保留可访问焦点环。
 - 已移除本轮范围内的玻璃背景、装饰性渐变、悬浮抬升、发光状态和旧蓝绿色硬编码；页面级卡片、筛选器、登录框、监控、上游管理、套餐、用户、节点、订单、积分和帮助界面均复用统一 token。布局、组件类型、组件位置和业务逻辑不变。
 - 本轮交付包含 `frontend/tests/cloudscape-visual-system.test.mjs`，验证 token、Naive UI 映射和代表性图表色板。验证命令为 `npm test`、`npm run typecheck`、`npm run build` 和 `git diff --check`。
 - 监控首页六张卡片标注为展示卡片，悬浮效果为默认无阴影，悬停/聚焦只增加 `0 8px 28px rgba(0, 0, 0, 0.08)`，不改变背景、边框、位置或透明度；对应类型注释位于 `frontend/src/views/Monitor.vue`。
-- 侧边栏按 Cloudflare Docs 公开号侧栏样式适配：`300px` 轨道、右边框、`16px` 水平内边距、`32px` 菜单行、`8px` 圆角、弱化文字、中性悬停/选中背景和内嵌焦点描边；菜单数据、路由、分组和移动抽屉行为不变，对应代码区域标注为“侧边栏”。
+- 监控首页六个摘要 SVG 使用中性图标色与底色；可用性热力图时间范围是“路由切换组件”，使用独立跟随指示面，图例不属于切换器。详见 [Cloudscape Visual System](.llm-wiki/modules/cloudscape-visual-system.md)。
+- 用户控制台四张核心指标卡片复用同一展示卡片和悬浮效果；统一由 `frontend/src/components/StatCard.vue` 控制，悬停/聚焦只增加同样的阴影，不改变卡片背景、边框和位置。
+- 订阅管理页四张状态摘要卡片复用同一展示卡片和悬浮效果；对应类型备注位于 `frontend/src/views/UserSub.vue` 的 `.sub-stat` 样式区域。
+- 订单记录页四张消费摘要卡片复用同一展示卡片和悬浮效果；对应类型备注位于 `frontend/src/views/UserOrders.vue` 的 `.kpi-card` 样式区域。
+- 积分明细页四张积分摘要卡片复用同一展示卡片和悬浮效果；对应类型备注位于 `frontend/src/views/UserPoints.vue` 的 `.kpi-card` 样式区域。
+- 管理概览四张运营 KPI 卡片复用同一展示卡片和悬浮效果；对应类型备注位于 `frontend/src/views/AdminOverview.vue` 的 `.kpi` 样式区域。
+- 用户管理六张统计卡片和用户卡片均复用同一展示卡片和悬浮效果；对应类型备注位于 `frontend/src/views/AdminUsers.vue` 的 `.ss-item` 与 `.user-card` 样式区域，统计卡片保留筛选选中态。
+- 用户组页三张资源摘要卡片复用同一展示卡片和悬浮效果；对应类型备注位于 `frontend/src/views/AdminUserGroups.vue` 的 `.group-summary-card` 样式区域。
+- 套餐管理页四张资源摘要卡片复用同一展示卡片和悬浮效果；对应类型备注位于 `frontend/src/views/AdminPackages.vue` 的 `.package-summary-card` 样式区域。
+- 其他页面顶部资源摘要统一由全局 `resource-metric` 展示卡片合同控制；用量报表、监控管理、监控详情、帮助状态、订单管理、sing-box 配置总览和在线更新版本概览的独立摘要卡也复用同一悬浮效果；服务器流量分析抽屉中的四张摘要卡同样遵循该合同。管理订单的两组状态/分组筛选标注为“路由切换组件”，使用跟随悬浮指示器并保留筛选逻辑。
+- 侧边栏本地按 Cloudflare Docs 公开侧栏源码复刻：使用其浅灰/白色配色、原生滚动条、侧栏筛选、`300px` 轨道、右边框、`32px` 菜单行、`8px` 圆角、弱化文字、中性悬停/选中背景、可折叠分组、子菜单左侧层级线和旋转箭头；筛选框与菜单项共用同一水平轨道，不重复叠加左右边距；路由与移动抽屉行为不变，对应代码区域标注为“侧边栏”。
+- 修正侧边栏展开重叠：普通菜单项保持 `32px`，可展开的 `.n-submenu` 使用自然高度，子分组不会覆盖后续项目；全站页面底色、卡片和边框同步 Cloudflare Docs 的 `99%` 灰白、白色和 `92%` 灰阶。
+- 管理概览顶部时间范围切换标注为“路由切换组件”，使用 Sub2 几何：外框 `16px`、选项与跟随指示面 `12px`、4px 内轨；悬浮/键盘焦点时选中面跟随指针平滑移动，离开后回到当前选项。管理概览内容页签标注为“切换路由2”，下划线保持在导航层上方，不被滚动容器裁切；页签 pane、筛选区和表格包装层固定 `min-width:0`，切到用户分析时不会被表格最小内容宽度撑开。颜色继续使用现有语义色，不改变数据范围、路由或刷新逻辑。
+- 组件类型备注是统一维护合同：凡新增或修改组件、交互状态或独立样式类型，必须在对应模板或样式代码位置添加简洁中文类型备注，例如“展示卡片”“悬浮效果”“路由切换组件”“填写框”“侧边栏”；若引入新的组件类型但用户没有给出备注名称，开始修改前必须提醒用户确认，不能静默省略。
 
 ## 2026-09-21 Edge 日次数展示与套餐强制推送（已部署）
 
@@ -45,10 +216,11 @@
 ## 2026-09-20 EdgeTunnel 请求次数对接（已部署）
 
 - QingZhou 对匹配 `edge.kreeper.cc` 的外部节点按用户改写 Edge 凭据，并在 VLESS、Trojan、Hysteria2、AnyTLS、TUIC、SS 和 VMess 链接中写入 `edge_user`；VMess 的协议 `id` 同步改写。
-- `EdgeUUIDForUser` 使用用户 ID 的前 48 位、RFC 4122 版本/变体位和 HMAC-SHA256 前 8 字节；HMAC 输入为 `edge:` 加 8 字节大端用户 ID。EdgeTunnel Worker 已用同一算法校验，避免因 UUID 保留位或文本/二进制编码差异导致用户无法入账。
+- `EdgeUUIDForUser` 使用绕开 UUID v4 版本/变体位的 60-bit 用户 ID payload，并附加 HMAC-SHA256 前 8 字节；HMAC 输入为 `edge:` 加 8 字节大端用户 ID。EdgeTunnel Worker 按同一半字节布局校验，避免用户 ID 穿过版本 nibble 后被解码成错误个人而无法入账。
 - `/api/internal/edge/usage` 按 `batch_id` 幂等接收 15 分钟批次，按批次 `usage_day`（UTC 日期）扣减每日次数，返回当日超额用户；套餐与时长选项的 `edge_request_limit=0` 表示不限。套餐原有 `duration_days/expiry_at` 仍统一控制流量和套餐有效期，每日 Edge 超限不会推进排队套餐。
 - 全量 Go、前端测试、类型检查和构建均通过；生产环境已配置 `QZ_EDGE_SECRET`、`QZ_EDGE_USAGE_TOKEN` 和 `QZ_EDGE_USAGE_URL`，运行版本为 `v0.2.80-kreeper-68f7055`。
 - EdgeTunnel Pages Production 已配置 `EDGE_QZ_SECRET`、`EDGE_QZ_USAGE_TOKEN` 和 `EDGE_QZ_USAGE_URL=https://proxy.kreeper.cc/api/internal/edge/usage`。真实签名空批次请求返回 `400`，认证链路与接口可达性已核验，未产生用量记录。
+- 2026-09-24 排查发现旧 Worker/Go UUID 解码在版本 nibble 处使用完整字节乘法，导致用户 ID 大于 255 时回传 `external_id` 错位，个人次数不增加；已改为 nibble 乘法并补充跨语言大 ID 回归测试。Worker 源码和 QingZhou 源码均已修改，尚未重新发布生产。
 - 源码 `19b76b2` 已构建为 Linux ARM64 `v0.2.80-kreeper-19b76b2` 并部署到 `/opt/qingzhou/qingzhou`；active 二进制 SHA-256 为 `73564ab342afeab3d251dbf6d2e3ad4458b95c5b7470bc628bc5636c7312ed0b`。发布备份位于 `/opt/qingzhou/backups/edge-daily-19b76b2-20260920-072024/`，包含旧二进制、数据库文件、环境文件、systemd 配置和 sing-box 配置。
 - 发布后本机与公网 `/api/health` 均返回 `v0.2.80-kreeper-19b76b2`；三个相关服务均 active，`8081`、`8882`、`18082` 正常监听，未产生启动错误。
 - 随后提交 `b5c4d95` 修正跨 UTC 日后的套餐状态判断，部署为 `v0.2.80-kreeper-b5c4d95`；active 二进制 SHA-256 为 `1308641fe1454701c273bdb290f088ccf1490a5277627ef8c04bf3be4e06976a`，备份位于 `/opt/qingzhou/backups/edge-daily-b5c4d95-20260920-073326/`。本机与公网健康检查、三个服务、三个监听端口和错误日志均正常。

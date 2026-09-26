@@ -14,7 +14,10 @@ export interface User {
 }
 
 export const useAuthStore = defineStore('auth', () => {
-  const token = ref(localStorage.getItem('qz_token') || '')
+  // Browser sessions are carried by the backend's HttpOnly cookie. Do not
+  // persist or resend a JWT from JavaScript; stale bearer tokens can shadow a
+  // valid cookie after a backend restart or account switch.
+  const token = ref('')
   const user = ref<User | null>(null)
   const loaded = ref(false)
   let initPromise: Promise<void> | null = null
@@ -23,10 +26,10 @@ export const useAuthStore = defineStore('auth', () => {
   const isAdmin = computed(() => !!user.value?.is_admin)
 
   async function login(username: string, password: string) {
-    const data = await apiPost<{ token: string; user: User }>('/api/auth/login', { username, password })
-    token.value = data.token
+    const data = await apiPost<{ token?: string; user: User }>('/api/auth/login', { username, password })
+    token.value = ''
     user.value = data.user
-    localStorage.setItem('qz_token', data.token)
+    localStorage.removeItem('qz_token')
   }
 
   async function register(username: string, password: string, code?: string, email?: string) {
@@ -40,9 +43,9 @@ export const useAuthStore = defineStore('auth', () => {
     if (data?.need_verify || !data?.token) {
       return data
     }
-    token.value = data.token
+    token.value = ''
     user.value = data.user ?? null
-    localStorage.setItem('qz_token', data.token)
+    localStorage.removeItem('qz_token')
     return data
   }
 
@@ -63,11 +66,12 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('qz_token')
   }
 
-  /** 初始化：从 localStorage 恢复 token，拉取用户信息。防重复调用。 */
+  /** 初始化：由 HttpOnly cookie 恢复会话，拉取用户信息。防重复调用。 */
   async function init() {
     if (loaded.value) return
     if (initPromise) return initPromise
     initPromise = (async () => {
+      localStorage.removeItem('qz_token')
       try { await fetchMe() } catch {}
       loaded.value = true
     })()

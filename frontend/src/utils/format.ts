@@ -12,6 +12,10 @@ export function fmtTotal(n: number | null | undefined): string {
   return fmtBytes(n)
 }
 
+export function fmtRequests(value: number | null | undefined): string {
+  return new Intl.NumberFormat('zh-CN').format(value || 0) + ' 次'
+}
+
 export function fmtDate(ts: number | null | undefined): string {
   if (!ts) return '永久'
   const d = new Date(ts * 1000)

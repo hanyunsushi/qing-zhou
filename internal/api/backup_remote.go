@@ -73,8 +73,11 @@ func (a *API) handleAdminCreateRemoteBackup(w http.ResponseWriter, r *http.Reque
 	record, err := a.remoteBackup.StartBackup(r.Context(), "manual")
 	if err != nil {
 		status := http.StatusBadRequest
-		if errors.Is(err, backup.ErrInProgress) {
+		switch {
+		case errors.Is(err, backup.ErrInProgress):
 			status = http.StatusConflict
+		case errors.Is(err, backup.ErrStopped):
+			status = http.StatusServiceUnavailable
 		}
 		fail(w, status, err.Error())
 		return

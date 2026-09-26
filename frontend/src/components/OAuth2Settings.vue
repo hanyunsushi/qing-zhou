@@ -4,17 +4,19 @@
     <n-alert v-if="loadError" type="error" style="margin-bottom: 16px">{{ loadError }} <n-button size="small" @click="load">重试</n-button></n-alert>
     <n-form label-placement="top" :disabled="!loaded || busy" style="max-width: 720px">
       <n-form-item label="启用认证中心登录"><n-switch v-model:value="form.enabled" /></n-form-item>
+      <!-- 填写框 -->
       <n-form-item label="登录按钮名称"><n-input v-model:value="form.name" placeholder="认证中心" :maxlength="80" /></n-form-item>
       <n-form-item label="Issuer 地址"><n-input v-model:value="form.issuer" placeholder="https://auth.example.com" /></n-form-item>
       <n-form-item label="Client ID"><n-input v-model:value="form.client_id" /></n-form-item>
       <n-form-item label="Client Secret"><n-input v-model:value="form.client_secret" type="password" show-password-on="click" placeholder="公共客户端可留空；*** 表示保留已保存密钥" :input-props="{ autocomplete: 'new-password' }" /></n-form-item>
-      <n-form-item label="轻舟回调地址"><n-input v-model:value="form.redirect_url" placeholder="https://panel.example.com/api/auth/oauth2/callback" /></n-form-item>
-      <n-form-item label="允许首次登录创建轻舟账号">
+      <n-form-item label="Kreeproxy 回调地址"><n-input v-model:value="form.redirect_url" placeholder="https://panel.example.com/api/auth/oauth2/callback" /></n-form-item>
+      <n-form-item label="允许首次登录创建 Kreeproxy 账号">
         <div><n-switch v-model:value="form.auto_register" /><p style="color: var(--text-3); font-size: 12px">仅在本站开放注册时生效，并遵守邮箱验证设置。已有账号需在账户设置中显式绑定，不会按邮箱自动合并。</p></div>
       </n-form-item>
       <n-space>
         <n-button :disabled="!loaded" :loading="busy" @click="test">测试认证中心连接</n-button>
-        <n-button type="primary" :disabled="!loaded" :loading="busy" @click="save">保存认证配置</n-button>
+        <!-- 高亮弧边按钮：认证配置保存是当前面板的主动作。 -->
+        <n-button type="primary" class="highlight-arc-button" :disabled="!loaded" :loading="busy" @click="save">保存认证配置</n-button>
       </n-space>
     </n-form>
   </n-card>

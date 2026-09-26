@@ -27,11 +27,13 @@
     <n-card title="邮箱设置" size="small" style="margin-bottom:16px;">
       <n-form label-placement="left" label-width="80" style="max-width:400px;">
         <n-form-item label="邮箱">
+          <!-- 填写框 -->
           <n-input v-model:value="emailForm.email" placeholder="输入邮箱地址" />
         </n-form-item>
         <n-form-item>
           <n-space>
-            <n-button type="primary" :loading="bindingEmail" @click="handleBindEmail">绑定邮箱</n-button>
+            <!-- 高亮弧边按钮：账户页主动作统一使用实心 Apple 蓝及深蓝悬浮态。 -->
+            <n-button type="primary" class="highlight-arc-button" :loading="bindingEmail" @click="handleBindEmail">绑定邮箱</n-button>
             <n-button v-if="auth.user?.email && !auth.user?.email_verified" :loading="resending" @click="handleResendVerify">发送验证邮件</n-button>
           </n-space>
         </n-form-item>
@@ -65,8 +67,10 @@
       <template v-else>
         <p class="hint">绑定后可在 Telegram 里发送 /sub、/plan、/traffic 查询，并接收到期和流量不足通知。订阅地址请当作密码保管。</p>
         <n-space>
-          <n-button type="primary" :loading="bindingTg" @click="handleBindTg">生成绑定链接</n-button>
-          <n-button v-if="tgLink" tag="a" :href="tgLink" target="_blank" rel="noopener">打开 Telegram</n-button>
+          <!-- 高亮弧边按钮：账户页主动作统一使用实心 Apple 蓝及深蓝悬浮态。 -->
+          <n-button type="primary" class="highlight-arc-button" :loading="bindingTg" @click="handleBindTg">生成绑定链接</n-button>
+          <!-- 项目超链接：账户页外部 Telegram 入口使用统一 Apple 蓝链接合同。 -->
+          <n-button v-if="tgLink" tag="a" class="project-link" :href="tgLink" target="_blank" rel="noopener">打开 Telegram</n-button>
           <n-button v-if="tgLink" quaternary @click="copyTgLink">复制链接</n-button>
         </n-space>
         <p v-if="tgLink" class="hint" style="margin-top:8px;">链接 15 分钟内有效，打开后点「开始」即可完成绑定。</p>
@@ -80,7 +84,8 @@
         <n-form-item label="新密码"><n-input v-model:value="pwForm.new" type="password" show-password-on="click" /></n-form-item>
         <n-form-item label="确认密码"><n-input v-model:value="pwForm.confirm" type="password" show-password-on="click" /></n-form-item>
         <n-form-item>
-          <n-button type="primary" :loading="changingPw" @click="handleChangePw">修改密码</n-button>
+          <!-- 高亮弧边按钮：账户页主动作统一使用实心 Apple 蓝及深蓝悬浮态。 -->
+          <n-button type="primary" class="highlight-arc-button" :loading="changingPw" @click="handleChangePw">修改密码</n-button>
         </n-form-item>
       </n-form>
       <p style="font-size:12px;color:var(--text-3);margin:0;">修改密码后，其他设备将被要求重新登录</p>

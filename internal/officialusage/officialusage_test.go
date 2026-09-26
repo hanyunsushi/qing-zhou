@@ -131,6 +131,18 @@ func TestFetchOCIRejectsUnrecognizedTransferUnit(t *testing.T) {
 	}
 }
 
+func TestFetchCloudflareRejectsOversizedResponse(t *testing.T) {
+	now := time.Date(2026, 9, 25, 8, 30, 0, 0, time.UTC)
+	body := `{"data":{"viewer":{"accounts":[{"pagesFunctionsInvocationsAdaptiveGroups":[],"workersInvocationsAdaptive":[]}]}}}` + strings.Repeat(" ", maxProviderResponseBytes)
+	client := testClient(func(*http.Request) (*http.Response, error) {
+		return jsonResponse(200, body), nil
+	})
+	usage := FetchCloudflare(context.Background(), client, CloudflareConfig{AccountID: "account", AnalyticsToken: "token"}, now)
+	if usage.Success || !strings.Contains(usage.Error, "响应过大") {
+		t.Fatalf("oversized Cloudflare response was accepted: %#v", usage)
+	}
+}
+
 func TestFetchOCIParsesOracleOutboundGBMonths(t *testing.T) {
 	key := testPrivateKey(t, false)
 	client := testClient(func(*http.Request) (*http.Response, error) {

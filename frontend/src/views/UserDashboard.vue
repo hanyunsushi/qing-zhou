@@ -11,11 +11,13 @@
           <template #icon><n-icon><RefreshOutline /></n-icon></template>
           刷新
         </n-button>
-        <n-button size="small" secondary @click="router.push('/sub')">
+        <!-- 普通按钮：沿用 Sub2 账号管理页刷新按钮的紧凑描边几何，不改文字和 SVG。 -->
+        <n-button size="small" secondary class="action-button action-button--normal" @click="router.push('/sub')">
           <template #icon><n-icon><LinkOutline /></n-icon></template>
           订阅管理
         </n-button>
-        <n-button size="small" type="primary" @click="router.push('/shop')">
+        <!-- 强调按钮：保留现有蓝色主按钮，仅采用 Sub2 的紧凑几何。 -->
+        <n-button size="small" type="primary" class="action-button action-button--emphasis" @click="router.push('/shop')">
           <template #icon><n-icon><CartOutline /></n-icon></template>
           去商城
         </n-button>
@@ -127,10 +129,15 @@
         <n-card size="small" class="sec">
           <template #header>
             <span class="sec-title">流量趋势</span>
-            <n-radio-group v-model:value="trendRange" size="small" :disabled="trendLoading">
-              <n-radio-button value="7d">7天</n-radio-button>
-              <n-radio-button value="30d">30天</n-radio-button>
-            </n-radio-group>
+            <!-- 路由切换组件：趋势范围使用独立指示面，不复用全局胶囊覆盖。 -->
+            <div ref="trendTabsRef" class="trend-range-tabs route-switch" @mouseover="moveTrendIndicatorFromEvent"
+                 @focusin="moveTrendIndicatorFromEvent" @mouseleave="moveTrendIndicatorToSelected"
+                 @focusout="handleTrendTabsFocusout">
+              <n-radio-group v-model:value="trendRange" size="small" :disabled="trendLoading">
+                <n-radio-button value="7d">7天</n-radio-button>
+                <n-radio-button value="30d">30天</n-radio-button>
+              </n-radio-group>
+            </div>
           </template>
           <n-spin :show="trendLoading">
             <TrafficTrendChart v-if="trendData.length" :data="trendData" />
@@ -155,7 +162,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { NCard, NAlert, NButton, NList, NListItem, NThing, NTag, NRadioGroup, NRadioButton, NModal, NSpace, NSpin, NIcon } from 'naive-ui'
 import { LinkOutline, CartOutline, ReceiptOutline, RefreshOutline } from '@vicons/ionicons5'
@@ -172,7 +179,7 @@ import { openHelp } from '@/utils/help'
 const router = useRouter(); const auth = useAuthStore(); const config = useConfigStore()
 function showHelp() { openHelp(config.config, router) }
 const dash = ref<any>({}); const notices = ref<any[]>([])
-const trendRange = ref('7d'); const trendData = ref<any[]>([]); const trendLoading = ref(false)
+const trendRange = ref('7d'); const trendTabsRef = ref<HTMLElement | null>(null); const trendData = ref<any[]>([]); const trendLoading = ref(false)
 const refreshing = ref(false)
 const showNotice = ref(false); const activeNotice = ref<any>(null)
 function openNotice(n: any) { activeNotice.value = n; showNotice.value = true }
@@ -305,7 +312,32 @@ async function loadTrend() {
   try { trendData.value = await apiList(`/api/user/stats/traffic?range=${trendRange.value}`) } catch {}
   finally { trendLoading.value = false }
 }
-watch(trendRange, loadTrend)
+function moveTrendIndicator(button: HTMLElement | null) {
+  const tabs = trendTabsRef.value
+  if (!tabs || !button) return
+  const tabsRect = tabs.getBoundingClientRect()
+  const buttonRect = button.getBoundingClientRect()
+  tabs.style.setProperty('--trend-indicator-x', `${buttonRect.left - tabsRect.left}px`)
+  tabs.style.setProperty('--trend-indicator-w', `${buttonRect.width}px`)
+}
+function selectedTrendButton() {
+  return trendTabsRef.value?.querySelector<HTMLElement>('.n-radio-button--checked') || null
+}
+function moveTrendIndicatorToSelected() { moveTrendIndicator(selectedTrendButton()) }
+function moveTrendIndicatorFromEvent(event: MouseEvent | FocusEvent) {
+  const target = event.target
+  if (!(target instanceof HTMLElement)) return
+  moveTrendIndicator(target.closest<HTMLElement>('.n-radio-button'))
+}
+function handleTrendTabsFocusout(event: FocusEvent) {
+  const nextTarget = event.relatedTarget
+  if (!(nextTarget instanceof Node) || !trendTabsRef.value?.contains(nextTarget)) moveTrendIndicatorToSelected()
+}
+watch(trendRange, async () => {
+  await loadTrend()
+  await nextTick()
+  moveTrendIndicatorToSelected()
+})
 
 async function loadDash() {
   try { dash.value = await apiGet('/api/user/dashboard') || {} } catch {}
@@ -320,31 +352,46 @@ onMounted(async () => {
   await loadDash()
   try { notices.value = await apiList('/api/user/announcements') } catch {}
   await loadTrend()
+  await nextTick()
+  moveTrendIndicatorToSelected()
+  window.addEventListener('resize', moveTrendIndicatorToSelected)
 })
+onUnmounted(() => window.removeEventListener('resize', moveTrendIndicatorToSelected))
 </script>
 
 <style scoped>
-.page-title{font-size:21px;margin-bottom:4px}
+.page-title{font-size:24px;line-height:30px;font-weight:500;margin-bottom:4px}
 .page-sub{color:var(--text-2);margin-bottom:0}
-a{color:var(--accent-strong)}
+/* 项目超链接：用户控制台内的导航链接统一使用 Apple 蓝。 */
+a{color:var(--accent)}
 .dash-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:20px}
 .dash-actions{display:flex;gap:8px;flex-shrink:0}
-.sec-title{font-weight:650;font-size:14px}
+.sec-title{font-weight:650;font-size:16px;line-height:20px;letter-spacing:0}
 .sec-link{font-size:12px;font-weight:400;margin-left:10px}
+
+/* 路由切换组件 */
+.trend-range-tabs{--trend-indicator-x:4px;--trend-indicator-w:0px;position:relative;isolation:isolate;display:inline-flex;align-items:center;min-height:40px;margin-left:16px;padding:4px;border:0;border-radius:16px!important;background:var(--bg-subtle);box-shadow:none}
+.trend-range-tabs::before{position:absolute;z-index:0;top:4px;bottom:4px;left:0;width:var(--trend-indicator-w);border-radius:12px;content:'';pointer-events:none;background:var(--card);box-shadow:none;transform:translateX(var(--trend-indicator-x));transition:transform .24s cubic-bezier(.215,.61,.355,1),width .24s cubic-bezier(.215,.61,.355,1),background-color .2s ease}
+.trend-range-tabs :deep(.n-radio-group){display:inline-flex;align-items:center;gap:0;height:auto!important;padding:0;border:0;background:transparent;box-shadow:none}
+.trend-range-tabs :deep(.n-radio-button){position:relative;z-index:1;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:32px;padding:6px 14px;line-height:20px;border:0!important;border-radius:12px!important;background:transparent!important;color:var(--text-2)!important;box-shadow:none;transition:color .1s ease-in-out,background-color .2s ease-in-out,box-shadow .2s ease-in-out}
+.trend-range-tabs :deep(.n-radio-button--checked){background:transparent!important;color:var(--text)!important;box-shadow:none!important}
+.trend-range-tabs :deep(.n-radio-button:hover){background:transparent!important;color:var(--text)!important}
+.trend-range-tabs :deep(.n-radio-button:focus-visible){box-shadow:inset 0 0 0 2px rgba(29,39,51,.16)!important}
 
 /* 提醒 */
 .dash-alert{margin-bottom:10px}
 .alert-enter-active,.alert-leave-active{transition:opacity .25s ease,transform .25s ease}
 .alert-enter-from,.alert-leave-to{opacity:0;transform:translateY(-6px)}
-.onboarding-strip{display:grid;grid-template-columns:minmax(220px,1.25fr) repeat(3,minmax(160px,1fr));gap:8px;margin:0 0 16px;padding:10px;border:1px solid var(--border);border-radius:14px;background:color-mix(in srgb,var(--card) 86%,var(--bg-soft));box-shadow:var(--shadow-sm)}
+.onboarding-strip{display:grid;grid-template-columns:minmax(220px,1.25fr) repeat(3,minmax(160px,1fr));gap:8px;margin:0 0 16px;padding:10px;border:0;background:var(--card);box-shadow:none}
 .onboarding-copy{display:flex;flex-direction:column;justify-content:center;padding:4px 8px}.onboarding-copy b{font-size:13px}.onboarding-copy span{margin-top:2px;color:var(--text-3);font-size:11.5px;line-height:1.5}
-.onboarding-strip button{display:flex;align-items:center;gap:9px;padding:8px 9px;border:0;border-radius:var(--r);background:var(--card);color:inherit;text-align:left;font:inherit;cursor:pointer;transition:background-color .18s ease,box-shadow .18s ease}.onboarding-strip button:hover{background:var(--accent-subtle);box-shadow:var(--shadow-sm)}
-.onboarding-strip button i{display:grid;place-items:center;flex:none;width:26px;height:26px;border-radius:8px;background:#e8ecef;color:#4f5b65;font-size:11px;font-style:normal;font-weight:700}.onboarding-strip button span{display:flex;min-width:0;flex-direction:column}.onboarding-strip button b{font-size:12px}.onboarding-strip button small{overflow:hidden;color:var(--text-3);font-size:10.5px;white-space:nowrap;text-overflow:ellipsis}
+/* 普通按钮悬浮效果：复用控制台“订阅管理”的文字加深与中性 ring。 */
+.onboarding-strip button{display:flex;align-items:center;gap:9px;padding:8px 9px;border:0;border-radius:var(--r);background:var(--card);color:var(--text-3);text-align:left;font:inherit;cursor:pointer;transition:color .1s ease-in-out,background-color .2s ease-in-out,box-shadow .2s ease-in-out}.onboarding-strip button:hover,.onboarding-strip button:focus-visible{background:var(--card);color:var(--text-2);box-shadow:0 0 0 1px transparent,0 0 0 2px var(--border-strong) !important}
+.onboarding-strip button i{display:grid;place-items:center;flex:none;width:26px;height:26px;border-radius:var(--r);background:#e8ecef;color:#4f5b65;font-size:11px;font-style:normal;font-weight:700}.onboarding-strip button span{display:flex;min-width:0;flex-direction:column}.onboarding-strip button b{font-size:12px}.onboarding-strip button small{overflow:hidden;color:var(--text-3);font-size:10.5px;white-space:nowrap;text-overflow:ellipsis;transition:color .1s ease-in-out}.onboarding-strip button:hover small,.onboarding-strip button:focus-visible small{color:var(--text-2)}
 
 /* KPI */
 .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:16px}
-.mini-progress{height:4px;border-radius:2px;background:var(--bg-soft);overflow:hidden}
-.mini-fill{height:100%;border-radius:2px;transition:width .6s cubic-bezier(.22,1,.36,1),background .4s ease}
+.mini-progress{height:4px;border-radius:var(--r);background:var(--bg-soft);overflow:hidden}
+.mini-fill{height:100%;border-radius:var(--r);transition:width .6s cubic-bezier(.22,1,.36,1),background .4s ease}
 
 /* 公告 */
 .notice-row{cursor:pointer;transition:background .16s}
@@ -371,8 +418,8 @@ a{color:var(--accent-strong)}
 .edge-quota{width:100%;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:12px}
 .edge-quota-head,.edge-quota-foot{display:flex;justify-content:space-between;gap:8px;color:var(--text-2)}
 .edge-quota-head b{color:var(--text);font-variant-numeric:tabular-nums}
-.edge-quota-track{height:4px;margin:7px 0 6px;border-radius:2px;background:var(--bg-soft);overflow:hidden}
-.edge-quota-track i{display:block;height:100%;background:var(--warn);border-radius:2px;transition:width .6s cubic-bezier(.22,1,.36,1)}
+.edge-quota-track{height:4px;margin:7px 0 6px;border-radius:var(--r);background:var(--bg-soft);overflow:hidden}
+.edge-quota-track i{display:block;height:100%;background:var(--warn);border-radius:var(--r);transition:width .6s cubic-bezier(.22,1,.36,1)}
 .edge-quota-foot{font-size:11px;color:var(--text-3)}
 .usage-card :deep(.n-space){gap:6px!important}
 
@@ -381,7 +428,7 @@ a{color:var(--accent-strong)}
 .tf-item{display:inline-flex;align-items:center;gap:5px}
 .tf-item b{color:var(--text);font-weight:650;font-variant-numeric:tabular-nums}
 .tf-peak{margin-left:auto;color:var(--text-3)}
-.dot{width:8px;height:8px;border-radius:2px;display:inline-block}
+.dot{width:8px;height:8px;border-radius:var(--r);display:inline-block}
 .dot.up{background:var(--success)}
 .dot.down{background:#688ae8}
 

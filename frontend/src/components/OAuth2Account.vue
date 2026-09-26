@@ -3,9 +3,11 @@
     <n-alert v-if="error" type="error">{{ error }}</n-alert>
     <n-tag v-if="state.bound" type="success">已绑定，可使用认证中心登录此账号</n-tag>
     <n-form v-else-if="state.enabled" label-placement="top" style="max-width: 420px" @submit.prevent="bind">
-      <p>绑定后可通过认证中心登录当前轻舟账号。请输入当前轻舟密码，再前往认证中心授权。</p>
-      <n-form-item label="当前轻舟密码"><n-input v-model:value="password" type="password" show-password-on="click" :input-props="{ autocomplete: 'current-password' }" /></n-form-item>
-      <n-button type="primary" :disabled="!password" :loading="busy" @click="bind">前往认证中心绑定</n-button>
+      <p>绑定后可通过认证中心登录当前 Kreeproxy 账号。请输入当前 Kreeproxy 密码，再前往认证中心授权。</p>
+      <!-- 填写框 -->
+      <n-form-item label="当前 Kreeproxy 密码"><n-input v-model:value="password" type="password" show-password-on="click" :input-props="{ autocomplete: 'current-password' }" /></n-form-item>
+      <!-- 高亮弧边按钮：账户页认证中心绑定主动作复用统一主按钮样式。 -->
+      <n-button type="primary" class="highlight-arc-button" :disabled="!password" :loading="busy" @click="bind">前往认证中心绑定</n-button>
     </n-form>
   </n-card>
 </template>

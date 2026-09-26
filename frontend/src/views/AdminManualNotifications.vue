@@ -11,6 +11,7 @@
     <n-card title="发送通知" size="small" style="margin-bottom:16px;">
       <n-form label-placement="left" label-width="90">
         <n-form-item label="标题">
+          <!-- 填写框 -->
           <n-input v-model:value="form.title" maxlength="100" show-count placeholder="通知标题" />
         </n-form-item>
         <n-form-item label="内容">
@@ -24,15 +25,17 @@
             </n-space>
           </n-radio-group>
         </n-form-item>
+        <!-- 下拉选择菜单：用户选择弹层复用顶栏菜单合同，触发选择器保持原样。 -->
         <n-form-item v-if="form.target_type === 'selected'" label="选择用户">
           <n-select v-model:value="form.user_ids" multiple filterable clearable :options="userOptions"
                     :loading="loadingUsers" placeholder="可选择多个用户" />
         </n-form-item>
       </n-form>
-      <n-alert type="info" :bordered="false" style="margin-bottom:12px;">
+      <InfoNotice class="info-notice--manual">
         “全部”包含所有正常的非管理员用户；未绑定 Telegram 的用户也会记录，并标记为“未发送”。
-      </n-alert>
-      <n-button type="primary" :loading="sending" @click="send">确认发送</n-button>
+      </InfoNotice>
+      <!-- 高亮弧边按钮：发送通知是当前页面的主动作。 -->
+      <n-button type="primary" class="highlight-arc-button" :loading="sending" @click="send">确认发送</n-button>
     </n-card>
 
     <n-card title="发送历史" size="small">
@@ -62,6 +65,7 @@
 <script setup lang="ts">
 import { h, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { NAlert, NButton, NCard, NDataTable, NDescriptions, NDescriptionsItem, NEmpty, NForm, NFormItem, NInput, NModal, NRadio, NRadioGroup, NSelect, NSpace, NSpin, NTag, useDialog, useMessage } from 'naive-ui'
+import InfoNotice from '@/components/InfoNotice.vue'
 import { apiGet, apiList, apiPost } from '@/api'
 import { fmtDate } from '@/utils/format'
 

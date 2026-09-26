@@ -34,6 +34,7 @@ const (
 var (
 	ErrNotConfigured = errors.New("远端备份尚未配置")
 	ErrInProgress    = errors.New("已有备份正在执行")
+	ErrStopped       = errors.New("远端备份管理器已停止")
 )
 
 type Config struct {
@@ -74,6 +75,7 @@ type Manager struct {
 
 	mu        sync.Mutex
 	running   bool
+	stopping  bool
 	rootCtx   context.Context
 	scheduler *cron.Cron
 	stopOnce  sync.Once
@@ -85,6 +87,7 @@ func New(st *store.Store) *Manager { return &Manager{st: st, factory: newS3Store
 func (m *Manager) Start(ctx context.Context) {
 	m.mu.Lock()
 	m.rootCtx = ctx
+	m.stopping = false
 	m.stopOnce = sync.Once{}
 	m.mu.Unlock()
 	m.applySchedule(ctx)
@@ -97,6 +100,7 @@ func (m *Manager) Start(ctx context.Context) {
 func (m *Manager) Stop() {
 	m.stopOnce.Do(func() {
 		m.mu.Lock()
+		m.stopping = true
 		scheduler := m.scheduler
 		m.scheduler = nil
 		m.mu.Unlock()
@@ -283,7 +287,7 @@ func (m *Manager) applySchedule(ctx context.Context) {
 	if cfg.Enabled {
 		next = cron.New()
 		if _, err := next.AddFunc(cfg.CronExpr, func() {
-			if _, err := m.StartBackup(ctx, "scheduled"); err != nil && !errors.Is(err, ErrInProgress) {
+			if _, err := m.StartBackup(ctx, "scheduled"); err != nil && !errors.Is(err, ErrInProgress) && !errors.Is(err, ErrStopped) {
 				log.Printf("remote backup scheduled run: %v", err)
 			}
 		}); err != nil {
@@ -364,12 +368,17 @@ func (m *Manager) StartBackup(ctx context.Context, triggeredBy string) (Record, 
 		return Record{}, fmt.Errorf("完整灾备包含敏感配置，必须使用 HTTPS 私有对象存储")
 	}
 	m.mu.Lock()
+	if m.stopping {
+		m.mu.Unlock()
+		return Record{}, ErrStopped
+	}
 	if m.running {
 		m.mu.Unlock()
 		return Record{}, ErrInProgress
 	}
 	m.running = true
 	root := m.rootCtx
+	m.wg.Add(1)
 	m.mu.Unlock()
 	if root == nil {
 		root = ctx
@@ -391,14 +400,15 @@ func (m *Manager) StartBackup(ctx context.Context, triggeredBy string) (Record, 
 	records, err := m.loadRecords()
 	if err != nil {
 		m.setRunning(false)
+		m.wg.Done()
 		return Record{}, err
 	}
 	records = append(records, record)
 	if err := m.saveRecords(records); err != nil {
 		m.setRunning(false)
+		m.wg.Done()
 		return Record{}, err
 	}
-	m.wg.Add(1)
 	go func() {
 		defer m.wg.Done()
 		defer m.setRunning(false)

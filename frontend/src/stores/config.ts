@@ -2,6 +2,10 @@ import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 import { apiGet } from '@/api'
 
+export const DEFAULT_SITE_NAME = 'Kreeproxy'
+export const DEFAULT_SITE_DESCRIPTION = '仅限个人在中国大陆以外地区依法依规使用'
+export const DEFAULT_BRAND_ICON = '/kreeproxy-brand.png'
+
 export interface SiteConfig {
   oauth2_enabled: boolean
   oauth2_name: string
@@ -26,10 +30,13 @@ export const useConfigStore = defineStore('config', () => {
   const config = ref<SiteConfig>({
     oauth2_enabled: false,
     oauth2_name: '认证中心',
-    site_name: '轻舟',
-    site_description: '',
-    register_mode: 'open',
-    registration_open: true,
+    site_name: DEFAULT_SITE_NAME,
+    site_description: DEFAULT_SITE_DESCRIPTION,
+    // Registration is closed until the public config confirms otherwise. This
+    // matches the backend seed and avoids briefly exposing the form on a slow
+    // or unavailable config request.
+    register_mode: 'closed',
+    registration_open: false,
     email_verify_required: true,
     // 默认 true：拿不到 /api/config 时维持原样（显示找回密码入口），
     // 而不是因为一次网络抖动就把功能藏起来。
@@ -40,16 +47,19 @@ export const useConfigStore = defineStore('config', () => {
     homepage_url: '',
     help_docs_mode: 'builtin',
     help_docs_url: '',
-    brand_icon_data_uri: '',
+    brand_icon_data_uri: DEFAULT_BRAND_ICON,
   })
 
   function applyBrowserBranding() {
     if (typeof document === 'undefined') return
-    const name = config.value.site_name?.trim() || '轻舟'
-    const icon = config.value.brand_icon_data_uri || '/qingzhou-mark.svg'
+    const name = config.value.site_name?.trim() || DEFAULT_SITE_NAME
+    const icon = config.value.brand_icon_data_uri || DEFAULT_BRAND_ICON
     const type = icon.startsWith('data:image/png') ? 'image/png'
       : icon.startsWith('data:image/jpeg') ? 'image/jpeg'
-        : icon.startsWith('data:image/webp') ? 'image/webp' : 'image/svg+xml'
+        : icon.startsWith('data:image/webp') ? 'image/webp'
+          : icon.endsWith('.png') ? 'image/png'
+            : icon.endsWith('.jpg') || icon.endsWith('.jpeg') ? 'image/jpeg'
+              : icon.endsWith('.webp') ? 'image/webp' : 'image/svg+xml'
     document.title = name
     for (const rel of ['icon', 'shortcut icon', 'apple-touch-icon']) {
       let link = document.querySelector<HTMLLinkElement>(`link[rel="${rel}"]`)
@@ -68,7 +78,13 @@ export const useConfigStore = defineStore('config', () => {
   async function fetchConfig() {
     try {
       const data = await apiGet<SiteConfig>('/api/config')
-      if (data) Object.assign(config.value, data)
+      if (data) {
+        const normalized = { ...data }
+        if (!normalized.site_name?.trim() || normalized.site_name.trim() === '轻舟') normalized.site_name = DEFAULT_SITE_NAME
+        if (!normalized.brand_icon_data_uri || normalized.brand_icon_data_uri === '/qingzhou-mark.svg') normalized.brand_icon_data_uri = DEFAULT_BRAND_ICON
+        if (!normalized.site_description?.trim()) normalized.site_description = DEFAULT_SITE_DESCRIPTION
+        Object.assign(config.value, normalized)
+      }
     } catch {}
     return config.value
   }

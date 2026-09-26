@@ -1,14 +1,14 @@
 <template>
   <div>
-    <div class="page-head"><div><h2 class="page-title">用户组</h2><p class="page-sub">购买权限、专属套餐与成员关系管理</p></div><div class="page-actions"><n-button type="primary" @click="openForm()">创建用户组</n-button></div></div>
+    <div class="page-head"><div><h2 class="page-title">用户组</h2><p class="page-sub">购买权限、专属套餐与成员关系管理</p></div><div class="page-actions"><!-- 高亮弧边按钮：页面级主操作统一复用强调按钮合同。 --><n-button type="primary" class="action-button action-button--emphasis" @click="openForm()">创建用户组</n-button></div></div>
     <p class="section-note" style="margin:0 0 14px;">
       用户组决定<b>谁能购买某个套餐</b>。把用户加进组，再到「套餐管理」里给套餐勾选可购买的用户组，该套餐就只对组内成员可见、可买。
       未绑定任何用户组的套餐对所有人开放。（与「节点管理」里的节点分组无关，那个决定的是买到套餐后能用哪些节点。）
     </p>
     <div class="resource-overview">
-      <div class="resource-metric"><b>{{ groups.length }}</b><span>全部用户组</span></div>
-      <div class="resource-metric"><b>{{ groups.reduce((sum, g) => sum + (g.members || 0), 0) }}</b><span>成员关系总数</span></div>
-      <div class="resource-metric"><b>{{ packages.filter(p => p.user_group_ids?.length).length }}</b><span>专属套餐</span></div>
+      <div class="resource-metric group-summary-card"><b>{{ groups.length }}</b><span>全部用户组</span></div>
+      <div class="resource-metric group-summary-card"><b>{{ groups.reduce((sum, g) => sum + (g.members || 0), 0) }}</b><span>成员关系总数</span></div>
+      <div class="resource-metric group-summary-card"><b>{{ packages.filter(p => p.user_group_ids?.length).length }}</b><span>专属套餐</span></div>
     </div>
 
     <n-spin :show="loading">
@@ -38,11 +38,12 @@
     <!-- 创建 / 编辑 -->
     <n-modal v-model:show="showForm" preset="card" :title="editing ? '编辑用户组' : '创建用户组'" style="max-width:440px;">
       <n-form label-placement="left" label-width="80">
+        <!-- 填写框 -->
         <n-form-item label="名称"><n-input v-model:value="form.name" placeholder="如：内测组 / 亲友组" /></n-form-item>
         <n-form-item label="描述"><n-input v-model:value="form.description" placeholder="备注用途（可留空）" /></n-form-item>
         <n-form-item label="排序"><n-input-number v-model:value="form.sort_order" style="width:100%;" /></n-form-item>
       </n-form>
-      <n-button type="primary" block :loading="saving" @click="handleSave">保存</n-button>
+      <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleSave">保存</n-button>
     </n-modal>
 
     <!-- 成员 -->
@@ -66,7 +67,7 @@
       <div style="margin-top:6px;font-size:12px;color:var(--text-3);line-height:1.5;">
         默认只列出最近 200 位用户；更早的用户请输入用户名或邮箱搜索。
       </div>
-      <n-button type="primary" block style="margin-top:16px;" :loading="saving" @click="handleSaveMembers">保存成员</n-button>
+      <n-button type="primary" class="highlight-arc-button" block style="margin-top:16px;" :loading="saving" @click="handleSaveMembers">保存成员</n-button>
     </n-modal>
   </div>
 </template>
@@ -219,3 +220,21 @@ async function load() {
 }
 onMounted(load)
 </script>
+
+<style scoped>
+/* 展示卡片 */
+.group-summary-card {
+  box-shadow: none;
+  transition: box-shadow .25s ease;
+  transform: none;
+  opacity: 1;
+}
+/* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 */
+.group-summary-card:hover, .group-summary-card:focus-visible {
+  border-color: var(--border);
+  background: var(--card);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+  transform: none;
+  opacity: 1;
+}
+</style>

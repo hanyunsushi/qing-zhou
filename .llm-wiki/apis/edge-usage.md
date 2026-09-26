@@ -1,6 +1,6 @@
 ---
 title: Edge Usage Callback API
-updated: 2026-09-20
+updated: 2026-09-25
 source_commit: 1083756
 ---
 
@@ -23,7 +23,8 @@ API or written to the database.
 
 The store inserts `batch_id` into `edge_request_batches` with a unique key.
 Repeated batches are acknowledged without changing counters. Invalid source,
-empty/duplicate user ids, non-positive counts and oversized values are rejected.
+empty/duplicate user ids (including alternate numeric spellings of the same
+positive id), non-positive counts and oversized values are rejected.
 
 Counts are applied to the user's active plan buckets in id order. A plan's
 `edge_request_limit=0` means unlimited for compatibility; a positive limit is
@@ -40,12 +41,20 @@ allowance is exhausted:
 {"accepted": 1, "blocked_external_ids": ["123"]}
 ```
 
+`usage_day` cannot be a future UTC date. Delayed callbacks for an older UTC
+day remain idempotently recorded but cannot overwrite a bucket that already
+stores a newer day, so out-of-order provider delivery cannot reset today's
+allowance. Ingestion, dashboard/admin rollups, and per-plan views share one UTC
+day snapshot per request.
+
 `GET /api/user/dashboard`, `GET /api/user/plans` and administrator user views
 expose `edge_requests` / `edge_request_limit` / `edge_requests_used` for the
 panel. OCI byte usage remains a separate provider statistic.
 
-The paired EdgeTunnel credential uses the first 48 bits of a UUID-shaped value
-for the user id, reserves RFC 4122 version/variant bits, and authenticates the
-eight-byte big-endian id with HMAC-SHA256. VMess protocol ids and the
+The paired EdgeTunnel credential uses a 60-bit user-id payload split around the
+UUIDv4 version nibble, reserves the RFC 4122 variant bits, and authenticates
+the eight-byte big-endian id with HMAC-SHA256. The worker must multiply the
+version-nibble segment by 16 when decoding it; treating it as a full byte
+corrupts user ids after the low byte range. VMess protocol ids and the
 `edge_user` query parameter are rewritten together; other supported Edge link
 schemes carry the same query parameter.

@@ -4,8 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f3f5f7">
-  <title>轻舟</title>
-  <link rel="icon" type="image/svg+xml" href="/qingzhou-mark.svg">
+  <script>
+    document.documentElement.classList.add('qz-shift5-route-transition-pending');
+    window.setTimeout(function () {
+      document.documentElement.classList.remove('qz-shift5-route-transition-pending');
+    }, 5000);
+  </script>
+  <title>Kreeproxy</title>
+  <link rel="icon" type="image/png" href="/kreeproxy-brand.png">
 </head>
 <body>
   <div id="app"></div>

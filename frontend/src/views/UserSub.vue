@@ -11,8 +11,10 @@
           <template #icon><n-icon><SpeedometerOutline /></n-icon></template>
           控制台
         </n-button>
-        <n-button size="small" secondary @click="router.push('/orders')">订单记录</n-button>
-        <n-button size="small" type="primary" @click="router.push('/shop')">去商城</n-button>
+        <!-- 普通按钮：复用控制台“订阅管理”的尺寸、文字和中性 ring。 -->
+        <n-button size="small" secondary class="action-button action-button--normal" @click="router.push('/orders')">订单记录</n-button>
+        <!-- 强调按钮：复用控制台“去商城”的蓝色与提亮悬浮状态。 -->
+        <n-button size="small" type="primary" class="action-button action-button--emphasis" @click="router.push('/shop')">去商城</n-button>
       </n-space>
     </div>
 
@@ -31,10 +33,13 @@
       </template>
       <div class="routing-choice">
         <div class="routing-choice-label">原生配置代理范围</div>
+        <!-- 下拉选择菜单：原生配置代理范围使用与顶栏菜单一致的选项悬浮圆角。 -->
+        <!-- 下拉选择菜单：弹层复用全局顶栏菜单合同；触发按钮保持原有尺寸与样式。 -->
         <n-select v-model:value="routingProfile" :options="routingProfileOptions" size="small" class="routing-choice-select" />
         <div class="routing-choice-note">{{ routingProfileNote }}</div>
       </div>
-      <n-input-group>
+      <!-- 复制栏：订阅地址仅用于查看和复制，不使用填写框的点击焦点高亮或过渡特效。 -->
+      <n-input-group class="subscription-link-group copy-field">
         <n-input :value="selectedSubscriptionURL" readonly placeholder="暂无订阅" />
         <n-button type="primary" @click="copy(selectedSubscriptionURL)">复制</n-button>
       </n-input-group>
@@ -57,12 +62,14 @@
           </template>
           通用格式只包含节点，代理范围由客户端本地规则决定
         </n-tooltip>
-        <n-button size="small" @click="showQr=!showQr">{{ showQr?'隐藏':'显示' }}二维码</n-button>
+        <!-- 高亮弧边按钮：固定使用实心 Apple 蓝，悬浮/聚焦时变深。 -->
+        <n-button size="small" type="primary" class="highlight-arc-button" @click="showQr=!showQr">{{ showQr?'隐藏':'显示' }}二维码</n-button>
       </div>
       <div class="sub-action-row safety">
         <span class="sub-action-label">安全操作</span>
         <!-- 两个按钮代价完全不同，分开呈现：换地址是纯面板操作、立即生效、不影响
              任何人；换凭据要同步到每个节点才生效，因此默认禁用 + 30 天冷却。 -->
+        <!-- 弧边警告按钮：保留 Naive UI 警告色与圆角样式，提示订阅地址变更风险。 -->
         <n-button size="small" type="warning" @click="handleResetSub">更换订阅地址</n-button>
         <!-- 禁用与否跟随后端开关，不写死：后端本来就要校验 node_creds_reset_enabled，
              按钮读同一个值才不会出现「管理员开了但按钮还是灰的」。 -->
@@ -176,8 +183,8 @@
           <span style="flex:1;"></span>
           <n-button size="tiny" @click="openEditProxy({ ...acct, account: true, custom: true })">编辑账号</n-button>
         </div>
-        <div class="pxrow"><span class="pxk">用户名</span><div class="pxv"><n-input-group><n-input :value="acct.username" readonly size="small" /><n-button size="small" @click="copy(acct.username)">复制</n-button></n-input-group></div></div>
-        <div class="pxrow"><span class="pxk">密码</span><div class="pxv"><n-input-group><n-input :value="acct.password" type="password" show-password-on="click" readonly size="small" /><n-button size="small" @click="copy(acct.password)">复制</n-button></n-input-group></div></div>
+        <div class="pxrow"><span class="pxk">用户名</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="acct.username" readonly size="small" /><n-button size="small" @click="copy(acct.username)">复制</n-button></n-input-group></div></div>
+        <div class="pxrow"><span class="pxk">密码</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="acct.password" type="password" show-password-on="click" readonly size="small" /><n-button size="small" @click="copy(acct.password)">复制</n-button></n-input-group></div></div>
         <div class="pxrow"><span class="pxk">有效期</span><span style="font-size:12px;color:var(--text-2);flex:1;">{{ acct.expires_at ? fmtDate(acct.expires_at) : '永久' }}</span></div>
         <div class="px-hint">
           <template v-if="acct.expired">已过期，下面的节点暂时改用各自套餐的账号。点「编辑账号」续期即可恢复通用。</template>
@@ -220,8 +227,8 @@
         <div v-if="!p.custom" class="px-hint">系统默认账号，建议点「详情 → 编辑账号」自设</div>
         <div v-if="expandedProxies.includes(p.tag)" class="px-detail">
           <div class="pxrow"><span class="pxk">类型</span><span style="font-size:13px;">{{ p.tls ? 'HTTPS' : 'HTTP / SOCKS5' }}</span></div>
-          <div class="pxrow"><span class="pxk">地址</span><div class="pxv"><n-input-group><n-input :value="p.host" readonly size="small" /><n-button size="small" @click="copy(p.host)">复制</n-button></n-input-group></div></div>
-          <div class="pxrow"><span class="pxk">端口</span><div class="pxv"><n-input-group><n-input :value="String(p.port)" readonly size="small" /><n-button size="small" @click="copy(String(p.port))">复制</n-button></n-input-group></div></div>
+          <div class="pxrow"><span class="pxk">地址</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="p.host" readonly size="small" /><n-button size="small" @click="copy(p.host)">复制</n-button></n-input-group></div></div>
+          <div class="pxrow"><span class="pxk">端口</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="String(p.port)" readonly size="small" /><n-button size="small" @click="copy(String(p.port))">复制</n-button></n-input-group></div></div>
           <!-- 两套账号在这个节点上都能登录，所以两套都列出来。通用账号只用一行指
                回上面——它每个节点都一样，逐个节点再抄一遍反而像「一节点一套」；套
                餐账号则必须逐项列全，它是这个节点独有的，不列就等于没有。 -->
@@ -236,8 +243,8 @@
               <span style="flex:1;"></span>
               <n-button size="tiny" @click="openEditProxy(p.plan)">编辑账号</n-button>
             </div>
-            <div class="pxrow"><span class="pxk">用户名</span><div class="pxv"><n-input-group><n-input :value="p.plan.username" readonly size="small" /><n-button size="small" @click="copy(p.plan.username)">复制</n-button></n-input-group></div></div>
-            <div class="pxrow"><span class="pxk">密码</span><div class="pxv"><n-input-group><n-input :value="p.plan.password" type="password" show-password-on="click" readonly size="small" /><n-button size="small" @click="copy(p.plan.password)">复制</n-button></n-input-group></div></div>
+            <div class="pxrow"><span class="pxk">用户名</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="p.plan.username" readonly size="small" /><n-button size="small" @click="copy(p.plan.username)">复制</n-button></n-input-group></div></div>
+            <div class="pxrow"><span class="pxk">密码</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="p.plan.password" type="password" show-password-on="click" readonly size="small" /><n-button size="small" @click="copy(p.plan.password)">复制</n-button></n-input-group></div></div>
             <div class="pxrow">
               <span class="pxk">有效期</span>
               <span class="pxsub">{{ p.plan.expires_at ? fmtDate(p.plan.expires_at) : '永久' }}</span>
@@ -310,7 +317,7 @@
           <template v-if="editForm.account">改的是所有节点通用的那一个，保存后旧密码立即失效，记得同步更新已填在别处的地方。</template>
           <template v-else>改的是这一份套餐自己的那一个，通用账号不受影响。</template>
         </div>
-        <n-button type="primary" block :loading="savingProxy" @click="saveProxy">保存</n-button>
+        <n-button type="primary" class="highlight-arc-button" block :loading="savingProxy" @click="saveProxy">保存</n-button>
       </n-form>
     </n-modal>
 
@@ -319,6 +326,7 @@
       <template #header-extra>
         <n-space size="small">
           <n-input v-model:value="search" placeholder="搜索节点 / 线路" size="small" style="width:160px;" clearable />
+          <!-- 下拉选择菜单：协议筛选弹层复用顶栏菜单合同，触发选择器保持原样。 -->
           <n-select v-model:value="protoFilter" :options="protoOptions" placeholder="协议" size="small" style="width:100px;" clearable />
           <n-button size="small" @click="handlePing" :loading="pinging">测速</n-button>
           <n-button size="small" @click="handleToggleAll(true)">全启用</n-button>
@@ -861,9 +869,21 @@ onMounted(async () => {
 .routing-choice { display: grid; grid-template-columns: 58px minmax(180px, 240px) 1fr; align-items: center; gap: 8px; margin-bottom: 10px; }
 .routing-choice-label { color: var(--text-3); font-size: 11px; }
 .routing-choice-note, .routing-compat-note { color: var(--text-3); font-size: 11px; line-height: 1.6; }
+.subscription-link-group { border-radius: var(--r) !important; }
 .routing-compat-note { margin-top: 5px; }
 .sub-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
-.sub-stat { min-width: 0; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--r); background: var(--card); box-shadow: var(--shadow-sm); }
+/* 展示卡片 */
+.sub-stat {
+  min-width: 0; padding: 12px 14px; border: 0; border-radius: var(--r);
+  background: var(--card); box-shadow: none; transition: box-shadow .25s ease; transform: none; opacity: 1;
+}
+/* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 */
+.sub-stat:hover, .sub-stat:focus-visible {
+  background: var(--card);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+  transform: none;
+  opacity: 1;
+}
 .sub-stat span, .sub-stat small { display: block; color: var(--text-3); font-size: 11px; }
 .sub-stat b { display: block; margin: 3px 0 2px; color: var(--text); font-size: 18px; line-height: 1.2; font-variant-numeric: tabular-nums; }
 .sub-action-row { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin-top: 11px; }
@@ -895,7 +915,7 @@ onMounted(async () => {
 .pl-when { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 5px; }
 .pl-seg-name { font-size: 12px; font-weight: 600; color: var(--text); }
 .pl-range { font-size: 12px; color: var(--text-2); }
-.pl-len { font-size: 11px; color: var(--text-3); border: 1px solid var(--border); border-radius: 999px; padding: 0 6px; }
+.pl-len { font-size: 11px; color: var(--text-3); border: 1px solid var(--border); border-radius: var(--r); padding: 0 6px; }
 .pl-use { font-size: 11px; color: var(--text-3); margin-top: 4px; }
 .pl-stripe { height: 6px; border: 1px dashed var(--border-strong); border-radius: 3px; background: var(--bg-soft); }
 .pl-more { margin: -2px 0 8px; color: var(--text-3); }

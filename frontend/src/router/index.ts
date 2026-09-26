@@ -1,10 +1,14 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { startShift5Leave } from '@/utils/shift5'
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
     { path: '/oauth2/callback', name: 'oauth-callback', component: () => import('@/views/OAuthCallback.vue') },
+    { path: '/login', name: 'login', component: () => import('@/views/AuthPage.vue'), meta: { authPage: true } },
+    { path: '/register', name: 'register', component: () => import('@/views/AuthPage.vue'), meta: { authPage: true } },
+    { path: '/forgot-password', name: 'forgot-password', component: () => import('@/views/AuthPage.vue'), meta: { authPage: true } },
     {
       path: '/',
       name: 'monitor',
@@ -47,23 +51,43 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach(async (to) => {
+router.beforeEach(async (to, from) => {
   if (to.name === 'oauth-callback') return
   const auth = useAuthStore()
 
-  // 等待 auth 初始化完成（首次加载时从 localStorage 恢复 token 并 fetchMe）
+  // 等待 auth 初始化完成（首次加载时由 HttpOnly cookie 恢复会话）。
   if (!auth.loaded) {
     await auth.init()
   }
+
+  if (to.name === 'monitor' && to.query.login === '1') {
+    return { name: 'login', query: to.query.redirect ? { redirect: String(to.query.redirect) } : undefined }
+  }
+  if (to.meta.authPage && auth.isLoggedIn) return { name: 'dashboard' }
 
   const requiresAuth = to.matched.some(r => r.meta.requiresAuth)
   const requiresAdmin = to.matched.some(r => r.meta.requiresAdmin)
 
   if (requiresAuth && !auth.isLoggedIn) {
-    return { name: 'monitor', query: { login: '1' } }
+    return { name: 'login', query: { redirect: to.fullPath } }
   }
   if (requiresAdmin && !auth.isAdmin) {
     return { name: 'monitor' }
+  }
+
+  // Cover the old route before Vue replaces its view; the destination runs the
+  // matching enter reveal from its page shell after the DOM is mounted.
+  const settingsSectionChange = from.name === 'admin-settings'
+    && to.name === 'admin-settings'
+    && from.path === to.path
+    && from.query.section !== to.query.section
+  const authRouteNames = new Set(['login', 'register', 'forgot-password'])
+  const sameAuthShell = authRouteNames.has(String(from.name)) && authRouteNames.has(String(to.name))
+  if (from.name && to.fullPath !== from.fullPath && to.name !== 'oauth-callback' && !sameAuthShell) {
+    const sameDashboardShell = from.matched.length > 1
+      && to.matched.length > 1
+      && from.matched[0] === to.matched[0]
+    await startShift5Leave(settingsSectionChange ? 'settings' : sameDashboardShell ? 'content' : 'full')
   }
 })
 

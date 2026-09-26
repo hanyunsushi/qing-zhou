@@ -6,7 +6,8 @@
         <h2 class="page-title" style="margin-bottom:4px;">订单记录</h2>
         <p class="page-sub">消费一目了然，订单轨迹清晰可见</p>
       </div>
-      <n-button size="small" secondary @click="router.push('/shop')">
+      <!-- 高亮弧边按钮：订单页右上角商城入口与控制台保持同一强调按钮合同。 -->
+      <n-button size="small" type="primary" class="action-button action-button--emphasis" @click="router.push('/shop')">
         <template #icon><n-icon><CartOutline /></n-icon></template>
         去商城
       </n-button>
@@ -56,11 +57,13 @@
 
     <!-- ============ 筛选交互 ============ -->
     <div class="filters">
-      <n-radio-group v-model:value="statusFilter" size="small">
+      <!-- 路由切换组件：订单状态筛选改变当前列表维度。 -->
+      <n-radio-group v-model:value="statusFilter" size="small" class="route-switch">
         <n-radio-button value="all">全部</n-radio-button>
         <n-radio-button value="success">成功</n-radio-button>
         <n-radio-button value="refunded">已退款</n-radio-button>
       </n-radio-group>
+      <!-- 填写框 -->
       <n-select v-model:value="typeSel" size="small" clearable placeholder="按类型筛选"
                 :options="typeOptions" style="width:150px;" />
       <n-input v-model:value="kw" size="small" clearable placeholder="搜索套餐" style="width:160px;" />
@@ -105,7 +108,8 @@
           <div class="empty-actions">
             <span>{{ orders.length ? '当前状态、类型或关键词组合没有命中订单。' : '购买套餐或流量包后，会在这里记录价格、状态和退款明细。' }}</span>
             <n-button v-if="orders.length" size="small" @click="resetFilters">清除筛选</n-button>
-            <n-button v-else size="small" @click="router.push('/shop')">去商城看看</n-button>
+            <!-- 高亮弧边按钮：固定使用实心 Apple 蓝，悬浮/聚焦时变深。 -->
+            <n-button v-else size="small" type="primary" class="highlight-arc-button" @click="router.push('/shop')">去商城看看</n-button>
           </div>
         </template>
       </n-empty>
@@ -118,7 +122,7 @@ import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { NCard, NSpin, NEmpty, NButton, NRadioGroup, NRadioButton, NSelect, NInput, NIcon } from 'naive-ui'
 import { CartOutline } from '@vicons/ionicons5'
-import * as echarts from 'echarts'
+import * as echarts from '@/utils/echarts'
 import { apiList } from '@/api'
 import { fmtDateTime, timeAgo, yuan } from '@/utils/format'
 import { useCountUp } from '@/utils/countup'
@@ -341,16 +345,20 @@ onUnmounted(() => {
 
 /* ---- KPI 卡片 ---- */
 .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 16px; }
+/* 展示卡片 */
 .kpi-card {
   background: var(--card); border: 1px solid var(--border); border-radius: var(--r-sm);
   padding: 14px 16px;
-  animation: riseIn .5s cubic-bezier(.22,1,.36,1) backwards;
+  box-shadow: none; transition: box-shadow .25s ease; transform: none; opacity: 1;
 }
-.kpi-card:nth-child(1) { animation-delay: 0ms; }
-.kpi-card:nth-child(2) { animation-delay: 60ms; }
-.kpi-card:nth-child(3) { animation-delay: 120ms; }
-.kpi-card:nth-child(4) { animation-delay: 180ms; }
-@keyframes riseIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+/* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 */
+.kpi-card:hover, .kpi-card:focus-visible {
+  border-color: var(--border);
+  background: var(--card);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+  transform: none;
+  opacity: 1;
+}
 .kpi-label { font-size: 12px; color: var(--text-3); font-weight: 550; }
 .kpi-value { font-size: 24px; font-weight: 720; letter-spacing: -0.02em; margin-top: 6px; line-height: 1.15; font-variant-numeric: tabular-nums; }
 .kpi-value.accent { color: var(--text); }
@@ -376,7 +384,6 @@ onUnmounted(() => {
 .group-head {
   display: flex; align-items: center; gap: 8px;
   margin: 10px 0 8px; padding: 0 2px;
-  animation: riseIn .4s cubic-bezier(.22,1,.36,1) backwards;
 }
 .group-head:first-child { margin-top: 0; }
 .group-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
@@ -387,11 +394,10 @@ onUnmounted(() => {
   display: flex; align-items: center; gap: 12px;
   background: var(--card); border: 1px solid var(--border); border-radius: var(--r-sm);
   padding: 12px 14px; margin-bottom: 8px;
-  animation: riseIn .45s cubic-bezier(.22,1,.36,1) backwards;
-  animation-delay: calc(var(--i, 0) * 45ms);
   transition: box-shadow .18s ease, border-color .18s ease, background-color .18s ease;
 }
-.order-item:hover { box-shadow: var(--shadow); border-color: var(--accent); background: var(--accent-subtle); }
+/* 悬浮效果：订单展示卡片不使用业务蓝底或蓝边，只增加中性阴影。 */
+.order-item:hover { box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08); border-color: transparent; background: var(--card); }
 
 .oi-ic {
   width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0;
@@ -415,7 +421,7 @@ onUnmounted(() => {
 .oi-refund { font-size: 11.5px; color: var(--warn); margin-top: 2px; font-variant-numeric: tabular-nums; }
 
 /* 状态胶囊 */
-.pill { display: inline-flex; align-items: center; padding: 1px 9px; border-radius: 999px; font-size: 11.5px; font-weight: 600; line-height: 1.6; }
+.pill { display: inline-flex; align-items: center; padding: 1px 9px; border-radius: var(--r); font-size: 11.5px; font-weight: 600; line-height: 1.6; }
 .pill-ok { background: rgba(16,185,129,.12); color: #0f9d6f; }
 .pill-warn { background: rgba(191,149,64,.15); color: var(--warn); }
 

@@ -33,24 +33,30 @@ defineEmits<{ (e: 'click'): void }>()
 </script>
 
 <style scoped>
+/* 展示卡片 */
 .stat-card {
   position: relative; overflow: hidden;
   display: block; width: 100%; text-align: left; font: inherit; color: inherit;
-  background: var(--card); border: 1px solid var(--border); border-radius: var(--r);
+  background: var(--card); border: 0; border-radius: var(--r);
   padding: 14px 16px 12px;
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow .18s var(--ease-standard), border-color .18s var(--ease-standard), background-color .18s var(--ease-standard);
+  box-shadow: none; transition: box-shadow .25s ease; transform: none; opacity: 1;
 }
 
 .stat-card.clickable { cursor: pointer; }
-.stat-card.clickable:hover { box-shadow: var(--shadow); border-color: var(--accent); background: var(--accent-subtle); }
-.stat-card.clickable:active { background: var(--accent-soft); }
-.stat-card.clickable:focus-visible { outline: 0; box-shadow: var(--focus-ring); }
+/* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 */
+/* 可跳转统计卡：悬浮时辅助说明变为 Apple 蓝，提示整张卡可进入对应页面。 */
+.stat-card:hover, .stat-card:focus-visible {
+  background: var(--card);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+  transform: none;
+  opacity: 1;
+}
 .stat-card.clickable:hover .sc-arrow { opacity: 1; transform: none; }
+.stat-card.clickable:hover .sc-sub, .stat-card.clickable:focus-visible .sc-sub { color: var(--accent); }
 
 .sc-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .sc-label { font-size: 12.5px; color: var(--text-2); font-weight: 550; }
-.sc-badge { font-size: 10.5px; font-weight: 650; padding: 2px 8px; border-radius: 20px; letter-spacing: .01em; }
+.sc-badge { font-size: 10.5px; font-weight: 650; padding: 2px 8px; border-radius: var(--r); letter-spacing: .01em; }
 .sc-value {
   font-size: 26px; font-weight: 720; letter-spacing: -0.02em; line-height: 1.15;
   margin-top: 8px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
@@ -63,6 +69,5 @@ defineEmits<{ (e: 'click'): void }>()
 /* 尊重系统的「减少动态效果」设置 */
 @media (prefers-reduced-motion: reduce) {
   .stat-card { animation: none; }
-  .stat-card.clickable:hover { transform: none; }
 }
 </style>

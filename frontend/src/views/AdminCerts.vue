@@ -10,7 +10,7 @@
 
     <n-card size="small" style="margin-bottom:16px;">
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-        <n-button type="primary" @click="openAcme">申请证书（Cloudflare DNS）</n-button>
+        <n-button type="primary" class="highlight-arc-button" @click="openAcme">申请证书（Cloudflare DNS）</n-button>
         <n-button @click="openPaste">粘贴证书</n-button>
         <n-button @click="openSelf">生成自签证书</n-button>
         <span style="flex:1;"></span>
@@ -18,7 +18,8 @@
       </div>
       <div style="margin-top:8px;font-size:12px;color:var(--text-3);">
         提示：ACME 申请需先在
-        <router-link to="/admin/settings" style="color:var(--primary);">系统设置</router-link>
+        <!-- 项目超链接：证书配置入口使用统一 Apple 蓝链接合同。 -->
+        <router-link to="/admin/settings" class="project-link">系统设置</router-link>
         填写 Cloudflare API Token；DNS 验证在面板本机完成，域名请在 Cloudflare 用<b>灰云（DNS only）</b>指向节点 IP 以保持直连速度。
       </div>
     </n-card>
@@ -80,6 +81,7 @@
     <!-- 申请 ACME -->
     <n-modal v-model:show="showAcme" preset="card" title="申请真实证书（Let's Encrypt）" style="max-width:520px;">
       <n-form label-placement="left" label-width="90">
+        <!-- 填写框 -->
         <n-form-item label="名称"><n-input v-model:value="acme.name" placeholder="如 trojan-cert" /></n-form-item>
         <n-form-item label="域名"><n-input v-model:value="acme.domain" placeholder="如 node.example.com（需已在 Cloudflare 解析）" /></n-form-item>
         <n-form-item label="验证方式">
@@ -102,7 +104,7 @@
       <template #footer>
         <n-space justify="end">
           <n-button @click="showAcme = false">取消</n-button>
-          <n-button type="primary" :loading="submitting" @click="submitAcme">申请</n-button>
+          <n-button type="primary" class="highlight-arc-button" :loading="submitting" @click="submitAcme">申请</n-button>
         </n-space>
       </template>
     </n-modal>
@@ -118,7 +120,7 @@
       <template #footer>
         <n-space justify="end">
           <n-button @click="showPaste = false">取消</n-button>
-          <n-button type="primary" :loading="submitting" @click="submitPaste">保存</n-button>
+          <n-button type="primary" class="highlight-arc-button" :loading="submitting" @click="submitPaste">保存</n-button>
         </n-space>
       </template>
     </n-modal>
@@ -134,7 +136,7 @@
       <template #footer>
         <n-space justify="end">
           <n-button @click="showSelf = false">取消</n-button>
-          <n-button type="primary" :loading="submitting" @click="submitSelf">生成</n-button>
+          <n-button type="primary" class="highlight-arc-button" :loading="submitting" @click="submitSelf">生成</n-button>
         </n-space>
       </template>
     </n-modal>

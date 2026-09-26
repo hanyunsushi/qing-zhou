@@ -25,7 +25,7 @@
           </span>
         </div>
 
-        <!-- 实时指标卡 -->
+        <!-- 实时指标卡：展示卡片 -->
         <div v-if="server.metrics" class="metric-grid">
           <div class="metric-card">
             <span class="m-label">CPU</span>
@@ -67,7 +67,8 @@
         <!-- 大图趋势 -->
         <n-card size="small" style="margin-top:16px;">
           <div class="chart-toolbar">
-            <n-radio-group v-model:value="range" size="small" @update:value="loadChart">
+            <!-- 路由切换组件：监控详情时间范围改变图表查询维度。 -->
+            <n-radio-group v-model:value="range" size="small" class="route-switch" @update:value="loadChart">
               <n-radio-button v-for="r in ranges" :key="r.value" :value="r.value">{{ r.label }}</n-radio-button>
             </n-radio-group>
             <n-checkbox-group v-model:value="series" size="small" @update:value="drawChart">
@@ -96,7 +97,7 @@ import {
 } from 'naive-ui'
 import { apiGet } from '@/api'
 import { fmtBytes, fmtUptime, pct } from '@/utils/format'
-import * as echarts from 'echarts'
+import * as echarts from '@/utils/echarts'
 
 const route = useRoute()
 const router = useRouter()
@@ -208,7 +209,10 @@ onUnmounted(() => {
 .chip.danger { background: var(--danger-soft); color: var(--danger); }
 
 .metric-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
-.metric-card { display: flex; flex-direction: column; gap: 4px; padding: 14px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; }
+/* 展示卡片 */
+.metric-card { display: flex; flex-direction: column; gap: 4px; padding: 14px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; box-shadow: none; transition: box-shadow .25s ease; transform: none; opacity: 1; }
+/* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 */
+.metric-card:hover, .metric-card:focus-visible { border-color: var(--border); background: var(--card); box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08); transform: none; opacity: 1; }
 .m-label { font-size: 11px; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
 .m-val { font-size: 22px; font-weight: 720; }
 .m-val.ok { color: var(--accent-strong); }

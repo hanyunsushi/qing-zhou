@@ -1,35 +1,80 @@
+/* Sub2 typography assets: display, Chinese display, body Latin and Chinese body. */
+@font-face { font-family: 'Fraunces'; src: url('/fonts/brand/Fraunces-Variable.ttf') format('truetype'); font-style: normal; font-weight: 400 900; font-display: swap; }
+@font-face { font-family: 'Source Han Serif SC'; src: url('/fonts/source-han/SourceHanSerifCN-VF.woff2') format('woff2'); font-style: normal; font-weight: 200 900; font-display: swap; }
+@font-face { font-family: 'Inter'; src: url('/fonts/inter/Inter-18pt-Light.ttf') format('truetype'); font-style: normal; font-weight: 300; font-display: swap; }
+@font-face { font-family: 'Resource Han Rounded CN'; src: url('/fonts/brand/ResourceHanRoundedCN-Regular.woff2') format('woff2'); font-style: normal; font-weight: 200 449; font-display: swap; }
+@font-face { font-family: 'Resource Han Rounded CN'; src: url('/fonts/brand/ResourceHanRoundedCN-Medium.woff2') format('woff2'); font-style: normal; font-weight: 450 649; font-display: swap; }
+@font-face { font-family: 'Resource Han Rounded CN'; src: url('/fonts/brand/ResourceHanRoundedCN-Bold.woff2') format('woff2'); font-style: normal; font-weight: 650 900; font-display: swap; }
+
 :root {
-  --bg: #f2f3f3;
+  /* 全局层级：页面白底、一级模块 250、悬浮/路由轨道 240。 */
+  --bg: #ffffff;
   --bg-soft: #fafafa;
-  --bg-subtle: #f6f6f6;
-  --card: #ffffff;
-  --card-hover: #ffffff;
-  --border: #d5dbdb;
-  --border-strong: #879596;
-  --text: #16191f;
-  --text-2: #414d4f;
-  --text-3: #5f6b6d;
-  --accent: #0972d3;
+  --bg-subtle: #f0f0f0;
+  --card: #fafafa;
+  --card-hover: #f0f0f0;
+  --border: oklch(92% 0 0);
+  --border-strong: oklch(87% 0 0);
+  --text: oklch(21% 0 0);
+  --text-2: oklch(37% 0 0);
+  --text-3: oklch(55.6% 0 0);
+  --accent: #007aff;
   --accent-hover: #033160;
+  --accent-arc-hover: #0068d7;
+  --accent-button-hover: color-mix(in srgb, var(--accent) 84%, white);
   --accent-strong: #033160;
   --accent-soft: #e9f3ff;
   --accent-subtle: #f2f8ff;
+  --selection-bg: rgba(0, 122, 255, .2);
   --danger: #d91515;
   --danger-soft: #fff1f0;
   --warn: #b84b00;
-  --info: #0972d3;
+  --info: #007aff;
   --success: #037f0c;
   --success-soft: #ecf7ed;
   --shadow: 0 2px 8px rgba(0, 7, 7, .12);
   --shadow-sm: 0 1px 4px rgba(0, 7, 7, .12);
   --shadow-flyout: 0 4px 16px rgba(0, 7, 7, .16);
+  /* Apple-style page rail: the visible thumb is centered inside a stable 16px slot. */
+  --scrollbar-track-width: 16px;
+  --scrollbar-thumb-width: 8px;
+  /* Apple globalnav scrim: this app header is sticky over page content, so the
+     visible glass surface is present at rest as well as while scrolling. */
+  --topbar-background: rgba(250, 250, 252, .8);
+  --topbar-scrim-background: rgba(250, 250, 252, .8);
+  --topbar-scrim-background-fallback: rgba(250, 250, 252, .92);
+  --topbar-backdrop-filter: saturate(180%) blur(20px);
+  --topbar-divider: rgba(0, 0, 0, .12);
+  --app-header-height: 64px;
   --focus-ring: 0 0 0 2px #ffffff, 0 0 0 4px var(--accent);
+  /* 输入框焦点只使用清晰的内边框，不再叠加扩散光晕。 */
+  --focus-ring-soft: none;
   --ease-standard: cubic-bezier(.2, .75, .2, 1);
   --ease-emphasized: cubic-bezier(.16, 1, .3, 1);
-  --r: 8px;
-  --r-sm: 4px;
-  --ff: "Amazon Ember", "Segoe UI", "Microsoft YaHei", "PingFang SC", system-ui, -apple-system, sans-serif;
+  /* 全局圆角：所有非圆形界面表面统一 18px。 */
+  --r: 18px;
+  --r-sm: 18px;
+  --r-control: 18px;
+  --r-overlay: 18px;
+  --r-logo: 18px;
+  --r-pill: 18px;
+  /* Sub2 active typography roles. Numeric content keeps the AWS mono/tabular rule. */
+  --ff-heading: "Fraunces", "Source Han Serif SC", serif;
+  --ff-body: "Inter", "Resource Han Rounded CN", sans-serif;
+  --ff: var(--ff-body);
   --ff-mono: "Amazon Ember Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-size-body: 14px;
+  --line-height-body: 20px;
+  --font-size-heading-xl: 28px;
+  --line-height-heading-xl: 36px;
+  --font-size-heading-l: 24px;
+  --line-height-heading-l: 30px;
+  --font-size-heading-m: 20px;
+  --line-height-heading-m: 24px;
+  --font-size-heading-s: 16px;
+  --line-height-heading-s: 20px;
+  --font-size-label: 12px;
+  --line-height-label: 16px;
   --chart-1: #688ae8;
   --chart-2: #c33d69;
   --chart-3: #2ea597;
@@ -43,25 +88,94 @@
   --chart-grid: #dedee3;
 }
 
+/* Shift5 page lifecycle: this gate only covers route/page content. Component
+   transitions remain owned by their local view styles. */
+.qz-shift5-route-transition {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  width: 100% !important;
+  height: 100dvh !important;
+  background: var(--bg) !important;
+  opacity: 1;
+  pointer-events: none !important;
+}
+.qz-shift5-route-transition.is-content {
+  inset: auto !important;
+}
+.qz-shift5-route-transition-pending .qz-shift5-page-shell > *:not(.qz-shift5-route-transition),
+.qz-shift5-route-transition-pending .route-page-shell > *:not(.qz-shift5-route-transition) {
+  visibility: hidden !important;
+}
+.route-page-shell { position: relative; }
+.qz-shift5-enter-pending { visibility: hidden !important; }
+.qz-shift5-page-shell {
+  display: contents;
+}
+@media (prefers-reduced-motion: reduce) {
+  .qz-shift5-route-transition-pending .qz-shift5-page-shell > *,
+  .qz-shift5-route-transition-pending .route-page-shell > * { visibility: visible !important; }
+  .qz-shift5-route-transition { display: none !important; }
+}
+
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; overflow-x: hidden; }
+/* Keep one explicit page scrollbar slot even when the current route is shorter
+   than the viewport. The native platform scrollbar is hidden, so this padding
+   is the only page-level width reservation on every browser. */
+body {
+  /* The visible rail is rendered by PageScrollbar so every platform gets the
+     same 16px track and centered 8px thumb. Native scrolling remains active. */
+  padding-right: var(--scrollbar-track-width);
+  scrollbar-width: none;
+}
+/* The document scrolling element can be html in Firefox/WebKit; hide its
+   platform scrollbar too so PageScrollbar is the only page-level chrome. */
+html { scrollbar-width: none; }
+html::-webkit-scrollbar { display: none; }
+body::-webkit-scrollbar { display: none; }
+/* 填写框文本光标：与所有焦点线条统一使用 Apple 系统蓝。 */
+input, textarea { caret-color: var(--accent); }
 body {
   font-family: var(--ff);
   background: var(--bg);
   color: var(--text);
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  font-weight: 400;
+  letter-spacing: 0;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--ff-heading);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+h1 { font-size: var(--font-size-heading-xl); line-height: var(--line-height-heading-xl); }
+h2 { font-size: var(--font-size-heading-l); line-height: var(--line-height-heading-l); }
+h3 { font-size: var(--font-size-heading-m); line-height: var(--line-height-heading-m); }
+h4, h5, h6 { font-size: var(--font-size-heading-s); line-height: var(--line-height-heading-s); }
+:where(.numeric, .mono, .tabular-nums, [class*="amount"], [class*="balance"], [class*="price"], [class*="value"], [class*="count"], [class*="pct"]) {
+  font-family: var(--ff-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+/* 项目超链接：所有可导航文本链接统一使用 Apple 蓝，悬浮沿用全局交互蓝。 */
 a { color: var(--accent); text-decoration: none; }
 a:hover { color: var(--accent-hover); }
+/* 项目超链接：组件化 router-link / tag="a" 也复用同一 Apple 蓝。 */
+.project-link { color: var(--accent) !important; }
+.project-link:hover { color: var(--accent-hover) !important; }
 button, input, textarea, select { font-family: inherit; }
-::selection { background: #b9d7f5; color: var(--text); }
+/* 文本选择：固定 Apple 系统蓝的半透明高亮，避免不同操作系统的原生色差。 */
+::selection { background: var(--selection-bg); color: inherit; }
+::-moz-selection { background: var(--selection-bg); color: inherit; }
 
 /* Cloudscape adaptation for the existing Naive UI component system. */
 .n-card {
-  border-color: var(--border) !important;
+  background: var(--card) !important;
+  border: 0 !important;
   border-radius: var(--r) !important;
   box-shadow: var(--shadow-sm);
   transition: border-color .18s var(--ease-standard), box-shadow .18s var(--ease-standard);
@@ -69,12 +183,19 @@ button, input, textarea, select { font-family: inherit; }
 .n-card > .n-card-header { padding: 16px 18px 12px; }
 .n-card > .n-card__content { padding: 14px 18px 18px; }
 .n-card.n-card--content-segmented > .n-card__content { border-top-color: var(--border); }
-.n-card > .n-card-header .n-card-header__main { font-weight: 650; letter-spacing: -.01em; }
+.n-card > .n-card-header .n-card-header__main { font-weight: 650; letter-spacing: 0; }
+
+/* 一级模块：容器与页面背景直接分层，不再绘制外框线。 */
+:where(.n-card, .n-data-table, .resource-metric, .stat-card, .list-card,
+  .sub-stat, .onboarding-strip, .heatmap-card, .sec,
+  [class*="-card"], [class*="-panel"], [class*="-wrap"]):not(.n-button):not(.n-input):not(.n-input-number):not(.n-base-selection):not(.topbar-hover-menu-panel) {
+  border: 0 !important;
+}
 
 .n-button {
   font-weight: 600;
   letter-spacing: 0;
-  border-radius: 8px !important;
+  border-radius: var(--r-control) !important;
   transition: color .22s var(--ease-standard), background-color .22s var(--ease-standard), border-color .22s var(--ease-standard), box-shadow .28s var(--ease-standard), transform .28s var(--ease-emphasized) !important;
 }
 .n-button:not(.n-button--disabled):focus-visible { box-shadow: var(--focus-ring); }
@@ -83,55 +204,605 @@ button, input, textarea, select { font-family: inherit; }
   box-shadow: none;
 }
 .n-button.n-button--primary-type:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):hover {
-  background: var(--accent-hover) !important;
+  background: var(--accent-button-hover) !important;
   transform: none;
   box-shadow: none;
 }
-.n-button.n-button--primary-type.n-button--secondary { box-shadow: inset 0 0 0 1px var(--accent); }
+.n-button.n-button--primary-type.n-button--secondary { box-shadow: inset 0 0 0 1px var(--border-strong); }
 .n-button.n-button--primary-type.primary-quiet { background: transparent !important; box-shadow: none !important; }
 .n-button:not(.n-button--disabled):active { transform: none; transition-duration: .08s !important; }
 
+/* 标准默认弧边按钮：仅在悬浮/聚焦时显示设计蓝描边。 */
+.n-button.n-button--default-type:not(.n-button--disabled):not(.n-button--secondary):not(.n-button--tertiary):not(.n-button--quaternary):not(.n-button--ghost):not(.n-button--text-type):not(.action-button) {
+  --n-border-hover: 1px solid var(--accent) !important;
+  --n-border-focus: 1px solid var(--accent) !important;
+}
+/* 高亮弧边按钮：固定实心 Apple 蓝；主动作悬浮/聚焦使用中间深蓝。 */
+.n-button.n-button--primary-type.highlight-arc-button {
+  --n-color: var(--accent) !important;
+  --n-color-hover: var(--accent-arc-hover) !important;
+  --n-color-pressed: var(--accent-strong) !important;
+  --n-border: 1px solid var(--accent) !important;
+  --n-border-hover: 1px solid var(--accent-arc-hover) !important;
+  --n-border-focus: 1px solid var(--accent-arc-hover) !important;
+  background: var(--accent) !important;
+  color: #fff !important;
+}
+.n-button.n-button--primary-type.highlight-arc-button:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):hover,
+.n-button.n-button--primary-type.highlight-arc-button:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):focus-visible {
+  background: var(--accent-arc-hover) !important;
+  color: #fff !important;
+  border-color: var(--accent-arc-hover) !important;
+}
+/* 普通按钮：紧凑 32px 几何、浅色文字与 Sub2 中性 ring 状态。 */
+.n-button.action-button { min-height:32px !important; height:32px; padding:0 10px !important; border-radius:8px !important; border:0 !important; font-size:13px; font-weight:500; line-height:20px; letter-spacing:0; transition:color .1s ease-in-out,background-color .2s ease-in-out,box-shadow .2s ease-in-out,opacity .2s ease-in-out,transform .2s ease-in-out !important; }
+.n-button.action-button--normal { --action-button-bg: transparent; --action-button-fg: var(--text-3); --action-button-border: var(--border); --action-button-bg-hover: transparent; --action-button-fg-hover: var(--text-2); --action-button-border-hover: var(--border-strong); --n-border: 0 solid transparent !important; --n-border-hover: 0 solid transparent !important; --n-border-focus: 0 solid transparent !important; background:var(--action-button-bg) !important; color:var(--action-button-fg) !important; box-shadow:0 0 0 1px var(--action-button-border) !important; }
+.n-button.action-button--normal:hover:not(.n-button--disabled), .n-button.action-button--normal:focus-visible:not(.n-button--disabled) { background:var(--action-button-bg-hover) !important; color:var(--action-button-fg-hover) !important; box-shadow:0 0 0 2px var(--action-button-border-hover) !important; }
+/* 强调按钮：背景和 ring 悬浮时同步提亮，并覆盖全局 primary hover 状态。 */
+.n-button.action-button--emphasis { --action-button-bg: var(--accent); --action-button-fg: #fff; --action-button-border: var(--accent); --action-button-bg-hover: var(--accent-button-hover); --action-button-border-hover: var(--accent-button-hover); background:var(--action-button-bg) !important; color:var(--action-button-fg) !important; box-shadow:0 0 0 1px var(--action-button-border) !important; }
+.n-button.n-button--primary-type.action-button--emphasis:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):hover, .n-button.n-button--primary-type.action-button--emphasis:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):focus-visible { background:var(--action-button-bg-hover) !important; color:var(--action-button-fg) !important; box-shadow:0 0 0 2px var(--action-button-border-hover) !important; }
+.n-button.action-button:active:not(.n-button--disabled) { transform:translateY(1px) !important; transition-duration:.08s !important; }
+
+/* 切换开关：保留启用/停用状态色，去掉 Naive UI rail 的焦点高亮边框。 */
+.n-switch:focus .n-switch__rail,
+.n-switch:focus-visible .n-switch__rail {
+  box-shadow: none !important;
+}
+
+/* 填写框 */
 .n-input, .n-input-number, .n-base-selection {
-  border-radius: 8px !important;
+  border-radius: var(--r-control) !important;
   background: #ffffff !important;
-  transition: box-shadow .25s var(--ease-standard), background-color .25s var(--ease-standard) !important;
+  transition: color .25s var(--ease-standard), background-color .25s var(--ease-standard), border-color .25s var(--ease-standard), box-shadow .25s var(--ease-standard) !important;
 }
 .n-input .n-input__border,
+.n-input .n-input__state-border,
 .n-input-number .n-input__border,
-.n-base-selection .n-base-selection__border { border-color: var(--border-strong) !important; }
+.n-input-number .n-input__state-border,
+.n-base-selection .n-base-selection__border,
+.n-base-selection .n-base-selection__state-border {
+  border: 1px solid #d1cfc5 !important;
+  box-shadow: none !important;
+  transition: border-color .25s var(--ease-standard), box-shadow .25s var(--ease-standard) !important;
+}
+.n-input .n-input__border,
+.n-input .n-input__state-border,
+.n-input-number .n-input__border,
+.n-input-number .n-input__state-border,
+.n-base-selection .n-base-selection__border,
+.n-base-selection .n-base-selection__state-border { border-color: #d1cfc5 !important; }
 .n-input:not(.n-input--disabled):hover .n-input__border,
-.n-base-selection:not(.n-base-selection--disabled):hover .n-base-selection__border { border-color: #b3b3b3 !important; }
-.n-input.n-input--focus, .n-base-selection.n-base-selection--active { box-shadow: var(--focus-ring); }
+.n-input:not(.n-input--disabled):hover .n-input__state-border,
+.n-input-number:not(.n-input-number--disabled):hover .n-input__border,
+.n-input-number:not(.n-input-number--disabled):hover .n-input__state-border,
+.n-base-selection:not(.n-base-selection--disabled):hover .n-base-selection__border,
+.n-base-selection:not(.n-base-selection--disabled):hover .n-base-selection__state-border {
+  border: 1px solid #d1cfc5 !important;
+  box-shadow: none !important;
+}
+/* 填写框焦点：统一 2px 苹果蓝线条，禁止外扩光晕。 */
+.n-input.n-input--focus,
+.n-input-number.n-input-number--focus,
+.n-base-selection.n-base-selection--active { box-shadow: none !important; }
+.n-input:not(.n-input--disabled).n-input--focus .n-input__border,
+.n-input:not(.n-input--disabled).n-input--focus .n-input__state-border,
+.n-input-number:not(.n-input-number--disabled).n-input-number--focus .n-input__border,
+.n-input-number:not(.n-input-number--disabled).n-input-number--focus .n-input__state-border,
+.n-base-selection:not(.n-base-selection--disabled).n-base-selection--active .n-base-selection__border,
+.n-base-selection:not(.n-base-selection--disabled).n-base-selection--active .n-base-selection__state-border {
+  border: 1px solid var(--accent) !important;
+  box-shadow: inset 0 0 0 1px var(--accent) !important;
+}
+/* 选择下拉菜单：点击/展开保持中性边框，不套用填写框的 Apple 蓝高亮。 */
+.n-base-selection:not(.n-base-selection--disabled).n-base-selection--active .n-base-selection__border,
+.n-base-selection:not(.n-base-selection--disabled).n-base-selection--active .n-base-selection__state-border {
+  border: 1px solid #d1cfc5 !important;
+  box-shadow: none !important;
+}
+/* 复制栏：只读内容不是填写框，点击查看/复制时保持中性边界，不显示 Apple 蓝焦点线。 */
+/* 复制栏焦点特效：锁定中性边界并禁止过渡，避免被全局填写框规则染蓝。 */
+.copy-field .n-input,
+.copy-field .n-input-number {
+  --n-border: 1px solid #d1cfc5 !important;
+  --n-border-hover: 1px solid #d1cfc5 !important;
+  --n-border-focus: 1px solid #d1cfc5 !important;
+  --n-color-focus: #ffffff !important;
+  --n-box-shadow-focus: none !important;
+  outline: none !important;
+  transition: none !important;
+}
+.copy-field input,
+.copy-field textarea {
+  caret-color: transparent !important;
+  outline: none !important;
+}
+.copy-field .n-input.n-input--focus,
+.copy-field .n-input-number.n-input-number--focus,
+.copy-field .n-input:focus-within,
+.copy-field .n-input-number:focus-within {
+  border-color: #d1cfc5 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+.copy-field .n-input .n-input__border,
+.copy-field .n-input .n-input__state-border,
+.copy-field .n-input-number .n-input__border,
+.copy-field .n-input-number .n-input__state-border {
+  border: 1px solid #d1cfc5 !important;
+  border-color: #d1cfc5 !important;
+  box-shadow: none !important;
+  transition: none !important;
+}
+.copy-field .n-input.n-input--focus .n-input__border,
+.copy-field .n-input.n-input--focus .n-input__state-border,
+.copy-field .n-input-number.n-input-number--focus .n-input__border,
+.copy-field .n-input-number.n-input-number--focus .n-input__state-border,
+.copy-field .n-input:focus-within .n-input__border,
+.copy-field .n-input:focus-within .n-input__state-border,
+.copy-field .n-input-number:focus-within .n-input__border,
+.copy-field .n-input-number:focus-within .n-input__state-border {
+  border: 1px solid #d1cfc5 !important;
+  border-color: #d1cfc5 !important;
+  box-shadow: none !important;
+}
 .n-form-item .n-form-item-label { color: var(--text-2); font-weight: 560; }
 .n-form-item-feedback-wrapper { min-height: 4px !important; }
 
-.n-modal, .n-dialog, .n-popover, .n-dropdown-menu {
+.n-modal, .n-dialog, .n-popover {
+  background: var(--card) !important;
   border: 1px solid var(--border);
   box-shadow: var(--shadow-flyout) !important;
 }
-.n-modal, .n-dialog { border-radius: var(--r) !important; }
-.n-dropdown-menu, .n-popover { border-radius: var(--r) !important; }
-.n-dropdown-option-body { border-radius: 6px !important; }
+/* 提示信息浮层：不要继承普通白色 popover 的表面，否则 Naive UI
+   tooltip 的白色文字会落在白底上；同时确保提示层覆盖页面滚动条。 */
+.n-tooltip.n-popover,
+.n-tooltip.n-popover-shared {
+  --n-color: var(--text) !important;
+  --n-text-color: #fff !important;
+  z-index: 2000 !important;
+  background: var(--text) !important;
+  border: 0 !important;
+  color: #fff !important;
+  box-shadow: var(--shadow-flyout) !important;
+}
+.n-tooltip.n-popover .n-popover__content,
+.n-tooltip.n-popover-shared .n-popover__content {
+  color: #fff !important;
+}
+.n-modal, .n-dialog, .n-popover,
+.n-alert, .n-message, .n-notification, .n-tooltip {
+  border-radius: var(--r-overlay) !important;
+}
+/* 顶栏语言切换式控件：共享 Sub2 的几何状态，颜色继续使用 QingZhou token。 */
+.n-button.topbar-language-reference-trigger {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  box-sizing: border-box !important;
+  min-height: 32px !important;
+  padding: 0 10px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+  /* Apple globalnav links remain transparent so the header material reads as one surface. */
+  background: var(--topbar-background) !important;
+  color: var(--text-2) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  line-height: 20px !important;
+  letter-spacing: 0 !important;
+  box-shadow: none !important;
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease !important;
+}
+.n-button.n-button--quaternary-type.topbar-language-reference-trigger {
+  --n-color: var(--topbar-background) !important;
+  --n-color-hover: var(--card-hover) !important;
+  --n-color-focus: var(--card-hover) !important;
+  --n-color-pressed: var(--card-hover) !important;
+  --n-text-color: var(--text-2) !important;
+  --n-text-color-hover: var(--text) !important;
+  --n-text-color-focus: var(--text) !important;
+  --n-text-color-pressed: var(--text) !important;
+  --n-border: 1px solid var(--border) !important;
+  --n-border-hover: 1px solid var(--border) !important;
+  --n-border-focus: 1px solid var(--border) !important;
+  --n-border-pressed: 1px solid var(--border) !important;
+  background-color: var(--topbar-background) !important;
+}
+.n-button.topbar-language-reference-trigger .n-button__border,
+.n-button.topbar-language-reference-trigger .n-button__state-border {
+  border: 1px solid var(--border) !important;
+  box-shadow: none !important;
+}
+.n-button.topbar-language-reference-trigger:hover,
+.n-button.topbar-language-reference-trigger:focus-visible {
+  border-radius: 12px !important;
+  border-color: var(--border) !important;
+  background: var(--card-hover) !important;
+  background-color: var(--card-hover) !important;
+}
+.n-button.n-button--quaternary-type.topbar-language-reference-trigger:hover,
+.n-button.n-button--quaternary-type.topbar-language-reference-trigger:focus,
+.n-button.n-button--quaternary-type.topbar-language-reference-trigger:focus-visible,
+.n-button.n-button--quaternary-type.topbar-language-reference-trigger:active {
+  --n-color: var(--card-hover) !important;
+  --n-color-hover: var(--card-hover) !important;
+  --n-color-focus: var(--card-hover) !important;
+  --n-color-pressed: var(--card-hover) !important;
+  background-color: var(--card-hover) !important;
+}
+.n-button.topbar-language-reference-trigger .n-button__content {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  min-height: 20px !important;
+  line-height: 20px !important;
+}
+.n-button.topbar-language-reference-trigger .n-button__icon { margin: 0 !important; }
+.n-button.topbar-language-reference-trigger .n-button__icon > .n-icon { display: inline-flex !important; align-items: center !important; }
+.n-button.topbar-account-trigger {
+  padding: 0 10px !important;
+}
+.n-button.topbar-account-trigger .n-button__content { gap: 7px !important; }
+.topbar-account-icon { width: 18px; height: 18px; flex: 0 0 18px; display: block; }
+.topbar-account-trigger .account-name {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--ff-body) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  line-height: 20px !important;
+  letter-spacing: 0 !important;
+}
+.n-button.topbar-language-reference-trigger:focus-visible {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: 2px !important;
+}
+/* 下拉选择菜单：只重绘弹层本体，不触碰触发按钮；几何与顶栏悬浮菜单一致。 */
+.n-base-select-menu,
+.n-dropdown-menu {
+  box-sizing: border-box !important;
+  padding: 12px !important;
+  background: var(--bg) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, .05) !important;
+}
+
+.n-base-select-menu .n-base-select-option,
+.n-dropdown-menu .n-dropdown-option-body {
+  min-height: 40px !important;
+  box-sizing: border-box !important;
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+  color: var(--text) !important;
+}
+
+.n-dropdown-option-body::before,
+.n-base-select-option::before {
+  top: 3px !important;
+  right: 3px !important;
+  bottom: 3px !important;
+  left: 3px !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  transition: background-color .15s ease !important;
+}
+
+.n-dropdown-option-body:hover::before,
+.n-dropdown-option-body--pending::before,
+.n-base-select-option:hover::before,
+.n-base-select-option--pending::before {
+  background: var(--card-hover) !important;
+}
+
+.n-dropdown-option-body--active,
+.n-dropdown-option-body--active .n-dropdown-option-body__prefix,
+.n-dropdown-option-body--active .n-dropdown-option-body__suffix,
+.n-base-select-option--selected,
+.n-base-select-option--selected .n-base-select-option__content {
+  color: var(--text) !important;
+}
+
+.n-dropdown-option-body--active::before,
+.n-base-select-option--selected::before {
+  background: var(--card-hover) !important;
+}
+
+.n-base-select-option--selected.n-base-select-option--pending::before {
+  background: var(--card-hover) !important;
+}
+
+.n-base-select-menu .n-base-select-option--selected .n-base-select-option__content,
+.n-base-select-menu .n-base-select-option--selected .n-base-select-option__check {
+  color: var(--text) !important;
+}
+
+/* 选择下拉菜单：选中态只保留灰色整行，不显示右侧勾选图标或其预留空位。 */
+.n-base-select-menu .n-base-select-option__check {
+  display: none !important;
+}
+.n-base-select-menu .n-base-select-option--show-checkmark {
+  padding-right: 12px !important;
+}
+
+/* Naive UI 的菜单本体复用顶栏的渐入节奏，收起不延迟。 */
+.n-base-select-menu.fade-in-scale-up-transition-enter-active,
+.n-dropdown-menu.fade-in-scale-up-transition-enter-active,
+.n-base-select-menu.popover-transition-enter-active {
+  transition:
+    opacity 400ms cubic-bezier(.77, 0, .175, 1),
+    transform 200ms cubic-bezier(.77, 0, .175, 1) !important;
+}
+
+.n-base-select-menu.fade-in-scale-up-transition-leave-active,
+.n-dropdown-menu.fade-in-scale-up-transition-leave-active,
+.n-base-select-menu.popover-transition-leave-active {
+  transition: none !important;
+}
+/* 顶栏悬浮菜单：复用 Anthropic Learn 的渐入与内容展开节奏；父级持有唯一 open 状态。 */
+.topbar-hover-menu {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  --topbar-menu-open-duration: 400ms;
+  --topbar-menu-dropdown-duration: 200ms;
+}
+/* 悬浮下拉菜单命中桥：面板与按钮保留 8px 视觉间距，经过空隙时仍留在同一悬浮区域。 */
+.topbar-hover-menu-hit-bridge {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: var(--topbar-menu-bridge-width, max(100%, 160px));
+  height: 8px;
+  transform: translateX(-50%);
+  pointer-events: auto;
+}
+.topbar-hover-menu-hit-bridge.is-positioned {
+  left: var(--topbar-menu-left);
+  transform: none;
+}
+.topbar-hover-menu-panel {
+  position: absolute;
+  top: var(--topbar-menu-top, calc(100% + 8px));
+  left: 50%;
+  z-index: 1100;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 1fr;
+  width: max-content;
+  min-width: 0;
+  max-width: calc(100vw - 16px);
+  min-height: 0;
+  padding: 0;
+  border: 1px solid var(--border) !important;
+  border-radius: 16px !important;
+  background: var(--bg);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, .05);
+  transform: translateX(-50%);
+}
+.topbar-hover-menu-panel.is-positioned {
+  left: var(--topbar-menu-left);
+  transform: none;
+}
+.topbar-hover-menu-panel-content {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  padding: 12px;
+}
+.topbar-menu-enter-active {
+  transition: opacity var(--topbar-menu-open-duration) cubic-bezier(.77, 0, .175, 1),
+    grid-template-rows var(--topbar-menu-dropdown-duration) cubic-bezier(.77, 0, .175, 1);
+}
+.topbar-menu-leave-active {
+  transition: none;
+}
+.topbar-menu-enter-from,
+.topbar-menu-leave-to {
+  grid-template-rows: 0fr;
+  opacity: 0;
+}
+.topbar-menu-enter-to,
+.topbar-menu-leave-from {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+.topbar-hover-menu-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  font: 400 14px/20px var(--ff-body);
+  text-align: center;
+  cursor: pointer;
+  transition: background-color .15s ease, color .15s ease;
+}
+.topbar-hover-menu-option:hover,
+.topbar-hover-menu-option:focus-visible {
+  background: var(--card-hover);
+  color: var(--text);
+  outline: none;
+}
+.topbar-hover-menu-option-icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+}
+.topbar-hover-menu-divider {
+  height: 1px;
+  margin: 2px 0;
+  background: var(--border);
+}
+
+/* 选择器与弹出框正文使用深色正文色，placeholder/辅助说明仍保留中性层级。 */
+.n-base-selection .n-base-selection-label,
+.n-base-selection .n-base-selection-label__render-label,
+.n-base-select-menu .n-base-select-option__content {
+  color: var(--text) !important;
+}
+.n-base-selection .n-base-selection-placeholder { color: var(--text-3) !important; }
+.n-dialog,
+.n-dialog .n-dialog__title,
+.n-dialog .n-dialog__content,
+.n-dialog .n-dialog__action,
+.n-modal .n-card,
+.n-modal .n-card-header,
+.n-modal .n-card__content {
+  color: var(--text) !important;
+}
 
 .n-data-table {
   border-radius: var(--r-sm);
   overflow: hidden;
-  border: 1px solid var(--border);
+  border: 0;
 }
-.n-data-table .n-data-table-th { background: var(--bg-subtle) !important; font-weight: 600; }
+.n-data-table .n-data-table-th { background: var(--card) !important; font-weight: 600; }
 .n-data-table .n-data-table-td { border-bottom-color: var(--border) !important; }
-.n-data-table .n-data-table-tr:hover .n-data-table-td { background: var(--accent-subtle) !important; }
+.n-data-table .n-data-table-tr:hover .n-data-table-td { background: var(--card-hover) !important; }
 
 .n-tabs .n-tabs-tab { font-weight: 600; }
-.n-tabs.n-tabs--bar-type .n-tabs-bar { height: 3px; border-radius: 3px 3px 0 0; }
+.n-tabs.n-tabs--bar-type .n-tabs-bar { height: 3px; border-radius: var(--r) var(--r) 0 0; }
+/* 二级切换路由：活动线由活动页签自身绘制，避免导航滚动层裁切边缘。 */
+.n-tabs.route-switch-2 {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  padding: 4px;
+  border: 0 !important;
+  border-radius: 16px;
+  background: var(--card);
+}
+.n-tabs.route-switch-2 :where(.n-tabs-nav, .v-x-scroll,
+  .n-tabs-nav-scroll-content, .n-tabs-wrapper, .n-tabs-tab-wrapper, .n-tabs-tab) {
+  overflow: visible !important;
+}
+/* 二级切换路由：导航文字与活动线保留独立水平留白，避免首个页签贴住外轨左边。 */
+.n-tabs.route-switch-2 .n-tabs-nav-scroll-content {
+  padding-inline: 8px;
+  box-sizing: border-box;
+}
+/* 二级切换路由：窄屏页签保留原生横向滚动，不把超出内容直接绘制到视口外。 */
+.n-tabs.route-switch-2 .n-tabs-nav-scroll-wrapper {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  /* Naive UI gives this overflow layer the module radius. At the bottom-left
+     edge that clips the first active underline into a slanted end on desktop. */
+  border-radius: 0 !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-inline: contain;
+}
+.n-tabs.route-switch-2 .n-tabs-nav-scroll-wrapper::-webkit-scrollbar { display: none; }
+/* Naive UI 的 shadow-start/end 是浮层渐变，不属于二级页签的独立滚动轨道。 */
+.n-tabs.route-switch-2 .n-tabs-nav-scroll-wrapper::before,
+.n-tabs.route-switch-2 .n-tabs-nav-scroll-wrapper::after {
+  box-shadow: none !important;
+}
+.n-tabs.route-switch-2 .n-tabs-nav {
+  position: relative;
+}
+/* 二级切换路由：整条所属模块轨道先绘制中性基线，活动蓝线覆盖对应页签区段。 */
+.n-tabs.route-switch-2 .n-tabs-nav::after {
+  position: absolute;
+  z-index: 0;
+  right: 8px;
+  bottom: 0;
+  left: 8px;
+  height: 1px;
+  content: '';
+  pointer-events: none;
+  background: var(--border);
+}
+.n-tabs.route-switch-2 :where(.n-tabs-content, .n-tabs-pane-wrapper, .n-tab-pane,
+  .n-card, .n-card__content, .n-spin-container, .n-spin-content, .filters, .tbl-wrap) {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+.n-tabs.route-switch-2 :where(.n-tabs-content, .n-tab-pane) { overflow-x: hidden; }
+.n-tabs.route-switch-2 .n-tabs-pane-wrapper { flex: 1 1 auto; overflow: visible !important; }
+.n-tabs.route-switch-2 .n-tabs-tab { position: relative; border: 0 !important; border-radius: 0 !important; background: transparent !important; }
+.n-tabs.route-switch-2 .n-tabs-tab:hover,
+.n-tabs.route-switch-2 .n-tabs-tab--active { background: transparent !important; }
+/* 二级切换路由：活动态只有底部指示线，禁止组件默认的侧边伪元素/阴影。 */
+.n-tabs.route-switch-2 .n-tabs-tab::before,
+.n-tabs.route-switch-2 .n-tabs-tab::after {
+  border-inline-start: 0 !important;
+  box-shadow: none !important;
+}
+.n-tabs.route-switch-2 .n-tabs-tab::before { display: none !important; content: none !important; }
+.n-tabs.route-switch-2 .n-tabs-bar { display: none !important; }
+.n-tabs.route-switch-2 .n-tabs-tab--active::after {
+  position: absolute;
+  z-index: 2;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  border: 0;
+  border-radius: 0 !important;
+  content: '';
+  pointer-events: none;
+  background: var(--accent);
+  clip-path: none;
+  transform: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 二级切换路由：竖屏页签使用类似系统设置的独立横向滚动轨道。 */
+@media (max-width: 768px) {
+  .n-tabs.route-switch-2 .n-tabs-nav-scroll-wrapper {
+    height: 40px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+  /* 滚动条占用 wrapper 底部空间时，基线仍与 33px 页签内容底边重合。 */
+  .n-tabs.route-switch-2 .n-tabs-nav::after {
+    bottom: 7px;
+  }
+  .n-tabs.route-switch-2 .n-tabs-nav-scroll-wrapper::-webkit-scrollbar {
+    display: block;
+    height: 4px;
+  }
+  .n-tabs.route-switch-2 .n-tabs-nav-scroll-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .n-tabs.route-switch-2 .n-tabs-nav-scroll-wrapper::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 999px;
+  }
+  .n-tabs.route-switch-2 .n-tabs-nav-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+    background: var(--text-3);
+  }
+}
 .n-radio-group {
   display: inline-flex; align-items: center; gap: 0;
-  padding: 3px; border: 1px solid var(--border); border-radius: 8px;
+  padding: 3px; border: 1px solid var(--border); border-radius: var(--r-control);
   background: var(--bg-subtle);
   box-shadow: none;
 }
 .n-radio-group .n-radio-button {
-  margin: 0 !important; border: 0 !important; border-radius: 5px !important;
+  margin: 0 !important; border: 0 !important; border-radius: var(--r-control) !important;
   background: transparent !important; box-shadow: none;
   color: var(--text-2) !important;
   --n-button-color: transparent !important;
@@ -154,22 +825,96 @@ button, input, textarea, select { font-family: inherit; }
   box-shadow: 0 1px 2px rgba(30,45,60,.1) !important;
 }
 .n-radio-group .n-radio-button:focus-visible { box-shadow: inset 0 0 0 2px rgba(29,39,51,.16) !important; }
-.n-tag { border-radius: var(--r-sm) !important; font-weight: 600; }
-.n-alert { border-radius: var(--r-sm) !important; }
+/* 路由切换组件：页面维度筛选与范围切换复用统一的 16px 外轨和 12px 选项几何。 */
+.n-radio-group.route-switch {
+  position: relative;
+  isolation: isolate;
+  min-height: 40px;
+  padding: 4px;
+  border: 0;
+  border-radius: 16px !important;
+  background: var(--bg-subtle);
+  box-shadow: none;
+}
+.n-radio-group.route-switch::before {
+  position: absolute;
+  /* 跟随面是背景层，按钮文字必须位于其上方，避免滑块移动时遮住文本。 */
+  z-index: 0;
+  top: 4px;
+  bottom: 4px;
+  left: 0;
+  width: var(--route-indicator-w, 0px);
+  border-radius: 12px;
+  content: '';
+  pointer-events: none;
+  background: var(--card);
+  box-shadow: none;
+  transform: translateX(var(--route-indicator-x, 4px));
+  transition: transform .24s cubic-bezier(.215,.61,.355,1), width .24s cubic-bezier(.215,.61,.355,1), background-color .2s ease, box-shadow .2s ease;
+}
+.n-radio-group.route-switch .n-radio-button {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 32px;
+  padding: 6px 14px;
+  line-height: 20px;
+  border-radius: 12px !important;
+  transition: color .1s ease-in-out, background-color .2s ease-in-out, box-shadow .2s ease-in-out;
+}
+.n-radio-group.route-switch .n-radio-button--checked {
+  background: transparent !important;
+  color: var(--text) !important;
+  box-shadow: none !important;
+}
+.n-radio-group.route-switch .n-radio-button:hover {
+  background: var(--card) !important;
+  color: var(--text) !important;
+}
+.n-radio-group.route-switch .n-radio-button--checked:hover {
+  background: var(--card) !important;
+  color: var(--text) !important;
+  box-shadow: none !important;
+}
+.n-radio-group.route-switch .n-radio-button:focus-visible {
+  background: transparent !important;
+  box-shadow: inset 0 0 0 2px rgba(29,39,51,.16) !important;
+}
+/* 路由切换组件：外轨无边线、底色 240；悬浮面统一为一级模块 250。 */
+:where(.route-switch) {
+  border: 0 !important;
+  background: var(--bg-subtle) !important;
+  box-shadow: none !important;
+}
+:where(.route-switch)::before {
+  background: var(--card) !important;
+  box-shadow: none !important;
+}
+:where(.route-switch) :where(button, .n-radio-button) {
+  /* 高亮只由 ::before 跟随面绘制，按钮自身始终透明，避免旧位置残留。 */
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.n-tag { border-radius: var(--r-control) !important; font-weight: 600; }
+.n-alert { border-radius: var(--r-overlay) !important; }
 .n-empty { color: var(--text-3); }
 .n-empty .n-empty__icon { opacity: .62; filter: saturate(.65); }
 .n-empty .n-empty__description { margin-top: 9px; color: var(--text-3); font-size: 12.5px; }
 .n-spin-container { transition: opacity .22s var(--ease-standard); }
 
-.n-button:not(.n-button--disabled):hover,
 .n-button:not(.n-button--disabled):focus-visible { box-shadow: var(--focus-ring); }
+.n-button:not(.n-button--disabled):focus:not(:focus-visible) { box-shadow: none !important; }
 .n-button:not(.n-button--disabled):active { transform: none; }
-.n-tag { --n-border-radius: var(--r-sm) !important; }
+.n-tag { --n-border-radius: var(--r-control) !important; }
 
-* { scrollbar-width: thin; scrollbar-color: #c7c7c7 transparent; }
-*::-webkit-scrollbar { width: 10px; height: 10px; }
-*::-webkit-scrollbar-thumb { background: #c7c7c7; border: 3px solid transparent; background-clip: padding-box; border-radius: 999px; }
-*::-webkit-scrollbar-thumb:hover { background: #a8a8a8; border: 2px solid transparent; background-clip: padding-box; }
+#app {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+}
 
 /* Markdown 渲染样式 */
 .md { color: var(--text); line-height: 1.7; font-size: 14.5px; overflow-wrap: anywhere; }
@@ -178,15 +923,16 @@ button, input, textarea, select { font-family: inherit; }
 .md p { margin: 10px 0; }
 .md ul, .md ol { margin: 10px 0; padding-left: 22px; }
 .md li { margin: 4px 0; }
-.md a { color: var(--accent-strong); text-decoration: underline; }
-.md code.md-code { background: var(--bg); border: 1px solid var(--border); border-radius: 5px; padding: 1px 5px; font-size: 12.5px; font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace; }
-.md pre.md-pre { background: #1e1e1e; color: #eee; border-radius: 10px; padding: 12px 14px; overflow-x: auto; margin: 12px 0; }
+/* 项目超链接：Markdown 正文链接同样固定为 Apple 蓝。 */
+.md a { color: var(--accent); text-decoration: underline; }
+.md code.md-code { background: var(--bg-subtle); border: 0; border-radius: 4px; padding: 2px 5px; color: var(--text-2); font-size: 12px; font-family: var(--ff-mono); line-height: 1.35; }
+.md pre.md-pre { background: #1e1e1e; color: #eee; border-radius: var(--r); padding: 12px 14px; overflow-x: auto; margin: 12px 0; }
 .md pre.md-pre code { font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; color: #eee; background: none; border: none; padding: 0; }
-.md blockquote { margin: 12px 0; padding: 6px 14px; border-left: 3px solid var(--accent); background: var(--bg-soft); border-radius: 0 8px 8px 0; color: var(--text-2); }
+.md blockquote { margin: 12px 0; padding: 6px 14px; border-left: 3px solid var(--accent); background: var(--bg-soft); border-radius: 0 var(--r) var(--r) 0; color: var(--text-2); }
 .md hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
-.md img { max-width: 100%; border-radius: 8px; }
+.md img { max-width: 100%; border-radius: var(--r); }
 .md .md-table-wrap { overflow-x: auto; margin: 14px 0; }
-.md table.md-table { border-collapse: collapse; width: 100%; font-size: 13.5px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.md table.md-table { border-collapse: collapse; width: 100%; font-size: 13.5px; border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
 .md table.md-table th, .md table.md-table td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; }
 .md table.md-table thead th { background: var(--bg-soft); font-weight: 650; }
 .md table.md-table tbody tr:nth-child(even) { background: var(--bg-soft); }
@@ -200,7 +946,7 @@ button, input, textarea, select { font-family: inherit; }
 }
 
 /* ---- 通用页面/卡片网格工具类 ---- */
-.page-title { font-size: 24px; font-weight: 650; margin: 0 0 5px; letter-spacing: -0.025em; line-height: 1.25; }
+.page-title { font-size: 24px; font-weight: 650; margin: 0 0 5px; letter-spacing: 0; line-height: 1.25; }
 .layout-content .page-title { font-size: 24px !important; margin-top: 0; }
 .layout-content .page-sub { margin: 0 0 20px !important; color: var(--text-2); font-size: 13px; line-height: 1.65; }
 .page-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; }
@@ -219,9 +965,16 @@ button, input, textarea, select { font-family: inherit; }
 .sticky-actions .save-state { margin-left: auto; color: var(--text-3); font-size: 12px; }
 .data-empty-panel { min-height: 180px; display: grid; place-items: center; padding: 26px; text-align: center; }
 .resource-overview { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin:0 0 16px; }
-.resource-metric { min-width:0; padding:11px 13px; border:1px solid var(--border); border-radius:var(--r); background:var(--card); box-shadow:var(--shadow-sm); }
-button.resource-metric { color:inherit; text-align:left; font:inherit; cursor:pointer; transition:background-color .18s ease, box-shadow .18s ease, border-color .18s ease; }
-button.resource-metric:hover { box-shadow:var(--shadow); border-color:var(--accent); background:var(--accent-subtle); }
+/* 展示卡片 */
+.resource-metric {
+  min-width:0; padding:11px 13px; border:0; border-radius:var(--r);
+  background:var(--card); box-shadow:none; transition:box-shadow .25s ease; transform:none; opacity:1;
+}
+/* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 */
+.resource-metric:hover, .resource-metric:focus-visible {
+  border-color:transparent; background:var(--card); box-shadow:0 8px 28px rgba(0, 0, 0, 0.08); transform:none; opacity:1;
+}
+button.resource-metric { color:inherit; text-align:left; font:inherit; cursor:pointer; }
 .resource-metric b { display:block; color:var(--text); font-size:19px; line-height:1.2; font-variant-numeric:tabular-nums; letter-spacing:-.02em; }
 .resource-metric span { display:block; overflow:hidden; margin-top:3px; color:var(--text-3); font-size:11.5px; white-space:nowrap; text-overflow:ellipsis; }
 .resource-metric.warn b { color:var(--warn); }
@@ -277,16 +1030,209 @@ button.resource-metric:hover { box-shadow:var(--shadow); border-color:var(--acce
 }
 .n-base-select-menu.qz-wide-menu .n-base-select-option {
   height: auto;
-  min-height: 34px;
-  padding-top: 6px;
-  padding-bottom: 6px;
+  min-height: 40px;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
 /* 统计行（多卡片并排）自动换行 */
 .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 14px; }
-.stat-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; box-shadow: var(--shadow-sm); }
+/* 展示卡片 */
+.stat-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; box-shadow: none; transition: box-shadow .25s ease; transform: none; opacity: 1; }
+/* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 */
+.stat-card:hover, .stat-card:focus-visible { border-color: var(--border); background: var(--card); box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08); transform: none; opacity: 1; }
 .stat-card .s-label { font-size: 12px; color: var(--text-3); margin-bottom: 4px; }
 .stat-card .s-value { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
+
+/* 全局圆角兜底：所有非圆形界面表面统一 18px。 */
+:where(
+  .n-card, .n-button, .n-input, .n-input-number, .n-base-selection,
+  .n-radio-group, .n-radio-button, .n-tag, .n-data-table,
+  .resource-metric, .stat-card, .list-card, .metric-card,
+  [class*="-card"], [class*="-panel"], [class*="-wrap"],
+  [class*="-switch"], [class*="-toolbar"], [class*="-overview"],
+  [class*="-control"], [class*="-note"], [class*="-badge"],
+  [class*="-chip"], [class*="-item"], .user-avatar
+) {
+  border-radius: var(--r) !important;
+}
+:where(.n-modal, .n-dialog, .n-popover, .n-alert,
+  .n-message, .n-notification, .n-tooltip, [class*="-modal"],
+  [class*="-dialog"], [class*="-popover"], [class*="-tooltip"],
+  [class*="-toast"], [class*="-alert"]) {
+  border-radius: var(--r-overlay) !important;
+}
+/* 遮罩覆盖整个视口，不能继承弹窗表面的圆角。 */
+:where(.n-modal-mask, .n-drawer-mask) { border-radius: 0 !important; }
+.qz-brand-mark, [class*="logo"] img, [class*="logo"] :where(img, svg) {
+  border-radius: var(--r-logo) !important;
+}
+:where(.account-button, .pill, [class*="-pill"], .n-tag--round) { border-radius: var(--r) !important; }
+:where(.status-dot, .status-beacon, .dot, .dot-live, .auto-dot,
+  .group-dot, .route-dot, .status-beacon, [class*="-avatar"]:not(.user-avatar)) {
+  border-radius: 50% !important;
+}
+/* 顶栏悬浮菜单例外：外框沿用菜单合同的 16px，而不是全局 panel 的 18px 兜底。 */
+.topbar-hover-menu-panel { border-radius: 16px !important; }
+
+/* 侧边栏例外：全局 [class*="-item"] 圆角兜底会匹配 Naive UI 的
+   .n-menu-item-content，必须在全局层明确恢复 Cloudflare 的 8px 行圆角。 */
+.sidebar-menu .n-menu,
+.sidebar-menu .n-menu-item,
+.sidebar-menu .n-submenu,
+.sidebar-menu .n-menu-item-content,
+.sidebar-menu .n-menu-item-content::before {
+  border-radius: 8px !important;
+}
+.sidebar-menu,
+.sidebar-menu > .n-menu,
+.sidebar-menu .n-submenu > .n-menu-item {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+.sidebar-menu { box-sizing: border-box !important; }
+.sidebar-menu {
+  scrollbar-gutter: stable;
+}
+.sidebar-menu .n-submenu {
+  --n-item-height: 32px;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 32px !important;
+  margin: 0 0 2px !important;
+  overflow-x: clip !important;
+  overflow-y: visible !important;
+  contain: inline-size;
+}
+.sidebar-menu .n-submenu-children {
+  position: relative !important;
+  box-sizing: border-box !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  margin: 2px 0 2px 12px !important;
+  padding-left: 16px !important;
+  border-left: 0 !important;
+  overflow-x: clip !important;
+  overflow-y: visible !important;
+}
+.sidebar-menu .n-submenu-children::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--sidebar-border);
+  pointer-events: none;
+}
+.sidebar-menu .n-submenu-children .n-menu-item {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: 32px !important;
+  margin: 0 0 1px !important;
+}
+.sidebar-menu .n-submenu-children .n-submenu {
+  min-height: 32px !important;
+  margin: 0 0 1px !important;
+}
+.sidebar-menu .n-submenu-children .n-menu-item-content {
+  padding-left: 12px !important;
+}
+.sidebar-menu .n-menu-item-content {
+  display: grid !important;
+  grid-template-columns: 24px minmax(0, 1fr) 16px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 32px !important;
+  height: 32px !important;
+  padding: 6px 12px !important;
+  background: transparent !important;
+}
+.sidebar-menu .n-menu-item-content::before {
+  left: 0 !important;
+  right: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  border-radius: 8px !important;
+}
+.sidebar-menu .n-menu-item-content .n-menu-item-content__icon {
+  width: 16px !important;
+  height: 16px !important;
+  margin-right: 8px !important;
+}
+.sidebar-menu .n-menu-item-content:hover::before {
+  background: var(--sidebar-hover) !important;
+  box-shadow: none !important;
+  border-radius: 8px !important;
+}
+.sidebar-menu .n-menu-item-content--selected::before,
+.sidebar-menu .n-menu-item-content--child-active::before {
+  background: var(--sidebar-selected) !important;
+  box-shadow: none !important;
+  border-radius: 8px !important;
+}
+.sidebar-menu .n-menu-item-content--selected .n-menu-item-content__icon,
+.sidebar-menu .n-menu-item-content--child-active .n-menu-item-content__icon,
+.sidebar-menu .n-menu-item-content--selected .n-menu-item-content__icon .n-icon,
+.sidebar-menu .n-menu-item-content--child-active .n-menu-item-content__icon .n-icon,
+.sidebar-menu .n-menu-item-content--selected .n-menu-item-content__icon svg,
+.sidebar-menu .n-menu-item-content--child-active .n-menu-item-content__icon svg {
+  color: var(--accent) !important;
+}
+
+/* 一级大模块：统一使用平面表面，不让各页面局部卡片恢复边框或阴影。 */
+:where(
+  .n-card, [class*="-card"], [class*="-panel"],
+  .resource-metric, .stat-card, .list-card, .metric-card,
+  .kpi, .kpi-card, .summary-card, .user-card, .ver-card, .tx-card
+):not(.topbar-hover-menu-panel) {
+  border: 0 !important;
+  box-shadow: none !important;
+}
+/* 展示卡片统一悬浮合同：平面保持原纸面，只增加中性阴影；局部旧规则不能改成灰色或蓝色底。 */
+:where(
+  .resource-metric, .stat-card, .list-card, .metric-card:not(.active),
+  .kpi, .kpi-card, .summary-card, .user-card, .ver-card, .tx-card,
+  .sub-stat, .shop-card, .order-item, .sb-overview button,
+  .traffic-summary-card, .sum-card, .group-summary-card, .package-summary-card
+):not(.topbar-hover-menu-panel):hover,
+:where(
+  .resource-metric, .stat-card, .list-card, .metric-card:not(.active),
+  .kpi, .kpi-card, .summary-card, .user-card, .ver-card, .tx-card,
+  .sub-stat, .shop-card, .order-item, .sb-overview button,
+  .traffic-summary-card, .sum-card, .group-summary-card, .package-summary-card
+):not(.topbar-hover-menu-panel):focus-visible {
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08) !important;
+}
+:where(
+  .resource-metric, .stat-card, .list-card, .metric-card:not(.active),
+  .kpi, .kpi-card, .summary-card, .user-card, .ver-card, .tx-card,
+  .sub-stat, .shop-card, .order-item, .sb-overview button
+):not(.topbar-hover-menu-panel):hover,
+:where(
+  .resource-metric, .stat-card, .list-card, .metric-card:not(.active),
+  .kpi, .kpi-card, .summary-card, .user-card, .ver-card, .tx-card,
+  .sub-stat, .shop-card, .order-item, .sb-overview button
+):not(.topbar-hover-menu-panel):focus-visible {
+  background: var(--card) !important;
+}
+:where(
+  .n-card, [class*="-card"], [class*="-panel"],
+  .resource-metric, .stat-card, .list-card, .metric-card,
+  .kpi, .kpi-card, .summary-card, .user-card, .ver-card, .tx-card
+):not(.topbar-hover-menu-panel):focus-visible {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: 2px !important;
+}
+/* 弹窗卡片属于浮层，不纳入一级模块平面化合同。 */
+.n-modal .n-card { border: 1px solid var(--border) !important; box-shadow: var(--shadow-flyout) !important; }
 
 /* 移动端：页面标题与工具栏紧凑 */
 @media (max-width: 768px) {

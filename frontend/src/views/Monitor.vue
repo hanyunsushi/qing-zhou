@@ -123,8 +123,13 @@
         <!-- 刷新 / 热力图范围 -->
         <div class="section-bar">
           <span class="section-title">可用性热力图</span>
-          <div class="heat-range">
-            <button v-for="r in heatRanges" :key="r.value" class="heat-range-btn" :class="{ active: heatRange === r.value }" @click="loadHeatmap(r.value)">{{ r.label }}</button>
+          <div class="heat-range-group">
+            <!-- 路由切换组件：热力图时间范围使用跟随指示面，不包含状态图例。 -->
+            <div ref="heatRangeRef" class="heat-range route-switch" @mouseover="moveHeatIndicatorFromEvent"
+                 @focusin="moveHeatIndicatorFromEvent" @mouseleave="moveHeatIndicatorToSelected"
+                 @focusout="handleHeatRangeFocusout">
+              <button v-for="r in heatRanges" :key="r.value" class="heat-range-btn" :class="{ active: heatRange === r.value }" @click="loadHeatmap(r.value)">{{ r.label }}</button>
+            </div>
             <span class="heat-legend"><i class="hm-dot ok"></i>正常 <i class="hm-dot warn"></i>高负载 <i class="hm-dot crit"></i>严重 <i class="hm-dot none"></i>无数据</span>
           </div>
         </div>
@@ -289,14 +294,14 @@
                 @dragend="handleUpstreamDragEnd"
               >
                 <div class="upstream-balance-head">
-                  <span class="upstream-provider-mark" :class="item.provider">{{ item.provider === 'oci' ? 'OCI' : 'CF' }}</span>
+                  <img :src="item.provider === 'oci' ? ociLogo : cloudflareLogo" :alt="item.provider === 'oci' ? 'Oracle Cloud Infrastructure' : 'Cloudflare'" class="upstream-provider-logo" />
                   <span class="upstream-provider-name">{{ item.provider === 'oci' ? 'Oracle Cloud' : 'Cloudflare' }}</span>
                   <span class="upstream-drag-hint" title="拖动调整余额顺序">⋮⋮</span>
                 </div>
                 <template v-if="item.usage?.success">
                   <div class="upstream-balance-value">{{ upstreamBalanceValue(item) }}</div>
                   <div class="upstream-balance-meta">{{ upstreamBalanceMeta(item) }}</div>
-                  <div class="upstream-balance-track"><i :class="upstreamUsageLevel(item.usage)" :style="{ width: upstreamUsagePercent(item.usage) + '%' }" /></div>
+                  <div class="upstream-balance-track"><i :class="upstreamUsageLevel(item.usage)" :style="{ width: pct(item.usage?.used, item.usage?.limit) + '%' }" /></div>
                   <div class="upstream-balance-foot">{{ item.usage.period || '当前周期' }} · {{ fmtUpdated(item.usage.updated_at) }}</div>
                 </template>
                 <template v-else>
@@ -324,10 +329,13 @@ import { NEmpty } from 'naive-ui'
 import { apiGet, apiList, apiPost, apiPut } from '@/api'
 import { useAuthStore } from '@/stores/auth'
 import { useConfigStore } from '@/stores/config'
-import { fmtBytes, fmtUptime, timeAgo, pct } from '@/utils/format'
+import { fmtBytes, fmtRequests, fmtUptime, timeAgo, pct } from '@/utils/format'
+import { defaultUpstreamOrder, normalizeUpstreamOrder, type UpstreamProvider } from '@/utils/upstreams'
 import { useCountUp } from '@/utils/countup'
 import AppHeader from '@/components/AppHeader.vue'
-import * as echarts from 'echarts'
+import ociLogo from '@/assets/provider-oci.svg'
+import cloudflareLogo from '@/assets/provider-cloudflare.svg'
+import * as echarts from '@/utils/echarts'
 
 interface ServerMetrics {
   cpu_percent: number; mem_used: number; mem_total: number
@@ -350,7 +358,6 @@ interface Server {
   metrics: ServerMetrics | null; last_seen: number; spark?: Spark | null
 }
 
-type UpstreamProvider = 'oci' | 'cloudflare'
 interface UpstreamView {
   provider: UpstreamProvider
   configured: boolean
@@ -376,8 +383,7 @@ const loading = ref(false)
 const refreshing = ref(false)
 let timer: ReturnType<typeof setInterval> | null = null
 
-const upstreamDefaults: UpstreamProvider[] = ['oci', 'cloudflare']
-const upstreamOrder = ref<UpstreamProvider[]>([...upstreamDefaults])
+const upstreamOrder = ref<UpstreamProvider[]>([...defaultUpstreamOrder])
 const defaultOCIMonthlyLimitBytes = 10 * 1024 ** 4
 const upstreamViews = reactive<Record<UpstreamProvider, UpstreamView>>({
   oci: { provider: 'oci', configured: false, limit: defaultOCIMonthlyLimitBytes },
@@ -396,16 +402,8 @@ const upstreamBalanceItems = computed(() => upstreamOrder.value.map(provider => 
   usage: upstreamUsages[provider],
 })))
 
-function normalizeUpstreamOrder(raw: unknown): UpstreamProvider[] {
-  const values = Array.isArray(raw) ? raw : String(raw || '').split(',')
-  const valid = values.filter((value): value is UpstreamProvider => value === 'oci' || value === 'cloudflare')
-  return [...new Set([...valid, ...upstreamDefaults])]
-}
-function upstreamUsagePercent(usage?: UpstreamUsage) {
-  return usage?.limit ? Math.min(100, Math.max(0, Math.round(usage.used / usage.limit * 1000) / 10)) : 0
-}
 function upstreamUsageLevel(usage?: UpstreamUsage) {
-  const percent = upstreamUsagePercent(usage)
+  const percent = pct(usage?.used, usage?.limit)
   return percent >= 90 ? 'crit' : percent >= 70 ? 'warn' : 'ok'
 }
 function upstreamBalanceValue(item: { provider: UpstreamProvider; usage?: UpstreamUsage }) {
@@ -417,7 +415,6 @@ function upstreamBalanceMeta(item: { provider: UpstreamProvider; usage?: Upstrea
     ? `总额 ${fmtBytes(item.usage.limit)} − 已用 ${fmtBytes(item.usage.used)}`
     : `已用 ${fmtRequests(item.usage.used)} / 上限 ${fmtRequests(item.usage.limit)}`
 }
-function fmtRequests(value?: number) { return new Intl.NumberFormat('zh-CN').format(value || 0) + ' 次' }
 function fmtUpdated(value?: string) { return value ? new Date(value).toLocaleString('zh-CN', { hour12: false }) : '尚未更新' }
 
 async function refreshUpstream(provider: UpstreamProvider) {
@@ -443,12 +440,12 @@ async function loadUpstreamBalances() {
       apiGet<UpstreamView[]>('/api/admin/upstreams'),
       apiGet<Record<string, string>>('/api/admin/settings'),
     ])
-    for (const provider of upstreamDefaults) {
+    for (const provider of defaultUpstreamOrder) {
       const view = views?.find(item => item.provider === provider)
       Object.assign(upstreamViews[provider], view || { provider, configured: false })
     }
     upstreamOrder.value = normalizeUpstreamOrder(settings?.admin_upstream_balance_order)
-    await Promise.all(upstreamDefaults.map(refreshUpstream))
+    await Promise.all(defaultUpstreamOrder.map(refreshUpstream))
   } catch {
     // The public monitor must remain usable when an administrator session expires
     // or a provider request is unavailable.
@@ -457,7 +454,7 @@ async function loadUpstreamBalances() {
 async function refreshUpstreamBalances() {
   if (!auth.isAdmin || upstreamRefreshing.value) return
   upstreamRefreshing.value = true
-  try { await Promise.all(upstreamDefaults.map(refreshUpstream)) } finally { upstreamRefreshing.value = false }
+  try { await Promise.all(defaultUpstreamOrder.map(refreshUpstream)) } finally { upstreamRefreshing.value = false }
 }
 function handleUpstreamDragStart(provider: UpstreamProvider, event: DragEvent) {
   upstreamDragging.value = provider
@@ -649,6 +646,7 @@ async function doRefresh() {
 
 // --- 可用性热力图（Y=机器, X=时间桶）---
 const heatEl = ref<HTMLElement | null>(null)
+const heatRangeRef = ref<HTMLElement | null>(null)
 const heatChart = shallowRef<echarts.ECharts | null>(null)
 const heatData = ref<any>(null)
 const heatRange = ref('24h')
@@ -656,6 +654,27 @@ const heatRanges = [
   { label: '1h', value: '1h' }, { label: '6h', value: '6h' },
   { label: '24h', value: '24h' }, { label: '7d', value: '7d' },
 ]
+function moveHeatIndicator(button: HTMLElement | null) {
+  const tabs = heatRangeRef.value
+  if (!tabs || !button) return
+  const tabsRect = tabs.getBoundingClientRect()
+  const buttonRect = button.getBoundingClientRect()
+  tabs.style.setProperty('--heat-indicator-x', `${buttonRect.left - tabsRect.left}px`)
+  tabs.style.setProperty('--heat-indicator-w', `${buttonRect.width}px`)
+}
+function selectedHeatButton() {
+  return heatRangeRef.value?.querySelector<HTMLElement>('.heat-range-btn.active') || null
+}
+function moveHeatIndicatorToSelected() { moveHeatIndicator(selectedHeatButton()) }
+function moveHeatIndicatorFromEvent(event: MouseEvent | FocusEvent) {
+  const target = event.target
+  if (!(target instanceof HTMLElement)) return
+  moveHeatIndicator(target.closest<HTMLElement>('.heat-range-btn'))
+}
+function handleHeatRangeFocusout(event: FocusEvent) {
+  const nextTarget = event.relatedTarget
+  if (!(nextTarget instanceof Node) || !heatRangeRef.value?.contains(nextTarget)) moveHeatIndicatorToSelected()
+}
 function fmtHeatTime(ts: number, range: string): string {
   const d = new Date(ts * 1000)
   const pad = (n: number) => String(n).padStart(2, '0')
@@ -673,6 +692,8 @@ function escapeHeatHtml(value: unknown): string {
 }
 async function loadHeatmap(range: string) {
   heatRange.value = range
+  await nextTick()
+  moveHeatIndicatorToSelected()
   try {
     const data = await apiGet<any>(`/api/monitor/heatmap?range=${range}`)
     heatData.value = data
@@ -741,7 +762,10 @@ function renderHeatmap() {
   }, true)
   chart.resize()
 }
-function onWinResize() { if (heatData.value) renderHeatmap() }
+function onWinResize() {
+  if (heatData.value) renderHeatmap()
+  moveHeatIndicatorToSelected()
+}
 
 onMounted(async () => {
   loading.value = true
@@ -751,6 +775,8 @@ onMounted(async () => {
   loading.value = false
   timer = setInterval(fetchData, 30000)
   loadHeatmap('24h')
+  await nextTick()
+  moveHeatIndicatorToSelected()
   if (auth.isAdmin) void loadUpstreamBalances()
   upstreamTimer = setInterval(() => {
     if (document.visibilityState === 'visible' && auth.isAdmin) void refreshUpstreamBalances()
@@ -771,8 +797,7 @@ onUnmounted(() => {
 .monitor-content { padding: 22px 24px 56px; max-width: 1320px; margin: 0 auto; }
 
 /* ===== 顶部标题 ===== */
-.hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 22px; flex-wrap: wrap; animation: heroIn .7s var(--ease-emphasized) both; }
-@keyframes heroIn { from { opacity: 0; transform: translateY(7px); } }
+.hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 22px; flex-wrap: wrap; }
 .hero-title {
   font-size: 25px; font-weight: 700; letter-spacing: -.025em; margin: 0; line-height: 1.1; color: var(--text);
 }
@@ -781,7 +806,8 @@ onUnmounted(() => {
 .clock {
   display: inline-flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums;
   font-size: 13px; font-weight: 650; color: var(--text-2); letter-spacing: .02em;
-  padding: 6px 12px; background: var(--card); border: 1px solid var(--border); border-radius: var(--r); box-shadow: var(--shadow-sm);
+  /* 时钟是信息文本，不单独绘制容器背景、边框或阴影。 */
+  padding: 6px 12px; background: transparent; border: 0; border-radius: 0; box-shadow: none;
 }
 .clock svg { opacity: .55; }
 .auto-badge { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-3); font-weight: 500; }
@@ -792,7 +818,7 @@ onUnmounted(() => {
   display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: var(--r);
   border: 1px solid var(--border); background: var(--card); color: var(--text-2); cursor: pointer; transition: color .18s var(--ease-standard), background .18s var(--ease-standard), box-shadow .18s var(--ease-standard), border-color .18s var(--ease-standard);
 }
-.refresh-btn:hover:not(:disabled) { color: var(--accent-strong); border-color: var(--accent); background: var(--accent-subtle); box-shadow: var(--focus-ring); }
+.refresh-btn:hover:not(:disabled) { color: var(--text); border-color: var(--border-strong); background: var(--card); box-shadow: 0 0 0 1px var(--border-strong); }
 .refresh-btn:disabled { opacity: .5; cursor: not-allowed; }
 .refresh-btn.spinning svg { animation: spin .8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -804,11 +830,7 @@ onUnmounted(() => {
   position: relative; overflow: hidden; display: flex; align-items: center; gap: 12px; padding: 15px 16px;
   background: var(--card); border: 1px solid var(--border); border-radius: var(--r);
   box-shadow: none; transition: box-shadow .25s ease; transform: none; opacity: 1; min-width: 0;
-  animation: summaryIn .68s var(--ease-emphasized) both;
 }
-.summary-card:nth-child(2) { animation-delay: 45ms; } .summary-card:nth-child(3) { animation-delay: 90ms; }
-.summary-card:nth-child(4) { animation-delay: 135ms; } .summary-card:nth-child(5) { animation-delay: 180ms; } .summary-card:nth-child(6) { animation-delay: 225ms; }
-@keyframes summaryIn { from { opacity: 0; transform: translateY(9px) scale(.985); filter: blur(3px); } to { opacity: 1; transform: none; filter: none; } }
 /* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 */
 .summary-card:hover, .summary-card:focus-visible {
   border-color: var(--border);
@@ -817,10 +839,8 @@ onUnmounted(() => {
   transform: none;
   opacity: 1;
 }
-.summary-icon { width: 42px; height: 42px; border-radius: var(--r); display: grid; place-items: center; flex-shrink: 0; border: 1px solid var(--border); box-shadow: none; }
-.summary-icon.i-server, .summary-icon.i-cpu, .summary-icon.i-mem, .summary-icon.i-disk { background: var(--accent-soft); color: var(--accent-strong); }
-.summary-icon.i-up { background: var(--success-soft); color: var(--success); }
-.summary-icon.i-down { background: var(--accent-soft); color: var(--accent-strong); }
+/* 图标底框：42px 方形容器使用 12px 圆角，避免继承 18px 表面圆角后显得过圆。 */
+.summary-icon { width: 42px; height: 42px; border-radius: 12px !important; display: grid; place-items: center; flex-shrink: 0; border: 1px solid var(--border); background: var(--bg-subtle); color: var(--text-2); box-shadow: none; }
 .summary-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
 .summary-val { font-size: 23px; font-weight: 770; letter-spacing: -.03em; color: var(--text); font-variant-numeric: tabular-nums; line-height: 1.05; }
 .summary-val.small { font-size: 18px; }
@@ -835,20 +855,22 @@ onUnmounted(() => {
 /* ===== 分节栏 ===== */
 .section-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 12px; flex-wrap: wrap; }
 .section-title { font-size: 14px; font-weight: 680; color: var(--text); }
-.heat-range { display: flex; align-items: center; gap: 0; flex-wrap: wrap; padding:3px; border:1px solid var(--border); border-radius:var(--r); background:var(--bg-subtle); }
+.heat-range-group { display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+/* 路由切换组件 */
+.heat-range.route-switch { --heat-indicator-x: 4px; --heat-indicator-w: 0px; position: relative; isolation: isolate; display: inline-flex; align-items: center; gap: 0; padding: 4px; border: 0; border-radius: 16px !important; background: var(--bg-subtle); box-shadow: none; }
+.heat-range.route-switch::before { position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 0; width: var(--heat-indicator-w); border-radius: 12px; content: ''; pointer-events: none; background: var(--card); box-shadow: none; transform: translateX(var(--heat-indicator-x)); transition: transform .24s cubic-bezier(.215,.61,.355,1), width .24s cubic-bezier(.215,.61,.355,1), background-color .2s ease; }
 .heat-range-btn {
-  padding: 4px 11px; border-radius: 5px; border: 0;
-  background: transparent; color: var(--text-3); font-size: 12px; font-weight: 600; cursor: pointer; transition: background .18s var(--ease-standard), color .18s var(--ease-standard), box-shadow .18s var(--ease-standard); font-family: inherit;
+  position: relative; z-index: 1; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-height: 32px; padding: 6px 14px; line-height: 20px; border-radius: 12px; border: 0;
+  background: transparent; color: var(--text-2); font-size: 12px; font-weight: 600; cursor: pointer; transition: color .1s ease-in-out, background-color .2s ease-in-out, box-shadow .2s ease-in-out; font-family: inherit;
 }
-.heat-range-btn:hover { color: var(--text); }
-.heat-range-btn.active { background: #fff; color: var(--text); box-shadow: 0 1px 2px rgba(30,45,60,.1); }
-.heat-range-btn:focus-visible { outline:0; box-shadow:inset 0 0 0 2px rgba(29,39,51,.16); }
+.heat-range-btn:hover, .heat-range-btn:focus-visible { color: var(--text); background: transparent; box-shadow: none; outline: none; }
+.heat-range-btn:focus-visible { box-shadow: inset 0 0 0 2px rgba(29,39,51,.16); }
+.heat-range-btn.active { background: transparent !important; color: var(--text); box-shadow: none; }
 .heat-legend { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-3); margin-left: 10px; }
 .hm-dot { width: 8px; height: 8px; border-radius: 3px; display: inline-block; margin-left: 6px; box-shadow: inset 0 0 0 1px rgba(31,43,55,.05); }
 .hm-dot.ok { background: #63a887; } .hm-dot.warn { background: #d2a34c; } .hm-dot.crit { background: #c96d67; } .hm-dot.none { background: #b9c2cc; }
 
-.heatmap-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); box-shadow: var(--shadow-sm); padding: 14px 16px 10px; margin-bottom: 26px; animation: panelIn .72s .16s var(--ease-emphasized) both; }
-@keyframes panelIn { from { opacity: 0; transform: translateY(8px); } }
+.heatmap-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); box-shadow: var(--shadow-sm); padding: 14px 16px 10px; margin-bottom: 26px; }
 .heat-chart { width: 100%; height: 58px; min-height: 0; }
 .heat-chart:empty { display: none; }
 .heat-empty { text-align: center; color: var(--text-3); padding: 24px; font-size: 13px; }
@@ -860,9 +882,7 @@ onUnmounted(() => {
   position: relative; overflow: hidden;
   background: var(--card); border: 1px solid var(--border); border-radius: var(--r);
   box-shadow: var(--shadow-sm); transition: box-shadow .18s var(--ease-standard), border-color .18s var(--ease-standard);
-  animation: cardIn .7s var(--ease-emphasized) backwards; animation-delay: calc(var(--i) * 55ms);
 }
-@keyframes cardIn { from { opacity: 0; transform: translateY(11px) scale(.988); filter: blur(3px); } to { opacity: 1; transform: none; filter: none; } }
 .server-card:hover { box-shadow: var(--shadow); border-color: var(--accent); }
 .upstream-balance-card:hover { border-color: var(--accent); }
 
@@ -882,7 +902,7 @@ onUnmounted(() => {
 }
 .status-badge {
   display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0; white-space: nowrap;
-  padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 650;
+  padding: 3px 9px; border-radius: var(--r); font-size: 11px; font-weight: 650;
 }
 .status-badge .badge-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
 .status-badge.online { background: var(--success-soft); color: var(--success); }
@@ -962,9 +982,7 @@ onUnmounted(() => {
 .upstream-balance-item.dragging { opacity: .45; transform: scale(.98); }
 .upstream-balance-item.drag-over { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
 .upstream-balance-head { display: flex; align-items: center; gap: 7px; min-width: 0; }
-.upstream-provider-mark { display: inline-grid; place-items: center; width: 28px; height: 22px; border-radius: 6px; font-size: 9px; font-weight: 750; letter-spacing: .02em; flex-shrink: 0; }
-.upstream-provider-mark.oci { background: #f7ead6; color: #9a6e23; }
-.upstream-provider-mark.cloudflare { background: #e7eff7; color: #286c98; }
+.upstream-provider-logo { width: 16px; height: 16px; flex: 0 0 16px; display: block; object-fit: contain; }
 .upstream-provider-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11.5px; font-weight: 650; color: var(--text-2); }
 .upstream-drag-hint { margin-left: auto; color: var(--text-3); font-size: 14px; line-height: 1; letter-spacing: -3px; opacity: .7; }
 .upstream-balance-value { margin-top: 10px; font-size: 20px; line-height: 1.15; font-weight: 750; color: var(--text); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }

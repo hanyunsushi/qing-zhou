@@ -3,6 +3,7 @@
     <div class="page-head"><div><h2 class="page-title">订单管理</h2><p class="page-sub">收入、退款、套餐归属与每笔订单的完整状态轨迹</p></div></div>
 
     <div class="stat-row">
+      <!-- 展示卡片 -->
       <div class="stat-card"><div class="s-label">总收入</div><div class="s-value" style="color:var(--success);">{{ stats.revenue }} 积分</div></div>
       <div class="stat-card"><div class="s-label">已退款</div><div class="s-value" style="color:var(--warn);">{{ stats.refunded }} 积分</div></div>
       <div class="stat-card"><div class="s-label">订单数</div><div class="s-value">{{ orders.length }}</div></div>
@@ -10,18 +11,24 @@
     </div>
 
     <div class="page-toolbar">
-      <div class="seg">
+      <!-- 路由切换组件 -->
+      <div ref="statusSwitchRef" class="seg route-switch"
+           @mouseover="moveStatusIndicatorFromEvent" @focusin="moveStatusIndicatorFromEvent"
+           @mouseleave="moveStatusIndicatorToSelected" @focusout="handleStatusSwitchFocusout">
         <button v-for="t in tabs" :key="t.key" class="seg-btn" :class="{ active: statusTab === t.key }" @click="statusTab = t.key">
           {{ t.label }}<span class="seg-count">{{ t.count }}</span>
         </button>
       </div>
-      <div class="seg">
+      <div ref="groupSwitchRef" class="seg route-switch"
+           @mouseover="moveGroupIndicatorFromEvent" @focusin="moveGroupIndicatorFromEvent"
+           @mouseleave="moveGroupIndicatorToSelected" @focusout="handleGroupSwitchFocusout">
         <span class="seg-label">分组</span>
         <button v-for="g in groupOpts" :key="g.key" class="seg-btn" :class="{ active: groupBy === g.key }" @click="groupBy = g.key">
           {{ g.label }}
         </button>
       </div>
       <span class="spacer" />
+      <!-- 填写框 -->
       <n-input v-model:value="search" placeholder="搜索用户名" size="small" style="width:200px;" clearable />
     </div>
 
@@ -111,7 +118,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { NSpin, NInput, NButton, NTag, NEmpty, useMessage, useDialog } from 'naive-ui'
 import { apiList, apiDelete } from '@/api'
 import { fmtDateTime } from '@/utils/format'
@@ -128,6 +135,8 @@ const sortKey = ref<'created_at' | 'price_points'>('created_at')
 const sortDir = ref<'asc' | 'desc'>('desc')
 const refundShow = ref(false)
 const refundId = ref<number | null>(null)
+const statusSwitchRef = ref<HTMLElement | null>(null)
+const groupSwitchRef = ref<HTMLElement | null>(null)
 
 const tabs = computed(() => [
   { key: 'all' as const, label: '全部', count: orders.value.length },
@@ -194,6 +203,45 @@ function sortInd(k: 'created_at' | 'price_points') {
   return sortDir.value === 'asc' ? ' ↑' : ' ↓'
 }
 
+function moveRouteIndicator(container: HTMLElement | null, button: HTMLElement | null) {
+  if (!container || !button) return
+  const containerRect = container.getBoundingClientRect()
+  const buttonRect = button.getBoundingClientRect()
+  container.style.setProperty('--route-indicator-x', `${buttonRect.left - containerRect.left}px`)
+  container.style.setProperty('--route-indicator-w', `${buttonRect.width}px`)
+}
+
+function selectedRouteButton(container: HTMLElement | null) {
+  return container?.querySelector<HTMLElement>('.seg-btn.active') || null
+}
+
+function moveRouteIndicatorToSelected(container: HTMLElement | null) {
+  moveRouteIndicator(container, selectedRouteButton(container))
+}
+
+function moveRouteIndicatorFromEvent(event: MouseEvent | FocusEvent, container: HTMLElement | null) {
+  const target = event.target
+  if (!(target instanceof HTMLElement)) return
+  moveRouteIndicator(container, target.closest<HTMLElement>('.seg-btn'))
+}
+
+function handleRouteSwitchFocusout(event: FocusEvent, container: HTMLElement | null) {
+  const nextTarget = event.relatedTarget
+  if (!(nextTarget instanceof Node) || !container?.contains(nextTarget)) moveRouteIndicatorToSelected(container)
+}
+
+function moveStatusIndicatorFromEvent(event: MouseEvent | FocusEvent) { moveRouteIndicatorFromEvent(event, statusSwitchRef.value) }
+function moveGroupIndicatorFromEvent(event: MouseEvent | FocusEvent) { moveRouteIndicatorFromEvent(event, groupSwitchRef.value) }
+function moveStatusIndicatorToSelected() { moveRouteIndicatorToSelected(statusSwitchRef.value) }
+function moveGroupIndicatorToSelected() { moveRouteIndicatorToSelected(groupSwitchRef.value) }
+function handleStatusSwitchFocusout(event: FocusEvent) { handleRouteSwitchFocusout(event, statusSwitchRef.value) }
+function handleGroupSwitchFocusout(event: FocusEvent) { handleRouteSwitchFocusout(event, groupSwitchRef.value) }
+
+function repositionRouteIndicators() {
+  moveStatusIndicatorToSelected()
+  moveGroupIndicatorToSelected()
+}
+
 const stats = computed(() => {
   let revenue = 0, refunded = 0, refundedCount = 0
   for (const o of orders.value) {
@@ -229,26 +277,54 @@ async function load() {
   catch (e: any) { message.error('加载失败：' + (e?.message || '请稍后重试')) }
   finally { loading.value = false }
 }
-onMounted(load)
+onMounted(async () => {
+  await load()
+  await nextTick()
+  repositionRouteIndicators()
+  window.addEventListener('resize', repositionRouteIndicators)
+})
+onUnmounted(() => window.removeEventListener('resize', repositionRouteIndicators))
 </script>
 
 <style scoped>
-/* 分段筛选 */
+/* 路由切换组件 */
 .seg { display: inline-flex; background: var(--bg-subtle); border: 1px solid var(--border); border-radius: var(--r); padding: 3px; }
+.seg.route-switch {
+  --route-indicator-x: 4px; --route-indicator-w: 0px;
+  position: relative; isolation: isolate; align-items: center; min-height: 40px; padding: 4px; border: 0; border-radius: 16px !important; background: var(--bg-subtle); box-shadow: none;
+}
+.seg.route-switch::before {
+  position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 0; width: var(--route-indicator-w);
+  border-radius: 12px; content: ''; pointer-events: none; background: var(--card);
+  box-shadow: none;
+  transform: translateX(var(--route-indicator-x));
+  transition: transform .24s cubic-bezier(.215,.61,.355,1), width .24s cubic-bezier(.215,.61,.355,1), background-color .2s ease, box-shadow .2s ease;
+}
 .seg-btn {
-  display: inline-flex; align-items: center; gap: 5px;
+  position: relative; z-index: 1; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; gap: 5px;
   border: none; background: none; cursor: pointer;
   font: inherit; font-size: 12.5px; color: var(--text-2);
-  padding: 4px 12px; border-radius: 5px; transition: background .15s, color .15s, box-shadow .15s;
+  min-height: 32px; padding: 6px 14px; line-height: 20px; border-radius: 12px; transition: color .1s ease-in-out, background-color .2s ease-in-out, box-shadow .2s ease-in-out;
 }
-.seg-btn:hover { color: var(--text); }
-.seg-btn.active { background: #fff; color: var(--text); font-weight: 600; box-shadow: 0 1px 2px rgba(30,45,60,.1); }
+.seg-btn:hover, .seg-btn:focus-visible { color: var(--text); background: transparent; box-shadow: none; outline: none; }
+.seg-btn:focus-visible { box-shadow: inset 0 0 0 2px rgba(29,39,51,.16); }
+.seg-btn.active { background: transparent; color: var(--text); font-weight: 600; box-shadow: none; }
 .seg-count { font-size: 11px; color: var(--text-3); }
 .seg-btn.active .seg-count { color: var(--text-2); }
-.seg-label { font-size: 11.5px; color: var(--text-3); padding: 0 8px 0 6px; align-self: center; }
+.seg-label { position: relative; z-index: 1; font-size: 11.5px; color: var(--text-3); padding: 0 8px 0 6px; align-self: center; }
+
+/* 展示卡片 */
+.stat-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 14px;
+  box-shadow: none; transition: box-shadow .25s ease; transform: none; opacity: 1;
+}
+/* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 */
+.stat-card:hover, .stat-card:focus-visible {
+  border-color: var(--border); background: var(--card); box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08); transform: none; opacity: 1;
+}
 
 /* 状态胶囊 */
-.pill { display: inline-flex; align-items: center; padding: 1px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; line-height: 1.6; }
+.pill { display: inline-flex; align-items: center; padding: 1px 9px; border-radius: var(--r); font-size: 12px; font-weight: 600; line-height: 1.6; }
 .pill-ok { background: rgba(16,185,129,.12); color: #0f9d6f; }
 .pill-warn { background: rgba(191,149,64,.15); color: var(--warn); }
 

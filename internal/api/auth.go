@@ -95,10 +95,13 @@ func (a *API) handleConfig(w http.ResponseWriter, r *http.Request) {
 	rate, _ := a.st.GetSettingInt64("points_per_cny", 10)
 	mode := a.registerMode()
 	siteName, _ := a.st.GetSetting("site_name")
-	if siteName == "" {
-		siteName = "轻舟"
+	if strings.TrimSpace(siteName) == "" || strings.TrimSpace(siteName) == "轻舟" {
+		siteName = "Kreeproxy"
 	}
 	siteDesc, _ := a.st.GetSetting("site_description")
+	if strings.TrimSpace(siteDesc) == "" {
+		siteDesc = "仅限个人在中国大陆以外地区依法依规使用"
+	}
 	homeMode, _ := a.st.GetSetting("homepage_mode")
 	if homeMode == "" {
 		homeMode = "monitor"
@@ -110,6 +113,9 @@ func (a *API) handleConfig(w http.ResponseWriter, r *http.Request) {
 	}
 	helpURL, _ := a.st.GetSetting("help_docs_url")
 	brandIcon, _ := a.st.GetSetting(brandIconSetting)
+	if brandIcon == "" || brandIcon == "/qingzhou-mark.svg" {
+		brandIcon = "/kreeproxy-brand.png"
+	}
 	ok(w, J{
 		"oauth2_enabled":        oauth.Enabled,
 		"oauth2_name":           oauth.Name,

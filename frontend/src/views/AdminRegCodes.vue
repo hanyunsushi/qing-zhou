@@ -11,6 +11,7 @@
     <!-- 生成区 -->
     <n-card size="small" style="margin-bottom:16px;">
       <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
+        <!-- 填写框 -->
         <div><div style="font-size:12px;color:var(--text-3);margin-bottom:4px;">数量</div><n-input-number v-model:value="genCount" :min="1" :max="100" style="width:100px;" /></div>
         <div><div style="font-size:12px;color:var(--text-3);margin-bottom:4px;">最大使用次数（0=不限）</div><n-input-number v-model:value="genMaxUses" :min="0" style="width:140px;" /></div>
         <div style="flex:1;min-width:160px;"><div style="font-size:12px;color:var(--text-3);margin-bottom:4px;">备注</div><n-input v-model:value="genNote" placeholder="可选" /></div>
@@ -18,7 +19,8 @@
           <div style="font-size:12px;color:var(--text-3);margin-bottom:4px;">加入用户组（可选）</div>
           <n-select v-model:value="genGroupIDs" :options="userGroupOptions" multiple clearable placeholder="用此码注册即加入" />
         </div>
-        <n-button type="primary" :loading="generating" @click="handleGenerate">生成</n-button>
+        <!-- 高亮弧边按钮：生成注册码是当前页面的主动作。 -->
+        <n-button type="primary" class="highlight-arc-button" :loading="generating" @click="handleGenerate">生成</n-button>
       </div>
       <div v-if="genGroupIDs.length" style="margin-top:8px;font-size:12px;color:var(--text-3);">
         用这批注册码注册的用户将自动加入「{{ groupNames(genGroupIDs) }}」，从而可以购买这些用户组的专属套餐。

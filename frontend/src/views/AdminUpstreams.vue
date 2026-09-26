@@ -25,14 +25,15 @@
           @drop.prevent="handleProviderDrop('oci')"
           @dragend="handleProviderDragEnd"
         >
-        <n-card size="small" class="upstream-card" title="Oracle Cloud Infrastructure">
+        <n-card size="small" class="upstream-card">
+          <template #header><div class="provider-card-title"><img :src="ociLogo" alt="Oracle Cloud Infrastructure" class="provider-logo" /><span>Oracle Cloud Infrastructure</span></div></template>
           <template #header-extra><n-tag :type="tagType(ociView.configured)" size="small" :bordered="false">{{ ociView.configured ? '已配置' : '未配置' }}</n-tag></template>
           <div class="balance-panel" :class="usageClass(ociUsage)">
             <template v-if="ociUsage?.success">
               <div class="balance-kicker">{{ ociUsage.period }}账户余额</div>
               <div class="balance-value">{{ fmtBytes(ociUsage.remaining) }}</div>
               <div class="balance-meta">账号总额 {{ fmtBytes(ociUsage.limit) }} − 官方已用 {{ fmtBytes(ociUsage.used) }}<template v-if="ociUsage.overage_detected"> · 已识别超额层级</template></div>
-              <n-progress type="line" :percentage="usagePercent(ociUsage)" :show-indicator="false" :height="6" status="success" />
+              <n-progress type="line" :percentage="pct(ociUsage.used, ociUsage.limit)" :show-indicator="false" :height="6" status="success" />
               <div class="balance-source">{{ ociUsage.source }} · 查询区间结束 {{ fmtUpdated(ociUsage.query_end) }} · 查询于 {{ fmtUpdated(ociUsage.updated_at) }}</div>
               <n-alert v-if="ociUsage.warning" type="warning" :bordered="false">{{ ociUsage.warning }}</n-alert>
             </template>
@@ -44,6 +45,7 @@
           </div>
 
           <n-form label-placement="top" class="provider-form">
+            <!-- 填写框 -->
             <n-form-item label="Tenancy OCID"><n-input v-model:value="ociForm.tenancy_ocid" placeholder="ocid1.tenancy..." /></n-form-item>
             <n-form-item label="User OCID"><n-input v-model:value="ociForm.user_ocid" placeholder="ocid1.user..." /></n-form-item>
             <div class="form-row">
@@ -60,7 +62,8 @@
             </n-form-item>
           </n-form>
           <div class="provider-actions">
-            <n-button type="primary" :loading="saving.oci" @click="saveOCI">保存 OCI 配置</n-button>
+            <!-- 高亮弧边按钮：供应商配置保存是当前卡片的主动作，悬浮时变深。 -->
+            <n-button type="primary" class="highlight-arc-button" :loading="saving.oci" @click="saveOCI">保存 OCI 配置</n-button>
             <n-button :disabled="!ociView.configured" :loading="refreshing.oci" @click="refreshUsage('oci')">查询余额</n-button>
             <n-button v-if="ociView.configured" tertiary type="error" @click="removeProvider('oci')">清除</n-button>
           </div>
@@ -77,14 +80,15 @@
           @drop.prevent="handleProviderDrop('cloudflare')"
           @dragend="handleProviderDragEnd"
         >
-        <n-card size="small" class="upstream-card" title="Cloudflare">
+        <n-card size="small" class="upstream-card">
+          <template #header><div class="provider-card-title"><img :src="cloudflareLogo" alt="Cloudflare" class="provider-logo" /><span>Cloudflare</span></div></template>
           <template #header-extra><n-tag :type="tagType(cfView.configured)" size="small" :bordered="false">{{ cfView.configured ? '已配置' : '未配置' }}</n-tag></template>
           <div class="balance-panel" :class="usageClass(cfUsage)">
             <template v-if="cfUsage?.success">
               <div class="balance-kicker">{{ cfUsage.period }}请求余额</div>
               <div class="balance-value">{{ fmtRequests(cfUsage.remaining) }}</div>
               <div class="balance-meta">已用 {{ fmtRequests(cfUsage.used) }} / 上限 {{ fmtRequests(cfUsage.limit) }}</div>
-              <n-progress type="line" :percentage="usagePercent(cfUsage)" :show-indicator="false" :height="6" status="success" />
+              <n-progress type="line" :percentage="pct(cfUsage.used, cfUsage.limit)" :show-indicator="false" :height="6" status="success" />
               <div class="balance-source">{{ cfUsage.source }} · {{ fmtUpdated(cfUsage.updated_at) }}</div>
             </template>
             <template v-else>
@@ -106,7 +110,8 @@
             </n-form-item>
           </n-form>
           <div class="provider-actions">
-            <n-button type="primary" :loading="saving.cloudflare" @click="saveCloudflare">保存 Cloudflare 配置</n-button>
+            <!-- 高亮弧边按钮：供应商配置保存是当前卡片的主动作，悬浮时变深。 -->
+            <n-button type="primary" class="highlight-arc-button" :loading="saving.cloudflare" @click="saveCloudflare">保存 Cloudflare 配置</n-button>
             <n-button :disabled="!cfView.configured" :loading="refreshing.cloudflare" @click="refreshUsage('cloudflare')">查询余额</n-button>
             <n-button v-if="cfView.configured" tertiary type="error" @click="removeProvider('cloudflare')">清除</n-button>
           </div>
@@ -128,9 +133,12 @@
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { NAlert, NButton, NCard, NForm, NFormItem, NInput, NInputNumber, NProgress, NSpin, NTag, useDialog, useMessage } from 'naive-ui'
 import { apiDelete, apiGet, apiPost, apiPut } from '@/api'
-import { fmtBytes } from '@/utils/format'
+import { fmtBytes, fmtRequests, pct } from '@/utils/format'
+import { defaultUpstreamOrder, normalizeUpstreamOrder, type UpstreamProvider } from '@/utils/upstreams'
+import ociLogo from '@/assets/provider-oci.svg'
+import cloudflareLogo from '@/assets/provider-cloudflare.svg'
 
-type Provider = 'oci' | 'cloudflare'
+type Provider = UpstreamProvider
 type ProviderView = {
   provider: Provider
   configured: boolean
@@ -174,7 +182,7 @@ const cfForm = reactive({ account_id: '', analytics_token: '', daily_request_lim
 
 const ociUsage = computed(() => usages.oci)
 const cfUsage = computed(() => usages.cloudflare)
-const upstreamOrder = ref<Provider[]>(['oci', 'cloudflare'])
+const upstreamOrder = ref<Provider[]>([...defaultUpstreamOrder])
 const draggingProvider = ref<Provider | null>(null)
 const dragOverProvider = ref<Provider | null>(null)
 
@@ -202,18 +210,13 @@ async function load() {
     assignView(ociView, views.find(v => v.provider === 'oci'))
     assignView(cfView, views.find(v => v.provider === 'cloudflare'))
     setForms()
-    upstreamOrder.value = normalizeProviderOrder(settings?.admin_upstream_balance_order)
+    upstreamOrder.value = normalizeUpstreamOrder(settings?.admin_upstream_balance_order)
     await Promise.all([ociView.configured ? refreshUsage('oci', true) : Promise.resolve(), cfView.configured ? refreshUsage('cloudflare', true) : Promise.resolve()])
   } catch (error: any) {
     message.error(error.message || '读取上游配置失败')
   } finally { loading.value = false }
 }
 
-function normalizeProviderOrder(raw: unknown): Provider[] {
-  const values = Array.isArray(raw) ? raw : String(raw || '').split(',')
-  const valid = values.filter((value): value is Provider => value === 'oci' || value === 'cloudflare')
-  return [...new Set<Provider>([...valid, 'oci', 'cloudflare'])]
-}
 function handleProviderDragStart(provider: Provider, event: DragEvent) {
   draggingProvider.value = provider
   if (event.dataTransfer) {
@@ -317,8 +320,6 @@ function removeProvider(provider: Provider) {
 }
 function tagType(configured: boolean): 'success' | 'default' { return configured ? 'success' : 'default' }
 function usageClass(usage?: Usage) { return usage?.success ? 'ready' : usage?.error ? 'failed' : '' }
-function usagePercent(usage?: Usage) { return usage?.limit ? Math.min(100, Math.max(0, Math.round(usage.used / usage.limit * 1000) / 10)) : 0 }
-function fmtRequests(value?: number) { return new Intl.NumberFormat('zh-CN').format(value || 0) + ' 次' }
 function fmtUpdated(value?: string) { return value ? new Date(value).toLocaleString('zh-CN', { hour12: false }) : '尚未更新' }
 
 onMounted(async () => {
@@ -340,6 +341,8 @@ onUnmounted(() => {
 .upstream-sort-item.dragging { opacity: .45; transform: scale(.99); }
 .upstream-sort-item.drag-over { border-radius: var(--r-sm); box-shadow: 0 0 0 2px var(--accent-soft); }
 .upstream-card { min-width: 0; }
+.provider-card-title { display: inline-flex; align-items: center; gap: 7px; min-width: 0; color: var(--text); font-size: 15px; font-weight: 650; line-height: 20px; }
+.provider-logo { width: 18px; height: 18px; flex: 0 0 18px; display: block; object-fit: contain; }
 .balance-panel { padding: 14px; margin-bottom: 14px; border: 1px solid var(--border); border-radius: var(--r-sm); background: var(--bg-soft); min-height: 122px; }
 .balance-panel.ready { background: var(--success-soft); border-color: var(--success); }
 .balance-panel.failed { background: var(--danger-soft); border-color: var(--danger); }

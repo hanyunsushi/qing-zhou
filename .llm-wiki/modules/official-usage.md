@@ -1,6 +1,6 @@
 ---
 title: Official Usage Module
-updated: 2026-09-20
+updated: 2026-09-25
 ---
 
 # Official Usage Module
@@ -39,6 +39,8 @@ The daily request allowance is locally configured and is not a Cloudflare billin
 
 - Official URLs are fixed by the module; configuration does not permit a custom endpoint.
 - Response bodies are bounded before parsing.
+- OCI and Cloudflare response bodies are capped at 2 MiB; oversized responses
+  fail closed even when their prefix is valid JSON.
 - Provider errors are returned as non-secret status text and never substitute node-interface counters.
 
 See also: [Admin Upstreams API](../apis/admin-upstreams.md).

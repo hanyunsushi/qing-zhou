@@ -2,7 +2,7 @@
   <div>
     <div class="shop-head">
       <div>
-        <h2 class="page-title">积分商城</h2>
+        <h2 class="page-title">订阅套餐</h2>
         <p class="page-sub">套餐、流量与时长逐项对比，购买前明确知道所得内容</p>
       </div>
       <div class="balance-pill"><small>可用积分</small><b>{{ auth.user?.points || 0 }}</b><span>{{ yuan(auth.user?.points || 0) }}</span></div>
@@ -57,7 +57,7 @@
           <div v-if="pkg.stock >= 0" class="sc-stock" :class="{ hot: pkg.stock <= 5 }">
             {{ pkg.stock === 0 ? '已售罄' : `仅剩 ${pkg.stock} 件` }}
           </div>
-          <n-button type="primary" block class="sc-buy"
+          <n-button type="primary" block class="sc-buy highlight-arc-button"
             :loading="buying===pkg.id"
             :disabled="!canAfford(pkg) || pkg.stock === 0"
             @click="handleBuy(pkg)">
@@ -68,7 +68,10 @@
     </div>
     <div v-if="!loading && packages.length===0" class="shop-empty">
       <n-empty description="暂无可购买的商品">
-        <template #extra><n-button size="small" @click="loadPackages">重新加载</n-button></template>
+        <template #extra>
+          <!-- 普通按钮：复用全局 action-button 普通按钮样式。 -->
+          <n-button size="small" class="action-button action-button--normal" @click="loadPackages">重新加载</n-button>
+        </template>
       </n-empty>
       <div class="empty-guide">
         <span><b>套餐</b><small>同时包含流量与有效期</small></span>
@@ -210,14 +213,14 @@ onMounted(async () => {
 <style scoped>
 .shop-head { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; margin-bottom:16px; }
 .shop-head .page-sub { margin-bottom:0; }
-.balance-pill { display:grid; grid-template-columns:auto auto; align-items:baseline; gap:0 8px; min-width:156px; padding:10px 13px; border:1px solid var(--border); border-radius:12px; background:var(--card); box-shadow:var(--shadow-xs); text-align:right; }
+.balance-pill { display:grid; grid-template-columns:auto auto; align-items:baseline; gap:0 8px; min-width:156px; padding:10px 13px; border:0; border-radius:12px; background:var(--card); box-shadow:none; text-align:right; }
 .balance-pill small { grid-column:1 / -1; color:var(--text-3); font-size:10.5px; }
 .balance-pill b { color:var(--text); font-size:20px; font-variant-numeric:tabular-nums; }
 .balance-pill span { color:var(--text-3); font-size:11.5px; }
 .shop-summary { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
-.shop-summary span { padding:6px 10px; border:1px solid var(--border); border-radius:999px; background:var(--bg-soft); color:var(--text-3); font-size:11.5px; }
+.shop-summary span { padding:6px 10px; border:0; border-radius:var(--r); background:var(--bg-soft); color:var(--text-3); font-size:11.5px; }
 .shop-summary b { color:var(--text-2); }
-.shop-empty { max-width:760px; margin:54px auto 0; padding:34px 30px 22px; border:1px solid var(--border); border-radius:16px; background:var(--card); box-shadow:var(--shadow-sm); }
+.shop-empty { max-width:760px; margin:54px auto 0; padding:34px 30px 22px; border:0; border-radius:16px; background:var(--card); box-shadow:none; }
 .empty-guide { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:24px; padding-top:16px; border-top:1px solid var(--border); }
 .empty-guide span { display:flex; flex-direction:column; padding:6px 9px; }
 .empty-guide b { color:var(--text-2); font-size:12px; }
@@ -229,12 +232,13 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   background: var(--card);
-  border: 1px solid var(--border);
+  border: 0;
   border-radius: var(--r);
   padding: 18px 18px 16px;
   transition: box-shadow .18s ease, transform .18s ease, border-color .18s ease;
 }
-.shop-card:hover { box-shadow: var(--shadow); border-color: var(--accent); background: var(--accent-subtle); }
+/* 悬浮效果：展示卡片保留纸面，只增加中性阴影。 */
+.shop-card:hover { box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08); border-color: transparent; background: var(--card); }
 .shop-card.dim { opacity: .78; }
 
 .sc-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
@@ -245,7 +249,7 @@ onMounted(async () => {
   font-size: 11px;
   font-weight: 600;
   padding: 2px 9px;
-  border-radius: 999px;
+  border-radius: var(--r);
   white-space: nowrap;
   border: 1px solid transparent;
 }
@@ -314,7 +318,7 @@ onMounted(async () => {
   font-size: 10px;
   line-height: 1;
   padding: 2px 5px;
-  border-radius: 999px;
+  border-radius: var(--r);
   color: #fff;
   background: var(--accent-strong);
 }

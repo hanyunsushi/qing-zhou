@@ -171,7 +171,7 @@ func buildMailer(st *store.Store) *mailer.Mailer {
 		User:     get("QZ_SMTP_USER", "smtp_user"),
 		Pass:     get("QZ_SMTP_PASS", "smtp_pass"),
 		From:     from,
-		FromName: firstNonEmpty(get("QZ_SMTP_FROM_NAME", "smtp_from_name"), "轻舟"),
+		FromName: firstNonEmpty(get("QZ_SMTP_FROM_NAME", "smtp_from_name"), "Kreeproxy"),
 		Security: get("QZ_SMTP_SECURITY", "smtp_security"),
 	}
 }

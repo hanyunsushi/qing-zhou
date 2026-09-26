@@ -31,6 +31,7 @@ const (
 	DefaultOCIMonthlyLimitBytes int64 = 10 * 1024 * 1024 * 1024 * 1024
 	DefaultCFDailyRequestLimit  int64 = 100_000
 	legacyOCIMonthlyLimitBytes  int64 = 10_000_000_000_000
+	maxProviderResponseBytes          = 2 << 20
 )
 
 // OCIConfig is the minimum OCI API-key profile required by the Usage API.
@@ -201,9 +202,9 @@ func FetchOCI(ctx context.Context, client *http.Client, config OCIConfig, now ti
 			base.Error = "OCI Usage API 请求失败: " + err.Error()
 			return base
 		}
-		data, readErr := io.ReadAll(io.LimitReader(resp.Body, (2<<20)+1))
+		data, readErr := io.ReadAll(io.LimitReader(resp.Body, maxProviderResponseBytes+1))
 		resp.Body.Close()
-		if readErr != nil || len(data) > 2<<20 {
+		if readErr != nil || len(data) > maxProviderResponseBytes {
 			base.Error = "读取 OCI Usage API 响应失败"
 			return base
 		}
@@ -484,9 +485,13 @@ func FetchCloudflare(ctx context.Context, client *http.Client, config Cloudflare
 		return base
 	}
 	defer resp.Body.Close()
-	data, err := io.ReadAll(io.LimitReader(resp.Body, 2<<20))
+	data, err := io.ReadAll(io.LimitReader(resp.Body, maxProviderResponseBytes+1))
 	if err != nil {
 		base.Error = "读取 Cloudflare Analytics 响应失败"
+		return base
+	}
+	if len(data) > maxProviderResponseBytes {
+		base.Error = "Cloudflare Analytics 响应过大"
 		return base
 	}
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {

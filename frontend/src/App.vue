@@ -2,9 +2,14 @@
   <n-config-provider :theme-overrides="themeOverrides" :locale="zhCN" :date-locale="dateZhCN">
     <n-message-provider>
       <n-dialog-provider>
-        <router-view />
+        <router-view v-slot="{ Component, route: viewRoute }">
+          <div ref="rootShell" class="qz-shift5-page-shell" :key="rootViewKey(viewRoute)">
+            <component :is="Component" />
+          </div>
+        </router-view>
       </n-dialog-provider>
     </n-message-provider>
+    <PageScrollbar />
   </n-config-provider>
 </template>
 
@@ -12,21 +17,41 @@
 import { NConfigProvider, NMessageProvider, NDialogProvider, zhCN, dateZhCN } from 'naive-ui'
 import type { GlobalThemeOverrides } from 'naive-ui'
 import { useConfigStore } from '@/stores/config'
+import { ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { useShift5PageTransition } from '@/utils/shift5'
+import PageScrollbar from '@/components/PageScrollbar.vue'
+
+const route = useRoute()
+const rootShell = ref<HTMLElement | null>(null)
+const authRouteNames = new Set(['login', 'register', 'forgot-password'])
+const rootViewKey = (viewRoute: { matched: Array<{ name?: string | symbol | null }> }) => {
+  const name = String(viewRoute.matched[0]?.name || 'layout')
+  return authRouteNames.has(name) ? 'auth' : name
+}
+useShift5PageTransition(
+  rootShell,
+  () => {
+    const name = String(route.matched[0]?.name || 'layout')
+    return authRouteNames.has(name) ? 'auth' : name
+  },
+  () => route.matched[0]?.name === 'monitor' || authRouteNames.has(String(route.matched[0]?.name)),
+)
 
 const themeOverrides: GlobalThemeOverrides = {
   common: {
-    primaryColor: '#0972d3',
-    primaryColorHover: '#033160',
+    primaryColor: '#007aff',
+    primaryColorHover: '#298fff',
     primaryColorPressed: '#002b55',
-    primaryColorSuppl: '#0972d3',
+    primaryColorSuppl: '#007aff',
     infoColor: '#3184c2',
     successColor: '#037f0c',
     warningColor: '#b84b00',
     errorColor: '#d91515',
-    borderRadius: '8px',
+    borderRadius: '18px',
     borderColor: '#d5dbdb',
     textColorBase: '#16191f',
-    fontFamily: '"Amazon Ember", "Segoe UI", "Microsoft YaHei", "PingFang SC", system-ui, sans-serif',
+    fontFamily: '"Inter", "Resource Han Rounded CN", sans-serif',
   },
 }
 

@@ -2,7 +2,7 @@
   <div>
     <div class="page-head">
       <div><h2 class="page-title">公告管理</h2><p class="page-sub">管理公告内容、展示时段、置顶与启用状态</p></div>
-      <div class="page-actions"><n-button type="primary" @click="openCreate">发布公告</n-button></div>
+      <div class="page-actions"><!-- 高亮弧边按钮：页面级主操作统一复用强调按钮合同。 --><n-button type="primary" class="action-button action-button--emphasis" @click="openCreate">发布公告</n-button></div>
     </div>
     <div class="resource-overview">
       <div class="resource-metric"><b>{{ announcements.length }}</b><span>全部公告</span></div>
@@ -34,6 +34,7 @@
 
     <n-modal v-model:show="showForm" preset="card" :title="editing?'编辑公告':'发布公告'" style="max-width:600px;">
       <n-form label-placement="left" label-width="80">
+        <!-- 填写框 -->
         <n-form-item label="标题"><n-input v-model:value="form.title" /></n-form-item>
         <n-form-item label="内容"><n-input v-model:value="form.content" type="textarea" :rows="6" /></n-form-item>
         <n-form-item label="开始时间"><n-input v-model:value="form.start_at" :input-props="{ type: 'datetime-local' }" /></n-form-item>
@@ -41,7 +42,8 @@
         <n-form-item label="置顶"><n-switch v-model:value="form.pinned" /></n-form-item>
         <n-form-item label="启用"><n-switch v-model:value="form.enabled" /></n-form-item>
       </n-form>
-      <n-button type="primary" block :loading="saving" @click="handleSave">保存</n-button>
+      <!-- 高亮弧边按钮：公告保存是编辑弹窗的主动作。 -->
+      <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleSave">保存</n-button>
     </n-modal>
   </div>
 </template>

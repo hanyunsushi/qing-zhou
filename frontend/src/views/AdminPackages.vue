@@ -4,14 +4,15 @@
       <div><h2 class="page-title">套餐管理</h2><p class="page-sub">商品规格、时长阶梯、库存、权限与上下架状态</p></div>
       <div class="page-actions">
         <n-button type="warning" :loading="syncing" @click="forceSyncPackages">强制推送</n-button>
-        <n-button type="primary" @click="openForm()">创建套餐</n-button>
+        <!-- 高亮弧边按钮：页面级主操作统一复用强调按钮合同。 -->
+        <n-button type="primary" class="action-button action-button--emphasis" @click="openForm()">创建套餐</n-button>
       </div>
     </div>
     <div class="resource-overview">
-      <div class="resource-metric"><b>{{ packages.length }}</b><span>全部套餐</span></div>
-      <div class="resource-metric success"><b>{{ packages.filter(p => p.enabled !== false).length }}</b><span>正在上架</span></div>
-      <div class="resource-metric"><b>{{ packages.filter(p => p.type === 'plan').length }}</b><span>订阅计划</span></div>
-      <div class="resource-metric"><b>{{ packages.filter(p => p.type === 'traffic').length }}</b><span>流量包 · 专属 {{ packages.filter(p => p.user_group_ids?.length).length }}</span></div>
+      <div class="resource-metric package-summary-card"><b>{{ packages.length }}</b><span>全部套餐</span></div>
+      <div class="resource-metric package-summary-card success"><b>{{ packages.filter(p => p.enabled !== false).length }}</b><span>正在上架</span></div>
+      <div class="resource-metric package-summary-card"><b>{{ packages.filter(p => p.type === 'plan').length }}</b><span>订阅计划</span></div>
+      <div class="resource-metric package-summary-card"><b>{{ packages.filter(p => p.type === 'traffic').length }}</b><span>流量包 · 专属 {{ packages.filter(p => p.user_group_ids?.length).length }}</span></div>
     </div>
     <n-spin :show="loading">
       <div v-if="packages.length" class="card-grid">
@@ -63,6 +64,7 @@
 
     <n-modal v-model:show="showForm" preset="card" :title="editing ? '编辑套餐' : '创建套餐'" style="max-width:520px;">
       <n-form label-placement="left" label-width="100">
+        <!-- 填写框 -->
         <n-form-item label="名称"><n-input v-model:value="form.name" /></n-form-item>
         <n-form-item label="类型">
           <n-select v-model:value="form.type" :options="[{label:'流量包',value:'traffic'},{label:'订阅计划',value:'plan'}]" />
@@ -139,7 +141,7 @@
           </div>
         </n-form-item>
       </n-form>
-      <n-button type="primary" block :loading="saving" @click="handleSave">保存</n-button>
+      <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleSave">保存</n-button>
     </n-modal>
   </div>
 </template>
@@ -354,9 +356,25 @@ onMounted(load)
   color: var(--text-2);
   background: var(--bg-2, #f6f6f6);
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--r);
   padding: 2px 8px;
   white-space: nowrap;
 }
 .opt-chip.def { color: var(--text); font-weight: 600; }
+
+/* 展示卡片 */
+.package-summary-card {
+  box-shadow: none;
+  transition: box-shadow .25s ease;
+  transform: none;
+  opacity: 1;
+}
+/* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 */
+.package-summary-card:hover, .package-summary-card:focus-visible {
+  border-color: var(--border);
+  background: var(--card);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+  transform: none;
+  opacity: 1;
+}
 </style>

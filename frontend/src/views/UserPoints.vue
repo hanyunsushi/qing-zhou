@@ -47,11 +47,13 @@
 
     <!-- ============ 筛选交互 ============ -->
     <div class="filters">
-      <n-radio-group v-model:value="typeFilter" size="small">
+      <!-- 路由切换组件：积分收支筛选改变当前列表维度。 -->
+      <n-radio-group v-model:value="typeFilter" size="small" class="route-switch">
         <n-radio-button value="all">全部</n-radio-button>
         <n-radio-button value="in">收入</n-radio-button>
         <n-radio-button value="out">支出</n-radio-button>
       </n-radio-group>
+      <!-- 填写框 -->
       <n-select v-model:value="typeSel" size="small" clearable placeholder="按类型筛选"
                 :options="typeOptions" style="width:170px;" />
       <n-input v-model:value="kw" size="small" clearable placeholder="搜索备注" style="width:170px;" />
@@ -84,7 +86,7 @@
           <div class="empty-actions">
             <span>{{ txs.length ? '当前筛选组合未命中记录，可清除条件查看全部明细。' : '充值、赠送、购买与退款都会在这里保留余额快照。' }}</span>
             <n-button v-if="txs.length" size="small" @click="resetFilters">清除筛选</n-button>
-            <n-button v-else size="small" @click="router.push('/shop')">查看积分商城</n-button>
+            <n-button v-else size="small" @click="router.push('/shop')">查看订阅套餐</n-button>
           </div>
         </template>
       </n-empty>
@@ -96,7 +98,7 @@
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { NCard, NSpin, NEmpty, NButton, NRadioGroup, NRadioButton, NSelect, NInput } from 'naive-ui'
-import * as echarts from 'echarts'
+import * as echarts from '@/utils/echarts'
 import { useAuthStore } from '@/stores/auth'
 import { apiGet } from '@/api'
 import { fmtDateTime, yuan } from '@/utils/format'
@@ -307,15 +309,20 @@ onUnmounted(() => {
 
 /* KPI 卡片 */
 .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px; }
+/* 展示卡片 */
 .kpi-card {
   background: var(--card); border: 1px solid var(--border); border-radius: var(--r-sm);
-  padding: 14px 16px; animation: riseIn .5s cubic-bezier(.22,1,.36,1) backwards;
+  padding: 14px 16px;
+  box-shadow: none; transition: box-shadow .25s ease; transform: none; opacity: 1;
 }
-.kpi-card:nth-child(1) { animation-delay: 0ms; }
-.kpi-card:nth-child(2) { animation-delay: 60ms; }
-.kpi-card:nth-child(3) { animation-delay: 120ms; }
-.kpi-card:nth-child(4) { animation-delay: 180ms; }
-@keyframes riseIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+/* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 */
+.kpi-card:hover, .kpi-card:focus-visible {
+  border-color: var(--border);
+  background: var(--card);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+  transform: none;
+  opacity: 1;
+}
 .kpi-label { font-size: 12px; color: var(--text-3); font-weight: 550; }
 .kpi-value { font-size: 24px; font-weight: 720; letter-spacing: -0.02em; margin-top: 6px; line-height: 1.15; font-variant-numeric: tabular-nums; }
 .kpi-value.accent { color: var(--text); }
@@ -348,11 +355,10 @@ onUnmounted(() => {
   display: flex; align-items: flex-start; gap: 12px;
   background: var(--card); border: 1px solid var(--border); border-radius: var(--r-sm);
   padding: 13px 14px;
-  animation: riseIn .45s cubic-bezier(.22,1,.36,1) backwards;
-  animation-delay: calc(var(--i, 0) * 40ms);
   transition: box-shadow .18s ease, transform .18s ease, border-color .18s ease;
 }
-.tx-card:hover { box-shadow: var(--shadow); border-color: var(--accent); background: var(--accent-subtle); }
+/* 悬浮效果：明细展示卡片不使用业务蓝底或蓝边，只增加中性阴影。 */
+.tx-card:hover { box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08); border-color: transparent; background: var(--card); }
 
 .tx-ic {
   width: 34px; height: 34px; border-radius: var(--r); flex-shrink: 0;

@@ -5,6 +5,7 @@ import test from 'node:test'
 const settings = await readFile(new URL('../src/views/AdminSettings.vue', import.meta.url), 'utf8')
 const config = await readFile(new URL('../src/stores/config.ts', import.meta.url), 'utf8')
 const mark = await readFile(new URL('../src/components/BrandMark.vue', import.meta.url), 'utf8')
+const auth = await readFile(new URL('../../internal/api/auth.go', import.meta.url), 'utf8')
 
 test('site settings provide a single brand-icon control near the site name', () => {
   assert.match(settings, /站点名称/)
@@ -15,8 +16,14 @@ test('site settings provide a single brand-icon control near the site name', () 
 })
 
 test('public branding synchronizes the visual mark and browser icons', () => {
-  assert.match(mark, /config\.config\.brand_icon_data_uri \|\| '\/qingzhou-mark\.svg'/)
+  assert.match(mark, /config\.config\.brand_icon_data_uri \|\| DEFAULT_BRAND_ICON/)
+  assert.match(config, /DEFAULT_SITE_NAME = 'Kreeproxy'/)
+  assert.match(config, /DEFAULT_BRAND_ICON = '\/kreeproxy-brand\.png'/)
   assert.match(config, /document\.title = name/)
   assert.match(config, /'shortcut icon'/)
   assert.match(config, /'apple-touch-icon'/)
+  assert.match(auth, /siteName = "Kreeproxy"/)
+  assert.match(auth, /brandIcon = "\/kreeproxy-brand\.png"/)
+  assert.match(config, /normalized\.site_name\.trim\(\) === '轻舟'/)
+  assert.match(config, /normalized\.brand_icon_data_uri === '\/qingzhou-mark\.svg'/)
 })

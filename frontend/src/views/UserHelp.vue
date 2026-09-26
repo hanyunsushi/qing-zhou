@@ -5,6 +5,7 @@
 
     <div class="help-layout">
       <n-card size="small" class="help-nav">
+        <!-- 填写框 -->
         <n-input v-model:value="query" size="small" clearable placeholder="搜索帮助文档" class="help-search" />
         <div
           v-for="doc in filteredDocs"

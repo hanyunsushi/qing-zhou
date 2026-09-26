@@ -9,34 +9,39 @@
         <h2 class="page-title">sing-box 配置</h2>
         <p class="page-sub">统一管理机器、TLS、入站、代理出口与下发状态</p>
       </div>
-      <n-button size="tiny" quaternary :type="showIp ? 'warning' : 'default'" @click="toggleIp">
-        {{ showIp ? '🙈 隐藏 IP' : '👁 显示 IP' }}
-      </n-button>
+      <!-- 切换开关：显示 IP 只切换地址打码状态，不使用按钮高亮或 warning 颜色。 -->
+      <div class="ip-visibility-toggle">
+        <span>显示 IP</span>
+        <n-switch size="small" :value="showIp" aria-label="显示 IP" @update:value="setShowIp" />
+      </div>
     </div>
+    <!-- 展示卡片；卡片 SVG 统一使用中性前景与灰色底框。 -->
     <div class="sb-overview" aria-label="sing-box 配置总览">
       <button type="button" @click="tab = 'topology'">
-        <span class="sb-icon">机</span><span><b>{{ machines.length }}</b><small>运行机器 · 本机 {{ servers.length ? '+ 远程' : '' }}</small></span>
+        <span class="sb-icon"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 20h8M12 17v3"/></svg></span><span><b>{{ machines.length }}</b><small>运行机器 · 本机 {{ servers.length ? '+ 远程' : '' }}</small></span>
       </button>
       <button type="button" @click="tab = 'tls'">
-        <span class="sb-icon mint">盾</span><span><b>{{ tlsList.length }}</b><small>TLS 配置 · 证书 {{ certList.length }}</small></span>
+        <span class="sb-icon"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 19 6v5c0 4.5-2.8 7.8-7 10-4.2-2.2-7-5.5-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span><span><b>{{ tlsList.length }}</b><small>TLS 配置 · 证书 {{ certList.length }}</small></span>
       </button>
       <button type="button" @click="tab = 'inbounds'">
-        <span class="sb-icon amber">入</span><span><b>{{ enabledInboundCount }} / {{ inbounds.length }}</b><small>启用入站 / 全部入站</small></span>
+        <span class="sb-icon"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M12 2v10m0 0-4-4m4 4 4-4"/></svg></span><span><b>{{ enabledInboundCount }} / {{ inbounds.length }}</b><small>启用入站 / 全部入站</small></span>
       </button>
       <button type="button" @click="tab = 'egress'">
-        <span class="sb-icon violet">出</span><span><b>{{ egresses.length }}</b><small>代理出口 · 绑定 {{ egressBoundCount }} 入站</small></span>
+        <span class="sb-icon"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M12 12V2m0 0-4 4m4-4 4 4"/></svg></span><span><b>{{ egresses.length }}</b><small>代理出口 · 绑定 {{ egressBoundCount }} 入站</small></span>
       </button>
       <button type="button" @click="tab = 'topology'">
-        <span class="sb-icon" :class="syncFailedCount ? 'danger' : 'ok'">同步</span><span><b>{{ syncHealthyCount }} / {{ machines.length }}</b><small>{{ syncFailedCount ? `${syncFailedCount} 台下发失败` : '机器同步状态正常' }}</small></span>
+        <span class="sb-icon"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7v5h-5"/><path d="M4 17v-5h5"/><path d="M6.2 9A7 7 0 0 1 19 7l1 1M4 16l1 1a7 7 0 0 0 12.8-2"/></svg></span><span><b>{{ syncHealthyCount }} / {{ machines.length }}</b><small>{{ syncFailedCount ? `${syncFailedCount} 台下发失败` : '机器同步状态正常' }}</small></span>
       </button>
     </div>
-    <n-tabs v-model:value="tab" animated @update:value="onTabChange">
+    <!-- 二级切换路由：活动线由活动页签自身绘制，避免窄屏导航滚动层裁切。 -->
+    <n-tabs v-model:value="tab" animated class="route-switch-2" @update:value="onTabChange">
       <n-tab-pane name="tls" tab="TLS 配置">
         <div class="page-toolbar">
+          <!-- 填写框 -->
           <n-input v-model:value="tlsSearch" placeholder="搜索名称/SNI" size="small" clearable style="width:200px;max-width:50%;" />
           <span class="spacer" />
           <n-button size="small" @click="toggleAllMachines">{{ allExpanded ? '全部折叠' : '全部展开' }}</n-button>
-          <n-button size="small" type="primary" @click="openTls()">添加 TLS</n-button>
+          <n-button size="small" type="primary" class="highlight-arc-button" @click="openTls()">添加 TLS</n-button>
         </div>
         <n-spin :show="loading">
           <n-collapse v-if="tlsGroups.length" v-model:expanded-names="expandedMachines" arrow-placement="left" class="machine-list">
@@ -44,14 +49,15 @@
               <template #header>
                 <div class="machine-head">
                   <span class="machine-name">{{ g.machine.name }}</span>
-                  <n-tag size="tiny" :type="g.machine.isLocal ? 'info' : 'default'" :bordered="false">{{ g.machine.isLocal ? '本机' : '远程' }}</n-tag>
+                  <!-- 区分-身份牌：本机/远程是位置身份，不使用状态色。 -->
+                  <n-tag size="tiny" class="identity-badge" :bordered="false">{{ g.machine.isLocal ? '本机' : '远程' }}</n-tag>
                   <span class="machine-host">{{ dispHost(g.machine.host) }}</span>
                 </div>
               </template>
               <template #header-extra>
                 <div class="machine-extra" @click.stop>
                   <n-tag size="tiny" :type="g.total ? 'success' : 'default'" :bordered="false">{{ g.total }} 项</n-tag>
-                  <n-button size="tiny" type="primary" @click="openTlsFor(g.machine.id)">＋ TLS</n-button>
+                  <n-button size="tiny" type="primary" class="highlight-arc-button" @click="openTlsFor(g.machine.id)">＋ TLS</n-button>
                 </div>
               </template>
               <div v-if="g.items.length" class="card-grid">
@@ -90,13 +96,14 @@
       <n-tab-pane name="inbounds" tab="入站">
         <div class="page-toolbar">
           <n-input v-model:value="inbSearch" placeholder="搜索 tag/协议" size="small" clearable style="width:160px;max-width:40%;" />
+          <!-- 下拉选择菜单：一键模板弹层复用顶栏菜单外框、配色与动效，触发器不改。 -->
           <n-select v-model:value="presetType" :options="presetOpts" placeholder="一键模板" size="small" style="width:180px;" @update:value="applyPreset" />
           <span class="spacer" />
           <n-button v-if="checkedIds.size" size="small" @click="batchToggle(true)">批量启用</n-button>
           <n-button v-if="checkedIds.size" size="small" @click="batchToggle(false)">批量停用</n-button>
           <n-button v-if="checkedIds.size" size="small" type="error" @click="batchDelete">批量删除</n-button>
           <n-button size="small" @click="toggleAllMachines">{{ allExpanded ? '全部折叠' : '全部展开' }}</n-button>
-          <n-button size="small" type="primary" @click="openInbound()">添加入站</n-button>
+          <n-button size="small" type="primary" class="highlight-arc-button" @click="openInbound()">添加入站</n-button>
         </div>
         <n-spin :show="loading">
           <n-collapse v-if="inboundGroups.length" v-model:expanded-names="expandedMachines" arrow-placement="left" class="machine-list">
@@ -104,7 +111,8 @@
               <template #header>
                 <div class="machine-head">
                   <span class="machine-name">{{ g.machine.name }}</span>
-                  <n-tag size="tiny" :type="g.machine.isLocal ? 'info' : 'default'" :bordered="false">{{ g.machine.isLocal ? '本机' : '远程' }}</n-tag>
+                  <!-- 区分-身份牌：本机/远程是位置身份，不使用状态色。 -->
+                  <n-tag size="tiny" class="identity-badge" :bordered="false">{{ g.machine.isLocal ? '本机' : '远程' }}</n-tag>
                   <span class="machine-host">{{ dispHost(g.machine.host) }}</span>
                   <n-tag v-if="!g.machine.enabled" size="tiny" type="warning" :bordered="false">已禁用</n-tag>
                 </div>
@@ -113,7 +121,7 @@
                 <div class="machine-extra" @click.stop>
                   <n-tag size="tiny" :type="g.enabledCount ? 'success' : 'default'" :bordered="false">启用 {{ g.enabledCount }} / {{ g.total }}</n-tag>
                   <n-button size="tiny" @click="previewMachine(g.machine.id)">预览</n-button>
-                  <n-button size="tiny" type="primary" @click="openInboundFor(g.machine.id)">＋ 入站</n-button>
+                  <n-button size="tiny" type="primary" class="highlight-arc-button" @click="openInboundFor(g.machine.id)">＋ 入站</n-button>
                 </div>
               </template>
               <div v-if="g.items.length" class="card-grid">
@@ -158,7 +166,7 @@
         <div class="page-toolbar">
           <span class="spacer" />
           <n-button size="small" @click="openEgressImport()">粘贴导入</n-button>
-          <n-button size="small" type="primary" @click="openEgress()">添加出口</n-button>
+          <n-button size="small" type="primary" class="highlight-arc-button" @click="openEgress()">添加出口</n-button>
         </div>
         <n-spin :show="loading">
           <div v-if="egresses.length" class="card-grid">
@@ -226,7 +234,8 @@
             <div v-for="g in inboundGroups" :key="g.machine.id" class="topo-machine">
               <div class="topo-mhead">
                 <span class="machine-name">{{ g.machine.name }}</span>
-                <n-tag size="tiny" :type="g.machine.isLocal ? 'info' : 'default'" :bordered="false">{{ g.machine.isLocal ? '本机' : '远程' }}</n-tag>
+                <!-- 区分-身份牌：本机/远程是位置身份，不使用状态色。 -->
+                <n-tag size="tiny" class="identity-badge" :bordered="false">{{ g.machine.isLocal ? '本机' : '远程' }}</n-tag>
                 <span class="machine-host">{{ dispHost(g.machine.host) }}</span>
                 <n-tag v-if="syncBadge(g.machine.id)" size="tiny" :type="syncBadge(g.machine.id)!.type" :bordered="false">
                   {{ syncBadge(g.machine.id)!.text }}
@@ -272,6 +281,7 @@
                 <span class="topo-node inet">🌐 互联网</span>
                 <span class="topo-actions">
                   <n-button v-if="!r.upstream_inbound_id && !r.egress_id" class="primary-quiet" size="tiny" quaternary type="primary" @click="addLandingAfter(r)">＋ 串联落地</n-button>
+                  <!-- 下拉选择菜单：挂出口的 popselect 弹层与全局 n-select 菜单统一，触发按钮不改。 -->
                   <n-popselect v-if="!r.upstream_inbound_id && !r.egress_id && egresses.length" :options="egressPopOpts" class="qz-wide-menu" scrollable @update:value="(v: number) => attachEgress(r, v)">
                     <n-button class="primary-quiet" size="tiny" quaternary type="primary">＋ 挂出口</n-button>
                   </n-popselect>
@@ -291,7 +301,7 @@
           <span class="spacer" />
           <n-button size="small" :loading="checkLoading" :disabled="!previewJson" @click="runCheck">正确性检查</n-button>
           <n-button size="small" :disabled="!previewJson" @click="copyPreview">复制配置</n-button>
-          <n-button size="small" type="primary" :loading="previewLoading" @click="loadPreview">刷新预览</n-button>
+          <n-button size="small" type="primary" class="highlight-arc-button" :loading="previewLoading" @click="loadPreview">刷新预览</n-button>
         </div>
         <!-- 这条提醒不能省：这一页把打码开关做出来，就会有人以为「打了码=可以截图」。
              打码只处理地址，配置里的 Reality 私钥、SS/Trojan 密码、用户 UUID 全是明文。 -->
@@ -367,7 +377,7 @@
               </div>
             </n-form-item>
             <n-form-item>
-              <n-button type="primary" @click="genKeys" :loading="genLoading">一键生成 Reality 密钥对</n-button>
+              <n-button type="primary" class="highlight-arc-button" @click="genKeys" :loading="genLoading">一键生成 Reality 密钥对</n-button>
             </n-form-item>
             <n-form-item label="私钥"><n-input :value="te.private_key" readonly placeholder="点击上方按钮生成" @click="copy(te.private_key)" style="cursor:pointer;" /></n-form-item>
             <n-form-item label="公钥"><n-input :value="te.public_key" readonly placeholder="点击上方按钮生成" @click="copy(te.public_key)" style="cursor:pointer;" /></n-form-item>
@@ -410,7 +420,7 @@
                     <n-input v-if="acme.method === 'webroot'" v-model:value="acme.webroot" placeholder="网站根目录，如 /var/www/html（nginx 该域名 root）" />
                     <span v-if="acme.method === 'http-01'" style="font-size:11px;color:var(--text-3);">若本机已用 nginx 占用 80 端口，standalone 会失败——请改用 Cloudflare DNS 或 Webroot。</span>
                     <n-input v-model:value="acme.email" placeholder="账户邮箱（可选，建议填写）" />
-                    <n-button type="primary" :loading="acmeLoading" @click="requestAcme">申请证书（域名取上方 SNI，名称取上方名称）</n-button>
+                    <n-button type="primary" class="highlight-arc-button" :loading="acmeLoading" @click="requestAcme">申请证书（域名取上方 SNI，名称取上方名称）</n-button>
                     <span style="font-size:11px;color:var(--text-3);">申请成功后证书写入本机固定路径，sing-box 以 certificate_path 引用；续期由 acme.sh 的 cron 自动完成。远程服务器暂不支持在线申请。</span>
                   </div>
                 </n-collapse-item>
@@ -427,7 +437,7 @@
             <n-form-item label="允许不安全"><n-switch v-model:value="te.insecure" /></n-form-item>
           </template>
         </n-form>
-        <n-button type="primary" block :loading="saving" @click="saveTls">保存</n-button>
+        <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="saveTls">保存</n-button>
       </n-drawer-content>
     </n-drawer>
 
@@ -525,7 +535,7 @@
             </n-form-item>
           </template>
         </n-form>
-        <n-button type="primary" block :loading="saving" @click="saveEgress">保存</n-button>
+        <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="saveEgress">保存</n-button>
       </n-drawer-content>
     </n-drawer>
 
@@ -561,7 +571,7 @@
           <div v-if="egImportItems.some((x: any) => x.type_guessed)" class="form-tip" style="margin:6px 0;">
             带 <b>?</b> 的类型是按端口猜的，请对照供应商说明确认。
           </div>
-          <n-button type="primary" block :loading="egImporting" style="margin-top:10px;" @click="doEgressImport">
+          <n-button type="primary" class="highlight-arc-button" block :loading="egImporting" style="margin-top:10px;" @click="doEgressImport">
             导入这 {{ egImportItems.length }} 条
           </n-button>
         </template>
@@ -695,7 +705,7 @@
             </template>
           </template>
         </n-form>
-        <n-button type="primary" block :loading="saving" @click="saveInbound">保存</n-button>
+        <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="saveInbound">保存</n-button>
       </n-drawer-content>
     </n-drawer>
   </div>
@@ -720,8 +730,8 @@ const quickCertLoading = ref(false)
 // 截图发群里就漏了。选择记在 localStorage，免得每次进来都要再点一次。
 const IP_KEY = 'qz.sb.showIp'
 const showIp = ref(localStorage.getItem(IP_KEY) === '1')
-function toggleIp() {
-  showIp.value = !showIp.value
+function setShowIp(value: boolean) {
+  showIp.value = value
   try { localStorage.setItem(IP_KEY, showIp.value ? '1' : '0') } catch {}
 }
 // 长下拉统一配置：选项名普遍很长（「入站 · 协议 @ 机器」「名称 · 类型 地址:端口」），
@@ -1782,19 +1792,19 @@ async function load() {
 .page-head { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
 .page-head .page-title { margin: 0; }
 .page-head .page-sub { margin:4px 0 0; }
-.page-head .n-button { margin-left: auto; }
+.ip-visibility-toggle { display:flex; align-items:center; gap:8px; margin-left:auto; color:var(--text-2); font-size:13px; line-height:20px; }
 .page-title { font-size: 21px; margin-bottom: 16px; }
+/* 展示卡片 */
 .sb-overview { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin-bottom:18px; }
-.sb-overview button { display:flex; align-items:center; gap:10px; min-width:0; padding:11px 12px; border:1px solid var(--border); border-radius:12px; background:var(--card); color:inherit; text-align:left; font:inherit; box-shadow:var(--shadow-xs); cursor:pointer; transition:transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease, border-color .2s ease; }
-.sb-overview button:hover { border-color:var(--accent); background:var(--accent-subtle); box-shadow:var(--shadow-sm); }
+.sb-overview button { display:flex; align-items:center; gap:10px; min-width:0; padding:11px 12px; border:0; border-radius:12px; background:var(--card); color:inherit; text-align:left; font:inherit; box-shadow:none; cursor:pointer; transition:box-shadow .25s ease; transform:none; opacity:1; }
+.sb-overview button:hover { background:var(--card); box-shadow:0 8px 28px rgba(0, 0, 0, 0.08); transform:none; opacity:1; }
+.sb-overview button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; box-shadow:none; }
 .sb-overview button > span:last-child { display:flex; min-width:0; flex-direction:column; }
 .sb-overview b { color:var(--text); font-size:18px; line-height:1.15; letter-spacing:-.02em; }
 .sb-overview small { overflow:hidden; margin-top:3px; color:var(--text-3); font-size:10.5px; white-space:nowrap; text-overflow:ellipsis; }
-.sb-icon { display:grid; place-items:center; flex:none; width:32px; height:32px; border-radius:10px; background:#e8eef3; color:#52606c; font-size:10px; font-weight:700; }
-.sb-icon.mint,.sb-icon.ok { background:#e5f3ed; color:#39715a; }
-.sb-icon.amber { background:#f8efdc; color:#89651f; }
-.sb-icon.violet { background:#eeeaf5; color:#685484; }
-.sb-icon.danger { background:#f7e8e6; color:#a24d48; }
+/* 卡片 SVG：统一中性前景与首页摘要卡同款灰色底框。 */
+.sb-icon { display:grid; place-items:center; flex:none; width:32px; height:32px; border-radius:10px; background:var(--bg-subtle); color:var(--text-2); }
+.sb-icon svg { width:18px; height:18px; }
 :deep(.n-drawer-content-body) { display: flex; flex-direction: column; }
 
 .form-tip { font-size: 12px; color: var(--text-3, #999); margin-top: 4px; line-height: 1.5; }
@@ -1924,25 +1934,23 @@ async function load() {
   overflow: auto;
 }
 
-/* 按机器分组：克制的白卡 + 浅描边，与全站一致 */
+/* 按机器分组：作为一级模块内的二级内容，使用页面背景且不绘制卡片边框。 */
+.machine-list { width: auto; margin-inline: 12px; }
 .machine-list :deep(.n-collapse-item) {
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  border: 0 !important;
+  border-radius: 0;
   margin-bottom: 12px;
-  background: var(--card);
-  overflow: hidden;
+  background: var(--bg);
 }
 .machine-list :deep(.n-collapse-item:not(:first-child)) { margin-top: 0; }
 .machine-list :deep(.n-collapse-item__header) {
   padding: 12px 14px !important;
-  border-radius: 12px 12px 0 0;
-}
-.machine-list :deep(.n-collapse-item--active > .n-collapse-item__header) {
-  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  border-bottom: 0 !important;
 }
 .machine-list :deep(.n-collapse-item__content-inner) {
   padding: 14px !important;
-  background: var(--bg-soft);
+  background: var(--bg);
 }
 /* 折叠的 ACME 区块：轻量收纳 */
 .acme-collapse { border: 1px solid var(--border); border-radius: 8px; background: var(--bg-soft); padding: 2px 12px; }
@@ -1953,6 +1961,7 @@ async function load() {
 .machine-name { font-weight: 650; font-size: 15px; color: var(--text); }
 .machine-host { font-size: 12px; color: var(--text-3); }
 .machine-extra { display: flex; align-items: center; gap: 6px; }
+.identity-badge { background:var(--card-hover) !important; color:var(--text-2) !important; border-color:transparent !important; font-weight:600; }
 @media (max-width: 640px) {
   .sb-overview { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .sb-overview button:last-child { grid-column:1 / -1; }

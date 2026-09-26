@@ -42,11 +42,50 @@ type edgeUsageBucket struct {
 	day   string
 }
 
-func edgeUsageDay(ts int64) string {
+func edgeUsageTotals(buckets []edgeUsageBucket, today string) EdgeRequestTotals {
+	var out EdgeRequestTotals
+	for _, b := range buckets {
+		if b.day == today {
+			out.Used += b.used
+		}
+		if b.limit == 0 {
+			out.Unlimited = true
+		} else {
+			out.Total += b.limit
+		}
+	}
+	if !out.Unlimited && out.Total > out.Used {
+		out.Remaining = out.Total - out.Used
+	}
+	return out
+}
+
+// EdgeRequestTotalsFromBuckets applies the persisted quota rules to an already
+// loaded bucket snapshot.
+func EdgeRequestTotalsFromBuckets(buckets []*Bucket, now int64) EdgeRequestTotals {
+	usageBuckets := make([]edgeUsageBucket, 0, len(buckets))
+	for _, b := range buckets {
+		if b.Kind != "plan" || b.Status != "active" || !b.NotExpired(now) {
+			continue
+		}
+		usageBuckets = append(usageBuckets, edgeUsageBucket{
+			limit: b.EdgeRequestLimit,
+			used:  b.EdgeRequestsUsed,
+			day:   b.EdgeUsageDay,
+		})
+	}
+	return edgeUsageTotals(usageBuckets, edgeUsageDayAt(now))
+}
+
+func edgeUsageDay(ts int64, now int64) string {
 	if ts <= 0 {
-		return time.Now().UTC().Format(edgeUsageDayLayout)
+		return edgeUsageDayAt(now)
 	}
 	return time.Unix(ts, 0).UTC().Format(edgeUsageDayLayout)
+}
+
+func edgeUsageDayAt(now int64) string {
+	return time.Unix(now, 0).UTC().Format(edgeUsageDayLayout)
 }
 
 func validEdgeUsageDay(day string) bool {
@@ -63,7 +102,9 @@ func (s *Store) ApplyEdgeUsageBatch(batch EdgeUsageBatch) ([]string, int, error)
 	if batch.Source != "edgetunnel" || strings.TrimSpace(batch.BatchID) == "" || len(batch.BatchID) > 128 || len(batch.Items) == 0 || len(batch.Items) > maxEdgeUsageItems {
 		return nil, 0, ErrInvalidEdgeUsageBatch
 	}
-	fallbackDay := edgeUsageDay(batch.PeriodStart)
+	now := time.Now().Unix()
+	today := edgeUsageDayAt(now)
+	fallbackDay := edgeUsageDay(batch.PeriodStart, now)
 	seen := make(map[string]struct{}, len(batch.Items))
 	for i := range batch.Items {
 		item := &batch.Items[i]
@@ -78,14 +119,18 @@ func (s *Store) ApplyEdgeUsageBatch(batch EdgeUsageBatch) ([]string, int, error)
 		if !validEdgeUsageDay(item.UsageDay) {
 			return nil, 0, ErrInvalidEdgeUsageBatch
 		}
-		seenKey := item.ExternalID + "\x00" + item.UsageDay
+		if item.UsageDay > today {
+			return nil, 0, ErrInvalidEdgeUsageBatch
+		}
+		userID, err := strconv.ParseInt(item.ExternalID, 10, 64)
+		if err != nil || userID <= 0 {
+			return nil, 0, ErrInvalidEdgeUsageBatch
+		}
+		seenKey := strconv.FormatInt(userID, 10) + "\x00" + item.UsageDay
 		if _, ok := seen[seenKey]; ok {
 			return nil, 0, ErrInvalidEdgeUsageBatch
 		}
 		seen[seenKey] = struct{}{}
-		if _, err := strconv.ParseInt(item.ExternalID, 10, 64); err != nil {
-			return nil, 0, ErrInvalidEdgeUsageBatch
-		}
 	}
 
 	tx, err := s.db.Begin()
@@ -101,7 +146,7 @@ func (s *Store) ApplyEdgeUsageBatch(batch EdgeUsageBatch) ([]string, int, error)
 
 	result, err := tx.Exec(`INSERT OR IGNORE INTO edge_request_batches
 		(batch_id, source, period_start, period_end, created_at) VALUES (?,?,?,?,?)`,
-		batch.BatchID, batch.Source, batch.PeriodStart, batch.PeriodEnd, time.Now().Unix())
+		batch.BatchID, batch.Source, batch.PeriodStart, batch.PeriodEnd, now)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -113,7 +158,6 @@ func (s *Store) ApplyEdgeUsageBatch(batch EdgeUsageBatch) ([]string, int, error)
 		return nil, 0, nil
 	}
 
-	now := time.Now().Unix()
 	blocked := make([]string, 0)
 	for _, item := range batch.Items {
 		userID, _ := strconv.ParseInt(item.ExternalID, 10, 64)
@@ -144,59 +188,67 @@ func (s *Store) ApplyEdgeUsageBatch(batch EdgeUsageBatch) ([]string, int, error)
 		}
 
 		remaining := item.Requests
-		for i := range buckets {
-			if remaining <= 0 {
+		stale := false
+		for _, bucket := range buckets {
+			if bucket.day > item.UsageDay {
+				stale = true
 				break
 			}
-			if buckets[i].day != item.UsageDay {
-				buckets[i].used = 0
+		}
+		if !stale {
+			for i := range buckets {
+				if remaining <= 0 {
+					break
+				}
+				if buckets[i].day != item.UsageDay {
+					buckets[i].used = 0
+					buckets[i].day = item.UsageDay
+				}
+				if buckets[i].limit == 0 {
+					buckets[i].used += remaining
+					if _, err := tx.Exec(`UPDATE user_plans SET edge_requests_used=?, edge_usage_day=?, updated_at=? WHERE id=?`, buckets[i].used, item.UsageDay, now, buckets[i].id); err != nil {
+						return nil, 0, err
+					}
+					remaining = 0
+					continue
+				}
+				available := buckets[i].limit - buckets[i].used
+				if available < 0 {
+					available = 0
+				}
+				take := remaining
+				if take > available {
+					take = available
+				}
+				if take > 0 {
+					buckets[i].used += take
+					if _, err := tx.Exec(`UPDATE user_plans SET edge_requests_used=?, edge_usage_day=?, updated_at=? WHERE id=?`, buckets[i].used, item.UsageDay, now, buckets[i].id); err != nil {
+						return nil, 0, err
+					}
+					remaining -= take
+				}
 			}
-			if buckets[i].limit == 0 {
-				buckets[i].used += remaining
-				if _, err := tx.Exec(`UPDATE user_plans SET edge_requests_used=?, edge_usage_day=?, updated_at=? WHERE id=?`, buckets[i].used, item.UsageDay, now, buckets[i].id); err != nil {
+			if remaining > 0 {
+				// Preserve the full provider count for the account even after the
+				// finite allowance is exhausted. The final bucket becomes visibly
+				// over-limit and the next subscription request is blocked.
+				last := buckets[len(buckets)-1]
+				if last.day != item.UsageDay {
+					last.used = 0
+					last.day = item.UsageDay
+				}
+				last.used += remaining
+				if _, err := tx.Exec(`UPDATE user_plans SET edge_requests_used=?, edge_usage_day=?, updated_at=? WHERE id=?`, last.used, item.UsageDay, now, last.id); err != nil {
 					return nil, 0, err
 				}
-				remaining = 0
-				continue
-			}
-			available := buckets[i].limit - buckets[i].used
-			if available < 0 {
-				available = 0
-			}
-			take := remaining
-			if take > available {
-				take = available
-			}
-			if take > 0 {
-				buckets[i].used += take
-				if _, err := tx.Exec(`UPDATE user_plans SET edge_requests_used=?, edge_usage_day=?, updated_at=? WHERE id=?`, buckets[i].used, item.UsageDay, now, buckets[i].id); err != nil {
-					return nil, 0, err
-				}
-				remaining -= take
 			}
 		}
-		if remaining > 0 {
-			// Preserve the full provider count for the account even after the
-			// finite allowance is exhausted. The final bucket becomes visibly
-			// over-limit and the next subscription request is blocked.
-			last := buckets[len(buckets)-1]
-			if last.day != item.UsageDay {
-				last.used = 0
-			}
-			last.used += remaining
-			if _, err := tx.Exec(`UPDATE user_plans SET edge_requests_used=?, edge_usage_day=?, updated_at=? WHERE id=?`, last.used, item.UsageDay, now, last.id); err != nil {
-				return nil, 0, err
-			}
+		totalsDay := item.UsageDay
+		if stale {
+			totalsDay = today
 		}
-		var total, used int64
-		var unlimited int
-		if err := tx.QueryRow(`SELECT COALESCE(SUM(edge_request_limit),0), COALESCE(SUM(CASE WHEN edge_usage_day=? THEN edge_requests_used ELSE 0 END),0),
-			COALESCE(MAX(CASE WHEN edge_request_limit=0 THEN 1 ELSE 0 END),0)
-			FROM user_plans WHERE user_id=? AND kind='plan' AND status='active'
-			AND (expiry_at=0 OR expiry_at>?)`, item.UsageDay, userID, now).Scan(&total, &used, &unlimited); err != nil {
-			return nil, 0, err
-		}
-		if unlimited == 0 && total > 0 && used >= total {
+		totals := edgeUsageTotals(buckets, totalsDay)
+		if !totals.Unlimited && totals.Total > 0 && totals.Used >= totals.Total {
 			blocked = append(blocked, item.ExternalID)
 		}
 	}
@@ -209,21 +261,26 @@ func (s *Store) ApplyEdgeUsageBatch(batch EdgeUsageBatch) ([]string, int, error)
 }
 
 func (s *Store) EdgeRequestTotals(userID int64) (EdgeRequestTotals, error) {
-	var out EdgeRequestTotals
-	var unlimited int
-	day := edgeUsageDay(0)
-	err := s.db.QueryRow(`SELECT COALESCE(SUM(edge_request_limit),0), COALESCE(SUM(CASE WHEN edge_usage_day=? THEN edge_requests_used ELSE 0 END),0),
-		COALESCE(MAX(CASE WHEN edge_request_limit=0 THEN 1 ELSE 0 END),0)
+	now := time.Now().Unix()
+	rows, err := s.db.Query(`SELECT edge_request_limit, edge_requests_used, edge_usage_day
 		FROM user_plans WHERE user_id=? AND kind='plan' AND status='active'
-		AND (expiry_at=0 OR expiry_at>?)`, day, userID, time.Now().Unix()).Scan(&out.Total, &out.Used, &unlimited)
+		AND (expiry_at=0 OR expiry_at>?)`, userID, now)
 	if err != nil {
-		return out, err
+		return EdgeRequestTotals{}, err
 	}
-	out.Unlimited = unlimited != 0
-	if !out.Unlimited && out.Total > out.Used {
-		out.Remaining = out.Total - out.Used
+	defer rows.Close()
+	buckets := make([]edgeUsageBucket, 0)
+	for rows.Next() {
+		var b edgeUsageBucket
+		if err := rows.Scan(&b.limit, &b.used, &b.day); err != nil {
+			return EdgeRequestTotals{}, err
+		}
+		buckets = append(buckets, b)
 	}
-	return out, nil
+	if err := rows.Err(); err != nil {
+		return EdgeRequestTotals{}, err
+	}
+	return edgeUsageTotals(buckets, edgeUsageDayAt(now)), nil
 }
 
 func (s *Store) EdgeRequestTotalsForUsers(userIDs []int64) (map[int64]EdgeRequestTotals, error) {

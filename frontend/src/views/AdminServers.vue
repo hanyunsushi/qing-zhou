@@ -2,7 +2,7 @@
   <div>
     <div class="page-head">
       <div><h2 class="page-title">服务器管理</h2><p class="page-sub">远程机器、SSH 接管、探针与 sing-box 运行版本</p></div>
-      <div class="page-actions"><n-button type="primary" @click="openForm()">添加服务器</n-button></div>
+      <div class="page-actions"><!-- 高亮弧边按钮：页面级主操作统一复用强调按钮合同。 --><n-button type="primary" class="action-button action-button--emphasis" @click="openForm()">添加服务器</n-button></div>
     </div>
     <div class="resource-overview">
       <div class="resource-metric"><b>{{ servers.length }}</b><span>全部远程服务器</span></div>
@@ -33,7 +33,8 @@
             <span class="nv-ver">{{ n.version || '—' }}</span>
             <n-tag v-if="n.too_old" type="error" size="tiny" :bordered="false">版本过低</n-tag>
             <n-tag v-else-if="!n.version" type="default" size="tiny" :bordered="false">未知</n-tag>
-            <n-tag v-if="n.version && !n.has_v2ray_api" type="warning" size="tiny" :bordered="false">无流量统计</n-tag>
+            <!-- 卡片-状态牌：无流量统计是能力状态，使用原文本次级色底与白字。 -->
+            <n-tag v-if="n.version && !n.has_v2ray_api" size="tiny" :bordered="false" class="card-status-badge">无流量统计</n-tag>
           </div>
           <div class="nv-side">
             <span v-if="n.checked_at" class="nv-time">{{ fmtDateTime(n.checked_at) }}</span>
@@ -89,6 +90,7 @@
 
     <n-modal v-model:show="showForm" preset="card" :title="editing?'编辑服务器':'添加服务器'" style="max-width:560px;">
       <n-form label-placement="left" label-width="100">
+        <!-- 填写框 -->
         <n-form-item label="名称"><n-input v-model:value="form.name" /></n-form-item>
         <n-form-item label="主机"><n-input v-model:value="form.host" placeholder="IP 或域名" /></n-form-item>
         <n-form-item label="SSH 端口"><n-input-number v-model:value="form.port" :min="1" :max="65535" style="width:100%;" /></n-form-item>
@@ -133,7 +135,7 @@
         <n-form-item label="启用"><n-switch v-model:value="form.enabled" /></n-form-item>
       </n-form>
       <n-space>
-        <n-button type="primary" :loading="saving" @click="handleSave">保存</n-button>
+        <n-button type="primary" class="highlight-arc-button" :loading="saving" @click="handleSave">保存</n-button>
         <n-button @click="handleTest" :loading="testing">测试连接</n-button>
       </n-space>
     </n-modal>
@@ -145,6 +147,7 @@
             <n-alert v-if="trafficIncomplete" type="warning" :bordered="false" style="margin-bottom:14px;">
               当前周期的设备流量仅从 {{ fmtDateTime(trafficAnalysis.usage.coverage_start) }} 开始采集；未校准前，周期总量和容量预估可能偏低。
             </n-alert>
+            <!-- 展示卡片 -->
             <div class="traffic-summary-grid">
               <div class="traffic-summary-card"><span>本周期已用</span><b>{{ fmtBytes(trafficAnalysis.usage.total) }}</b><small>{{ trafficModeLabel(trafficAnalysis.accounting_mode) }}</small></div>
               <div class="traffic-summary-card"><span>剩余流量</span><b>{{ trafficAnalysis.limit_bytes > 0 ? fmtBytes(trafficRemaining) : '未设上限' }}</b><small>重置 {{ fmtDateTime(trafficAnalysis.next_reset) }}</small></div>
@@ -204,7 +207,7 @@ import { ref, reactive, computed, onMounted, onUnmounted, nextTick, shallowRef, 
 import { NSpin, NButton, NModal, NForm, NFormItem, NInput, NInputNumber, NSwitch, NSpace, NTag, NEmpty, NCard, NSelect, NRadioGroup, NRadioButton, NDrawer, NDrawerContent, NAlert, NProgress, useMessage, useDialog } from 'naive-ui'
 import { apiList, apiPost, apiPut, apiDelete, apiGet } from '@/api'
 import { fmtBytes, fmtDateTime, pct } from '@/utils/format'
-import * as echarts from 'echarts'
+import * as echarts from '@/utils/echarts'
 const message = useMessage()
 const dialog = useDialog()
 const servers = ref<any[]>([])
@@ -433,6 +436,7 @@ onUnmounted(() => trafficChart.value?.dispose())
 </script>
 
 <style scoped>
+.card-status-badge { background:var(--text-2) !important; color:#fff !important; border-color:transparent !important; font-weight:600; }
 .nv-note { font-size:12px; color:var(--text-3); line-height:1.75; margin:0 0 12px; }
 .nv-list { display:flex; flex-direction:column; gap:2px; }
 .nv-row {
@@ -459,10 +463,14 @@ onUnmounted(() => trafficChart.value?.dispose())
 .lc-order { display:flex; align-items:center; gap:3px; }
 .order-no { display:inline-grid; place-items:center; width:20px; height:20px; border-radius:6px; background:var(--bg-soft); color:var(--text-3); font-size:10px; font-style:normal; font-variant-numeric:tabular-nums; }
 .traffic-summary-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
-.traffic-summary-card { min-width:0; padding:13px 14px; border:1px solid var(--border); border-radius:12px; background:var(--bg-soft); }
+/* 展示卡片 */
+.traffic-summary-card { min-width:0; padding:13px 14px; border:1px solid var(--border); border-radius:12px; background:var(--bg-soft); box-shadow:none; transition:box-shadow .25s ease; transform:none; opacity:1; }
+/* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 */
+.traffic-summary-card:hover, .traffic-summary-card:focus-visible { border-color:var(--border); background:var(--bg-soft); box-shadow:0 8px 28px rgba(0, 0, 0, 0.08); transform:none; opacity:1; }
 .traffic-summary-card span,.traffic-summary-card small { display:block; color:var(--text-3); font-size:10px; }
 .traffic-summary-card b { display:block; margin:4px 0 2px; color:var(--text); font-size:18px; font-variant-numeric:tabular-nums; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .traffic-summary-card.capacity { background:var(--success-soft); }
+.traffic-summary-card.capacity:hover, .traffic-summary-card.capacity:focus-visible { background:var(--success-soft); box-shadow:0 8px 28px rgba(0, 0, 0, 0.08); }
 .quota-overview { margin-top:12px; padding:13px 14px; border:1px solid var(--border); border-radius:12px; }
 .quota-overview>div { display:flex; justify-content:space-between; margin-bottom:7px; font-size:12px; }
 .quota-overview p { margin:7px 0 0; color:var(--text-3); font-size:11px; line-height:1.6; }

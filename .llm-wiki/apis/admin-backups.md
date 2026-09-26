@@ -1,6 +1,6 @@
 ---
 title: Admin Remote Backups API
-updated: 2026-09-17
+updated: 2026-09-25
 ---
 
 # Admin Remote Backups API
@@ -35,6 +35,10 @@ retained. A zero retention value disables that respective limit. Failed deletes
 are kept in the local record list so an object-store outage does not silently
 forget remote data. The feature deliberately does not expose browser-driven
 restore, avoiding accidental overwrite of the production SQLite database.
+
+The manager serializes shutdown with backup launch: `Stop` blocks new runs
+before waiting, and workers are registered before launch-time database record
+work. The shutdown wait therefore cannot race an in-progress launch.
 
 When `QZ_BACKUP_MANIFEST` names a valid server-controlled JSON allowlist, the
 same snapshot is packed as a `.tar.gz` recovery package with selected runtime

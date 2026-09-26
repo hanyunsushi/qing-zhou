@@ -5,7 +5,21 @@ updated: 2026-09-18
 
 # System Overview
 
-QingZhou is a Go/SQLite service with a Vue 3 administrative UI. Admin routes are authenticated by JWT/cookie session and `requireAdmin`; the front-end uses the unified `{code,msg,data}` API envelope.
+QingZhou is a Go/SQLite service with a Vue 3 administrative UI. Admin routes are authenticated by the backend's seven-day HttpOnly `qz_token` cookie and `requireAdmin`; the frontend does not persist or resend JWTs from JavaScript and uses the unified `{code,msg,data}` API envelope.
+
+## Local preview lifecycle
+
+The local preview uses the workspace database at `.local/qingzhou.db`. The Go
+preview listens on `127.0.0.1:8081`, while the Vite development server listens
+on `127.0.0.1:5173` and proxies `/api` and `/sub` to the Go service. Both are
+kept outside the task terminal by the user-level LaunchAgents
+`com.hinaw.qingzhou-preview` and `com.hinaw.qingzhou-preview-frontend`; this
+prevents a Codex task ending from taking down the API while the browser still
+has the Vite page open. The database-stored JWT signing key and HttpOnly cookie
+therefore survive a preview process restart. The preview service exposes the
+Homebrew `sing-box` PATH, but the installed build currently lacks
+`with_v2ray_api`; that can prevent automatic sing-box apply while leaving panel
+health and auth available.
 
 The public bootstrap configuration also carries the non-sensitive site name,
 description and optional `brand_icon_data_uri`. The shared front-end config

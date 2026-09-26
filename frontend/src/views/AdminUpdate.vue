@@ -4,7 +4,7 @@
     <p class="page-sub">检查版本、查看发布说明、安装指定版本与离线回滚</p>
 
     <n-spin :show="loading">
-      <!-- 版本概览 -->
+      <!-- 版本概览：展示卡片 -->
       <div class="ver-grid">
         <div class="ver-card">
           <div class="ver-label">当前版本</div>
@@ -25,13 +25,16 @@
           <template #icon><n-icon><RefreshOutline /></n-icon></template>
           检查更新
         </n-button>
+        <!-- 项目超链接：发布页入口使用全局 Apple 蓝链接合同。 -->
         <a v-if="info?.url" :href="info.url" target="_blank" rel="noopener" class="release-link">
           在 GitHub 查看发布页 ↗
         </a>
         <span class="spacer" />
+        <!-- 高亮弧边按钮：仅调整正常态；禁用态保留 Naive UI 默认样式，作为禁用态模板。 -->
         <n-button
           v-if="info?.update_available"
           type="primary"
+          class="highlight-arc-button"
           :disabled="updating || !info.downloadable"
           :loading="updating"
           @click="confirmUpdate"
@@ -40,9 +43,9 @@
         </n-button>
       </div>
 
-      <n-alert v-if="info && info.update_available && !info.downloadable" type="warning" style="margin-top:8px;">
+      <InfoNotice v-if="info && info.update_available && !info.downloadable" class="info-notice--update">
         最新发布未提供适配当前服务器架构的二进制（{{ info.asset_name }}），无法一键更新。请手动升级或补充对应架构的构建产物。
-      </n-alert>
+      </InfoNotice>
 
       <!-- 回滚：不联网，发布翻车时唯一还能走的路径 -->
       <div class="rb-box">
@@ -78,6 +81,8 @@
           请先到「系统设置 → 数据备份」下载一份快照。
         </p>
         <div v-if="releases.length" class="rel-pick">
+          <!-- 填写框 -->
+          <!-- 下拉选择菜单：版本选择弹层复用顶栏菜单合同，触发选择器保持原样。 -->
           <n-select
             v-model:value="selectedTag"
             :options="releaseOptions"
@@ -91,15 +96,15 @@
             @click="confirmInstall"
           >安装此版本</n-button>
         </div>
-        <n-alert v-if="selectedRelease && !selectedRelease.downloadable" type="warning" style="margin-top:8px;">
+        <InfoNotice v-if="selectedRelease && !selectedRelease.downloadable" class="info-notice--update">
           该版本未提供适配当前架构的二进制（{{ info?.asset_name }}），无法一键安装。
-        </n-alert>
-        <n-alert v-else-if="selectedRelease?.relation === 'older'" type="warning" style="margin-top:8px;">
+        </InfoNotice>
+        <InfoNotice v-else-if="selectedRelease?.relation === 'older'" class="info-notice--update">
           这是一次<b>降级</b>：{{ info?.current }} → {{ selectedRelease.tag }}。请确认已了解上面关于数据库的说明。
-        </n-alert>
-        <n-alert v-else-if="selectedRelease?.prerelease" type="warning" style="margin-top:8px;">
+        </InfoNotice>
+        <InfoNotice v-else-if="selectedRelease?.prerelease" class="info-notice--update">
           {{ selectedRelease.tag }} 是预发布版本，不建议用于生产。
-        </n-alert>
+        </InfoNotice>
       </div>
 
       <!-- 更新进度 -->
@@ -127,15 +132,16 @@
       </div>
     </n-spin>
 
-    <n-alert type="info" style="margin-top:16px;">
+    <InfoNotice class="info-notice--update-flow">
       更新流程：从 GitHub Releases 下载对应架构二进制 → 校验 SHA-256 → 原子替换 → 进程自动重启。
       重启期间面板会短暂（约 1~2 秒）不可访问，完成后本页会自动刷新到新版本。
-    </n-alert>
+    </InfoNotice>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import InfoNotice from '@/components/InfoNotice.vue'
 import { NSpin, NButton, NIcon, NTag, NAlert, NProgress, NSelect, useMessage, useDialog } from 'naive-ui'
 import { RefreshOutline } from '@vicons/ionicons5'
 import { apiGet, apiPost } from '@/api'
@@ -416,22 +422,26 @@ onUnmounted(() => { if (pollTimer) window.clearTimeout(pollTimer) })
 }
 .ver-card {
   flex: 1; min-width: 160px;
-  background: #fff; border: 1px solid var(--border); border-radius: 12px;
+  background: var(--card); border: 0; border-radius: 12px;
   padding: 16px 18px; display: flex; flex-direction: column; gap: 6px;
+  box-shadow: none; transition: box-shadow .25s ease; transform: none; opacity: 1;
 }
-.ver-card.hot { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,0,0,.08); }
+/* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 */
+.ver-card:hover, .ver-card:focus-visible { background: var(--card); border-color: transparent; box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08); transform: none; opacity: 1; }
+.ver-card.hot { border-color: transparent; }
 .ver-label { font-size: 12px; color: var(--text-3); }
 .ver-value { font-size: 22px; font-weight: 750; letter-spacing: -0.02em; }
 .ver-arrow { display: grid; place-items: center; color: var(--text-3); font-size: 20px; }
 
 .toolbar { display: flex; align-items: center; gap: 12px; margin-top: 16px; }
 .toolbar .spacer { flex: 1; }
-.release-link { font-size: 13px; color: var(--accent-strong); text-decoration: none; }
-.release-link:hover { text-decoration: underline; }
+/* 项目超链接：更新发布页链接常态 Apple 蓝，悬浮使用交互态蓝。 */
+.release-link { font-size: 13px; color: var(--accent); text-decoration: none; }
+.release-link:hover { color: var(--accent-hover); text-decoration: underline; }
 
 .progress-box {
   margin-top: 16px; padding: 14px 16px;
-  background: var(--bg-soft, #faf9f5); border: 1px solid var(--border); border-radius: 12px;
+  background: var(--bg-soft, #faf9f5); border: 0; border-radius: 12px; box-shadow: none;
 }
 .progress-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
 .progress-head .phase { font-weight: 650; }
@@ -441,7 +451,7 @@ onUnmounted(() => { if (pollTimer) window.clearTimeout(pollTimer) })
 
 .rb-box, .rel-box {
   margin-top: 16px; padding: 14px 16px;
-  background: #fff; border: 1px solid var(--border); border-radius: 12px;
+  background: #fff; border: 0; border-radius: 12px; box-shadow: none;
 }
 .rb-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
 .rb-title { font-weight: 650; }
@@ -449,12 +459,11 @@ onUnmounted(() => { if (pollTimer) window.clearTimeout(pollTimer) })
 .rel-pick { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 
 .changelog {
-  margin-top: 20px; background: #fff; border: 1px solid var(--border); border-radius: 12px;
-  overflow: hidden;
+  margin-top: 20px; background: #fff; border: 0; border-radius: 12px; box-shadow: none; overflow: hidden;
 }
 .cl-head {
   display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
-  padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--bg-soft);
+  padding: 14px 18px; border-bottom: 0; background: var(--bg-soft);
 }
 .cl-title { font-weight: 700; }
 .cl-date { font-size: 12px; color: var(--text-3); }

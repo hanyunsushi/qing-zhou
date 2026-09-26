@@ -6,7 +6,8 @@
         <p class="page-sub">编写与发布帮助内容，管理用户端的展示顺序</p>
       </div>
       <div class="page-actions">
-        <n-button type="primary" size="large" @click="openCreate">
+        <!-- 高亮弧边按钮：页面级主操作统一复用强调按钮合同。 -->
+        <n-button type="primary" size="large" class="action-button action-button--emphasis" @click="openCreate">
           <template #icon><n-icon><AddOutline /></n-icon></template>
           新建文档
         </n-button>
@@ -39,6 +40,7 @@
           <span aria-live="polite">{{ filteredDocs.length }} 篇结果</span>
         </div>
         <div class="toolbar-controls">
+          <!-- 填写框 -->
           <n-input
             v-model:value="searchQuery"
             clearable
@@ -48,7 +50,8 @@
           >
             <template #prefix><n-icon><SearchOutline /></n-icon></template>
           </n-input>
-          <div class="status-switch" aria-label="按发布状态筛选">
+          <!-- 路由切换组件：帮助文档发布状态改变当前列表维度。 -->
+          <div class="status-switch route-switch" aria-label="按发布状态筛选">
             <button
               v-for="option in statusOptions"
               :key="option.value"
@@ -107,7 +110,7 @@
           <n-empty :description="emptyDescription">
             <template #extra>
               <n-button v-if="searchQuery || statusFilter !== 'all'" @click="resetFilters">清除筛选</n-button>
-              <n-button v-else type="primary" @click="openCreate">创建第一篇文档</n-button>
+              <n-button v-else type="primary" class="highlight-arc-button" @click="openCreate">创建第一篇文档</n-button>
             </template>
           </n-empty>
         </div>
@@ -185,7 +188,7 @@
         <span>保存后将同步更新用户端帮助中心</span>
         <div>
           <n-button @click="showForm = false">取消</n-button>
-          <n-button type="primary" :loading="saving" @click="handleSave">
+          <n-button type="primary" class="highlight-arc-button" :loading="saving" @click="handleSave">
             {{ editing ? '保存更改' : form.published ? '创建并发布' : '保存草稿' }}
           </n-button>
         </div>
@@ -386,29 +389,36 @@ onMounted(load)
 .help-page-head { align-items: center; margin-bottom: 20px; }
 .help-page-head .page-sub { max-width: 620px; }
 .help-overview { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
-.metric-card { position: relative; display: flex; align-items: center; gap: 13px; padding: 15px 16px; border-color: transparent; overflow: hidden; }
+/* 展示卡片 */
+.metric-card { position: relative; display: flex; align-items: center; gap: 13px; padding: 15px 16px; border: 0 !important; overflow: hidden; box-shadow: none; transition: box-shadow .25s ease; transform: none; opacity: 1; }
+/* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 */
+.metric-card:hover, .metric-card:focus-visible { background: var(--card); box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08); transform: none; opacity: 1; }
 .metric-card::after { content: ''; position: absolute; inset: auto 0 0; height: 3px; background: transparent; transition: background-color .2s ease; }
-.metric-card.active { border-color: color-mix(in srgb, var(--accent) 34%, var(--border)); background: color-mix(in srgb, var(--accent) 4%, var(--card)); }
-.metric-card.active::after { background: var(--accent); }
-.metric-icon { display: grid !important; place-items: center; flex: 0 0 40px; width: 40px; height: 40px; margin: 0 !important; border-radius: 11px; color: var(--accent) !important; background: color-mix(in srgb, var(--accent) 10%, transparent); font-size: 20px !important; }
-.metric-card.success .metric-icon { color: var(--success) !important; background: color-mix(in srgb, var(--success) 11%, transparent); }
-.metric-card.draft .metric-icon { color: var(--text-2) !important; background: var(--bg-soft); }
+.metric-card.active { border: 0 !important; background: var(--card-hover); }
+.metric-card.active:hover, .metric-card.active:focus-visible { background: var(--card-hover); box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08); }
+.metric-card.active::after { background: transparent; }
+/* 卡片 SVG：复用首页摘要图标的中性前景与灰色底框，不按统计状态着色。 */
+.metric-icon { display: grid !important; place-items: center; flex: 0 0 40px; width: 40px; height: 40px; margin: 0 !important; border-radius: 11px; color: var(--text-2) !important; background: var(--bg-subtle); font-size: 20px !important; }
 .metric-copy { min-width: 0; text-align: left; }
 .metric-copy b { font-size: 22px; }
 .metric-copy > span { margin-top: 1px; color: var(--text); font-size: 12.5px; font-weight: 600; }
 .metric-copy small { display: block; margin-top: 2px; color: var(--text-3); font-size: 11px; font-weight: 400; }
 
 .document-panel { border: 1px solid var(--border); border-radius: var(--r); background: var(--card); box-shadow: var(--shadow-sm); overflow: hidden; }
-.document-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 16px 18px; border-bottom: 1px solid var(--border); background: color-mix(in srgb, var(--bg-soft) 64%, var(--card)); }
+.document-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 16px 18px; border: 0; border-bottom: 1px solid var(--border); border-radius: 0 !important; background: color-mix(in srgb, var(--bg-soft) 64%, var(--card)); }
 .toolbar-copy { display: flex; align-items: baseline; gap: 10px; white-space: nowrap; }
 .toolbar-copy h3 { margin: 0; color: var(--text); font-size: 15px; font-weight: 650; }
 .toolbar-copy span { color: var(--text-3); font-size: 12px; }
 .toolbar-controls { display: flex; align-items: center; justify-content: flex-end; gap: 10px; width: min(100%, 560px); }
 .search-input { width: min(300px, 100%); }
 .status-switch { display: inline-flex; padding: 3px; border: 1px solid var(--border); border-radius: var(--r); background: var(--bg-soft); }
+.status-switch.route-switch { position:relative; isolation:isolate; min-height: 40px; padding: 4px; border: 0; border-radius: 16px !important; background: var(--bg-subtle); box-shadow: none; }
+.status-switch.route-switch::before { position:absolute; z-index:0; top:4px; bottom:4px; left:0; width:var(--route-indicator-w, 0px); border-radius:12px; content:''; pointer-events:none; background:var(--card); box-shadow:none; transform:translateX(var(--route-indicator-x, 4px)); transition:transform .24s cubic-bezier(.215,.61,.355,1), width .24s cubic-bezier(.215,.61,.355,1); }
 .status-switch button { height: 28px; padding: 0 11px; border: 0; border-radius: 6px; background: transparent; color: var(--text-2); font-family: inherit; font-size: 12px; font-weight: 500; line-height: 1; white-space: nowrap; cursor: pointer; }
+.status-switch.route-switch button { position:relative; z-index:1; display:inline-flex; align-items:center; justify-content:center; box-sizing:border-box; height: 32px; padding: 6px 11px; line-height:20px; border-radius: 12px; }
+.status-switch.route-switch button:focus-visible { outline:0; box-shadow:inset 0 0 0 2px rgba(29,39,51,.16); }
 .status-switch button:hover { color: var(--text); }
-.status-switch button.active { background: var(--card); color: var(--accent); box-shadow: var(--shadow-sm); font-weight: 650; }
+.status-switch button.active { background: transparent; color: var(--text); box-shadow: none; font-weight: 650; }
 
 .document-list { min-height: 120px; }
 .document-row { display: grid; grid-template-columns: 58px minmax(0, 1fr) auto; align-items: center; gap: 16px; padding: 17px 18px; border-bottom: 1px solid var(--border); transition: background-color .18s ease; }

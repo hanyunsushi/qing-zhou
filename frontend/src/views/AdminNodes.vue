@@ -9,14 +9,15 @@
       <button class="resource-metric" type="button" @click="tab='sources'"><b>{{ sources.length }}</b><span>订阅源 · 启用 {{ sources.filter(s => s.enabled).length }}</span></button>
       <button class="resource-metric" type="button" @click="tab='topology'"><b>{{ inbounds.length }}</b><span>关联入站 · 出口 {{ egresses.length }}</span></button>
     </div>
-    <n-tabs v-model:value="tab" animated>
+    <!-- 二级切换路由：活动线由活动页签自身绘制，避免窄屏导航滚动层裁切。 -->
+    <n-tabs v-model:value="tab" animated class="route-switch-2">
       <!-- 节点（按分组卡片展示，同组节点聚在一张卡片里） -->
       <n-tab-pane name="nodes" tab="节点">
         <div class="page-toolbar">
           <span class="spacer" />
           <n-button size="small" @click="openGroup()">添加分组</n-button>
           <n-button size="small" @click="openNodeImport">批量导入</n-button>
-          <n-button size="small" type="primary" @click="openNode()">添加节点</n-button>
+          <n-button size="small" type="primary" class="highlight-arc-button" @click="openNode()">添加节点</n-button>
         </div>
         <n-spin :show="loading">
           <div v-if="groupedView.length">
@@ -179,7 +180,7 @@
       <n-tab-pane name="sources" tab="订阅源">
         <div class="page-toolbar">
           <span class="spacer" />
-          <n-button size="small" type="primary" @click="openSource()">添加订阅源</n-button>
+          <n-button size="small" type="primary" class="highlight-arc-button" @click="openSource()">添加订阅源</n-button>
         </div>
         <n-spin :show="loading">
           <div v-if="sources.length" class="card-grid">
@@ -202,7 +203,7 @@
                    错误只进了 last_error 和服务端日志，面板上必须说出来。 -->
               <div v-if="r.last_error" class="src-err" :title="r.last_error">拉取失败：{{ r.last_error }}</div>
               <div class="lc-foot">
-                <n-button size="tiny" type="primary" @click="handleFetchSource(r.id)">拉取</n-button>
+                <n-button size="tiny" type="primary" class="highlight-arc-button" @click="handleFetchSource(r.id)">拉取</n-button>
                 <n-button size="tiny" @click="openSource(r)">编辑</n-button>
                 <n-button size="tiny" type="error" @click="handleDeleteSource(r.id)">删除</n-button>
               </div>
@@ -219,6 +220,7 @@
         <span>目标分组</span><b>{{ reuseTargetName }}</b>
         <p>从全局入口中选择一个；新线路只复用入口地址、端口、TLS 和协议，固定落地在下一步单独选择。</p>
       </div>
+      <!-- 填写框 -->
       <n-input v-model:value="reuseSearch" clearable placeholder="搜索地区、机器、协议、端口、Tag 或来源分组" />
       <div v-if="filteredReuseCatalog.length" class="reuse-list">
         <button v-for="entry in filteredReuseCatalog" :key="entry.tag" type="button" class="reuse-entry" @click="chooseReuseEntry(entry)">
@@ -273,7 +275,7 @@
           </n-form-item>
           <n-form-item label="启用"><n-switch v-model:value="nodeForm.enabled" /></n-form-item>
         </n-form>
-        <n-button type="primary" block :loading="saving" @click="handleSaveNode">保存</n-button>
+        <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleSaveNode">保存</n-button>
       </n-drawer-content>
     </n-drawer>
 
@@ -288,7 +290,7 @@
             <n-select v-model:value="importGroupIds" :options="groupOptions" multiple placeholder="选择分组" />
           </n-form-item>
         </n-form>
-        <n-button type="primary" block :loading="saving" @click="handleImport">导入</n-button>
+        <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleImport">导入</n-button>
       </n-drawer-content>
     </n-drawer>
 
@@ -306,7 +308,7 @@
           </n-form-item>
           <n-form-item label="排序"><n-input-number v-model:value="groupForm.sort_order" :min="0" style="width:100%;" /></n-form-item>
         </n-form>
-        <n-button type="primary" block :loading="saving" @click="handleSaveGroup">保存</n-button>
+        <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleSaveGroup">保存</n-button>
       </n-drawer-content>
     </n-drawer>
 
@@ -321,7 +323,7 @@
           </n-form-item>
           <n-form-item label="启用"><n-switch v-model:value="sourceForm.enabled" /></n-form-item>
         </n-form>
-        <n-button type="primary" block :loading="saving" @click="handleSaveSource">保存</n-button>
+        <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleSaveSource">保存</n-button>
       </n-drawer-content>
     </n-drawer>
   </div>
@@ -905,7 +907,7 @@ async function load() {
 .reuse-entry-main { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 3px; }
 .reuse-entry-head { display: flex; align-items: center; gap: 7px; min-width: 0; }
 .reuse-entry-head > b { overflow: hidden; color: var(--text); font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
-.reuse-proto, .reuse-current { flex: none; padding: 1px 6px; border-radius: 999px; font-size: 10px; font-weight: 600; }
+.reuse-proto, .reuse-current { flex: none; padding: 1px 6px; border-radius: var(--r); font-size: 10px; font-weight: 600; }
 .reuse-proto { background: var(--accent-soft); color: var(--accent-strong); }
 .reuse-current { background: rgba(24, 160, 88, .1); color: #168a4c; }
 .reuse-machine { overflow: hidden; color: var(--text-2); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }

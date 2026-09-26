@@ -6,9 +6,11 @@
       <div class="ctl">
         <div class="ctl-group">
           <span class="ctl-label">时间</span>
-          <n-radio-group v-model:value="preset" size="small" @update:value="onPreset">
+          <!-- 路由切换组件：用量报表时间范围改变查询维度。 -->
+          <n-radio-group v-model:value="preset" size="small" class="route-switch" @update:value="onPreset">
             <n-radio-button v-for="p in presets" :key="p.v" :value="p.v">{{ p.l }}</n-radio-button>
           </n-radio-group>
+          <!-- 填写框 -->
           <n-date-picker
             v-if="preset === 'custom'"
             v-model:value="customRange"
@@ -125,7 +127,8 @@
           <span class="sec-note">
             {{ tableMode === 'user' ? `合并同一用户的全部套餐 · 共 ${userSummary.length} 位用户` : `共 ${detail.length} 行` }}
           </span>
-          <n-radio-group v-model:value="tableMode" size="small" class="table-mode">
+          <!-- 路由切换组件：用量报表视图在用户汇总与套餐明细间切换。 -->
+          <n-radio-group v-model:value="tableMode" size="small" class="table-mode route-switch">
             <n-radio-button value="user">按用户汇总</n-radio-button>
             <n-radio-button value="package">按套餐明细</n-radio-button>
           </n-radio-group>
@@ -177,7 +180,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { NCard, NRadioGroup, NRadioButton, NSelect, NButton, NSpin, NDatePicker, useMessage } from 'naive-ui'
-import * as echarts from 'echarts'
+import * as echarts from '@/utils/echarts'
 import { apiGet, apiList } from '@/api'
 import { fmtBytes } from '@/utils/format'
 
@@ -594,13 +597,14 @@ onUnmounted(() => {
 }
 .scope b { color: var(--text-2); font-weight: 650; }
 
-/* KPI */
+/* 展示卡片 */
 .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-bottom: 14px; }
 .kpi {
   background: var(--card); border: 1px solid var(--border); border-radius: var(--r-sm);
-  padding: 13px 15px; transition: box-shadow .15s, border-color .15s;
+  padding: 13px 15px; box-shadow: none; transition: box-shadow .25s ease; transform: none; opacity: 1;
 }
-.kpi:hover { box-shadow: var(--shadow); border-color: #d5d5d5; }
+/* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 */
+.kpi:hover, .kpi:focus-visible { border-color: var(--border); background: var(--card); box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08); transform: none; opacity: 1; }
 .kpi-label { font-size: 12px; color: var(--text-2); font-weight: 550; }
 .kpi-value { font-size: 21px; font-weight: 720; letter-spacing: -0.02em; margin-top: 5px; line-height: 1.2; }
 .kpi-sub { font-size: 11px; color: var(--text-3); margin-top: 3px; }

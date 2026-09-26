@@ -7,9 +7,14 @@
       </div>
       <!-- 时间范围是全页的统一维度：KPI 的环比、流量趋势、用户表的「区间流量」
            都跟着它走，避免几块数据各说各的时间口径。 -->
-      <n-radio-group v-model:value="range" size="small" @update:value="reload">
-        <n-radio-button v-for="r in ranges" :key="r.v" :value="r.v">{{ r.l }}</n-radio-button>
-      </n-radio-group>
+      <!-- 路由切换组件：管理概览时间范围驱动整页统计查询。 -->
+      <div ref="rangeTabsRef" class="overview-range-tabs" @mouseover="moveRangeIndicatorFromEvent"
+           @focusin="moveRangeIndicatorFromEvent" @mouseleave="moveRangeIndicatorToSelected"
+           @focusout="handleRangeTabsFocusout">
+        <n-radio-group v-model:value="range" size="small" @update:value="reload">
+          <n-radio-button v-for="r in ranges" :key="r.v" :value="r.v">{{ r.l }}</n-radio-button>
+        </n-radio-group>
+      </div>
     </div>
 
     <!-- KPI -->
@@ -38,7 +43,8 @@
       </div>
     </n-card>
 
-    <n-tabs v-model:value="tab" type="line" animated class="ov-tabs">
+    <!-- 二级切换路由（切换路由2）：活动线由活动页签自身绘制，避免导航滚动层裁切。 -->
+    <n-tabs v-model:value="tab" type="line" animated class="ov-tabs route-switch-2">
       <!-- ========== 趋势 ========== -->
       <n-tab-pane name="trend" tab="趋势">
         <n-card size="small" class="sec">
@@ -140,6 +146,7 @@
       <n-tab-pane name="user" tab="用户分析">
         <n-card size="small" class="sec">
           <div class="filters">
+            <!-- 填写框 -->
             <n-input v-model:value="uf.q" size="small" clearable placeholder="搜索用户名 / 邮箱" style="width:190px;" @update:value="debouncedUsers" />
             <n-select v-model:value="uf.status" size="small" clearable placeholder="状态" style="width:120px;"
                       :options="[{label:'正常',value:'active'},{label:'封禁',value:'banned'}]" @update:value="loadUsers" />
@@ -230,7 +237,7 @@
 <script setup lang="ts">
 import { ref, computed, reactive, onMounted, onUnmounted, nextTick, watch, h, defineComponent } from 'vue'
 import { NCard, NTabs, NTabPane, NRadioGroup, NRadioButton, NInput, NSelect, NCheckbox, NButton, NTag, NSpin, useMessage } from 'naive-ui'
-import * as echarts from 'echarts'
+import * as echarts from '@/utils/echarts'
 import { apiGet, apiList } from '@/api'
 import { fmtBytes, fmtTotal, fmtDate, timeAgo } from '@/utils/format'
 import AdminUsageReport from '@/components/AdminUsageReport.vue'
@@ -243,6 +250,7 @@ const PIE = ['#688ae8', '#c33d69', '#2ea597', '#8456ce', '#e07941', '#3759ce', '
 
 const ranges = [{ v: '7d', l: '7天' }, { v: '14d', l: '14天' }, { v: '30d', l: '30天' }, { v: '90d', l: '90天' }]
 const range = ref('14d')
+const rangeTabsRef = ref<HTMLElement | null>(null)
 const days = computed(() => ({ '7d': 7, '14d': 14, '30d': 30, '90d': 90 } as any)[range.value] || 14)
 const tab = ref('trend')
 
@@ -579,6 +587,36 @@ function redrawUserChart() {
   if (expanded.value && userCharts[expanded.value]) userCharts[expanded.value].resize()
 }
 
+function moveRangeIndicator(button: HTMLElement | null) {
+  const tabs = rangeTabsRef.value
+  if (!tabs || !button) return
+  const tabsRect = tabs.getBoundingClientRect()
+  const buttonRect = button.getBoundingClientRect()
+  tabs.style.setProperty('--range-indicator-x', `${buttonRect.left - tabsRect.left}px`)
+  tabs.style.setProperty('--range-indicator-w', `${buttonRect.width}px`)
+}
+
+function selectedRangeButton() {
+  return rangeTabsRef.value?.querySelector<HTMLElement>('.n-radio-button--checked') || null
+}
+
+function moveRangeIndicatorToSelected() {
+  moveRangeIndicator(selectedRangeButton())
+}
+
+function moveRangeIndicatorFromEvent(event: MouseEvent | FocusEvent) {
+  const target = event.target
+  if (!(target instanceof HTMLElement)) return
+  moveRangeIndicator(target.closest<HTMLElement>('.n-radio-button'))
+}
+
+function handleRangeTabsFocusout(event: FocusEvent) {
+  const nextTarget = event.relatedTarget
+  if (!(nextTarget instanceof Node) || !rangeTabsRef.value?.contains(nextTarget)) {
+    moveRangeIndicatorToSelected()
+  }
+}
+
 // ---- 加载 ----
 async function reload() {
   await Promise.all([
@@ -609,10 +647,14 @@ async function reload() {
 
 onMounted(async () => {
   await reload()
+  await nextTick()
+  moveRangeIndicatorToSelected()
   window.addEventListener('resize', onResize)
+  window.addEventListener('resize', moveRangeIndicatorToSelected)
 })
 onUnmounted(() => {
   window.removeEventListener('resize', onResize)
+  window.removeEventListener('resize', moveRangeIndicatorToSelected)
   clearTimeout(debounceTimer)
   Object.values(charts).forEach(c => c.dispose())
   Object.values(userCharts).forEach(c => c.dispose())
@@ -623,18 +665,101 @@ onUnmounted(() => {
 .ov-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
 .page-sub { color: var(--text-2); margin: 0; font-size: 13px; }
 
+/* 路由切换组件 */
+.ov-head :deep(.overview-range-tabs) {
+  --range-indicator-x: 4px;
+  --range-indicator-w: 0px;
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  max-width: 100%;
+  height: auto !important;
+  min-height: 40px;
+  padding: 4px;
+  border: 0;
+  border-radius: 16px !important;
+  background: var(--bg-subtle);
+  box-shadow: none;
+}
+.ov-head :deep(.overview-range-tabs::before) {
+  position: absolute;
+  z-index: 0;
+  top: 4px;
+  bottom: 4px;
+  left: 0;
+  width: var(--range-indicator-w);
+  border-radius: 12px !important;
+  content: '';
+  pointer-events: none;
+  background: var(--card);
+  box-shadow: none;
+  transform: translateX(var(--range-indicator-x));
+  transition: transform .24s cubic-bezier(.215,.61,.355,1), width .24s cubic-bezier(.215,.61,.355,1), background-color .2s ease, box-shadow .2s ease;
+}
+.ov-head :deep(.overview-range-tabs .n-radio-group) {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  height: auto !important;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.ov-head :deep(.overview-range-tabs .n-radio-button) {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 32px;
+  padding: 6px 14px;
+  line-height: 20px;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: transparent !important;
+  color: var(--text-2) !important;
+  box-shadow: none;
+}
+.ov-head :deep(.overview-range-tabs .n-radio-button:hover),
+.ov-head :deep(.overview-range-tabs .n-radio-button:focus-visible) {
+  background: transparent !important;
+  color: var(--text) !important;
+  box-shadow: none !important;
+}
+.ov-head :deep(.overview-range-tabs .n-radio-button--checked) {
+  background: transparent !important;
+  color: var(--text) !important;
+  box-shadow: none !important;
+}
+.ov-head :deep(.overview-range-tabs .n-radio-button:focus-visible) {
+  box-shadow: inset 0 0 0 2px rgba(29,39,51,.16) !important;
+}
+
 /* KPI */
 .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-bottom: 16px; }
+/* 展示卡片 */
 .kpi {
   position: relative; overflow: hidden;
   background: var(--card); border: 1px solid var(--border); border-radius: var(--r-sm);
-  padding: 14px 16px 10px; transition: box-shadow .15s, border-color .15s, transform .15s;
+  padding: 14px 16px 10px;
+  box-shadow: none; transition: box-shadow .25s ease; transform: none; opacity: 1;
 }
 .kpi.clickable { cursor: pointer; }
-.kpi:hover { box-shadow: var(--shadow); border-color: #d5d5d5; }
+/* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 */
+.kpi:hover, .kpi:focus-visible {
+  border-color: var(--border);
+  background: var(--card);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+  transform: none;
+  opacity: 1;
+}
 .kpi-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .kpi-label { font-size: 12.5px; color: var(--text-2); font-weight: 550; }
-.kpi-delta { font-size: 11px; font-weight: 650; padding: 1px 6px; border-radius: 20px; background: var(--bg-soft); color: var(--text-3); }
+.kpi-delta { font-size: 11px; font-weight: 650; padding: 1px 6px; border-radius: var(--r); background: var(--bg-soft); color: var(--text-3); }
 .kpi-delta.good { color: #4d7256; background: #eef4ef; }
 .kpi-delta.bad { color: #a8564b; background: #f9eeec; }
 .kpi-value { font-size: 26px; font-weight: 720; letter-spacing: -0.02em; margin-top: 6px; line-height: 1.15; }
@@ -646,7 +771,7 @@ onUnmounted(() => {
 .sec { margin-bottom: 14px; border-radius: var(--r-sm); }
 .sec-title { font-weight: 650; font-size: 14px; }
 .sec-note { font-size: 11.5px; color: var(--text-3); margin-left: 10px; font-weight: 400; }
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.two-col { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
 .chart { width: 100%; }
 .empty { text-align: center; color: var(--text-3); padding: 22px; font-size: 13px; }
 .hint { font-size: 11.5px; color: var(--text-3); margin: 10px 0 0; }
@@ -677,8 +802,8 @@ onUnmounted(() => {
 .tbl { width: 100%; border-collapse: collapse; font-size: 13px; white-space: nowrap; }
 .tbl th, .tbl td { padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--border); }
 .tbl th { font-size: 11.5px; font-weight: 600; color: var(--text-3); background: var(--bg-soft); position: sticky; top: 0; }
-.tbl th:first-child { border-radius: 6px 0 0 0; }
-.tbl th:last-child { border-radius: 0 6px 0 0; }
+.tbl th:first-child { border-radius: var(--r) 0 0 0; }
+.tbl th:last-child { border-radius: 0 var(--r) 0 0; }
 .tbl th.l, .tbl td.l { text-align: left; }
 .tbl th.sortable { cursor: pointer; user-select: none; }
 .tbl th.sortable:hover { color: var(--text); }
@@ -689,8 +814,8 @@ onUnmounted(() => {
 .tbl td.warn, .tbl .warn { color: #a17a2e; }
 .tbl td.bad, .tbl .bad { color: #a8564b; }
 .pkg-name, .u-name { font-weight: 600; color: var(--text); }
-.mini-bar { display: inline-block; width: 54px; height: 5px; border-radius: 3px; background: #ececec; overflow: hidden; vertical-align: middle; margin-right: 6px; }
-.mini-bar i { display: block; height: 100%; background: #688ae8; border-radius: 3px; }
+.mini-bar { display: inline-block; width: 54px; height: 5px; border-radius: var(--r); background: #ececec; overflow: hidden; vertical-align: middle; margin-right: 6px; }
+.mini-bar i { display: block; height: 100%; background: #688ae8; border-radius: var(--r); }
 .mini-bar i.hot { background: #c33d69; }
 
 .filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }

@@ -10,7 +10,8 @@
           <template #icon><n-icon><RefreshOutline /></n-icon></template>
           刷新
         </n-button>
-        <n-button size="small" type="primary" @click="openCreate">
+        <!-- 高亮弧边按钮：页面级主操作统一复用强调按钮合同。 -->
+        <n-button size="small" type="primary" class="action-button action-button--emphasis" @click="openCreate">
           <template #icon><n-icon><PersonAddOutline /></n-icon></template>
           创建用户
         </n-button>
@@ -27,6 +28,7 @@
     </div>
 
     <div class="page-toolbar">
+      <!-- 填写框 -->
       <n-input v-model:value="search" placeholder="搜索用户名 / 邮箱 / 备注" style="width:240px;max-width:60%;" clearable>
         <template #prefix><n-icon><SearchOutline /></n-icon></template>
       </n-input>
@@ -46,7 +48,8 @@
                 <span class="uc-name" :title="u.username">{{ u.username }}</span>
                 <span v-if="u.online" class="dot-live" title="在线" />
                 <n-tag v-if="u.status === 'banned'" type="error" size="tiny" :bordered="false">封禁</n-tag>
-                <n-tag v-if="u.role === 'admin'" type="warning" size="tiny" :bordered="false">管理员</n-tag>
+                <!-- 区分-身份牌：使用 AWS 语义警告色底与白色文字，避免浅底橙字对比不足。 -->
+                <n-tag v-if="u.role === 'admin'" class="identity-badge" type="warning" size="tiny" :bordered="false">管理员</n-tag>
               </div>
               <div class="uc-sub" :title="u.email || ''">
                 {{ u.email || '未绑定邮箱' }} · {{ u.online ? '在线' : timeAgo(u.last_online_at) }}
@@ -79,6 +82,7 @@
           </div>
 
           <!-- 套餐：卡片只报「有几份、在用哪几个、什么时候要续」，明细在套餐面板 -->
+          <!-- 可跳转展示卡片：进入该用户的套餐分配/明细面板。 -->
           <button class="uc-block uc-plans" type="button" @click="openPlans(u)">
             <div class="uc-row">
               <span class="uc-k">套餐</span>
@@ -103,11 +107,13 @@
           </div>
 
           <div class="uc-foot">
-            <n-button size="tiny" type="primary" secondary @click="openPlans(u)">套餐</n-button>
+            <!-- 高亮弧边按钮：固定实心 Apple 蓝，保留用户卡片原有 tiny 尺寸。 -->
+            <n-button size="tiny" type="primary" class="highlight-arc-button" @click="openPlans(u)">套餐</n-button>
             <n-button size="tiny" @click="openEdit(u)">编辑</n-button>
             <n-button size="tiny" @click="openRecharge(u)">充值</n-button>
             <n-button size="tiny" @click="openOrders(u)">订单</n-button>
             <span class="spacer" />
+            <!-- 下拉选择菜单：用户更多操作弹层复用顶栏菜单合同，触发按钮保持原样。 -->
             <n-dropdown trigger="click" :options="moreOptions" @select="(k: string) => onMore(k, u)">
               <n-button size="tiny" quaternary :loading="resettingCreds === u.id">⋯</n-button>
             </n-dropdown>
@@ -146,7 +152,8 @@
         </div>
 
         <div class="pm-bar">
-          <n-radio-group v-model:value="planFilter" size="small">
+          <!-- 路由切换组件：套餐状态筛选改变当前用户套餐列表维度。 -->
+          <n-radio-group v-model:value="planFilter" size="small" class="route-switch">
             <n-radio-button value="all">全部</n-radio-button>
             <n-radio-button value="active">生效中</n-radio-button>
             <n-radio-button value="queued">排队中</n-radio-button>
@@ -202,7 +209,7 @@
             <!-- 天数只对订阅计划有意义：流量包加的是共享池，没有按份倒计时。 -->
             <n-input-number v-if="assignIsPlan" v-model:value="assignDays" :min="1" :max="assignDaysMax" :precision="0"
                             :show-button="false" placeholder="天数" style="width:96px;flex:none;" />
-            <n-button type="primary" :loading="saving" :disabled="!assignPkgId" @click="handleAssign">
+            <n-button type="primary" class="highlight-arc-button" :loading="saving" :disabled="!assignPkgId" @click="handleAssign">
               {{ assignWillQueue ? '分配并排队' : '分配' }}
             </n-button>
           </div>
@@ -241,7 +248,7 @@
           </div>
         </n-form-item>
       </n-form>
-      <n-button type="primary" block :loading="saving" @click="handleCreate">创建</n-button>
+      <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleCreate">创建</n-button>
     </n-modal>
 
     <!-- 编辑用户 -->
@@ -291,7 +298,7 @@
           </div>
         </n-form-item>
       </n-form>
-      <n-button type="primary" block :loading="saving" @click="handleSave">保存</n-button>
+      <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleSave">保存</n-button>
     </n-modal>
 
     <!-- 积分充值 -->
@@ -301,7 +308,7 @@
         <n-form-item label="积分"><n-input-number v-model:value="rechargeAmount" style="width:100%;" /></n-form-item>
         <n-form-item label="说明"><n-input v-model:value="rechargeNote" placeholder="正数充值，负数扣除" /></n-form-item>
       </n-form>
-      <n-button type="primary" block :loading="saving" @click="handleRecharge">确认</n-button>
+      <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleRecharge">确认</n-button>
     </n-modal>
 
     <!-- 按份调整流量：给某一份额度加减 GB，不是退款也不是新开一份 -->
@@ -321,7 +328,7 @@
         正数增加、负数扣减。扣减不会低于已用流量。排队中尚未生效的份也可以改额度。
         这不是退款：积分与订单都不动。
       </p>
-      <n-button type="primary" block :loading="saving" :disabled="!adjustGB" @click="handleAdjust">确认</n-button>
+      <n-button type="primary" class="highlight-arc-button" block :loading="saving" :disabled="!adjustGB" @click="handleAdjust">确认</n-button>
     </n-modal>
 
     <!-- 订单历史 -->
@@ -981,25 +988,45 @@ onMounted(load)
 
 /* 概览条：既是数字也是筛选器 */
 .stat-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)); gap: 8px; margin-bottom: 14px; }
+/* 展示卡片 */
 .ss-item {
   display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; text-align: left;
-  background: var(--card); border: 1px solid var(--border); border-radius: var(--r-sm);
+  background: var(--card); border: 0; border-radius: var(--r-sm);
   font: inherit; color: inherit; cursor: pointer;
-  transition: border-color .16s, box-shadow .16s, transform .16s;
+  box-shadow: none; transition: box-shadow .25s ease; transform: none; opacity: 1;
 }
-.ss-item:hover { border-color: var(--accent); box-shadow: var(--shadow-sm); background: var(--accent-subtle); }
-.ss-item.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+/* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 */
+.ss-item:hover, .ss-item:focus-visible {
+  border-color: transparent;
+  background: var(--card);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+  transform: none;
+  opacity: 1;
+}
+.ss-item.on { border-color: transparent; background: var(--card-hover); box-shadow: none; }
+.ss-item.on:hover, .ss-item.on:focus-visible {
+  border-color: transparent;
+  background: var(--card-hover);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+}
 .ss-item:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 2px; }
 .ss-val { font-size: 20px; font-weight: 720; line-height: 1.1; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
 .ss-label { font-size: 11.5px; color: var(--text-3); }
 
-/* 用户卡片 */
+/* 展示卡片 */
 .user-card {
   display: flex; flex-direction: column; gap: 10px; padding: 14px;
   background: var(--card); border: 1px solid var(--border); border-radius: var(--r-sm);
-  transition: box-shadow .18s, border-color .18s;
+  box-shadow: none; transition: box-shadow .25s ease; transform: none; opacity: 1;
 }
-.user-card:hover { box-shadow: var(--shadow); border-color: var(--accent); background: var(--accent-subtle); }
+/* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 */
+.user-card:hover, .user-card:focus-visible {
+  border-color: var(--border);
+  background: var(--card);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+  transform: none;
+  opacity: 1;
+}
 .uc-head { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .uc-avatar {
   width: 36px; height: 36px; flex-shrink: 0; border-radius: 10px;
@@ -1009,6 +1036,7 @@ onMounted(load)
 .uc-id { min-width: 0; flex: 1; }
 .uc-name-row { display: flex; align-items: center; gap: 6px; min-width: 0; }
 .uc-name { font-weight: 650; font-size: 14.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.identity-badge { background: var(--warn) !important; color: #fff !important; border-color: transparent !important; }
 .uc-sub { font-size: 11.5px; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 /* 备注和邮箱行区分开：略深一点、单行截断，长备注靠 title 看全 */
 .uc-remark {
@@ -1022,7 +1050,8 @@ onMounted(load)
   background: var(--bg-soft); border: 1px solid transparent; border-radius: 8px; padding: 8px 10px;
 }
 .uc-plans { cursor: pointer; transition: background .16s, border-color .16s; }
-.uc-plans:hover { background: var(--accent-soft); border-color: var(--border); }
+/* 可跳转套餐块：悬浮复用中性卡片悬浮面，不使用蓝色业务状态底。 */
+.uc-plans:hover { background: var(--card-hover); border-color: transparent; }
 .uc-plans:hover .uc-arrow { opacity: 1; transform: translateX(2px); }
 .uc-plans:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 1px; }
 .uc-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
@@ -1042,7 +1071,7 @@ onMounted(load)
 .bar-fill { height: 100%; border-radius: 3px; transition: width .6s cubic-bezier(.22, 1, .36, 1), background .3s ease; }
 
 /* 状态小片 */
-.chip { font-style: normal; font-size: 10.5px; font-weight: 650; padding: 1px 7px; border-radius: 20px; white-space: nowrap; }
+.chip { font-style: normal; font-size: 10.5px; font-weight: 650; padding: 1px 7px; border-radius: var(--r); white-space: nowrap; }
 .chip.ok { background: var(--success-soft); color: var(--success); }
 .chip.q { background: var(--accent-soft); color: var(--accent-strong); }
 .chip.fin { background: #7676761a; color: var(--text-3); }

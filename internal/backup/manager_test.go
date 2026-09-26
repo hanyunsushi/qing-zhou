@@ -331,6 +331,37 @@ func TestStartBackupRecordsUploadFailureAndRejectsConcurrentRun(t *testing.T) {
 	}
 }
 
+func TestStopWaitsForBackupAndRejectsNewRuns(t *testing.T) {
+	manager, st := newBackupTestManager(t)
+	defer st.Close()
+	saveValidConfig(t, manager)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	manager.Start(ctx)
+	fake := &fakeObjectStore{putStarted: make(chan struct{}, 1), putContinue: make(chan struct{})}
+	manager.factory = func(context.Context, Config) (objectStore, error) { return fake, nil }
+	if _, err := manager.StartBackup(context.Background(), "manual"); err != nil {
+		t.Fatal(err)
+	}
+	<-fake.putStarted
+	stopped := make(chan struct{})
+	go func() { manager.Stop(); close(stopped) }()
+	select {
+	case <-stopped:
+		t.Fatal("Stop returned while backup was still running")
+	case <-time.After(20 * time.Millisecond):
+	}
+	close(fake.putContinue)
+	select {
+	case <-stopped:
+	case <-time.After(5 * time.Second):
+		t.Fatal("Stop did not finish after the backup completed")
+	}
+	if _, err := manager.StartBackup(context.Background(), "manual"); !errors.Is(err, ErrStopped) {
+		t.Fatalf("backup after Stop returned %v, want ErrStopped", err)
+	}
+}
+
 func TestRetentionDeletesOldObjects(t *testing.T) {
 	manager, st := newBackupTestManager(t)
 	defer st.Close()

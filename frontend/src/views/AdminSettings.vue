@@ -5,6 +5,7 @@
         <h2 class="page-title">系统设置</h2>
         <p class="page-sub">按分区管理站点、通知、节点与运维配置</p>
       </div>
+      <!-- 填写框 -->
       <n-input v-model:value="settingsSearch" class="settings-search" clearable
                placeholder="搜索设置，例如 Telegram、退款、证书"
                :input-props="{ 'aria-label': '搜索设置' }" @keydown.enter="openFirstSearchResult" />
@@ -30,7 +31,7 @@
           </button>
         </template>
       </aside>
-      <main class="settings-main">
+      <main ref="settingsMain" class="settings-main">
       <div v-if="activeSection" class="settings-section-head">
         <div class="settings-section-group">{{ activeSectionGroup }}</div>
         <h3>{{ activeSection.label }}</h3>
@@ -70,6 +71,7 @@
           </n-form-item>
           <n-form-item label="邮箱验证">
             <div>
+              <!-- 切换开关：邮箱验证仅使用开关自身状态色，不绘制额外高亮边框。 -->
               <n-switch v-model:value="emailVerify" />
               <div style="font-size:12px;color:var(--text-3);line-height:1.7;margin-top:4px;max-width:520px;">
                 开放注册的新用户未验证邮箱时，订阅里不会下发节点。用积分购买或管理员分配套餐后即可使用对应节点。邀请码注册和管理员开户不受影响。
@@ -81,6 +83,7 @@
           <n-form-item label="新用户默认流量 (GB)"><n-input-number v-model:value="defaultTraffic" :min="0" style="width:200px;" /></n-form-item>
           <n-form-item label="新用户默认天数"><n-input-number v-model:value="defaultExpiry" :min="0" style="width:200px;" /></n-form-item>
           <n-form-item label="免费节点分组">
+            <!-- 选择下拉菜单：点击时保持中性边框，不绘制填写框式高亮。 -->
             <n-select v-model:value="freeGroupId" :options="groupOptions" placeholder="无计划用户可用的节点分组" clearable style="width:300px;" />
           </n-form-item>
           <n-form-item label="用户自助重置凭据">
@@ -144,9 +147,11 @@
           </n-form-item>
           <n-form-item label="sing-box 安装命令">
             <div style="width:100%;max-width:560px;">
-              <n-input-group>
+              <!-- 复制栏：安装命令仅用于查看和复制，不使用填写框的点击焦点高亮。 -->
+              <n-input-group class="copy-field">
                 <n-input :value="installCmd" readonly style="font-family:monospace;font-size:12px;" />
-                <n-button type="primary" ghost @click="copyInstall">复制</n-button>
+                <!-- 普通按钮：安装命令复制动作不使用主色高亮。 -->
+                <n-button class="action-button action-button--normal" @click="copyInstall">复制</n-button>
               </n-input-group>
               <p style="font-size:12px;color:var(--text-3);margin-top:6px;line-height:1.7;">
                 在落地服务器上以 root 运行此命令：已安装 sing-box 会自动检测并打印信息；未安装则拉取官方最新版（含
@@ -220,14 +225,14 @@
       <n-card v-show="activeSectionId === 'settings-smtp'" id="settings-smtp" class="settings-section" size="small">
         <!-- 没配 SMTP 时，依赖邮件的功能会安静地失效：面板日志里有链接，用户那边
              什么都收不到。把后果写出来，而不是留一组空输入框让人以为「可选」。 -->
-        <div v-if="!smtpConfigured" class="warn-box">
+        <InfoNotice v-if="!smtpConfigured" class="info-notice--settings">
           <b>当前未配置邮件服务</b>，以下功能不可用：
           <ul>
             <li>用户「找回密码」——登录框里会直接提示去找管理员，重置只能你在「用户管理 → 编辑 → 重置密码」里做。</li>
             <li v-if="emailVerify">开放注册后的邮箱验证——<b>「基本设置」里的「邮箱验证」是开着的，开放注册的新用户不点邮件就拿不到免费节点</b>。用积分购买或管理员分配套餐后仍可使用对应节点。邀请码注册和管理员开户不受影响。请配好 SMTP，或关掉它。</li>
             <li v-else>开放注册后的邮箱验证（当前「邮箱验证」是关的，不影响注册）。</li>
           </ul>
-        </div>
+        </InfoNotice>
         <n-form label-placement="top">
           <n-form-item label="SMTP 主机"><n-input v-model:value="form.smtp_host" /></n-form-item>
           <n-form-item label="SMTP 端口"><n-input v-model:value="form.smtp_port" /></n-form-item>
@@ -246,7 +251,8 @@
       </n-card>
 
       <n-card v-show="activeSectionId === 'settings-telegram'" id="settings-telegram" class="settings-section" size="small">
-        <div class="tg-subnav" role="tablist" aria-label="Telegram 设置分区">
+        <!-- 路由切换组件：Telegram 设置子分区切换当前配置面板。 -->
+        <div class="tg-subnav route-switch" role="tablist" aria-label="Telegram 设置分区">
           <button v-for="panel in telegramPanels" :key="panel.id" type="button" role="tab"
                   :class="{ active: telegramPanel === panel.id }"
                   :aria-selected="telegramPanel === panel.id" @click="telegramPanel = panel.id">
@@ -255,10 +261,11 @@
         </div>
 
         <div v-show="telegramPanel === 'bot'" class="tg-panel" role="tabpanel">
-          <div v-if="!telegramConfigured" class="warn-box">
+          <InfoNotice v-if="!telegramConfigured" class="info-notice--settings">
             <b>当前未配置 Telegram Bot</b>。配好后，用户可在「账户设置」里绑定，用聊天查询订阅 / 套餐 / 流量，并接收到期和流量不足通知。
-          </div>
+          </InfoNotice>
           <p class="section-intro">
+            <!-- 项目超链接：设置说明中的外部服务链接统一使用 Apple 蓝。 -->
             在 <a href="https://t.me/BotFather" target="_blank" rel="noopener">@BotFather</a> 创建机器人，把 Token 贴到下面。
             面板用长轮询收消息，不需要公网 Webhook。Token 加密存储；清空并保存即关闭 Bot。
             订阅地址会发到 Telegram，请提醒用户不要把聊天记录转发出去。
@@ -432,7 +439,7 @@
         <details class="cf-guide">
           <summary class="cf-guide-t">如何获取 Cloudflare API Token（约 1 分钟）</summary>
           <ol>
-            <li>打开 <a href="https://dash.cloudflare.com/profile/api-tokens" target="_blank" rel="noopener">Cloudflare → 我的个人资料 → API 令牌</a>，点<b>「创建令牌」</b>。</li>
+            <li>打开 <!-- 项目超链接：Cloudflare 文档入口统一使用 Apple 蓝。 --><a href="https://dash.cloudflare.com/profile/api-tokens" target="_blank" rel="noopener">Cloudflare → 我的个人资料 → API 令牌</a>，点<b>「创建令牌」</b>。</li>
             <li>选用模板 <b>「编辑区域 DNS（Edit zone DNS）」</b> —— 它已自带所需权限。<br>（若手动创建，需添加两条权限：<b>区域 · DNS · 编辑</b> 和 <b>区域 · 区域 · 读取</b>。）</li>
             <li>「区域资源」选 <b>包含 → 特定区域 → 你的域名</b>（或「所有区域」）。</li>
             <li>「继续以显示摘要」→ <b>创建令牌</b> → 复制生成的令牌，粘贴到下方。</li>
@@ -577,7 +584,7 @@
                   当前由环境变量 <code>QZ_UPDATE_GITHUB_TOKEN</code> 指定，面板改不动。
                 </template>
                 <template v-else>
-                  在 <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">GitHub → Settings → Developer settings → Personal access tokens</a>
+                  在 <!-- 项目超链接：GitHub 令牌入口统一使用 Apple 蓝。 --><a href="https://github.com/settings/tokens" target="_blank" rel="noopener">GitHub → Settings → Developer settings → Personal access tokens</a>
                   生成，不勾任何 scope。加密存储，保存后显示为 <code>***</code>；
                   填错了就把这一栏清空再保存，即可退回匿名调用。
                 </template>
@@ -625,7 +632,7 @@
           </div>
         </n-form>
         <div class="backup-actions">
-          <n-button type="primary" :loading="savingBackupConfig" @click="saveBackupConfig">保存远端配置</n-button>
+          <n-button type="primary" class="highlight-arc-button" :loading="savingBackupConfig" @click="saveBackupConfig">保存远端配置</n-button>
           <n-button :loading="testingBackupConfig" :disabled="!backupConfig.endpoint || !backupConfig.bucket" @click="testBackupConfig">测试连接</n-button>
           <n-button :loading="backingUp" @click="handleBackup">下载本地快照</n-button>
         </div>
@@ -648,7 +655,7 @@
             <div class="backup-record-meta"><span v-if="record.size_bytes">{{ fmtBytes(record.size_bytes) }}</span><code v-if="record.sha256">{{ record.sha256 }}</code><span v-if="record.error" class="backup-error">{{ record.error }}</span></div>
             <div class="backup-record-actions"><n-button v-if="record.status === 'completed'" size="small" @click="downloadRemoteBackup(record)">下载</n-button><n-button size="small" tertiary type="error" @click="deleteRemoteBackup(record)">删除</n-button></div>
           </div>
-          <n-button type="primary" :loading="creatingRemoteBackup" :disabled="!backupConfigured || !!backupRecovery.error" @click="createRemoteBackup">立即备份到远端</n-button>
+        <n-button type="primary" class="highlight-arc-button" :loading="creatingRemoteBackup" :disabled="!backupConfigured || !!backupRecovery.error" @click="createRemoteBackup">立即备份到远端</n-button>
         </div>
       </n-card>
 
@@ -658,7 +665,8 @@
           <span>保存后统一生效</span>
         </div>
         <n-button :disabled="saving" @click="confirmDiscardChanges">放弃更改</n-button>
-        <n-button type="primary" :loading="saving" :disabled="!settingsLoaded" @click="handleSave">保存设置</n-button>
+        <!-- 高亮弧边按钮：保存设置是当前设置面板的主动作，复用统一实心 Apple 蓝样式。 -->
+        <n-button type="primary" class="highlight-arc-button" :loading="saving" :disabled="!settingsLoaded" @click="handleSave">保存设置</n-button>
       </div>
     </n-spin>
       </main>
@@ -667,18 +675,22 @@
 </template>
 
 <script setup lang="ts">
+import InfoNotice from '@/components/InfoNotice.vue'
 import OAuth2Settings from '@/components/OAuth2Settings.vue'
 import { ref, reactive, computed, nextTick, onMounted, onBeforeUnmount, watch } from 'vue'
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import { NAlert, NCard, NCheckbox, NForm, NFormItem, NInput, NInputGroup, NInputNumber, NSelect, NSwitch, NButton, NSpace, NSpin, useDialog, useMessage } from 'naive-ui'
 import { apiGet, apiPost, apiPut, apiDelete, apiList, apiDownload } from '@/api'
 import { useConfigStore } from '@/stores/config'
+import { useShift5PageTransition } from '@/utils/shift5'
 import { fmtBytes } from '@/utils/format'
 
 const message = useMessage()
 const dialog = useDialog()
 const route = useRoute()
 const router = useRouter()
+const settingsMain = ref<HTMLElement | null>(null)
+useShift5PageTransition(settingsMain, () => route.fullPath, () => route.name === 'admin-settings')
 const config = useConfigStore()
 const settingsLoaded = ref(false)
 const loadError = ref('')
@@ -731,8 +743,8 @@ async function selectSettingsSection(id: string, clearSearch = false) {
   await nextTick()
   const main = document.querySelector('.settings-main')
   if (main) {
-    const top = main.getBoundingClientRect().top + window.scrollY - 78
-    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' })
+    const top = main.getBoundingClientRect().top + document.body.scrollTop - 78
+    document.body.scrollTo({ top: Math.max(0, top), behavior: 'smooth' })
   }
 }
 
@@ -831,7 +843,7 @@ const currentTgTplBody = computed({
   set: (v: string) => { form[currentTgTplField.value] = v },
 })
 const tgSample: Record<string, string> = {
-  site: '轻舟', username: 'alice',
+  site: 'Kreeproxy', username: 'alice',
   panel: 'https://panel.example', panel_link: '打开面板',
   url: 'https://panel.example/sub/xxxx',
   url_clash: 'https://panel.example/sub/xxxx?format=clash',
@@ -880,7 +892,7 @@ function insertTgVar(key: string) {
 const rebuilding = ref(false)
 const form = reactive<Record<string, any>>({})
 const brandIconInput = ref<HTMLInputElement | null>(null)
-const brandIconPreview = computed(() => form.brand_icon_data_uri || '/qingzhou-mark.svg')
+const brandIconPreview = computed(() => form.brand_icon_data_uri || '/kreeproxy-brand.png')
 
 function openBrandIconPicker() {
   brandIconInput.value?.click()
@@ -1132,6 +1144,8 @@ function confirmDiscardChanges() {
     content: `将恢复 ${dirtyCount.value} 项设置，已自动保存的 Telegram 接收人不会受影响。`,
     positiveText: '放弃更改',
     negativeText: '继续编辑',
+    // 对话框初始不把焦点投到“继续编辑”，避免弹出瞬间显示按钮 focus ring；键盘主动聚焦仍保留可见焦点。
+    autoFocus: false,
     onPositiveClick: discardChanges,
   })
 }
@@ -1505,7 +1519,7 @@ async function loadSettings() {
       // 从未设置过的键不会出现在响应里，而 n-input 需要一个受控的空串而不是
       // undefined —— 否则第一次输入前它不是一个受控输入。
       form.node_host_override ??= ''
-      form.brand_icon_data_uri ??= ''
+      form.brand_icon_data_uri ??= '/kreeproxy-brand.png'
       form.help_docs_mode = data.help_docs_mode === 'external' ? 'external' : 'builtin'
       form.help_docs_url ??= ''
       emailVerify.value = data.email_verify_required === 'true'
@@ -1559,15 +1573,14 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', handleBeforeUnl
 .settings-hero .page-sub { margin-bottom:0; }
 .settings-search { width:min(380px,42vw); }
 .settings-layout { display:grid; grid-template-columns:210px minmax(0, 1fr); align-items:start; gap:22px; }
-.settings-nav { position:sticky; top:84px; display:flex; flex-direction:column; gap:3px; padding:8px; border:1px solid var(--border); border-radius:var(--r); background:var(--card); box-shadow:var(--shadow-sm); }
+.settings-nav { position:sticky; top:84px; display:flex; flex-direction:column; gap:2px; padding:0; border:0; border-radius:0; background:transparent; box-shadow:none; }
 .settings-nav-group { padding:12px 9px 5px; color:var(--text-3); font-size:10.5px; font-weight:700; letter-spacing:.08em; }
 .settings-nav-group:first-child { padding-top:5px; }
-.settings-nav button { position:relative; display:grid; grid-template-columns:1fr auto; align-items:center; gap:8px; min-height:40px; padding:8px 9px; border:0; border-radius:var(--r-sm); background:transparent; color:var(--text-2); text-align:left; font:inherit; cursor:pointer; transition:background .18s ease, color .18s ease; }
-.settings-nav button:hover { color:var(--text); background:var(--bg-soft); }
-.settings-nav button.active { color:var(--accent-strong); background:var(--accent-soft); }
+.settings-nav button { position:relative; display:grid; grid-template-columns:1fr auto; align-items:center; gap:8px; min-height:32px; padding:6px 12px; border:0; border-radius:8px; background:transparent; color:var(--text-2); text-align:left; font:inherit; cursor:pointer; transition:background .15s ease, color .15s ease; }
+.settings-nav button:hover { color:var(--text); background:var(--card-hover); }
+.settings-nav button.active { color:var(--text); background:var(--card-hover); }
 .settings-nav button:focus:not(:focus-visible) { outline:none; }
 .settings-nav button:focus-visible { outline:2px solid color-mix(in srgb, var(--accent) 65%, transparent); outline-offset:1px; }
-.settings-nav button.active::before { position:absolute; left:0; width:3px; height:18px; border-radius:0 3px 3px 0; background:var(--accent); content:''; }
 .settings-nav span { font-size:12.5px; font-weight:650; }
 .settings-nav small { color:var(--text-3); font-size:10px; white-space:nowrap; }
 .settings-search-empty { padding:20px 10px; color:var(--text-3); font-size:12px; text-align:center; }
@@ -1603,12 +1616,13 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', handleBeforeUnl
 .backup-record-meta code { overflow:hidden; color:var(--text-3); font-size:10px; text-overflow:ellipsis; white-space:nowrap; }
 .backup-record-meta .backup-error { color:var(--danger); }
 .backup-record-actions { display:flex; gap:6px; }
-.settings-actions { position:sticky; bottom:14px; z-index:8; display:flex; align-items:center; gap:8px; width:100%; padding:10px 12px; border:1px solid var(--border-strong); border-radius:var(--r); background:var(--card); box-shadow:var(--shadow-flyout); }
+.settings-actions { position:sticky; bottom:14px; z-index:8; display:flex; align-items:center; gap:8px; width:100%; padding:10px 12px; border:1px solid var(--border-strong); border-radius:var(--r); background:var(--card); box-shadow:none; }
 .settings-dirty-copy { display:flex; min-width:0; flex:1; flex-direction:column; }
 .settings-dirty-copy b { color:var(--text); font-size:12.5px; }
 .settings-dirty-copy span { color:var(--text-3); font-size:11px; }
 .form-hint { margin-top: 4px; font-size: 12px; color: var(--text-3); line-height: 1.5; }
-.form-hint a { color: var(--accent-strong); }
+/* 项目超链接：表单辅助说明中的链接统一使用 Apple 蓝。 */
+.form-hint a { color: var(--accent); }
 .section-intro { max-width:72ch; margin:0 0 14px; color:var(--text-3); font-size:12px; line-height:1.7; }
 .inline-action, .inline-field { display:flex; align-items:center; gap:9px; }
 .field-stack { display:flex; width:100%; flex-direction:column; gap:3px; }
@@ -1619,19 +1633,14 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', handleBeforeUnl
 .section-operation { display:flex; align-items:center; justify-content:space-between; gap:16px; max-width:760px; margin-top:8px; padding:12px 14px; border:1px solid var(--border); border-radius:10px; background:var(--bg-soft); }
 .section-operation b { font-size:12.5px; }
 .section-operation p { margin:2px 0 0; color:var(--text-3); font-size:11.5px; }
-.warn-box {
-  margin-bottom: 14px; padding: 10px 12px; border-radius: 8px;
-  background: #fbf3e3; border: 1px solid var(--border); border-left: 3px solid var(--warn);
-  font-size: 12.5px; color: var(--text-2); line-height: 1.7;
-}
-.warn-box ul { margin: 6px 0 0; padding-left: 20px; }
 .page-sub { color: var(--text-2); margin-bottom: 22px; }
 .cf-guide { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; }
 .cf-guide-t { color:var(--text); font-size:12.5px; font-weight:650; cursor:pointer; }
 .cf-guide[open] .cf-guide-t { margin-bottom:8px; }
 .cf-guide ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
 .cf-guide li { font-size: 12.5px; color: var(--text-2); line-height: 1.6; }
-.cf-guide a { color: var(--accent-strong); }
+/* 项目超链接：Cloudflare 获取指引中的链接统一使用 Apple 蓝。 */
+.cf-guide a { color: var(--accent); }
 .host-cands { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
 .host-cands-t { font-size: 12px; color: var(--text-3); }
 .host-cand { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; width: 100%; max-width: 420px;
@@ -1644,11 +1653,15 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', handleBeforeUnl
 .cf-guide-n { margin-top: 10px; font-size: 12px; color: var(--text-3); line-height: 1.55; }
 .cf-guide code { background: var(--border); padding: 0 4px; border-radius: 4px; }
 .tg-subnav { display:flex; gap:4px; overflow-x:auto; margin:-2px 0 18px; padding:3px; border-radius:9px; background:var(--bg-soft); }
+.tg-subnav.route-switch { position:relative; isolation:isolate; min-height:40px; padding:4px; border-radius:16px !important; background:var(--bg-subtle); box-shadow:none; }
+.tg-subnav.route-switch::before { position:absolute; z-index:0; top:4px; bottom:4px; left:0; width:var(--route-indicator-w, 0px); border-radius:12px; content:''; pointer-events:none; background:var(--card); box-shadow:none; transform:translateX(var(--route-indicator-x, 4px)); transition:transform .24s cubic-bezier(.215,.61,.355,1), width .24s cubic-bezier(.215,.61,.355,1); }
 .tg-subnav button { flex:0 0 auto; min-height:34px; padding:6px 11px; border:0; border-radius:7px; background:transparent; color:var(--text-2); font:inherit; font-size:12px; font-weight:620; cursor:pointer; }
+.tg-subnav.route-switch button { position:relative; z-index:1; display:inline-flex; align-items:center; justify-content:center; box-sizing:border-box; min-height:32px; line-height:20px; border-radius:12px; }
 .tg-subnav button:hover { color:var(--text); background:color-mix(in srgb, var(--card) 66%, transparent); }
-.tg-subnav button.active { color:var(--text); background:var(--card); box-shadow:0 1px 3px rgba(28,48,70,.1); }
+.tg-subnav.route-switch button:hover { background:transparent; }
+.tg-subnav button.active { color:var(--text); background:transparent; box-shadow:none; }
 .tg-subnav button:focus:not(:focus-visible) { outline:none; }
-.tg-subnav button:focus-visible { outline:2px solid color-mix(in srgb, var(--accent) 65%, transparent); outline-offset:-1px; }
+.tg-subnav button:focus-visible { outline:2px solid rgba(29,39,51,.16); outline-offset:-1px; }
 .tg-panel { min-height:260px; }
 .tg-tpl-h { font-size: 13px; font-weight: 650; margin-bottom: 6px; }
 .ops-recipients { width:100%; max-width:720px; }
@@ -1661,7 +1674,7 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', handleBeforeUnl
 .ops-live-state.is-error { color:var(--danger); }
 .ops-live-state.is-error i { background:var(--danger); }
 @keyframes ops-pulse { 50% { opacity:.35; } }
-.ops-selected-count { flex:none; padding:2px 8px; border-radius:999px; background:var(--bg-soft); color:var(--text-2); font-size:11.5px; font-weight:600; }
+.ops-selected-count { flex:none; padding:2px 8px; border-radius:var(--r); background:var(--bg-soft); color:var(--text-2); font-size:11.5px; font-weight:600; }
 .ops-recipient-list { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:8px; }
 .ops-recipient {
   box-sizing:border-box; width:100%; min-height:58px; margin:0; padding:9px 11px;
@@ -1674,7 +1687,7 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', handleBeforeUnl
 .ops-recipient-copy { display:flex; min-width:0; flex-direction:column; gap:4px; line-height:1.3; }
 .ops-recipient-name { overflow:hidden; color:var(--text); font-size:13px; font-weight:650; text-overflow:ellipsis; white-space:nowrap; }
 .ops-recipient-meta { display:flex; min-width:0; align-items:center; gap:7px; color:var(--text-3); font-size:11.5px; }
-.ops-recipient-role { flex:none; padding:1px 6px; border-radius:999px; background:var(--bg-soft); color:var(--text-2); }
+.ops-recipient-role { flex:none; padding:1px 6px; border-radius:var(--r); background:var(--bg-soft); color:var(--text-2); }
 .ops-recipient-tg { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .ops-recipient-hint { margin-top:8px; }
 .tg-custom-list { display:flex; flex-direction:column; gap:10px; margin-bottom:10px; }
@@ -1711,7 +1724,6 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', handleBeforeUnl
   .settings-nav { top:64px; z-index:6; flex-direction:row; overflow-x:auto; }
   .settings-nav-group { display:none; }
   .settings-nav button { display:flex; flex:0 0 auto; min-height:36px; white-space:nowrap; }
-  .settings-nav button.active::before { display:none; }
   .settings-nav small { display:none; }
   .settings-nav button:hover { transform:none; }
   .settings-search-empty { min-width:160px; }

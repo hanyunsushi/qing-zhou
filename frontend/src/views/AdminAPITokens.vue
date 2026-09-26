@@ -15,6 +15,7 @@
       <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
         <div style="flex:1;min-width:160px;">
           <div style="font-size:12px;color:var(--text-3);margin-bottom:4px;">名称</div>
+          <!-- 填写框 -->
           <n-input v-model:value="form.name" placeholder="如 telegram-bot" />
         </div>
         <div style="flex:2;min-width:240px;">
@@ -25,7 +26,8 @@
           <div style="font-size:12px;color:var(--text-3);margin-bottom:4px;">有效期</div>
           <n-select v-model:value="form.ttl" :options="ttlOpts" style="width:140px;" />
         </div>
-        <n-button type="primary" :loading="creating" @click="createToken">创建</n-button>
+        <!-- 高亮弧边按钮：创建 API Token 是当前页面的主动作。 -->
+        <n-button type="primary" class="highlight-arc-button" :loading="creating" @click="createToken">创建</n-button>
       </div>
       <div v-if="createdPlain" style="margin-top:12px;padding:10px;background:var(--bg-soft);border-radius:8px;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
