@@ -5,6 +5,25 @@ updated: 2026-09-21
 
 # QingZhou Deployment and Artifact Retention
 
+## 2026-09-26 Embedded frontend resource release
+
+The production binary was rebuilt after the frontend build step was omitted;
+without `frontend/dist`, `go:embed` had no SPA assets and the server returned
+the explicit missing-frontend error. The release process is now verified as
+`cd frontend && npx vite build`, followed by the Linux ARM64 Go build.
+
+Stable source baseline: `293613b`. Production version:
+`v0.2.80-kreeper-oidcfix-embedded-20260926`. Active binary SHA-256:
+`8a0570b43f176a8ab9addb9b11936b3e67f565e0fd3eeb770416a9b6f2ffab58`.
+Rollback material is at
+`/opt/qingzhou/backups/embedded-frontend-20260926-105638/`.
+Only `qingzhou.service` was restarted; database, sing-box and Cloudflare
+Tunnel were not replaced.
+
+Local and public home pages, `/api/health`, and the hashed JS/CSS assets return
+`200`. Public OAuth start remains `200` with Authentik PKCE S256. All three
+services are active with zero restarts.
+
 ## 2026-09-26 Authentik OIDC Issuer fix
 
 The OAuth start path returned `502` because configuration validation removed the

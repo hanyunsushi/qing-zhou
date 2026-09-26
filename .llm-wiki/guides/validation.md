@@ -23,6 +23,15 @@ warning remains in `frontend/src/views/AdminSingbox.vue` and was not changed.
 The live OCI check confirmed Authentik discovery `200`, local/public health
 `200`, and local/public OAuth start `200` with PKCE S256 authorization URLs.
 
+## 2026-09-26 Embedded frontend resource release
+
+`frontend/npx vite build` completed successfully, followed by a Linux ARM64 Go
+build from the stable `293613b` source baseline. An isolated binary smoke test
+served the embedded home page, its hashed JavaScript and CSS assets, and the
+health endpoint with `200`; the public deployment repeated those checks. The
+production binary hash is
+`8a0570b43f176a8ab9addb9b11936b3e67f565e0fd3eeb770416a9b6f2ffab58`.
+
 ## Edge quota and package force-sync release
 
 The release gate passed `go test ./...`, the 23 front-end contract tests,
