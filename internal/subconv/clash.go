@@ -569,7 +569,7 @@ func clashProxy(p *Proxy, opt ClashOptions) map[string]any {
 			}
 			m["reality-opts"] = ro
 		}
-		clashWS(m, p, network, p.param("path"), p.param("host"))
+		clashWS(m, p, network, edgeTransportPath(p, p.param("path")), p.param("host"))
 		if p.tlsInsecure() {
 			m["skip-cert-verify"] = true
 		}
@@ -603,7 +603,7 @@ func clashProxy(p *Proxy, opt ClashOptions) map[string]any {
 				m["skip-cert-verify"] = true
 			}
 		}
-		clashWS(m, p, network, str(p.VMess["path"]), str(p.VMess["host"]))
+		clashWS(m, p, network, edgeTransportPath(p, str(p.VMess["path"])), str(p.VMess["host"]))
 	case "ss":
 		m["type"] = "ss"
 		m["cipher"] = p.Method

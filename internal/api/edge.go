@@ -38,6 +38,23 @@ func isEdgeTunnelURL(u *url.URL) bool {
 	return false
 }
 
+func addEdgeUserToPath(path, edgeUUID string) string {
+	if edgeUUID == "" {
+		return path
+	}
+	if path == "" {
+		path = "/"
+	}
+	u, err := url.Parse(path)
+	if err != nil {
+		return path
+	}
+	q := u.Query()
+	q.Set("edge_user", edgeUUID)
+	u.RawQuery = q.Encode()
+	return u.String()
+}
+
 func rewriteEdgeTunnelLink(raw string, userID int64) string {
 	secret := strings.TrimSpace(os.Getenv("QZ_EDGE_SECRET"))
 	if secret == "" || userID <= 0 {
@@ -72,6 +89,9 @@ func rewriteEdgeTunnelLink(raw string, userID int64) string {
 	}
 	q := u.Query()
 	q.Set("edge_user", edgeUUID)
+	if q.Get("path") != "" {
+		q.Set("path", addEdgeUserToPath(q.Get("path"), edgeUUID))
+	}
 	u.RawQuery = q.Encode()
 	return u.String()
 }
@@ -116,6 +136,9 @@ func rewriteEdgeVMess(raw, edgeUUID string) string {
 		return raw
 	}
 	profile["id"] = edgeUUID
+	if path, ok := profile["path"].(string); ok {
+		profile["path"] = addEdgeUserToPath(path, edgeUUID)
+	}
 	body, err := json.Marshal(profile)
 	if err != nil {
 		return raw

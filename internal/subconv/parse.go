@@ -518,6 +518,37 @@ func (p *Proxy) param(keys ...string) string {
 	return ""
 }
 
+// edgeTransportPath carries the per-user Edge credential through renderers
+// such as Clash and sing-box, which intentionally discard unknown share-link
+// query keys. EdgeTunnel reads this query from the actual transport request.
+func edgeTransportPath(p *Proxy, path string) string {
+	if p == nil {
+		return path
+	}
+	edgeUser := p.Params.Get("edge_user")
+	if edgeUser == "" && p.VMess != nil {
+		edgeUser = str(p.VMess["edge_user"])
+	}
+	if edgeUser == "" {
+		return path
+	}
+	return addQueryToPath(path, "edge_user", edgeUser)
+}
+
+func addQueryToPath(path, key, value string) string {
+	if path == "" {
+		path = "/"
+	}
+	u, err := url.Parse(path)
+	if err != nil {
+		return path
+	}
+	q := u.Query()
+	q.Set(key, value)
+	u.RawQuery = q.Encode()
+	return u.String()
+}
+
 // udpBlocked reports whether the link marks its node as unable to relay UDP
 // (`qz-udp=block`, emitted for inbounds bound to a UDP-blocking proxy egress —
 // see singbox.LinkParams.NoUDP). The node drops UDP either way; this flag lets

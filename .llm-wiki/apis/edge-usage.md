@@ -66,3 +66,9 @@ while sending the Worker hostname as WebSocket Host/SNI. VMess applies the same
 rule to its `add`/`host`/`sni`/`peer` fields. Without this match, the generated
 subscription contains only the shared upstream credential and no `edge_user`,
 so the Worker cannot count or report the request.
+
+The `edge_user` marker must survive client rendering as well as the raw share
+link. Clash and sing-box discard unknown top-level URI parameters, so QingZhou
+also appends the marker to the actual WebSocket/HTTP transport path
+(`/?edge_user=...`). This is the path the Edge Worker receives and validates;
+ordinary non-Edge nodes retain their original path.

@@ -535,7 +535,7 @@ func singboxOutbound(p *Proxy) map[string]any {
 		o["alter_id"] = p.AlterID
 		o["security"] = "auto"
 		if str(p.VMess["net"]) == "ws" {
-			o["transport"] = sbWS(str(p.VMess["path"]), str(p.VMess["host"]), 0, "")
+			o["transport"] = sbWS(edgeTransportPath(p, str(p.VMess["path"])), str(p.VMess["host"]), 0, "")
 		}
 		// Was a hand-rolled block that set only server_name, so alpn / utls
 		// fingerprint / insecure were dropped for vmess alone. sbTLS reads all of
@@ -728,7 +728,7 @@ func sbTLS(p *Proxy, sec string) map[string]any {
 func sbTransport(p *Proxy) map[string]any {
 	switch p.param("type") {
 	case "ws":
-		return sbWS(p.param("path"), p.param("host"),
+		return sbWS(edgeTransportPath(p, p.param("path")), p.param("host"),
 			atoi(p.param("max_early_data")), p.param("early_data_header_name"))
 	case "grpc":
 		t := map[string]any{"type": "grpc"}
@@ -738,7 +738,7 @@ func sbTransport(p *Proxy) map[string]any {
 		return t
 	case "httpupgrade":
 		t := map[string]any{"type": "httpupgrade"}
-		if v := p.param("path"); v != "" {
+		if v := edgeTransportPath(p, p.param("path")); v != "" {
 			t["path"] = v
 		}
 		if v := p.param("host"); v != "" {
@@ -747,7 +747,7 @@ func sbTransport(p *Proxy) map[string]any {
 		return t
 	case "h2", "http":
 		t := map[string]any{"type": "http"}
-		if v := p.param("path"); v != "" {
+		if v := edgeTransportPath(p, p.param("path")); v != "" {
 			t["path"] = v
 		}
 		if v := p.param("host"); v != "" {

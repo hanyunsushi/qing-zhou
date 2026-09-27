@@ -9,6 +9,7 @@ updated: 2026-09-27
 - 2026-09-27 发布门禁与 Release：前端 95 项测试、类型检查、生产构建、`go test ./...`、`go test -race ./...`、`go vet ./...` 与 `git diff --check` 通过；提交 `4799d22`、标签 `v0.2.84-kreeper-20260927` 和 GitHub Actions `36257004993` 已验证，Release 资产已上传。
 - 2026-09-27 生产部署：OCI 宿主已运行 `v0.2.84-kreeper-20260927` 的 ARM64 面板，二进制 SHA-256 为 `09fd55be04ea93e70a71de68a4800b91e04b5a15335797ed0fd11c6da47b516d`；回滚目录、SQLite 热备份、服务状态、本机/公网健康接口与前端资源已核验，生产数据库和配置未覆盖。
 - 2026-09-27 Edge 订阅识别修复已部署：发现 Edge 节点实际以 Cloudflare IP 拨号、仅在 VLESS `host/sni` 中携带 `edge.kreeper.cc`，旧逻辑因此未生成 `edge_user`，用户次数保持 0。`internal/api/edge.go` 现增加 URL 主机与传输 Host/SNI/peer 匹配，并补齐 VLESS/VMess 回归测试；生产版本为 `v0.2.84-kreeper-edgefix-20260927`，ARM64 SHA-256 为 `f8564b6953b864b7978b96020b272d179642ba1e68e686bac953ebc93109c9f5`。真实订阅 11/11 Edge 节点已带 `edge_user`。
+- 2026-09-27 Edge 超时回滚与二次修复：发现 Clash/sing-box 会丢弃顶层未知 `edge_user` 查询参数，前一版真实客户端请求仍未携带凭据，导致 CF 节点超时；生产已回滚到 `v0.2.84-kreeper-20260927`。源码新增将 `edge_user` 注入实际 WebSocket/HTTP transport path，并补齐 Clash/sing-box 渲染回归测试；待重新部署验证。
 
 - Repository root: `/Users/hinaw/qing-zhou-fork`.
 - Git metadata is unavailable: `.git` points to `/Users/hinaw/qing-zhou/.git/worktrees/qingzhou-kreeper-production`, and that path does not exist. No commit or diff baseline was inferred.

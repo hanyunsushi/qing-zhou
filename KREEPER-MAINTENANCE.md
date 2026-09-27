@@ -1,5 +1,10 @@
 # Kreeper QingZhou 定制维护
 
+## 2026-09-27 Edge CF 节点超时二次修复（待部署）
+
+- 前一版只把 `edge_user` 放在原始分享链接查询参数中；Clash/sing-box 渲染器会丢弃未知参数，实际 WebSocket 请求没有带 `edge_user`，Worker 仍按普通 UUID 处理，导致 CF 节点超时。
+- 本轮将 `edge_user` 注入 VLESS/VMess 的实际 transport path（`/?edge_user=...`），并增加 Clash/sing-box 渲染回归测试；普通节点路径不变。生产已先回滚到 `v0.2.84-kreeper-20260927`，待本轮验证后重新部署。
+
 ## 2026-09-27 Edge 订阅凭据识别修复（已部署）
 
 - 根因：生产 Edge 节点拨号地址是 Cloudflare IP，`edge.kreeper.cc` 只在 VLESS 的传输 `host/sni` 参数中出现；旧逻辑只比较 URL 主机名，生成的订阅没有 `edge_user`，Worker 因而不会计数或回传。
