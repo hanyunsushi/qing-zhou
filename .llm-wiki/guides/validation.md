@@ -16,6 +16,13 @@ The release gate passed 99 front-end contract tests, `vue-tsc -b`, `vite build`,
 `go test ./...` and `git diff --check`. The existing ECharts async chunk warning
 (`567 KB` minified) remains non-blocking.
 
+Release `v0.2.84-kreeper-20260928` was published from commit `69786f0` and
+workflow `36344618817` uploaded the ARM64 panel with SHA-256
+`ce4b7cde25a1d17d81a6dc0b0667767a5804a25488c61ecc0f312a08f022dc9c`.
+Production validation is pending because the SSH host closes the connection
+before the banner; the public health endpoint still reports
+`v0.2.84-kreeper-edgefix2-20260927`.
+
 Run from the repository root:
 
 ```bash

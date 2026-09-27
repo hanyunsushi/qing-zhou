@@ -13,6 +13,17 @@ sing-box configuration and rollback backup. Verify local/public `/api/health`,
 the three related services, listeners `8081`, `8882`, `18082`, the active
 ARM64 binary hash and the public hashed frontend resource after restart.
 
+The release was published from source commit `69786f0` as
+`v0.2.84-kreeper-20260928`; workflow `36344618817` uploaded the ARM64 panel
+asset with SHA-256
+`ce4b7cde25a1d17d81a6dc0b0667767a5804a25488c61ecc0f312a08f022dc9c`.
+Production deployment remains pending: the public service still reports
+`v0.2.84-kreeper-edgefix2-20260927`, and the `qingzhou` SSH endpoint closes the
+connection before its banner. No production file, database, environment or
+service was changed. The panel self-updater still targets the official
+`mllt992/qing-zhou` repository, so it cannot install this fork release until
+the host `QZ_UPDATE_REPO` is changed through the protected host-service path.
+
 # QingZhou Deployment and Artifact Retention
 
 ## 2026-09-26 Embedded frontend resource release
