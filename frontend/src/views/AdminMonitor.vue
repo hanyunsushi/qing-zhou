@@ -15,13 +15,13 @@
         <div class="sum-ic">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
         </div>
-        <div><span class="sum-val" style="color:#059669;">{{ dash.online || 0 }}</span><span class="sum-lab">在线</span></div>
+        <div><span class="sum-val" style="color:var(--success);">{{ dash.online || 0 }}</span><span class="sum-lab">在线</span></div>
       </div>
       <div class="sum-card">
         <div class="sum-ic">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
         </div>
-        <div><span class="sum-val" style="color:#dc2626;">{{ dash.offline || 0 }}</span><span class="sum-lab">离线</span></div>
+        <div><span class="sum-val" style="color:var(--danger);">{{ dash.offline || 0 }}</span><span class="sum-lab">离线</span></div>
       </div>
       <div class="sum-card">
         <div class="sum-ic">
@@ -284,6 +284,7 @@ import {
 import { apiGet, apiList, apiPost, apiPut } from '@/api'
 import { fmtBytes, fmtDateTime, fmtUptime, pct, toLocalDatetimeInput } from '@/utils/format'
 import * as echarts from '@/utils/echarts'
+import { STATUS_COLORS, statusColorForPercent } from '@/utils/status-colors'
 
 const message = useMessage()
 const router = useRouter()
@@ -376,7 +377,7 @@ function trafficIncomplete(s: any) {
   const t = s.month_traffic
   return !t?.calibrated && t?.sample_count > 0 && t.coverage_start > (s.traffic_cycle_start || 0) + 3600
 }
-function pctColor(v: number) { return v >= 90 ? '#d91515' : v >= 70 ? '#b84b00' : '#037f0c' }
+function pctColor(v: number) { return statusColorForPercent(v) }
 
 // 热力图分类：绿/黄/红
 // 旧版 cell 热力图已替换为 ECharts 时间热力图（Y=机器, X=时间桶），见 loadHeatmap。
@@ -453,10 +454,10 @@ function renderHeatmap() {
   const labelCount = cw < 520 ? 4 : cw < 900 ? 6 : 8
   const labelInterval = Math.max(0, Math.ceil(buckets.length / labelCount) - 1)
   const states = [
-    { label: '运行正常', color: '#63a887' },
-    { label: '高负载', color: '#d2a34c' },
-    { label: '严重负载', color: '#c96d67' },
-    { label: '离线 / 无数据', color: '#b9c2cc' },
+    { label: '运行正常', color: STATUS_COLORS.success },
+    { label: '高负载', color: STATUS_COLORS.warning },
+    { label: '严重负载', color: STATUS_COLORS.error },
+    { label: '离线 / 无数据', color: STATUS_COLORS.inactive },
   ]
   heatEl.value.style.height = chartH + 'px'
   chart.setOption({
@@ -490,7 +491,7 @@ function renderHeatmap() {
     series: [{
       type: 'heatmap', data: pts, progressive: 0,
       itemStyle: { borderColor: 'rgba(255,255,255,.96)', borderWidth: 3, borderRadius: 5 },
-      emphasis: { itemStyle: { borderColor: '#fff', borderWidth: 2, shadowBlur: 10, shadowColor: 'rgba(42,55,70,.18)' } },
+      emphasis: { scale: true, itemStyle: { borderColor: '#fff', borderWidth: 2 } },
     }],
   }, true)
   chart.resize()
@@ -808,7 +809,7 @@ onUnmounted(() => {
 .heatmap-header-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; min-width: 0; }
 .hm-legend { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 6px; min-width: 0; font-size: 11px; color: var(--text-3); margin-left: 0; }
 .hm-dot { width: 8px; height: 8px; border-radius: 3px; display: inline-block; margin-left: 6px; box-shadow: inset 0 0 0 1px rgba(31,43,55,.05); }
-.hm-dot.ok { background: #63a887; } .hm-dot.warn { background: #d2a34c; } .hm-dot.crit { background: #c96d67; } .hm-dot.none { background: #b9c2cc; }
+.hm-dot.ok { background: var(--success); } .hm-dot.warn { background: var(--warn); } .hm-dot.crit { background: var(--danger); } .hm-dot.none { background: var(--inactive); }
 .heat-chart { width: 100%; height: 58px; min-height: 0; }
 .heat-chart:empty { display: none; }
 .range-switch { display:inline-flex; align-items:center; gap:0; padding:3px; border:1px solid var(--border); border-radius:var(--r); background:var(--bg-subtle); }
@@ -822,7 +823,7 @@ onUnmounted(() => {
 .mini-range { width:max-content; margin-bottom:6px; }
 
 /* 告警 */
-.alert-cnt { display: inline-block; margin-left: 6px; padding: 0 6px; border-radius: 9px; background: var(--danger-soft, #fef2f2); color: var(--danger, #dc2626); font-size: 11px; font-weight: 650; }
+.alert-cnt { display: inline-block; margin-left: 6px; padding: 0 6px; border-radius: 9px; background: var(--danger); color: #fff; font-size: 11px; font-weight: 650; }
 .alert-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border-soft, #f1efe8); }
 .alert-row:last-child { border-bottom: none; }
 .alert-main { min-width: 0; }

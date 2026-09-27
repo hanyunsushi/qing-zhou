@@ -9,7 +9,7 @@ test('Cloudscape visual tokens keep the existing Vue component system', () => {
   const globalCss = read('src/styles/global.css')
   const app = read('src/App.vue')
 
-  for (const token of ['--accent: #007aff', '--accent-button-hover: color-mix(in srgb, var(--accent) 84%, white)', '--success: #037f0c', '--danger: #d91515', '--chart-1: #688ae8', '--chart-8: #096f64']) {
+  for (const token of ['--accent: #007aff', '--accent-button-hover: color-mix(in srgb, var(--accent) 84%, white)', '--success: #00802f', '--warn: #855900', '--danger: #db0000', '--info: #007aff', '--inactive: #656871', '--chart-1: #688ae8', '--chart-8: #096f64']) {
     assert.match(globalCss, new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')))
   }
   assert.match(app, /primaryColor: '#007aff'/)
@@ -25,6 +25,8 @@ test('Cloudscape visual tokens keep the existing Vue component system', () => {
   assert.match(app, /borderRadius: '18px'/)
   assert.doesNotMatch(app, /@cloudscape-design\/components/)
   assert.match(globalCss, /\.n-button\.n-button--primary-type:not\(\.n-button--secondary\):not\(\.n-button--ghost\):not\(\.n-button--disabled\):hover \{\s*background: var\(--accent-button-hover\) !important;/)
+  assert.match(globalCss, /\.n-tag\.n-tag--success-type[\s\S]*?background: var\(--status-solid-bg\) !important;/)
+  assert.match(globalCss, /\.n-tag\.n-tag--warning-type \{ --status-solid-bg: var\(--warn\); \}/)
 })
 
 test('custom scrollbar geometry keeps one stable centered slot across platforms', () => {
@@ -468,6 +470,45 @@ test('admin monitor summary SVGs use the same neutral icon treatment', () => {
   const source = read('src/views/AdminMonitor.vue')
   assert.match(source, /卡片 SVG：与首页摘要图标及帮助文档统计卡统一使用中性前景和灰色底框[\s\S]*?\.sum-ic \{[\s\S]*?background: var\(--bg-subtle\); color: var\(--text-2\);/)
   assert.doesNotMatch(source, /class="sum-ic" style=/)
+})
+
+test('semantic status colors use solid white-label badges and chart state semantics', () => {
+  const globalCss = read('src/styles/global.css')
+  const monitor = read('src/views/Monitor.vue')
+  const adminMonitor = read('src/views/AdminMonitor.vue')
+  const statusColors = read('src/utils/status-colors.ts')
+  assert.match(statusColors, /success: '#00802f'[\s\S]*?warning: '#855900'[\s\S]*?error: '#db0000'[\s\S]*?info: '#007aff'/)
+  assert.match(globalCss, /\.n-tag\.n-tag--success-type,[\s\S]*?--n-text-color: #fff !important;/)
+  assert.match(monitor, /status-badge\.online \{ background: var\(--success\); color: #fff; \}/)
+  assert.match(monitor, /emphasis: \{ scale: true, itemStyle: \{ borderColor: '#fff', borderWidth: 2 \} \}/)
+  assert.doesNotMatch(monitor, /shadowBlur: 10|card-top-line/)
+  assert.match(adminMonitor, /color: STATUS_COLORS\.success[\s\S]*?color: STATUS_COLORS\.warning[\s\S]*?color: STATUS_COLORS\.error/)
+  assert.doesNotMatch(adminMonitor, /shadowBlur: 10/)
+})
+
+test('monitor provider cards expose the shared drag and status surface contract', () => {
+  const monitor = read('src/views/Monitor.vue')
+  const upstreams = read('src/views/AdminUpstreams.vue')
+  assert.match(monitor, /class="upstream-refresh-link"[^>]*>刷新/)
+  assert.match(monitor, /\.upstream-refresh-link \{[\s\S]*?color: var\(--accent\);/)
+  assert.match(monitor, /\.upstream-balance-item \{[\s\S]*?border: 0;[\s\S]*?box-shadow: none|\.upstream-balance-item \{[\s\S]*?border: 0;/)
+  assert.match(monitor, /\.tag\.price \{ background: var\(--warn\); color: #fff;/)
+  assert.doesNotMatch(monitor, /<span class="tag loc">OCI · Cloudflare<\/span>/)
+  assert.match(monitor, /class="upstream-drag-hint"/)
+  assert.match(upstreams, /class="provider-drag-hint" title="拖动调整供应商卡片顺序"/)
+})
+
+test('admin sidebar elevates management to a first-level section', () => {
+  const layout = read('src/components/DashboardLayout.vue')
+  assert.match(layout, /menuSection\('g-admin', '管理后台', adminItems\.value\)/)
+  assert.match(layout, /const adminItems = computed<[\s\S]*?label: '运营',[\s\S]*?label: '节点服务',[\s\S]*?label: '内容系统'/)
+  assert.doesNotMatch(layout, /label: '管理后台', key: 'admin-root'/)
+})
+
+test('node sorting cards use the page surface distinct from module cards', () => {
+  const nodes = read('src/views/AdminNodes.vue')
+  assert.match(nodes, /\.node-sort-card \{ background: var\(--bg\); \}/)
+  assert.match(nodes, /<n-tag v-if="r\.enabled"|<n-tag :type="r\.enabled \? 'success' : 'default'/)
 })
 
 test('admin monitor heatmap header wraps controls below the title on narrow screens', () => {

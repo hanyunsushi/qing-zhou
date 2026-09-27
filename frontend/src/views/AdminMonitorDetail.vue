@@ -97,6 +97,7 @@ import {
 } from 'naive-ui'
 import { apiGet } from '@/api'
 import { fmtBytes, fmtUptime, pct } from '@/utils/format'
+import { statusColorForPercent } from '@/utils/status-colors'
 import * as echarts from '@/utils/echarts'
 
 const route = useRoute()
@@ -127,7 +128,7 @@ const trafficStatus = computed(() => {
 })
 
 function pctClass(v: number) { return v >= 90 ? 'crit' : v >= 70 ? 'warn' : 'ok' }
-function pctColor(v: number) { return v >= 90 ? '#d91515' : v >= 70 ? '#b84b00' : '#037f0c' }
+function pctColor(v: number) { return statusColorForPercent(v) }
 function back() { router.push({ name: 'admin-monitor' }) }
 
 async function loadServer() {

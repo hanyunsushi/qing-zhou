@@ -941,6 +941,8 @@ async function load() {
 .route-warning { margin-top: 8px; padding-top: 7px; border-top: 1px solid rgba(208, 48, 80, 0.12); color: #d03050; font-size: 11px; line-height: 1.4; }
 .route-preview.warn { background: rgba(208, 48, 80, 0.035); border-color: rgba(208, 48, 80, 0.13); }
 .list-card .lc-foot { justify-content: space-between; gap: 8px; margin-top: 0; padding-top: 2px; }
+/* 节点卡片：一级分组模块使用 var(--card)，节点项退回页面背景以建立层级对比。 */
+.node-sort-card { background: var(--bg); }
 .node-sort-card { cursor: grab; transition: opacity .2s ease, transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
 .node-sort-card:active { cursor: grabbing; }
 .node-sort-card.dragging { opacity: .45; transform: scale(.985); }

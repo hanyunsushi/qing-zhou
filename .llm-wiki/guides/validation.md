@@ -1,9 +1,20 @@
 ---
 title: Validation Guide
-updated: 2026-09-21
+updated: 2026-09-28
 ---
 
 # Validation Guide
+
+## 2026-09-28 Admin hierarchy and node card release gate
+
+The admin sidebar now exposes “管理后台” as a first-level static group, with
+运营、节点服务 and 内容系统 as its expandable second-level groups. Node
+sorting cards use the page surface independently from their enclosing module;
+routes, search, permissions and status semantics are unchanged.
+
+The release gate passed 99 front-end contract tests, `vue-tsc -b`, `vite build`,
+`go test ./...` and `git diff --check`. The existing ECharts async chunk warning
+(`567 KB` minified) remains non-blocking.
 
 Run from the repository root:
 

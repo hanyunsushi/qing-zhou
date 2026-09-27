@@ -26,12 +26,17 @@
   --accent-soft: #e9f3ff;
   --accent-subtle: #f2f8ff;
   --selection-bg: rgba(0, 122, 255, .2);
-  --danger: #d91515;
-  --danger-soft: #fff1f0;
-  --warn: #b84b00;
+  /* Cloudscape semantic status colors; status badges use their solid text
+     color as the surface, while information remains Apple blue. */
+  --danger: #db0000;
+  --danger-soft: #fff5f5;
+  --warn: #855900;
+  --warn-soft: #fffef0;
   --info: #007aff;
-  --success: #037f0c;
-  --success-soft: #ecf7ed;
+  --info-soft: #f0fbff;
+  --success: #00802f;
+  --success-soft: #effff1;
+  --inactive: #656871;
   --shadow: 0 2px 8px rgba(0, 7, 7, .12);
   --shadow-sm: 0 1px 4px rgba(0, 7, 7, .12);
   --shadow-flyout: 0 4px 16px rgba(0, 7, 7, .16);
@@ -899,6 +904,28 @@ button, input, textarea, select { font-family: inherit; }
   box-shadow: none !important;
 }
 .n-tag { border-radius: var(--r-control) !important; font-weight: 600; }
+/* 状态牌：AWS semantic status color as solid background with white text. */
+.n-tag.n-tag--success-type,
+.n-tag.n-tag--warning-type,
+.n-tag.n-tag--error-type,
+.n-tag.n-tag--info-type {
+  --n-color: var(--status-solid-bg) !important;
+  --n-color-hover: var(--status-solid-bg) !important;
+  --n-color-pressed: var(--status-solid-bg) !important;
+  --n-text-color: #fff !important;
+  --n-text-color-hover: #fff !important;
+  --n-text-color-pressed: #fff !important;
+  --n-border: 1px solid transparent !important;
+  --n-border-hover: 1px solid transparent !important;
+  --n-border-pressed: 1px solid transparent !important;
+  background: var(--status-solid-bg) !important;
+  color: #fff !important;
+  border-color: transparent !important;
+}
+.n-tag.n-tag--success-type { --status-solid-bg: var(--success); }
+.n-tag.n-tag--warning-type { --status-solid-bg: var(--warn); }
+.n-tag.n-tag--error-type { --status-solid-bg: var(--danger); }
+.n-tag.n-tag--info-type { --status-solid-bg: var(--info); }
 .n-alert { border-radius: var(--r-overlay) !important; }
 .n-empty { color: var(--text-3); }
 .n-empty .n-empty__icon { opacity: .62; filter: saturate(.65); }

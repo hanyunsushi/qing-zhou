@@ -175,6 +175,7 @@ import { useCountUp } from '@/utils/countup'
 import StatCard from '@/components/StatCard.vue'
 import TrafficTrendChart from '@/components/TrafficTrendChart.vue'
 import { openHelp } from '@/utils/help'
+import { STATUS_COLORS } from '@/utils/status-colors'
 
 const router = useRouter(); const auth = useAuthStore(); const config = useConfigStore()
 function showHelp() { openHelp(config.config, router) }
@@ -209,8 +210,8 @@ const metered = computed(() => (traffic.value.total || 0) > 0)
 const usedPct = computed(() => pct(traffic.value.used, traffic.value.total))
 const usedBadge = computed(() => metered.value && usedPct.value > 0 ? '已用 ' + usedPct.value + '%' : '')
 const ringColor = computed(() => {
-  if (!metered.value) return '#b8b8b8'
-  return usedPct.value > 90 ? '#d91515' : usedPct.value > 70 ? '#b84b00' : '#037f0c'
+  if (!metered.value) return STATUS_COLORS.inactive
+  return usedPct.value > 90 ? STATUS_COLORS.error : usedPct.value > 70 ? STATUS_COLORS.warning : STATUS_COLORS.success
 })
 
 const remainingText = computed(() => {

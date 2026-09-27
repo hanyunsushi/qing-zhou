@@ -26,7 +26,7 @@
           @dragend="handleProviderDragEnd"
         >
         <n-card size="small" class="upstream-card">
-          <template #header><div class="provider-card-title"><img :src="ociLogo" alt="Oracle Cloud Infrastructure" class="provider-logo" /><span>Oracle Cloud Infrastructure</span></div></template>
+          <template #header><div class="provider-card-title"><img :src="ociLogo" alt="Oracle Cloud Infrastructure" class="provider-logo" /><span>Oracle Cloud Infrastructure</span><span class="provider-drag-hint" title="拖动调整供应商卡片顺序" aria-hidden="true">⋮⋮</span></div></template>
           <template #header-extra><n-tag :type="tagType(ociView.configured)" size="small" :bordered="false">{{ ociView.configured ? '已配置' : '未配置' }}</n-tag></template>
           <div class="balance-panel" :class="usageClass(ociUsage)">
             <template v-if="ociUsage?.success">
@@ -81,7 +81,7 @@
           @dragend="handleProviderDragEnd"
         >
         <n-card size="small" class="upstream-card">
-          <template #header><div class="provider-card-title"><img :src="cloudflareLogo" alt="Cloudflare" class="provider-logo" /><span>Cloudflare</span></div></template>
+          <template #header><div class="provider-card-title"><img :src="cloudflareLogo" alt="Cloudflare" class="provider-logo" /><span>Cloudflare</span><span class="provider-drag-hint" title="拖动调整供应商卡片顺序" aria-hidden="true">⋮⋮</span></div></template>
           <template #header-extra><n-tag :type="tagType(cfView.configured)" size="small" :bordered="false">{{ cfView.configured ? '已配置' : '未配置' }}</n-tag></template>
           <div class="balance-panel" :class="usageClass(cfUsage)">
             <template v-if="cfUsage?.success">
@@ -343,6 +343,7 @@ onUnmounted(() => {
 .upstream-card { min-width: 0; }
 .provider-card-title { display: inline-flex; align-items: center; gap: 7px; min-width: 0; color: var(--text); font-size: 15px; font-weight: 650; line-height: 20px; }
 .provider-logo { width: 18px; height: 18px; flex: 0 0 18px; display: block; object-fit: contain; }
+.provider-drag-hint { margin-left: auto; color: var(--text-3); font-size: 14px; line-height: 1; letter-spacing: -3px; opacity: .7; }
 .balance-panel { padding: 14px; margin-bottom: 14px; border: 1px solid var(--border); border-radius: var(--r-sm); background: var(--bg-soft); min-height: 122px; }
 .balance-panel.ready { background: var(--success-soft); border-color: var(--success); }
 .balance-panel.failed { background: var(--danger-soft); border-color: var(--danger); }

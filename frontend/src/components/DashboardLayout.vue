@@ -221,7 +221,7 @@ const shopItems: MenuOption[] = [
   { label: '积分明细', key: '/points', icon: renderIcon(WalletOutline) },
 ]
 
-// 侧边栏菜单归类级别：二级菜单项；信息下另有三级管理后台归类。
+// 侧边栏菜单归类级别：信息下只保留普通二级菜单项。
 const infoLeafItems: MenuOption[] = [
   { label: '公告通知', key: '/notices', icon: renderIcon(MegaphoneOutline) },
   { label: '帮助中心', key: '/help', icon: renderIcon(BookOutline) },
@@ -254,18 +254,14 @@ const adminSysItems: MenuOption[] = [
   { label: '在线更新', key: '/admin/update', icon: renderIcon(CloudDownloadOutline) },
 ]
 
-// 侧边栏菜单归类级别：二级菜单项与三级归类均保留 SVG 图标；账户设置和管理后台归入信息。
-const infoItems = computed<MenuOption[]>(() => [
-  ...infoLeafItems,
-  ...(auth.isAdmin ? [{
-    label: '管理后台', key: 'admin-root', icon: renderIcon(SettingsOutline), children: [
-      // 侧边栏菜单归类级别：三级归类，保留 SVG 图标和展开箭头。
-      { label: '运营', key: 'ag-ops', icon: renderIcon(PulseOutline), children: adminOpsItems },
-      { label: '节点服务', key: 'ag-node', icon: renderIcon(ServerOutline), children: adminNodeItems },
-      { label: '内容系统', key: 'ag-sys', icon: renderIcon(DocumentTextOutline), children: adminSysItems },
-    ],
-  }] : []),
-])
+// 侧边栏菜单归类级别：管理后台是独立一级分组，运营/节点服务/内容系统为二级归类。
+const adminItems = computed<MenuOption[]>(() => auth.isAdmin ? [
+  { label: '运营', key: 'ag-ops', icon: renderIcon(PulseOutline), children: adminOpsItems },
+  { label: '节点服务', key: 'ag-node', icon: renderIcon(ServerOutline), children: adminNodeItems },
+  { label: '内容系统', key: 'ag-sys', icon: renderIcon(DocumentTextOutline), children: adminSysItems },
+] : [])
+
+const infoItems = computed<MenuOption[]>(() => infoLeafItems)
 
 const allMenuOptions = computed<MenuOption[]>(() => {
   // 侧边栏菜单归类级别：一级归类标题使用静态 group，避免一级菜单产生箭头、竖线和伸缩。
@@ -274,11 +270,12 @@ const allMenuOptions = computed<MenuOption[]>(() => {
     menuSection('g-common', '常用', userMenuItems),
     menuSection('g-shop', '商城', shopItems),
     menuSection('g-info', '信息', infoItems.value),
+    menuSection('g-admin', '管理后台', adminItems.value),
   ]
   return items
 })
 
-const defaultExpandedKeys = ['admin-root', 'ag-ops', 'ag-node', 'ag-sys']
+const defaultExpandedKeys = ['ag-ops', 'ag-node', 'ag-sys']
 
 function filterMenuOptions(options: MenuOption[], query: string): MenuOption[] {
   if (!query) return options
@@ -309,9 +306,7 @@ const searchItems = computed(() => {
     { label: '首页', value: '/' },
     ...userMenuItems.map(item => ({ label: String(item.label), value: String(item.key) })),
     ...shopItems.map(item => ({ label: String(item.label), value: String(item.key) })),
-    ...infoItems.value
-      .filter(item => item.key !== 'admin-root')
-      .map(item => ({ label: String(item.label), value: String(item.key) })),
+    ...infoItems.value.map(item => ({ label: String(item.label), value: String(item.key) })),
   ]
   if (auth.isAdmin) {
     items.push(
@@ -346,12 +341,10 @@ const { openMenu, setMenuOpen, closeMenu } = useMutualHoverMenu<HeaderMenu>()
 // 悬浮下拉菜单：共享一个打开状态，忽略旧菜单迟到的关闭事件，避免切换闪烁。
 
 function handleMenuSelect(key: string) {
-  if (key === 'admin-root') return
   if (key === '/help') openHelp(config.config, router)
   else router.push(key)
 }
 function goAndClose(key: string) {
-  if (key === 'admin-root') return
   drawerShow.value = false
   if (key === '/help') openHelp(config.config, router)
   else router.push(key)

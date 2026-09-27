@@ -29,6 +29,7 @@ import { computed } from 'vue'
 import { NTag, NButton } from 'naive-ui'
 import { fmtBytes, fmtDate, fmtDateTime, pct } from '@/utils/format'
 import { planStatusMeta, planTimeText } from '@/utils/plan'
+import { STATUS_COLORS } from '@/utils/status-colors'
 
 const props = defineProps<{ plan: any; removing?: boolean }>()
 defineEmits<{ (e: 'remove'): void; (e: 'adjust'): void }>()
@@ -47,7 +48,7 @@ const fillWidth = computed(() =>
 const fillColor = computed(() => {
   if (bucket.value === 'finished') return 'var(--text-3)'
   if (props.plan.traffic_limit <= 0) return 'var(--text-3)'
-  return usedPct.value > 90 ? '#d91515' : usedPct.value > 70 ? '#b84b00' : '#037f0c'
+  return usedPct.value > 90 ? STATUS_COLORS.error : usedPct.value > 70 ? STATUS_COLORS.warning : STATUS_COLORS.success
 })
 
 const amountText = computed(() => {

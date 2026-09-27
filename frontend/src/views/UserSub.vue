@@ -112,7 +112,7 @@
                 <n-tag :type="planStatus(line.segs[0]).type" size="small" bordered>{{ planStatus(line.segs[0]).label }}</n-tag>
               </div>
             </div>
-            <n-progress v-if="line.segs[0].status !== 'queued'" type="line" :percentage="planPct(line.segs[0])" :color="planPct(line.segs[0])>90?'#d91515':'#037f0c'" />
+            <n-progress v-if="line.segs[0].status !== 'queued'" type="line" :percentage="planPct(line.segs[0])" :color="statusColorForPercent(planPct(line.segs[0]))" />
             <div v-else class="pl-stripe"></div>
             <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3);margin-top:4px;gap:8px;">
               <span>{{ segUsage(line.segs[0]) }}</span>
@@ -149,7 +149,7 @@
                   <n-tag :type="planStatus(p).type" size="tiny" bordered>{{ planStatus(p).label }}</n-tag>
                 </div>
                 <n-progress v-if="p.status !== 'queued'" type="line" :percentage="planPct(p)" :height="5"
-                            :color="planPct(p)>90?'#d91515':'#037f0c'" />
+                            :color="statusColorForPercent(planPct(p))" />
                 <div v-else class="pl-stripe"></div>
                 <div class="pl-use">{{ segUsage(p) }}</div>
               </div>
@@ -368,6 +368,7 @@ import { apiGet, apiList, apiPost, apiPut } from '@/api'
 import { useAuthStore } from '@/stores/auth'
 import { fmtBytes, fmtTotal, fmtDate, pct } from '@/utils/format'
 import { planStatusMeta, planTimeText, planSortKey } from '@/utils/plan'
+import { statusColorForPercent, STATUS_COLORS } from '@/utils/status-colors'
 import { copyText } from '@/utils/clipboard'
 import QRCode from 'qrcode'
 
@@ -674,9 +675,9 @@ const nodeGroups = computed(() => {
 
 function latencyColor(ms: number) {
   if (ms < 0) return 'var(--text-3)'
-  if (ms < 150) return '#037f0c'
-  if (ms < 400) return '#e07941'
-  return '#d91515'
+  if (ms < 150) return STATUS_COLORS.success
+  if (ms < 400) return STATUS_COLORS.warning
+  return STATUS_COLORS.error
 }
 
 // 一段链路的胶囊。这些 vnode 由 n-data-table 渲染，拿不到本组件 scoped 样式的

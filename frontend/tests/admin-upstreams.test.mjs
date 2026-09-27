@@ -198,18 +198,18 @@ test('mobile menu trigger copies the Sub2 portrait sidebar toggle contract', () 
   assert.match(layout, /\.app-header-menu-toggle-icon \{ display: block; width: 22px; height: 22px; flex: 0 0 22px; \}/)
 })
 
-test('sidebar categories use static level-one groups and nest account/admin under information', () => {
+test('sidebar categories use static level-one groups with a dedicated admin section', () => {
   assert.match(layout, /侧边栏菜单归类级别：一级归类只作为静态分组标题/)
   assert.match(layout, /return \{ type: 'group', key, label: groupLabel\(label\), children, sidebarLabel: label \}/)
   assert.match(layout, /const infoLeafItems: MenuOption\[\] = \[[\s\S]*?key: '\/account'/)
-  assert.match(layout, /const infoItems = computed<MenuOption\[\]>\(\(\) => \[[\s\S]*?\.\.\.infoLeafItems,[\s\S]*?key: 'admin-root'/)
-  assert.match(layout, /侧边栏菜单归类级别：三级归类，保留 SVG 图标和展开箭头/)
+  assert.match(layout, /const infoItems = computed<MenuOption\[\]>\(\(\) => infoLeafItems\)/)
+  assert.match(layout, /const adminItems = computed<MenuOption\[\]>\(\(\) => auth\.isAdmin \? \[[\s\S]*?label: '运营'/)
   assert.match(layout, /key: 'ag-ops', icon: renderIcon\(PulseOutline\)/)
   assert.match(layout, /key: 'ag-node', icon: renderIcon\(ServerOutline\)/)
   assert.match(layout, /key: 'ag-sys', icon: renderIcon\(DocumentTextOutline\)/)
-  assert.doesNotMatch(layout, /menuSection\('admin-root'/)
+  assert.match(layout, /menuSection\('g-admin', '管理后台', adminItems\.value\)/)
 })
 
 test('sidebar search suggestions contain navigable routes only', () => {
-  assert.match(layout, /\.filter\(item => item\.key !== 'admin-root'\)/)
+  assert.doesNotMatch(layout, /item\.key !== 'admin-root'/)
 })

@@ -372,6 +372,7 @@ import { RefreshOutline, PersonAddOutline, SearchOutline } from '@vicons/ionicon
 import { apiList, apiPost, apiPut, apiDelete } from '@/api'
 import { fmtBytes, fmtDate, fmtDateTime, timeAgo, daysLeft, pct, toLocalDatetimeInput } from '@/utils/format'
 import { planStatusMeta, planSortKey } from '@/utils/plan'
+import { statusColorForPercent } from '@/utils/status-colors'
 import RefundDialog from '@/components/RefundDialog.vue'
 import PlanItem from '@/components/AdminPlanItem.vue'
 
@@ -455,7 +456,7 @@ function barWidth(u: any) {
   return '0%'
 }
 function barColor(p: number) {
-  return p > 90 ? '#d91515' : p > 70 ? '#b84b00' : '#037f0c'
+  return statusColorForPercent(p)
 }
 
 // ---- 套餐摘要 ----
@@ -498,11 +499,11 @@ function expiringSoon(u: any) {
 // ---- 概览 / 筛选 ----
 const stats = computed(() => [
   { key: 'all', label: '全部用户', value: users.value.length, color: '' },
-  { key: 'online', label: '在线', value: onlineCount.value, color: '#037f0c' },
+  { key: 'online', label: '在线', value: onlineCount.value, color: 'var(--success)' },
   { key: 'unfetched', label: '从未拉取订阅', value: users.value.filter((u: any) => !u.sub_last_fetched_at).length, color: '#767676' },
   { key: 'noplan', label: '无生效套餐', value: users.value.filter(needsPlan).length, color: '#767676' },
-  { key: 'expiring', label: '7 天内到期', value: users.value.filter(expiringSoon).length, color: '#b84b00' },
-  { key: 'banned', label: '已封禁', value: users.value.filter((u: any) => u.status === 'banned').length, color: '#d91515' },
+  { key: 'expiring', label: '7 天内到期', value: users.value.filter(expiringSoon).length, color: 'var(--warn)' },
+  { key: 'banned', label: '已封禁', value: users.value.filter((u: any) => u.status === 'banned').length, color: 'var(--danger)' },
 ])
 const emptyText = computed(() => {
   if (search.value) return '没有匹配的用户'

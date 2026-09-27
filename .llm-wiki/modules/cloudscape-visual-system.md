@@ -1,9 +1,14 @@
 ---
 title: Cloudscape Visual System
-updated: 2026-09-27
+updated: 2026-09-28
 ---
 
 # Cloudscape Visual System
+
+## Admin sidebar hierarchy and node surfaces
+
+- “管理后台”是与“常用 / 商城 / 信息”并列的一级静态侧栏分组；其下的“运营 / 节点服务 / 内容系统”是二级可展开归类，页面项为叶子路由。该视觉层级不改变权限、路由、搜索和移动抽屉行为。
+- 节点管理的可排序 `node-sort-card` 使用页面底色 `var(--bg)`，所属一级分组模块继续使用 `var(--card)`，用表面明度区分模块容器与其内部卡片。节点启用/禁用及自建/外部标签继续由统一 AWS 语义状态色合同控制。
 
 ## ECharts bundle contract
 
@@ -494,6 +499,42 @@ See Also: `frontend/src/utils/shift5.ts`, `frontend/src/router/index.ts`, `front
 - 侧栏 `type="search"` 筛选框隐藏 Chromium 原生搜索清除叉号，避免输入有内容时出现额外控件；输入筛选、Esc 清空、快捷键聚焦和焦点边界保持不变。
 
 ## Color rules
+
+### Semantic status palette customization
+
+- QingZhou uses the AWS Cloudscape light-theme semantic status text colors as
+  the base palette: success `#00802f`, warning `#855900`, error `#db0000`,
+  and inactive/loading `#656871`. Information intentionally remains the
+  product's Apple blue `#007aff`, rather than Cloudscape's standard info
+  `#006ce0`, so links, information notices, and interactive emphasis keep one
+  consistent blue.
+- This project customizes the Cloudscape surface treatment for compact status
+  badges: the semantic text color is used as a solid background and the label
+  is white. This applies to online/offline, enabled/disabled, published/draft,
+  pending/running/synced, warning, error, and similar status labels. It does
+  not turn ordinary buttons, links, focus rings, or identity badges into status
+  colors unless their component contract explicitly says so.
+- The corresponding Cloudscape light backgrounds remain available as
+  `--success-soft: #effff1`, `--warn-soft: #fffef0`, `--danger-soft: #fff5f5`,
+  and `--info-soft: #f0fbff` for low-emphasis notices and surfaces. They are
+  not used for the solid status-badge variant.
+- Percentage meters and resource gauges use the same semantic thresholds:
+  below 70% success, 70-89% warning, and 90% or higher error. The shared
+  `frontend/src/utils/status-colors.ts` helper is the only source for these
+  colors, including dashboard rings, subscription/server progress, and monitor
+  gauges.
+- Heatmaps and other charts are still charts, but state-encoding cells and
+  legends use the same customized semantic status colors. Hover emphasis only
+  scales the cell; it does not add a shadow. Categorical series colors remain
+  separate Cloudscape chart colors and must not be reused as UI status colors.
+- Provider balance cards that can be reordered use a visible `⋮⋮` drag affordance
+  in the title row. Their normal surfaces are borderless and shadowless; hover
+  changes only the neutral surface, while the refresh action remains Apple blue.
+- Provider scope text is omitted from the public upstream balance card when the
+  individual provider logos and titles already identify OCI and Cloudflare.
+- Price tags are warning-semantic status pills (`--warn` background with white
+  text), while heatmap legends use the same success/warning/error/inactive
+  status tokens as their cells.
 
 ### Global surface hierarchy (2026-09-23)
 

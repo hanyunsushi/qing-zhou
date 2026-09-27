@@ -3,6 +3,16 @@ title: QingZhou Deployment and Artifact Retention
 updated: 2026-09-21
 ---
 
+## 2026-09-28 Admin hierarchy and node card release
+
+Source release `v0.2.84-kreeper-20260928` contains the first-level admin
+sidebar hierarchy and node card surface changes. The production rollout must
+use the existing host-service path `/opt/qingzhou/qingzhou` under
+`qingzhou.service`; preserve the database, environment, service definitions,
+sing-box configuration and rollback backup. Verify local/public `/api/health`,
+the three related services, listeners `8081`, `8882`, `18082`, the active
+ARM64 binary hash and the public hashed frontend resource after restart.
+
 # QingZhou Deployment and Artifact Retention
 
 ## 2026-09-26 Embedded frontend resource release

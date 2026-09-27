@@ -397,7 +397,7 @@
             <n-form-item label="发送测试">
               <n-button size="small" :loading="testingOps" :disabled="!opsEffective" @click="handleTestOpsAlert">发送测试告警</n-button>
               <span v-if="opsEffective" class="form-hint" style="margin-left:8px;">当前 {{ opsEffective }} 个聊天会收到告警</span>
-              <span v-else style="margin-left:8px;color:#dc2626;font-size:12px;">当前没有人会收到告警</span>
+              <span v-else style="margin-left:8px;color:var(--danger);font-size:12px;">当前没有人会收到告警</span>
             </n-form-item>
           </n-form>
         </div>

@@ -5,15 +5,6 @@
     <!-- SVG 渐变定义（供仪表盘 / 迷你图引用） -->
     <svg width="0" height="0" style="position:absolute" aria-hidden="true">
       <defs>
-        <linearGradient id="gg-ok" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#54a95b" /><stop offset="1" stop-color="#037f0c" />
-        </linearGradient>
-        <linearGradient id="gg-warn" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#f4a261" /><stop offset="1" stop-color="#b84b00" />
-        </linearGradient>
-        <linearGradient id="gg-crit" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#f47d7d" /><stop offset="1" stop-color="#d91515" />
-        </linearGradient>
         <linearGradient id="spark-grad" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#3180b5" stop-opacity="0.24" />
           <stop offset="1" stop-color="#3180b5" stop-opacity="0" />
@@ -147,7 +138,7 @@
         <div class="server-grid">
           <template v-for="(s, i) in servers" :key="s.name">
           <div class="server-card" :style="{ '--i': i }">
-            <div class="card-top-line" :class="s.status" />
+
 
             <!-- 头部 -->
             <div class="card-header">
@@ -178,7 +169,7 @@
                   <svg viewBox="0 0 64 64" class="gauge-svg">
                     <circle class="gauge-bg" cx="32" cy="32" r="26" />
                     <circle class="gauge-fg" cx="32" cy="32" r="26"
-                      :stroke="`url(#gg-${g.lvl})`"
+                      :stroke="statusColorForLevel(g.lvl)"
                       :stroke-dasharray="GAUGE_C"
                       :stroke-dashoffset="g.off" />
                   </svg>
@@ -269,7 +260,6 @@
 
           <!-- 上游余额只对管理员加载，避免把供应商账户用量暴露到公开状态页。 -->
           <div v-if="auth.isAdmin && s.name === '面板本机'" class="server-card upstream-balance-card" :style="{ '--i': i + 1 }">
-            <div class="card-top-line online" />
             <div class="card-header">
               <div class="card-title">
                 <span class="status-beacon online" />
@@ -278,7 +268,6 @@
               <span class="status-badge online"><i class="badge-dot" /> 官方数据</span>
             </div>
             <div class="tag-line">
-              <span class="tag loc">OCI · Cloudflare</span>
               <span class="tag spec">每 15 分钟更新</span>
             </div>
             <div class="upstream-balance-grid">
@@ -336,6 +325,7 @@ import AppHeader from '@/components/AppHeader.vue'
 import ociLogo from '@/assets/provider-oci.svg'
 import cloudflareLogo from '@/assets/provider-cloudflare.svg'
 import * as echarts from '@/utils/echarts'
+import { STATUS_COLORS, statusColorForLevel } from '@/utils/status-colors'
 
 interface ServerMetrics {
   cpu_percent: number; mem_used: number; mem_total: number
@@ -732,10 +722,10 @@ function renderHeatmap() {
   const labelCount = cw < 520 ? 4 : cw < 900 ? 6 : 8
   const labelInterval = Math.max(0, Math.ceil(buckets.length / labelCount) - 1)
   const states = [
-    { label: '运行正常', color: '#63a887' },
-    { label: '高负载', color: '#d2a34c' },
-    { label: '严重负载', color: '#c96d67' },
-    { label: '离线 / 无数据', color: '#b9c2cc' },
+    { label: '运行正常', color: STATUS_COLORS.success },
+    { label: '高负载', color: STATUS_COLORS.warning },
+    { label: '严重负载', color: STATUS_COLORS.error },
+    { label: '离线 / 无数据', color: STATUS_COLORS.inactive },
   ]
   heatEl.value.style.height = chartH + 'px'
   chart.setOption({
@@ -758,7 +748,7 @@ function renderHeatmap() {
     xAxis: { type: 'category', data: xLabels, axisLabel: { interval: labelInterval, color: '#7b8794', fontSize: 10, margin: 10, hideOverlap: true }, axisTick: { show: false }, axisLine: { show: false } },
     yAxis: { type: 'category', data: yLabels, axisLabel: { color: '#606d7b', fontSize: 11, width: yLabelW - 12, overflow: 'truncate', margin: 10 }, axisTick: { show: false }, axisLine: { show: false } },
     visualMap: { type: 'piecewise', show: false, pieces: states.map((state, value) => ({ value, color: state.color })) },
-    series: [{ type: 'heatmap', data: pts, progressive: 0, itemStyle: { borderColor: 'rgba(255,255,255,.96)', borderWidth: 3, borderRadius: 5 }, emphasis: { itemStyle: { borderColor: '#fff', borderWidth: 2, shadowBlur: 10, shadowColor: 'rgba(42,55,70,.18)' } } }],
+    series: [{ type: 'heatmap', data: pts, progressive: 0, itemStyle: { borderColor: 'rgba(255,255,255,.96)', borderWidth: 3, borderRadius: 5 }, emphasis: { scale: true, itemStyle: { borderColor: '#fff', borderWidth: 2 } } }],
   }, true)
   chart.resize()
 }
@@ -868,7 +858,7 @@ onUnmounted(() => {
 .heat-range-btn.active { background: transparent !important; color: var(--text); box-shadow: none; }
 .heat-legend { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-3); margin-left: 10px; }
 .hm-dot { width: 8px; height: 8px; border-radius: 3px; display: inline-block; margin-left: 6px; box-shadow: inset 0 0 0 1px rgba(31,43,55,.05); }
-.hm-dot.ok { background: #63a887; } .hm-dot.warn { background: #d2a34c; } .hm-dot.crit { background: #c96d67; } .hm-dot.none { background: #b9c2cc; }
+.hm-dot.ok { background: var(--success); } .hm-dot.warn { background: var(--warn); } .hm-dot.crit { background: var(--danger); } .hm-dot.none { background: var(--inactive); }
 
 .heatmap-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); box-shadow: var(--shadow-sm); padding: 14px 16px 10px; margin-bottom: 26px; }
 .heat-chart { width: 100%; height: 58px; min-height: 0; }
@@ -886,10 +876,6 @@ onUnmounted(() => {
 .server-card:hover { box-shadow: var(--shadow); border-color: var(--accent); }
 .upstream-balance-card:hover { border-color: var(--accent); }
 
-.card-top-line { height: 3px; }
-.card-top-line.online { background: var(--success); }
-.card-top-line.offline { background: var(--danger); }
-
 .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 14px 16px 8px; }
 .card-title { display: flex; align-items: flex-start; gap: 8px; min-width: 0; flex: 1; }
 .status-beacon { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
@@ -905,14 +891,14 @@ onUnmounted(() => {
   padding: 3px 9px; border-radius: var(--r); font-size: 11px; font-weight: 650;
 }
 .status-badge .badge-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
-.status-badge.online { background: var(--success-soft); color: var(--success); }
-.status-badge.offline { background: var(--danger-soft); color: var(--danger); }
+.status-badge.online { background: var(--success); color: #fff; }
+.status-badge.offline { background: var(--danger); color: #fff; }
 
 .tag-line { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 12px; }
 .tag { padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 500; background: var(--bg-soft); color: var(--text-2); white-space: nowrap; }
 .tag.loc { background: var(--accent-soft); color: var(--accent-strong); }
 .tag.spec { font-variant-numeric: tabular-nums; }
-.tag.price { background: #f5efe0; color: #946f24; font-variant-numeric: tabular-nums; }
+.tag.price { background: var(--warn); color: #fff; font-variant-numeric: tabular-nums; }
 .tag.expiry { display: inline-flex; align-items: center; gap: 5px; font-variant-numeric: tabular-nums; }
 .tag.expiry .exp-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
 .tag.expiry.ok { background: var(--success-soft); color: var(--success); }
@@ -974,13 +960,13 @@ onUnmounted(() => {
 /* 管理员专属上游余额：两个官方数据源合并在一张卡片里，可拖动子卡片调整顺序。 */
 .upstream-balance-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; padding: 0 12px 12px; }
 .upstream-balance-item {
-  min-width: 0; padding: 11px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg-soft);
-  cursor: grab; transition: border-color .2s var(--ease-standard), box-shadow .2s var(--ease-standard), opacity .2s ease, transform .2s ease;
+  min-width: 0; padding: 11px 12px; border: 0; border-radius: 10px; background: var(--bg-soft);
+  cursor: grab; transition: background-color .2s var(--ease-standard), opacity .2s ease, transform .2s ease;
 }
 .upstream-balance-item:active { cursor: grabbing; }
-.upstream-balance-item:hover { border-color: var(--border-strong); box-shadow: var(--shadow-sm); }
+.upstream-balance-item:hover { background: var(--card-hover); }
 .upstream-balance-item.dragging { opacity: .45; transform: scale(.98); }
-.upstream-balance-item.drag-over { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+.upstream-balance-item.drag-over { background: var(--accent-soft); }
 .upstream-balance-head { display: flex; align-items: center; gap: 7px; min-width: 0; }
 .upstream-provider-logo { width: 16px; height: 16px; flex: 0 0 16px; display: block; object-fit: contain; }
 .upstream-provider-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11.5px; font-weight: 650; color: var(--text-2); }
@@ -993,7 +979,8 @@ onUnmounted(() => {
 .upstream-balance-track i.ok { background: var(--success); } .upstream-balance-track i.warn { background: var(--warn); } .upstream-balance-track i.crit { background: var(--danger); }
 .upstream-balance-foot { margin-top: 7px; overflow: hidden; color: var(--text-3); font-size: 9.5px; line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; }
 .upstream-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.upstream-refresh-link { padding: 0; border: 0; background: transparent; color: var(--accent-strong); font: inherit; font-size: 11px; cursor: pointer; }
+.upstream-refresh-link { padding: 0; border: 0; background: transparent; color: var(--accent); font: inherit; font-size: 11px; cursor: pointer; }
+.upstream-refresh-link:hover:not(:disabled) { color: var(--accent-hover); }
 .upstream-refresh-link:disabled { cursor: wait; opacity: .5; }
 
 .card-footer { padding: 9px 16px; border-top: 1px solid var(--border); }
