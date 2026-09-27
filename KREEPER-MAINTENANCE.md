@@ -1,9 +1,10 @@
 # Kreeper QingZhou 定制维护
 
-## 2026-09-27 Edge CF 节点超时二次修复（待部署）
+## 2026-09-27 Edge CF 节点超时二次修复（已部署）
 
 - 前一版只把 `edge_user` 放在原始分享链接查询参数中；Clash/sing-box 渲染器会丢弃未知参数，实际 WebSocket 请求没有带 `edge_user`，Worker 仍按普通 UUID 处理，导致 CF 节点超时。
-- 本轮将 `edge_user` 注入 VLESS/VMess 的实际 transport path（`/?edge_user=...`），并增加 Clash/sing-box 渲染回归测试；普通节点路径不变。生产已先回滚到 `v0.2.84-kreeper-20260927`，待本轮验证后重新部署。
+- 本轮将 `edge_user` 注入 VLESS/VMess 的实际 transport path（`/?edge_user=...`），并增加 Clash/sing-box 渲染回归测试；普通节点路径不变。生产版本为 `v0.2.84-kreeper-edgefix2-20260927`，ARM64 SHA-256 为 `28f899cb494c97aea1cb0fb80e32069a7363874921c7f20c7e745741c1a32cdc`，回滚目录为 `/opt/qingzhou/backups/edge-path-match-20260927-161137/`。
+- 真实生产 Clash/sing-box 输出均已确认 Edge 节点路径包含 `/?edge_user=...`，`qingzhou.service` 与公网健康接口正常。
 
 ## 2026-09-27 Edge 订阅凭据识别修复（已部署）
 

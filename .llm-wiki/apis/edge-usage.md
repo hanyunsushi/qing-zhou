@@ -1,7 +1,7 @@
 ---
 title: Edge Usage Callback API
 updated: 2026-09-27
-source_commit: deployed-edge-host-match
+source_commit: c0882eb
 ---
 
 # Edge Usage Callback API
