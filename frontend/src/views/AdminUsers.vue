@@ -372,7 +372,7 @@ import { RefreshOutline, PersonAddOutline, SearchOutline } from '@vicons/ionicon
 import { apiList, apiPost, apiPut, apiDelete } from '@/api'
 import { fmtBytes, fmtDate, fmtDateTime, timeAgo, daysLeft, pct, toLocalDatetimeInput } from '@/utils/format'
 import { planStatusMeta, planSortKey } from '@/utils/plan'
-import { statusColorForPercent } from '@/utils/status-colors'
+import { chartColorForPercent } from '@/utils/status-colors'
 import RefundDialog from '@/components/RefundDialog.vue'
 import PlanItem from '@/components/AdminPlanItem.vue'
 
@@ -455,8 +455,9 @@ function barWidth(u: any) {
   if (meteredOf(u)) return Math.min(usedPctOf(u), 100) + '%'
   return '0%'
 }
+// 区分-状态牌：用户套餐用量进度使用 Apple 状态色。
 function barColor(p: number) {
-  return statusColorForPercent(p)
+  return chartColorForPercent(p)
 }
 
 // ---- 套餐摘要 ----

@@ -26,17 +26,21 @@
   --accent-soft: #e9f3ff;
   --accent-subtle: #f2f8ff;
   --selection-bg: rgba(0, 122, 255, .2);
-  /* Cloudscape semantic status colors; status badges use their solid text
-     color as the surface, while information remains Apple blue. */
-  --danger: #db0000;
-  --danger-soft: #fff5f5;
-  --warn: #855900;
-  --warn-soft: #fffef0;
+  /* Apple semantic palette, darkened only where white text needs contrast. */
+  --danger: #d70015;
+  --danger-soft: #fff1f0;
+  --warn: #c93400;
+  --warn-soft: #fff4e5;
   --info: #007aff;
-  --info-soft: #f0fbff;
-  --success: #00802f;
-  --success-soft: #effff1;
-  --inactive: #656871;
+  --info-soft: #eaf3ff;
+  --success: #248a3d;
+  --success-soft: #edf9ef;
+  --inactive: #636366;
+  /* 区分-状态牌：status-encoded charts/meters share Apple status colors. */
+  --chart-success: var(--success);
+  --chart-warning: var(--warn);
+  --chart-error: var(--danger);
+  --chart-inactive: var(--inactive);
   --shadow: 0 2px 8px rgba(0, 7, 7, .12);
   --shadow-sm: 0 1px 4px rgba(0, 7, 7, .12);
   --shadow-flyout: 0 4px 16px rgba(0, 7, 7, .16);
@@ -161,7 +165,7 @@ h1 { font-size: var(--font-size-heading-xl); line-height: var(--line-height-head
 h2 { font-size: var(--font-size-heading-l); line-height: var(--line-height-heading-l); }
 h3 { font-size: var(--font-size-heading-m); line-height: var(--line-height-heading-m); }
 h4, h5, h6 { font-size: var(--font-size-heading-s); line-height: var(--line-height-heading-s); }
-:where(.numeric, .mono, .tabular-nums, [class*="amount"], [class*="balance"], [class*="price"], [class*="value"], [class*="count"], [class*="pct"]) {
+:where(.numeric, .mono, .tabular-nums) {
   font-family: var(--ff-mono);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0;
@@ -904,7 +908,7 @@ button, input, textarea, select { font-family: inherit; }
   box-shadow: none !important;
 }
 .n-tag { border-radius: var(--r-control) !important; font-weight: 600; }
-/* 状态牌：AWS semantic status color as solid background with white text. */
+/* 区分-状态牌：Apple semantic status color as solid background with white text. */
 .n-tag.n-tag--success-type,
 .n-tag.n-tag--warning-type,
 .n-tag.n-tag--error-type,

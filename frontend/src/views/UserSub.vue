@@ -112,7 +112,8 @@
                 <n-tag :type="planStatus(line.segs[0]).type" size="small" bordered>{{ planStatus(line.segs[0]).label }}</n-tag>
               </div>
             </div>
-            <n-progress v-if="line.segs[0].status !== 'queued'" type="line" :percentage="planPct(line.segs[0])" :color="statusColorForPercent(planPct(line.segs[0]))" />
+            <!-- 区分-状态牌：订阅用量进度使用 Apple 状态色。 -->
+            <n-progress v-if="line.segs[0].status !== 'queued'" type="line" :percentage="planPct(line.segs[0])" :color="chartColorForPercent(planPct(line.segs[0]))" />
             <div v-else class="pl-stripe"></div>
             <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3);margin-top:4px;gap:8px;">
               <span>{{ segUsage(line.segs[0]) }}</span>
@@ -148,8 +149,9 @@
                   <span v-if="p.duration_days" class="pl-len">{{ p.duration_days }} 天</span>
                   <n-tag :type="planStatus(p).type" size="tiny" bordered>{{ planStatus(p).label }}</n-tag>
                 </div>
+                <!-- 区分-状态牌：订阅明细用量进度使用 Apple 状态色。 -->
                 <n-progress v-if="p.status !== 'queued'" type="line" :percentage="planPct(p)" :height="5"
-                            :color="statusColorForPercent(planPct(p))" />
+                            :color="chartColorForPercent(planPct(p))" />
                 <div v-else class="pl-stripe"></div>
                 <div class="pl-use">{{ segUsage(p) }}</div>
               </div>
@@ -368,7 +370,7 @@ import { apiGet, apiList, apiPost, apiPut } from '@/api'
 import { useAuthStore } from '@/stores/auth'
 import { fmtBytes, fmtTotal, fmtDate, pct } from '@/utils/format'
 import { planStatusMeta, planTimeText, planSortKey } from '@/utils/plan'
-import { statusColorForPercent, STATUS_COLORS } from '@/utils/status-colors'
+import { chartColorForPercent, STATUS_COLORS } from '@/utils/status-colors'
 import { copyText } from '@/utils/clipboard'
 import QRCode from 'qrcode'
 

@@ -29,7 +29,7 @@ import { computed } from 'vue'
 import { NTag, NButton } from 'naive-ui'
 import { fmtBytes, fmtDate, fmtDateTime, pct } from '@/utils/format'
 import { planStatusMeta, planTimeText } from '@/utils/plan'
-import { STATUS_COLORS } from '@/utils/status-colors'
+import { chartColorForPercent } from '@/utils/status-colors'
 
 const props = defineProps<{ plan: any; removing?: boolean }>()
 defineEmits<{ (e: 'remove'): void; (e: 'adjust'): void }>()
@@ -45,10 +45,11 @@ const canAdjust = computed(() => {
 const usedPct = computed(() => pct(props.plan.used, props.plan.traffic_limit))
 const fillWidth = computed(() =>
   props.plan.traffic_limit > 0 ? Math.min(usedPct.value, 100) + '%' : '0%')
+// 区分-状态牌：套餐用量进度使用 Apple 状态色。
 const fillColor = computed(() => {
   if (bucket.value === 'finished') return 'var(--text-3)'
   if (props.plan.traffic_limit <= 0) return 'var(--text-3)'
-  return usedPct.value > 90 ? STATUS_COLORS.error : usedPct.value > 70 ? STATUS_COLORS.warning : STATUS_COLORS.success
+  return chartColorForPercent(usedPct.value)
 })
 
 const amountText = computed(() => {

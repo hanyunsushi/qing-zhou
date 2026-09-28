@@ -42,7 +42,7 @@
     <!-- 核心指标 -->
     <div class="kpi-row">
       <StatCard
-        label="剩余流量" :value="remainingText" :badge="usedBadge" :badge-color="ringColor"
+        label="剩余流量" :value="remainingText" :badge="usedBadge" :badge-color="badgeColor"
         :sub="trafficSub" :delay="0"
       >
         <div class="mini-progress">
@@ -175,7 +175,7 @@ import { useCountUp } from '@/utils/countup'
 import StatCard from '@/components/StatCard.vue'
 import TrafficTrendChart from '@/components/TrafficTrendChart.vue'
 import { openHelp } from '@/utils/help'
-import { STATUS_COLORS } from '@/utils/status-colors'
+import { CHART_STATUS_COLORS, chartColorForPercent, STATUS_COLORS } from '@/utils/status-colors'
 
 const router = useRouter(); const auth = useAuthStore(); const config = useConfigStore()
 function showHelp() { openHelp(config.config, router) }
@@ -209,10 +209,11 @@ const edgeQuotaFoot = computed(() => {
 const metered = computed(() => (traffic.value.total || 0) > 0)
 const usedPct = computed(() => pct(traffic.value.used, traffic.value.total))
 const usedBadge = computed(() => metered.value && usedPct.value > 0 ? '已用 ' + usedPct.value + '%' : '')
-const ringColor = computed(() => {
-  if (!metered.value) return STATUS_COLORS.inactive
-  return usedPct.value > 90 ? STATUS_COLORS.error : usedPct.value > 70 ? STATUS_COLORS.warning : STATUS_COLORS.success
-})
+// 区分-状态牌：额度环按 Apple 状态色表达使用率，未配置时使用非激活色。
+const ringColor = computed(() => metered.value ? chartColorForPercent(usedPct.value) : CHART_STATUS_COLORS.inactive)
+const badgeColor = computed(() => metered.value
+  ? (usedPct.value > 90 ? STATUS_COLORS.error : usedPct.value > 70 ? STATUS_COLORS.warning : STATUS_COLORS.success)
+  : STATUS_COLORS.inactive)
 
 const remainingText = computed(() => {
   if (!dash.value.traffic) return '—'

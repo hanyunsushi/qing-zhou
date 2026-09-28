@@ -1,7 +1,34 @@
 ---
 title: QingZhou Deployment and Artifact Retention
-updated: 2026-09-21
+updated: 2026-09-28
 ---
+
+## 2026-09-28 Apple status palette and monitor visual deployment
+
+Deployed the Apple-derived ordinary UI status palette while preserving the
+existing AWS chart colors. Heatmaps, legends, gauges, quota rings, resource
+meters and progress visualizations remain on their prior AWS colors; the
+upstream balance progress bars retain their fixed-success green.
+
+The same working-tree deployment includes monitor provider-card surfaces and
+labels plus the explicit numeric-font selector correction. Frontend tests
+(100), `vue-tsc -b`, `vite build`, `go test ./...`, and `git diff --check` passed.
+Vite reports the existing non-blocking 567 KB ECharts async chunk warning. No
+GitHub Release was created.
+
+Production runs `v0.2.84-kreeper-20260928-apple-status`; the ARM64 binary
+SHA-256 is
+`c3f8759ba1ac31a324649140aa72ed0afedfa9e913aa1cb9cae3cb3b34d3b283`.
+Deployment used `ubuntu@140.245.43.76` and
+`~/.ssh/oci-a1-20260730.key`; only `qingzhou.service` was restarted. Rollback
+material is `/opt/qingzhou/backups/fork-v0.2.84-kreeper-20260928-apple-status-20260928-162537/`;
+it contains the previous binary, a SQLite online backup (`PRAGMA integrity_check`
+returned `ok`), env, service definitions and sing-box configuration. The
+production database and configuration were not modified.
+
+Local and public `/api/health` return the deployed version. All three services
+are active, listeners `8081`, `8882` and `18082` are present, and the public
+hashed JS, CSS and status-color module hashes match the local build.
 
 ## 2026-09-28 Admin hierarchy and node card release
 
@@ -17,10 +44,15 @@ The release was published from source commit `69786f0` as
 `v0.2.84-kreeper-20260928`; workflow `36344618817` uploaded the ARM64 panel
 asset with SHA-256
 `ce4b7cde25a1d17d81a6dc0b0667767a5804a25488c61ecc0f312a08f022dc9c`.
-Production deployment remains pending: the public service still reports
-`v0.2.84-kreeper-edgefix2-20260927`, and the `qingzhou` SSH endpoint closes the
-connection before its banner. No production file, database, environment or
-service was changed. The panel self-updater still targets the official
+Production deployment completed through the fixed OCI endpoint
+`ubuntu@140.245.43.76` with `~/.ssh/oci-a1-20260730.key`; the `qingzhou` alias
+was intentionally not used because Mihomo resolves it to Fake-IP
+`198.18.1.50`. The backup is
+`/opt/qingzhou/backups/fork-v0.2.84-kreeper-20260928-20260928-102819/`, and the
+SQLite backup passed `PRAGMA integrity_check`. Local/public health now report
+`v0.2.84-kreeper-20260928`, all three services are active, listeners `8081`,
+`8882`, `18082` are present, and the public root plus hashed assets return
+`200`. The panel self-updater still targets the official
 `mllt992/qing-zhou` repository, so it cannot install this fork release until
 the host `QZ_UPDATE_REPO` is changed through the protected host-service path.
 

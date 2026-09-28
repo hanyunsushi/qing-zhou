@@ -97,7 +97,7 @@ import {
 } from 'naive-ui'
 import { apiGet } from '@/api'
 import { fmtBytes, fmtUptime, pct } from '@/utils/format'
-import { statusColorForPercent } from '@/utils/status-colors'
+import { chartColorForPercent } from '@/utils/status-colors'
 import * as echarts from '@/utils/echarts'
 
 const route = useRoute()
@@ -128,7 +128,8 @@ const trafficStatus = computed(() => {
 })
 
 function pctClass(v: number) { return v >= 90 ? 'crit' : v >= 70 ? 'warn' : 'ok' }
-function pctColor(v: number) { return statusColorForPercent(v) }
+// 区分-状态牌：单机资源百分比使用 Apple 状态色。
+function pctColor(v: number) { return chartColorForPercent(v) }
 function back() { router.push({ name: 'admin-monitor' }) }
 
 async function loadServer() {
@@ -217,8 +218,8 @@ onUnmounted(() => {
 .m-label { font-size: 11px; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
 .m-val { font-size: 22px; font-weight: 720; }
 .m-val.ok { color: var(--accent-strong); }
-.m-val.warn { color: var(--warn); }
-.m-val.crit { color: var(--danger); }
+.m-val.warn { color: var(--chart-warning); }
+.m-val.crit { color: var(--chart-error); }
 .m-sub { font-size: 11px; color: var(--text-3); }
 
 .chart-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }

@@ -1,9 +1,17 @@
 ---
 title: Current Wiki Sync State
-updated: 2026-09-27
+updated: 2026-09-28
 ---
 
 # Working-tree audit
+
+- 2026-09-28 Apple 状态编码可视化统一（本地未部署）：热力图图例/格子、资源仪表、配额环、百分比资源条和状态提示统一复用 Apple-derived 状态色；`CHART_STATUS_COLORS` 与 `--chart-*` 作为兼容入口不再保存另一套 AWS 状态色。普通分类图表色板保持独立。首页/管理监控相关代码以“区分-状态牌”注释标出状态边界；OCI/Cloudflare 子卡悬浮只保留中性阴影，不改页面底色或位置。前端契约测试 `100/100`、`vue-tsc -b`、生产构建和 `git diff --check` 已通过；构建保留已知 ECharts `567.24 KB` 非阻塞 warning。尚未重编译 Go 二进制、发布或部署生产。
+
+- 2026-09-28 Apple 状态色、监控卡视觉和字体修正已部署：普通 UI 使用 Apple-derived status palette；图表、仪表、配额环和进度可视化保留 AWS 色值。版本 `v0.2.84-kreeper-20260928-apple-status`，ARM64 SHA-256 `c3f8759ba1ac31a324649140aa72ed0afedfa9e913aa1cb9cae3cb3b34d3b283`；备份 `/opt/qingzhou/backups/fork-v0.2.84-kreeper-20260928-apple-status-20260928-162537/`，SQLite 在线快照完整性 `ok`。仅重启 `qingzhou.service`，未改生产数据库或配置；本机/公网健康、三项服务、三个端口以及公网 JS/CSS/状态色模块哈希均验收通过。前端 100 项测试、类型检查、生产构建与 Go 全量测试通过；没有创建 GitHub Release。
+
+- 2026-09-28 首页监控卡与字体修正包含在上述部署：OCI/Cloudflare 子卡使用页面背景、价格/官方状态牌使用 Apple 蓝白字，数字字体仅显式应用于数字节点。
+
+- 2026-09-28 管理后台层级与节点卡片表面已部署：Release `v0.2.84-kreeper-20260928`、提交 `69786f0`、Actions `36344618817`；生产 ARM64 二进制 SHA-256 为 `ce4b7cde25a1d17d81a6dc0b0667767a5804a25488c61ecc0f312a08f022dc9c`。通过 `ubuntu@140.245.43.76` 直连部署，备份 `/opt/qingzhou/backups/fork-v0.2.84-kreeper-20260928-20260928-102819/`；本机/公网健康、三项服务、三个监听端口和公网资源均验收通过。
 
 - 2026-09-27 chunk 优化：新增共享 tree-shakable ECharts 注册表，9 个图表页面只注册实际使用的图表和组件；构建首屏主包约 `300.72 KB`，ECharts 独立异步包约 `567.24 KB`（gzip `189.79 KB`），保留已知非阻塞的大 chunk warning。
 - 2026-09-27 发布门禁与 Release：前端 95 项测试、类型检查、生产构建、`go test ./...`、`go test -race ./...`、`go vet ./...` 与 `git diff --check` 通过；提交 `4799d22`、标签 `v0.2.84-kreeper-20260927` 和 GitHub Actions `36257004993` 已验证，Release 资产已上传。

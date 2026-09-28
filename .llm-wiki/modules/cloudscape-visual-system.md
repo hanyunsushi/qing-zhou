@@ -8,7 +8,7 @@ updated: 2026-09-28
 ## Admin sidebar hierarchy and node surfaces
 
 - “管理后台”是与“常用 / 商城 / 信息”并列的一级静态侧栏分组；其下的“运营 / 节点服务 / 内容系统”是二级可展开归类，页面项为叶子路由。该视觉层级不改变权限、路由、搜索和移动抽屉行为。
-- 节点管理的可排序 `node-sort-card` 使用页面底色 `var(--bg)`，所属一级分组模块继续使用 `var(--card)`，用表面明度区分模块容器与其内部卡片。节点启用/禁用及自建/外部标签继续由统一 AWS 语义状态色合同控制。
+- 节点管理的可排序 `node-sort-card` 使用页面底色 `var(--bg)`，所属一级分组模块继续使用 `var(--card)`，用表面明度区分模块容器与其内部卡片。节点启用/禁用及自建/外部标签使用统一 Apple-derived 语义状态色合同。
 
 ## ECharts bundle contract
 
@@ -63,6 +63,12 @@ updated: 2026-09-28
 ## Server status badges
 
 - 服务器管理版本卡的“无流量统计”属于“卡片-状态牌”，使用原文本次级色 `var(--text-2)` 实心背景、白色文字和透明边框；“版本过低”和“未知”继续使用各自语义色。
+
+## Semantic status palette
+
+- `STATUS_COLORS` 是 QingZhou 的 Apple-derived 语义状态色：成功 `#248a3d`、警告 `#c93400`、错误 `#d70015`、信息 Apple blue `#007aff`、非激活 `#636366`；实心“区分-状态牌”使用状态色作为背景并配白色文字。
+- `CHART_STATUS_COLORS` 与 `--chart-success/warning/error/inactive` 是状态编码可视化的兼容入口，明确复用同一 Apple 状态色；因此热力图图例/格子、资源仪表、配额环、百分比进度条和状态提示不会再出现另一套 AWS 状态色。
+- 普通分类图表仍使用独立的 `--chart-1` 至 `--chart-8` 色板，不把分类序列误当成状态牌。相关模板、CSS 和工具函数用“区分-状态牌”注释标出边界。
 
 ## Login modal boundaries
 
@@ -136,7 +142,7 @@ updated: 2026-09-28
   Naive UI `primaryColor` 共同提供。全局主按钮悬浮统一使用
   `--accent-button-hover`（`color-mix(in srgb, var(--accent) 84%, white)`，当前
   `#298fff`），theme `primaryColorHover` 同步；`--accent-hover` 仍用于链接等非按钮
-  悬浮，按下态保持独立。图表色板保持独立不变。
+  悬浮，按下态保持独立。状态编码图表与状态牌共用 Apple 语义色，普通分类图表色板保持独立不变。
 - 全局文本选择固定使用 `--selection-bg: rgba(0, 122, 255, .2)` 的 Apple 系统蓝半透明高亮，文字使用 `inherit`；同时覆盖 `::selection` 与 `::-moz-selection`，避免不同操作系统的原生选中色差。此行为与按钮、菜单和路由组件的选中状态分离。
 
 ## Radius scaling
@@ -228,7 +234,7 @@ updated: 2026-09-28
 - sing-box 概览摘要按钮不绘制边框或悬浮阴影，悬浮时只切换至 `var(--card-hover)`；键盘焦点保留独立可见 outline。
 - sing-box 机器分组属于一级模块内的二级内容，折叠项、标题和内容区均使用页面底色 `var(--bg)`，不绘制卡片边框或活动分隔线。
 - sing-box “本机/远程”标注为“区分-身份牌”，采用中性底色和文字，不将位置身份误表达为状态色。
-- 用户管理“管理员”属于“区分-身份牌”：身份牌使用 AWS 语义色底（本项目 `var(--warn)`）与白色文字，不使用浅色底搭配彩色文字。统计筛选卡选中态沿用中性卡片悬浮面，不绘制蓝色装饰边框；卡片内“套餐”操作属于“弧边高亮按钮”，保持原尺寸。
+- 用户管理“管理员”属于“区分-身份牌”：身份牌使用 Apple-derived 警告语义色底（本项目 `var(--warn)`）与白色文字，不使用浅色底搭配彩色文字。统计筛选卡选中态沿用中性卡片悬浮面，不绘制蓝色装饰边框；卡片内“套餐”操作属于“弧边高亮按钮”，保持原尺寸。
 - 手动通知、SMTP、Telegram 和在线更新的说明块统一使用 `frontend/src/components/InfoNotice.vue`“提示信息”组件：`var(--accent-soft)` 浅蓝底、Apple 蓝圆形白色 `!`、无边框、无阴影；页面通过修饰类保留各自上下间距。
 - 该“提示信息”保留 info 语义底色，但提示面及内部 alert body 不绘制边框或阴影，避免 Naive UI bordered 默认样式回退。
 - 设置页“放弃未保存的更改？”确认弹窗关闭 Naive UI 默认 `autoFocus`，避免弹窗初始状态把 focus ring 投到“继续编辑”；键盘主动聚焦仍保留可见焦点。
@@ -289,6 +295,12 @@ Cloudscape system through the custom `cloudscape-design-system` skill.
   asset is not used.
   Numeric values keep the AWS-style `Amazon Ember Mono` fallback stack and
   `tabular-nums`.
+- Numeric typography is opt-in through the explicit `.numeric`, `.mono` and
+  `.tabular-nums` utility classes or a direct component selector on the actual
+  numeric node. Do not infer font roles from class-name substrings such as
+  `balance`, `price`, `value`, `count` or `pct`: those names also occur on
+  containers and mixed Chinese/number text, and substring rules make whole
+  cards accidentally render in a monospace font.
 - `frontend/src/App.vue` maps the same semantic colors into Naive UI theme
   overrides.
 - The selected summary card supplies the QingZhou `18px` outer radius reference.
@@ -502,39 +514,47 @@ See Also: `frontend/src/utils/shift5.ts`, `frontend/src/router/index.ts`, `front
 
 ### Semantic status palette customization
 
-- QingZhou uses the AWS Cloudscape light-theme semantic status text colors as
-  the base palette: success `#00802f`, warning `#855900`, error `#db0000`,
-  and inactive/loading `#656871`. Information intentionally remains the
-  product's Apple blue `#007aff`, rather than Cloudscape's standard info
-  `#006ce0`, so links, information notices, and interactive emphasis keep one
-  consistent blue.
-- This project customizes the Cloudscape surface treatment for compact status
-  badges: the semantic text color is used as a solid background and the label
-  is white. This applies to online/offline, enabled/disabled, published/draft,
-  pending/running/synced, warning, error, and similar status labels. It does
-  not turn ordinary buttons, links, focus rings, or identity badges into status
-  colors unless their component contract explicitly says so.
-- The corresponding Cloudscape light backgrounds remain available as
-  `--success-soft: #effff1`, `--warn-soft: #fffef0`, `--danger-soft: #fff5f5`,
-  and `--info-soft: #f0fbff` for low-emphasis notices and surfaces. They are
-  not used for the solid status-badge variant.
-- Percentage meters and resource gauges use the same semantic thresholds:
-  below 70% success, 70-89% warning, and 90% or higher error. The shared
-  `frontend/src/utils/status-colors.ts` helper is the only source for these
-  colors, including dashboard rings, subscription/server progress, and monitor
-  gauges.
-- Heatmaps and other charts are still charts, but state-encoding cells and
-  legends use the same customized semantic status colors. Hover emphasis only
-  scales the cell; it does not add a shadow. Categorical series colors remain
-  separate Cloudscape chart colors and must not be reused as UI status colors.
+- QingZhou's ordinary UI status palette follows Apple's system semantics:
+  success `#248a3d`, warning `#c93400`, error `#d70015`, inactive/loading
+  `#636366`, and information Apple blue `#007aff`. The success/warning/error
+  values are intentionally darkened Apple-derived colors so white text remains
+  readable on solid status badges.
+- Compact status badges use these Apple-derived semantic colors as solid
+  backgrounds with white labels. This applies to online/offline,
+  enabled/disabled, published/draft, pending/running/synced, warning, error,
+  and similar status labels. It does not turn ordinary buttons, links, focus
+  rings, or identity badges into status colors unless their component contract
+  explicitly says so.
+- Low-emphasis notices use the corresponding Apple-tinted surfaces:
+  `--success-soft: #edf9ef`, `--warn-soft: #fff4e5`, `--danger-soft: #fff1f0`,
+  and `--info-soft: #eaf3ff`.
+- Status-encoded visualizations are included in this palette contract. Heatmap
+  cells and legends, percentage meters, rings, gauges, and progress visuals
+  use the same Apple status colors through `CHART_STATUS_COLORS` and
+  `--chart-success`, `--chart-warning`, `--chart-error`, and `--chart-inactive`;
+  categorical chart series colors remain separate.
+- Ordinary status indicators use the Apple semantic thresholds below 70%
+  success, 70-89% warning, and 90% or higher error. The shared
+  `frontend/src/utils/status-colors.ts` helper is the only source for ordinary
+  UI status colors. Percentage meters, rings, gauges, and progress visuals are
+  chart-like and use the same thresholds through `chartColorForPercent` /
+  `chartColorForLevel`. A meter that was previously fixed-success remains
+  fixed-success through the explicit `CHART_STATUS_COLORS.success` token.
+- Heatmaps and other state-encoding charts therefore share the Apple status
+  contract, while categorical series colors remain separate Cloudscape chart
+  colors and must not be reused as UI status colors. Hover emphasis only scales
+  the cell; it does not add a shadow.
 - Provider balance cards that can be reordered use a visible `⋮⋮` drag affordance
   in the title row. Their normal surfaces are borderless and shadowless; hover
-  changes only the neutral surface, while the refresh action remains Apple blue.
+  adds only a neutral display-card shadow without changing the page surface,
+  position, or scale, while the refresh action remains Apple blue.
 - Provider scope text is omitted from the public upstream balance card when the
   individual provider logos and titles already identify OCI and Cloudflare.
-- Price tags are warning-semantic status pills (`--warn` background with white
-  text), while heatmap legends use the same success/warning/error/inactive
-  status tokens as their cells.
+- Price tags use the product's Apple blue interaction color (`--accent`)
+  background with white text. The monitor's “官方数据” badge follows the same
+  informational blue treatment; server online/offline badges remain semantic
+  Apple success/error colors. Heatmap legends use the same AWS chart
+  success/warning/error/inactive tokens as their cells.
 
 ### Global surface hierarchy (2026-09-23)
 

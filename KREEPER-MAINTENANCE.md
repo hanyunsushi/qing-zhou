@@ -1,11 +1,35 @@
 # Kreeper QingZhou 定制维护
 
-## 2026-09-28 管理后台层级与节点卡片表面（已发布，生产待部署）
+## 2026-09-28 Apple 状态编码可视化统一（本地未部署）
+
+- 热力图图例与实际可用性格子、资源仪表、配额环、百分比资源条和状态提示统一使用 Apple-derived 状态色：成功 `#248a3d`、警告 `#c93400`、错误 `#d70015`、非激活 `#636366`，信息继续为 Apple blue `#007aff`。普通分类图表仍保留独立分类色板。
+- `CHART_STATUS_COLORS` / `--chart-*` 作为状态编码入口复用 Apple 状态色；首页运行状态牌、首页与管理监控热力图代码均以“区分-状态牌”注释标记。OCI/Cloudflare 子卡 hover 只增加中性展示卡片阴影，不切换底色、不位移、不缩放。
+- 前端契约测试 `100/100`、`vue-tsc -b`、`vite build` 和 `git diff --check` 已通过；构建保留已知 ECharts `567.24 KB` 非阻塞 warning。本轮尚未重新构建 Go 二进制、创建 Release 或部署生产。
+
+## 2026-09-28 Apple 状态色、监控卡视觉与字体修正（已部署）
+
+- 普通界面状态色由 AWS 语义色切换为 Apple-derived palette：成功 `#248a3d`、警告 `#c93400`、错误 `#d70015`、非激活 `#636366`，信息继续使用 Apple 蓝 `#007aff`；实心状态牌继续白字，浅色提示改用对应 Apple 淡色底。
+- 上一版部署的图表状态色仍为 AWS 色，并通过 `CHART_STATUS_COLORS` / `--chart-*` / `chartColorFor*` 独立维护；当前本地覆盖已按上一节统一为 Apple 状态编码色。上游余额条的本地版本随同状态入口更新。
+- 同批部署监控 OCI/Cloudflare 子卡页面底色、月费价格牌和“官方数据”牌的 Apple 蓝白字，以及仅对显式数字节点启用等宽字体的修正。
+- 发布前端 100 项测试、`vue-tsc -b`、`vite build`、Go 全量测试与 `git diff --check` 均通过；构建保留已知非阻塞的 ECharts 567 KB 异步 chunk warning。此次为固定 OCI 主机服务直接部署，未创建 GitHub Release。
+- 生产版本 `v0.2.84-kreeper-20260928-apple-status`，ARM64 二进制 SHA-256 为 `c3f8759ba1ac31a324649140aa72ed0afedfa9e913aa1cb9cae3cb3b34d3b283`。通过 `ubuntu@140.245.43.76` 与 `~/.ssh/oci-a1-20260730.key` 部署；备份目录 `/opt/qingzhou/backups/fork-v0.2.84-kreeper-20260928-apple-status-20260928-162537/`，SQLite 在线快照完整性为 `ok`。仅重启 `qingzhou.service`，数据库、env、服务定义、sing-box 与 Tunnel 配置未修改。
+- 本机/公网 `/api/health` 返回新版本；三个服务 active，`8081`、`8882`、`18082` 正常监听。公网首页 JS、CSS 和状态色模块哈希与本地构建一致。
+
+## 2026-09-28 首页监控上游卡片与价格牌（已部署，见上节）
+
+- 首页监控的 OCI/Cloudflare 可排序子卡改用页面背景 `var(--bg)`；月费价格牌和“官方数据”状态牌改为 Apple 蓝 `var(--accent)` 实心背景、白色文字。
+- 服务器“运行中/离线”状态牌使用 Apple-derived 语义色；上一版部署的热力图状态仍为 AWS 色，当前本地覆盖见本页最上方。
+
+## 2026-09-28 字体覆盖修正（已部署，见上节）
+
+- 根因是全局 `[class*="balance|price|value|count|pct"]` 选择器把整个上游卡片、价格牌和混合中文说明误套成等宽字体。现改为仅显式数字工具类或真实数值节点选择器启用数字字体；标题、状态牌和混合文本回到统一正文字体。部署与验证详情见上节。
+
+## 2026-09-28 管理后台层级与节点卡片表面（已发布并部署）
 
 - 侧栏将“管理后台”提升为与“常用 / 商城 / 信息”并列的一级静态分组；“运营 / 节点服务 / 内容系统”保留为管理后台下的二级可展开归类，页面路由、搜索结果和管理员权限判断不变。
 - 节点管理排序卡使用页面底色 `var(--bg)`，与一级分组模块 `var(--card)` 表面区分；启用、禁用、自建、外部等状态牌继续复用统一 AWS 语义状态色实心背景与白字合同。
 - 发布门禁：前端 99 项契约测试、`vue-tsc -b`、`vite build`、Go 全量测试和 `git diff --check` 通过。提交 `69786f0` 已推送 fork，release `v0.2.84-kreeper-20260928` 已发布，GitHub Actions `36344618817` 成功上传 ARM64 面板（SHA-256 `ce4b7cde25a1d17d81a6dc0b0667767a5804a25488c61ecc0f312a08f022dc9c`）、探针和带 `with_v2ray_api` 的 sing-box。
-- 生产尚未替换：截至 2026-09-28，公网 `/api/health` 仍返回 `v0.2.84-kreeper-edgefix2-20260927`。SSH 到 `qingzhou`（当前解析为代理的 `198.18.1.50`）在 SSH banner 前被远端关闭；未执行二进制替换、重启或任何数据库/环境/服务配置写入。在线更新页仍使用官方 `mllt992/qing-zhou`，看不到 fork release；恢复宿主 SSH 或通过受控运维入口后，必须先备份再部署该 ARM64 资产并完成本地/公网健康验收。
+- 生产已通过固定 OCI 入口 `ubuntu@140.245.43.76` 与 `~/.ssh/oci-a1-20260730.key` 完成部署；未使用会落入 Mihomo Fake-IP `198.18.1.50` 的 `qingzhou` 别名。备份位于 `/opt/qingzhou/backups/fork-v0.2.84-kreeper-20260928-20260928-102819/`，包含旧二进制、SQLite 一致性快照（`PRAGMA integrity_check=ok`）、环境、systemd unit 和 `/etc/qingzhou-sing-box`。生产已原子替换 ARM64 二进制并核对 SHA-256 `ce4b7cde25a1d17d81a6dc0b0667767a5804a25488c61ecc0f312a08f022dc9c`；本机/公网健康返回 `v0.2.84-kreeper-20260928`，三项服务 active，监听 `8081`、`8882`、`18082`，公网首页与 hashed JS/CSS 返回 `200`，重启后 qingzhou 错误日志为空。在线更新页仍使用官方 `mllt992/qing-zhou`，暂不会自动发现 fork release。
 
 ## 2026-09-27 Edge CF 节点超时二次修复（已部署）
 

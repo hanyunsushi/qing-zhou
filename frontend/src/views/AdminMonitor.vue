@@ -52,6 +52,7 @@
           <span class="range-switch route-switch">
             <button v-for="r in heatRanges" :key="r.value" type="button" :class="{ active: heatRange===r.value }" @click="loadHeatmap(r.value)">{{ r.label }}</button>
           </span>
+          <!-- 区分-状态牌：热力图图例与可用性格子共用 Apple 状态色。 -->
           <span class="hm-legend"><i class="hm-dot ok" />正常 <i class="hm-dot warn" />高负载 <i class="hm-dot crit" />严重 <i class="hm-dot none" />无数据</span>
         </div>
       </template>
@@ -284,7 +285,7 @@ import {
 import { apiGet, apiList, apiPost, apiPut } from '@/api'
 import { fmtBytes, fmtDateTime, fmtUptime, pct, toLocalDatetimeInput } from '@/utils/format'
 import * as echarts from '@/utils/echarts'
-import { STATUS_COLORS, statusColorForPercent } from '@/utils/status-colors'
+import { CHART_STATUS_COLORS, chartColorForPercent } from '@/utils/status-colors'
 
 const message = useMessage()
 const router = useRouter()
@@ -377,7 +378,7 @@ function trafficIncomplete(s: any) {
   const t = s.month_traffic
   return !t?.calibrated && t?.sample_count > 0 && t.coverage_start > (s.traffic_cycle_start || 0) + 3600
 }
-function pctColor(v: number) { return statusColorForPercent(v) }
+function pctColor(v: number) { return chartColorForPercent(v) }
 
 // 热力图分类：绿/黄/红
 // 旧版 cell 热力图已替换为 ECharts 时间热力图（Y=机器, X=时间桶），见 loadHeatmap。
@@ -453,11 +454,12 @@ function renderHeatmap() {
   const chartH = gridHeight + padT + padB
   const labelCount = cw < 520 ? 4 : cw < 900 ? 6 : 8
   const labelInterval = Math.max(0, Math.ceil(buckets.length / labelCount) - 1)
+  // 区分-状态牌：ECharts 可用性格子与图例共用 Apple 状态色。
   const states = [
-    { label: '运行正常', color: STATUS_COLORS.success },
-    { label: '高负载', color: STATUS_COLORS.warning },
-    { label: '严重负载', color: STATUS_COLORS.error },
-    { label: '离线 / 无数据', color: STATUS_COLORS.inactive },
+    { label: '运行正常', color: CHART_STATUS_COLORS.success },
+    { label: '高负载', color: CHART_STATUS_COLORS.warning },
+    { label: '严重负载', color: CHART_STATUS_COLORS.error },
+    { label: '离线 / 无数据', color: CHART_STATUS_COLORS.inactive },
   ]
   heatEl.value.style.height = chartH + 'px'
   chart.setOption({
@@ -808,8 +810,9 @@ onUnmounted(() => {
 /* 热力图 */
 .heatmap-header-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; min-width: 0; }
 .hm-legend { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 6px; min-width: 0; font-size: 11px; color: var(--text-3); margin-left: 0; }
+/* 区分-状态牌：管理监控图例使用统一 Apple 状态色。 */
 .hm-dot { width: 8px; height: 8px; border-radius: 3px; display: inline-block; margin-left: 6px; box-shadow: inset 0 0 0 1px rgba(31,43,55,.05); }
-.hm-dot.ok { background: var(--success); } .hm-dot.warn { background: var(--warn); } .hm-dot.crit { background: var(--danger); } .hm-dot.none { background: var(--inactive); }
+.hm-dot.ok { background: var(--chart-success); } .hm-dot.warn { background: var(--chart-warning); } .hm-dot.crit { background: var(--chart-error); } .hm-dot.none { background: var(--chart-inactive); }
 .heat-chart { width: 100%; height: 58px; min-height: 0; }
 .heat-chart:empty { display: none; }
 .range-switch { display:inline-flex; align-items:center; gap:0; padding:3px; border:1px solid var(--border); border-radius:var(--r); background:var(--bg-subtle); }

@@ -1,19 +1,45 @@
-// Cloudscape semantic status palette adapted for QingZhou.
-// Information remains the product's Apple blue; chart series colors stay separate.
+// 区分-状态牌：Apple semantic status palette adapted for QingZhou.
 export const STATUS_COLORS = {
-  success: '#00802f',
-  warning: '#855900',
-  error: '#db0000',
+  success: '#248a3d',
+  warning: '#c93400',
+  error: '#d70015',
   info: '#007aff',
-  inactive: '#656871',
+  inactive: '#636366',
+} as const
+
+// 区分-状态牌：status-encoded charts and meters intentionally reuse the same
+// Apple semantic colors; categorical chart series remain independent.
+export const CHART_STATUS_COLORS = {
+  success: STATUS_COLORS.success,
+  warning: STATUS_COLORS.warning,
+  error: STATUS_COLORS.error,
+  inactive: STATUS_COLORS.inactive,
 } as const
 
 export type StatusLevel = 'ok' | 'warn' | 'crit'
 
+function colorForPercent(palette: typeof STATUS_COLORS | typeof CHART_STATUS_COLORS, value: number): string {
+  return value >= 90 ? palette.error : value >= 70 ? palette.warning : palette.success
+}
+
+function colorForLevel(palette: typeof STATUS_COLORS | typeof CHART_STATUS_COLORS, level: StatusLevel | string): string {
+  return level === 'crit' ? palette.error : level === 'warn' ? palette.warning : palette.success
+}
+
 export function statusColorForPercent(value: number): string {
-  return value >= 90 ? STATUS_COLORS.error : value >= 70 ? STATUS_COLORS.warning : STATUS_COLORS.success
+  return colorForPercent(STATUS_COLORS, value)
 }
 
 export function statusColorForLevel(level: StatusLevel | string): string {
-  return level === 'crit' ? STATUS_COLORS.error : level === 'warn' ? STATUS_COLORS.warning : STATUS_COLORS.success
+  return colorForLevel(STATUS_COLORS, level)
+}
+
+// 区分-状态牌：status-encoded meters use the shared Apple palette; ordinary
+// categorical chart series continue to use their own chart palette.
+export function chartColorForPercent(value: number): string {
+  return colorForPercent(CHART_STATUS_COLORS, value)
+}
+
+export function chartColorForLevel(level: StatusLevel | string): string {
+  return colorForLevel(CHART_STATUS_COLORS, level)
 }

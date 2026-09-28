@@ -33,7 +33,8 @@
               <div class="balance-kicker">{{ ociUsage.period }}账户余额</div>
               <div class="balance-value">{{ fmtBytes(ociUsage.remaining) }}</div>
               <div class="balance-meta">账号总额 {{ fmtBytes(ociUsage.limit) }} − 官方已用 {{ fmtBytes(ociUsage.used) }}<template v-if="ociUsage.overage_detected"> · 已识别超额层级</template></div>
-              <n-progress type="line" :percentage="pct(ociUsage.used, ociUsage.limit)" :show-indicator="false" :height="6" status="success" />
+              <!-- 区分-状态牌：官方额度进度使用 Apple 状态色。 -->
+              <n-progress type="line" :percentage="pct(ociUsage.used, ociUsage.limit)" :show-indicator="false" :height="6" :color="CHART_STATUS_COLORS.success" />
               <div class="balance-source">{{ ociUsage.source }} · 查询区间结束 {{ fmtUpdated(ociUsage.query_end) }} · 查询于 {{ fmtUpdated(ociUsage.updated_at) }}</div>
               <n-alert v-if="ociUsage.warning" type="warning" :bordered="false">{{ ociUsage.warning }}</n-alert>
             </template>
@@ -88,7 +89,8 @@
               <div class="balance-kicker">{{ cfUsage.period }}请求余额</div>
               <div class="balance-value">{{ fmtRequests(cfUsage.remaining) }}</div>
               <div class="balance-meta">已用 {{ fmtRequests(cfUsage.used) }} / 上限 {{ fmtRequests(cfUsage.limit) }}</div>
-              <n-progress type="line" :percentage="pct(cfUsage.used, cfUsage.limit)" :show-indicator="false" :height="6" status="success" />
+              <!-- 区分-状态牌：官方额度进度使用 Apple 状态色。 -->
+              <n-progress type="line" :percentage="pct(cfUsage.used, cfUsage.limit)" :show-indicator="false" :height="6" :color="CHART_STATUS_COLORS.success" />
               <div class="balance-source">{{ cfUsage.source }} · {{ fmtUpdated(cfUsage.updated_at) }}</div>
             </template>
             <template v-else>
@@ -135,6 +137,7 @@ import { NAlert, NButton, NCard, NForm, NFormItem, NInput, NInputNumber, NProgre
 import { apiDelete, apiGet, apiPost, apiPut } from '@/api'
 import { fmtBytes, fmtRequests, pct } from '@/utils/format'
 import { defaultUpstreamOrder, normalizeUpstreamOrder, type UpstreamProvider } from '@/utils/upstreams'
+import { CHART_STATUS_COLORS } from '@/utils/status-colors'
 import ociLogo from '@/assets/provider-oci.svg'
 import cloudflareLogo from '@/assets/provider-cloudflare.svg'
 
@@ -348,7 +351,7 @@ onUnmounted(() => {
 .balance-panel.ready { background: var(--success-soft); border-color: var(--success); }
 .balance-panel.failed { background: var(--danger-soft); border-color: var(--danger); }
 .balance-kicker, .balance-source, .secret-state, .field-note { font-size: 12px; color: var(--text-3); line-height: 1.65; }
-.balance-value { margin: 4px 0 1px; font-size: 28px; line-height: 1.18; font-weight: 720; letter-spacing: -.025em; color: var(--text); font-variant-numeric: tabular-nums; }
+.balance-value { margin: 4px 0 1px; font-size: 28px; line-height: 1.18; font-weight: 720; letter-spacing: -.025em; color: var(--text); font-family: var(--ff-mono); font-variant-numeric: tabular-nums; }
 .balance-meta { margin-bottom: 8px; font-size: 12.5px; color: var(--text-2); font-variant-numeric: tabular-nums; }
 .balance-source { margin-top: 8px; }
 .balance-empty { margin: 9px 0; min-height: 26px; font-size: 14px; color: var(--text-2); line-height: 1.55; }

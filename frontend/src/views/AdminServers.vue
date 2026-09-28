@@ -157,7 +157,8 @@
 
             <div v-if="trafficAnalysis.limit_bytes > 0" class="quota-overview">
               <div><span>周期额度消耗</span><b>{{ trafficPercent.toFixed(1) }}%</b></div>
-              <n-progress type="line" :percentage="Math.min(trafficPercent, 100)" :show-indicator="false" :height="8" :color="statusColorForPercent(trafficPercent)" />
+              <!-- 区分-状态牌：流量额度进度使用 Apple 状态色。 -->
+              <n-progress type="line" :percentage="Math.min(trafficPercent, 100)" :show-indicator="false" :height="8" :color="chartColorForPercent(trafficPercent)" />
               <p v-if="trafficAnalysis.projection.available">
                 按近期速度，周期结束预计使用 {{ fmtBytes(trafficAnalysis.projection.projected_cycle_total_bytes) }}。
                 <template v-if="trafficAnalysis.projection.estimated_exhaustion_at && trafficAnalysis.projection.estimated_exhaustion_at < trafficAnalysis.next_reset">预计 {{ fmtDateTime(trafficAnalysis.projection.estimated_exhaustion_at) }} 用尽额度。</template>
@@ -207,7 +208,7 @@ import { ref, reactive, computed, onMounted, onUnmounted, nextTick, shallowRef, 
 import { NSpin, NButton, NModal, NForm, NFormItem, NInput, NInputNumber, NSwitch, NSpace, NTag, NEmpty, NCard, NSelect, NRadioGroup, NRadioButton, NDrawer, NDrawerContent, NAlert, NProgress, useMessage, useDialog } from 'naive-ui'
 import { apiList, apiPost, apiPut, apiDelete, apiGet } from '@/api'
 import { fmtBytes, fmtDateTime, pct } from '@/utils/format'
-import { statusColorForPercent } from '@/utils/status-colors'
+import { chartColorForPercent } from '@/utils/status-colors'
 import * as echarts from '@/utils/echarts'
 const message = useMessage()
 const dialog = useDialog()

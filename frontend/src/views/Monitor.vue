@@ -121,6 +121,7 @@
                  @focusout="handleHeatRangeFocusout">
               <button v-for="r in heatRanges" :key="r.value" class="heat-range-btn" :class="{ active: heatRange === r.value }" @click="loadHeatmap(r.value)">{{ r.label }}</button>
             </div>
+            <!-- 区分-状态牌：热力图图例与可用性格子共用 Apple 状态色。 -->
             <span class="heat-legend"><i class="hm-dot ok"></i>正常 <i class="hm-dot warn"></i>高负载 <i class="hm-dot crit"></i>严重 <i class="hm-dot none"></i>无数据</span>
           </div>
         </div>
@@ -146,6 +147,7 @@
                 <span class="status-beacon" :class="s.status" />
                 <span class="server-name" :title="s.name">{{ s.name }}</span>
               </div>
+              <!-- 区分-状态牌：服务器运行状态使用 Apple 语义色实心底与白字。 -->
               <span class="status-badge" :class="s.status">
                 <i class="badge-dot" /> {{ s.status === 'online' ? '运行中' : '离线' }}
               </span>
@@ -168,8 +170,9 @@
                 <div class="gauge" v-for="g in gauges(s)" :key="g.key">
                   <svg viewBox="0 0 64 64" class="gauge-svg">
                     <circle class="gauge-bg" cx="32" cy="32" r="26" />
+                    <!-- 区分-状态牌：资源仪表使用 Apple 状态色。 -->
                     <circle class="gauge-fg" cx="32" cy="32" r="26"
-                      :stroke="statusColorForLevel(g.lvl)"
+                      :stroke="chartColorForLevel(g.lvl)"
                       :stroke-dasharray="GAUGE_C"
                       :stroke-dashoffset="g.off" />
                   </svg>
@@ -325,7 +328,7 @@ import AppHeader from '@/components/AppHeader.vue'
 import ociLogo from '@/assets/provider-oci.svg'
 import cloudflareLogo from '@/assets/provider-cloudflare.svg'
 import * as echarts from '@/utils/echarts'
-import { STATUS_COLORS, statusColorForLevel } from '@/utils/status-colors'
+import { CHART_STATUS_COLORS, chartColorForLevel } from '@/utils/status-colors'
 
 interface ServerMetrics {
   cpu_percent: number; mem_used: number; mem_total: number
@@ -721,11 +724,12 @@ function renderHeatmap() {
   const chartH = gridHeight + padT + padB
   const labelCount = cw < 520 ? 4 : cw < 900 ? 6 : 8
   const labelInterval = Math.max(0, Math.ceil(buckets.length / labelCount) - 1)
+  // 区分-状态牌：ECharts 可用性格子与图例共用 Apple 状态色。
   const states = [
-    { label: '运行正常', color: STATUS_COLORS.success },
-    { label: '高负载', color: STATUS_COLORS.warning },
-    { label: '严重负载', color: STATUS_COLORS.error },
-    { label: '离线 / 无数据', color: STATUS_COLORS.inactive },
+    { label: '运行正常', color: CHART_STATUS_COLORS.success },
+    { label: '高负载', color: CHART_STATUS_COLORS.warning },
+    { label: '严重负载', color: CHART_STATUS_COLORS.error },
+    { label: '离线 / 无数据', color: CHART_STATUS_COLORS.inactive },
   ]
   heatEl.value.style.height = chartH + 'px'
   chart.setOption({
@@ -832,15 +836,16 @@ onUnmounted(() => {
 /* 图标底框：42px 方形容器使用 12px 圆角，避免继承 18px 表面圆角后显得过圆。 */
 .summary-icon { width: 42px; height: 42px; border-radius: 12px !important; display: grid; place-items: center; flex-shrink: 0; border: 1px solid var(--border); background: var(--bg-subtle); color: var(--text-2); box-shadow: none; }
 .summary-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
-.summary-val { font-size: 23px; font-weight: 770; letter-spacing: -.03em; color: var(--text); font-variant-numeric: tabular-nums; line-height: 1.05; }
+.summary-val { font-size: 23px; font-weight: 770; letter-spacing: -.03em; color: var(--text); font-family: var(--ff-mono); font-variant-numeric: tabular-nums; line-height: 1.05; }
 .summary-val.small { font-size: 18px; }
 .summary-val i { font-size: 13px; font-weight: 600; color: var(--text-3); font-style: normal; margin-left: 1px; }
 .summary-label { font-size: 11.5px; color: var(--text-3); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .summary-label b { font-weight: 650; }
 .ok-text { color: var(--success); } .crit-text { color: var(--danger); }
 .mini-bar { height: 4px; border-radius: 3px; background: var(--bg); overflow: hidden; margin-top: 5px; }
+/* 区分-状态牌：摘要资源条、交换分区和流量条使用同一 Apple 状态色。 */
 .mini-fill { height: 100%; border-radius: 3px; transition: width 1s var(--ease-emphasized); }
-.mini-fill.ok { background: var(--success); } .mini-fill.warn { background: var(--warn); } .mini-fill.crit { background: var(--danger); }
+.mini-fill.ok { background: var(--chart-success); } .mini-fill.warn { background: var(--chart-warning); } .mini-fill.crit { background: var(--chart-error); }
 
 /* ===== 分节栏 ===== */
 .section-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 12px; flex-wrap: wrap; }
@@ -858,7 +863,7 @@ onUnmounted(() => {
 .heat-range-btn.active { background: transparent !important; color: var(--text); box-shadow: none; }
 .heat-legend { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-3); margin-left: 10px; }
 .hm-dot { width: 8px; height: 8px; border-radius: 3px; display: inline-block; margin-left: 6px; box-shadow: inset 0 0 0 1px rgba(31,43,55,.05); }
-.hm-dot.ok { background: var(--success); } .hm-dot.warn { background: var(--warn); } .hm-dot.crit { background: var(--danger); } .hm-dot.none { background: var(--inactive); }
+.hm-dot.ok { background: var(--chart-success); } .hm-dot.warn { background: var(--chart-warning); } .hm-dot.crit { background: var(--chart-error); } .hm-dot.none { background: var(--chart-inactive); }
 
 .heatmap-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); box-shadow: var(--shadow-sm); padding: 14px 16px 10px; margin-bottom: 26px; }
 .heat-chart { width: 100%; height: 58px; min-height: 0; }
@@ -874,10 +879,12 @@ onUnmounted(() => {
   box-shadow: var(--shadow-sm); transition: box-shadow .18s var(--ease-standard), border-color .18s var(--ease-standard);
 }
 .server-card:hover { box-shadow: var(--shadow); border-color: var(--accent); }
-.upstream-balance-card:hover { border-color: var(--accent); }
+/* 展示卡片：悬浮子卡时父级上游卡不切换蓝色边框或额外阴影。 */
+.upstream-balance-card:hover { box-shadow: var(--shadow-sm); border-color: var(--border); }
 
 .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 14px 16px 8px; }
 .card-title { display: flex; align-items: flex-start; gap: 8px; min-width: 0; flex: 1; }
+/* 区分-状态牌：状态圆点与运行状态牌保持同一 Apple 语义色。 */
 .status-beacon { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
 .status-beacon.online { background: var(--success); box-shadow: none; animation: beacon 2.4s ease-in-out infinite; }
 .status-beacon.offline { background: var(--danger); box-shadow: none; }
@@ -886,6 +893,7 @@ onUnmounted(() => {
   font-weight: 680; font-size: 14.5px; line-height: 1.35; min-width: 0; color: var(--text);
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;
 }
+/* 区分-状态牌：状态牌使用实心 Apple 语义色与白色文字。 */
 .status-badge {
   display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0; white-space: nowrap;
   padding: 3px 9px; border-radius: var(--r); font-size: 11px; font-weight: 650;
@@ -898,7 +906,7 @@ onUnmounted(() => {
 .tag { padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 500; background: var(--bg-soft); color: var(--text-2); white-space: nowrap; }
 .tag.loc { background: var(--accent-soft); color: var(--accent-strong); }
 .tag.spec { font-variant-numeric: tabular-nums; }
-.tag.price { background: var(--warn); color: #fff; font-variant-numeric: tabular-nums; }
+.tag.price { background: var(--accent); color: #fff; font-family: var(--ff-mono); font-variant-numeric: tabular-nums; }
 .tag.expiry { display: inline-flex; align-items: center; gap: 5px; font-variant-numeric: tabular-nums; }
 .tag.expiry .exp-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
 .tag.expiry.ok { background: var(--success-soft); color: var(--success); }
@@ -914,9 +922,9 @@ onUnmounted(() => {
 .gauge-center { position: absolute; top: 0; left: 0; right: 0; display: grid; place-items: center; pointer-events: none; }
 .gauge-svg + .gauge-center { height: 100%; max-height: 76px; }
 .gauge-center { height: min(76px, 100%); }
-.gauge-val { font-size: 15px; font-weight: 750; color: var(--text); font-variant-numeric: tabular-nums; line-height: 1; }
+.gauge-val { font-size: 15px; font-weight: 750; color: var(--text); font-family: var(--ff-mono); font-variant-numeric: tabular-nums; line-height: 1; }
 .gauge-val i { font-size: 9px; font-weight: 600; font-style: normal; color: var(--text-3); margin-left: 1px; }
-.gauge-val.warn { color: var(--warn); } .gauge-val.crit { color: var(--danger); }
+.gauge-val.warn { color: var(--chart-warning); } .gauge-val.crit { color: var(--chart-error); }
 .gauge-meta { display: flex; flex-direction: column; gap: 1px; margin-top: 3px; width: 100%; }
 .gauge-label { font-size: 11px; font-weight: 650; color: var(--text-2); }
 .gauge-sub { font-size: 9.5px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
@@ -933,7 +941,7 @@ onUnmounted(() => {
 .swap-label { color: var(--text-3); font-weight: 600; flex-shrink: 0; }
 .swap-track { flex: 1; height: 5px; border-radius: 3px; background: var(--bg); overflow: hidden; }
 .swap-fill { height: 100%; border-radius: 3px; transition: width 1s var(--ease-emphasized); }
-.swap-fill.ok { background: var(--success); } .swap-fill.warn { background: var(--warn); } .swap-fill.crit { background: var(--danger); }
+.swap-fill.ok { background: var(--chart-success); } .swap-fill.warn { background: var(--chart-warning); } .swap-fill.crit { background: var(--chart-error); }
 .swap-detail { color: var(--text-3); flex-shrink: 0; font-variant-numeric: tabular-nums; }
 
 /* 详细信息网格 */
@@ -943,7 +951,7 @@ onUnmounted(() => {
 .info-cell > div { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
 .info-cell.wide { grid-column: span 2; }
 .ic-label { font-size: 10px; color: var(--text-3); font-weight: 500; }
-.ic-val { font-size: 12px; color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+.ic-val { font-size: 12px; color: var(--text); font-weight: 600; font-family: var(--ff-mono); font-variant-numeric: tabular-nums; }
 .ic-val.ellip { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .card-no-data { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 30px 16px; color: var(--text-3); font-size: 13px; }
@@ -953,30 +961,32 @@ onUnmounted(() => {
 .public-traffic-head b { color: var(--text); font-size: 12px; font-weight: 680; font-variant-numeric: tabular-nums; text-align: right; }
 .public-traffic-track { height: 5px; margin: 7px 0 6px; overflow: hidden; border-radius: 4px; background: var(--bg); }
 .public-traffic-track i { display: block; height: 100%; border-radius: inherit; transition: width 1s var(--ease-emphasized); }
-.public-traffic-track i.ok { background: var(--success); } .public-traffic-track i.warn { background: var(--warn); } .public-traffic-track i.crit { background: var(--danger); }
+.public-traffic-track i.ok { background: var(--chart-success); } .public-traffic-track i.warn { background: var(--chart-warning); } .public-traffic-track i.crit { background: var(--chart-error); }
 .public-traffic-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 10px; font-size: 10px; color: var(--text-3); }
 .warn-text { color: var(--warn); }
 
 /* 管理员专属上游余额：两个官方数据源合并在一张卡片里，可拖动子卡片调整顺序。 */
 .upstream-balance-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; padding: 0 12px 12px; }
+.upstream-balance-card .status-badge.online { background: var(--accent); color: #fff; }
 .upstream-balance-item {
-  min-width: 0; padding: 11px 12px; border: 0; border-radius: 10px; background: var(--bg-soft);
-  cursor: grab; transition: background-color .2s var(--ease-standard), opacity .2s ease, transform .2s ease;
+  min-width: 0; padding: 11px 12px; border: 0; border-radius: 10px; background: var(--bg);
+  box-shadow: none; cursor: grab; transition: box-shadow .25s ease, opacity .2s ease;
 }
 .upstream-balance-item:active { cursor: grabbing; }
-.upstream-balance-item:hover { background: var(--card-hover); }
+/* 展示卡片：上游子卡悬浮只增加中性阴影，保持页面底色、位置和尺寸。 */
+.upstream-balance-item:hover { background: var(--bg); box-shadow: 0 8px 28px rgba(0, 0, 0, .08); transform: none; }
 .upstream-balance-item.dragging { opacity: .45; transform: scale(.98); }
 .upstream-balance-item.drag-over { background: var(--accent-soft); }
 .upstream-balance-head { display: flex; align-items: center; gap: 7px; min-width: 0; }
 .upstream-provider-logo { width: 16px; height: 16px; flex: 0 0 16px; display: block; object-fit: contain; }
 .upstream-provider-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11.5px; font-weight: 650; color: var(--text-2); }
 .upstream-drag-hint { margin-left: auto; color: var(--text-3); font-size: 14px; line-height: 1; letter-spacing: -3px; opacity: .7; }
-.upstream-balance-value { margin-top: 10px; font-size: 20px; line-height: 1.15; font-weight: 750; color: var(--text); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.upstream-balance-value { margin-top: 10px; font-size: 20px; line-height: 1.15; font-weight: 750; color: var(--text); font-family: var(--ff-mono); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
 .upstream-balance-value.muted { color: var(--text-2); font-size: 18px; }
 .upstream-balance-meta { min-height: 30px; margin-top: 4px; color: var(--text-3); font-size: 10.5px; line-height: 1.45; font-variant-numeric: tabular-nums; }
 .upstream-balance-track { height: 4px; margin-top: 7px; overflow: hidden; border-radius: 4px; background: var(--bg); }
 .upstream-balance-track i { display: block; height: 100%; border-radius: inherit; transition: width .5s var(--ease-emphasized); }
-.upstream-balance-track i.ok { background: var(--success); } .upstream-balance-track i.warn { background: var(--warn); } .upstream-balance-track i.crit { background: var(--danger); }
+.upstream-balance-track i.ok { background: var(--chart-success); } .upstream-balance-track i.warn { background: var(--chart-warning); } .upstream-balance-track i.crit { background: var(--chart-error); }
 .upstream-balance-foot { margin-top: 7px; overflow: hidden; color: var(--text-3); font-size: 9.5px; line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; }
 .upstream-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .upstream-refresh-link { padding: 0; border: 0; background: transparent; color: var(--accent); font: inherit; font-size: 11px; cursor: pointer; }

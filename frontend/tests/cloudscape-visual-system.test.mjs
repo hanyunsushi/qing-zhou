@@ -9,7 +9,7 @@ test('Cloudscape visual tokens keep the existing Vue component system', () => {
   const globalCss = read('src/styles/global.css')
   const app = read('src/App.vue')
 
-  for (const token of ['--accent: #007aff', '--accent-button-hover: color-mix(in srgb, var(--accent) 84%, white)', '--success: #00802f', '--warn: #855900', '--danger: #db0000', '--info: #007aff', '--inactive: #656871', '--chart-1: #688ae8', '--chart-8: #096f64']) {
+  for (const token of ['--accent: #007aff', '--accent-button-hover: color-mix(in srgb, var(--accent) 84%, white)', '--success: #248a3d', '--warn: #c93400', '--danger: #d70015', '--info: #007aff', '--inactive: #636366', '--chart-success: var(--success)', '--chart-warning: var(--warn)', '--chart-error: var(--danger)', '--chart-inactive: var(--inactive)', '--chart-1: #688ae8', '--chart-8: #096f64']) {
     assert.match(globalCss, new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')))
   }
   assert.match(app, /primaryColor: '#007aff'/)
@@ -27,6 +27,12 @@ test('Cloudscape visual tokens keep the existing Vue component system', () => {
   assert.match(globalCss, /\.n-button\.n-button--primary-type:not\(\.n-button--secondary\):not\(\.n-button--ghost\):not\(\.n-button--disabled\):hover \{\s*background: var\(--accent-button-hover\) !important;/)
   assert.match(globalCss, /\.n-tag\.n-tag--success-type[\s\S]*?background: var\(--status-solid-bg\) !important;/)
   assert.match(globalCss, /\.n-tag\.n-tag--warning-type \{ --status-solid-bg: var\(--warn\); \}/)
+})
+
+test('typography applies numeric font only through explicit utility classes', () => {
+  const globalCss = read('src/styles/global.css')
+  assert.match(globalCss, /:where\(\.numeric, \.mono, \.tabular-nums\) \{[\s\S]*?font-family: var\(--ff-mono\);/)
+  assert.doesNotMatch(globalCss, /\[class\*="(?:amount|balance|price|value|count|pct)"\]/)
 })
 
 test('custom scrollbar geometry keeps one stable centered slot across platforms', () => {
@@ -476,13 +482,24 @@ test('semantic status colors use solid white-label badges and chart state semant
   const globalCss = read('src/styles/global.css')
   const monitor = read('src/views/Monitor.vue')
   const adminMonitor = read('src/views/AdminMonitor.vue')
+  const dashboard = read('src/views/UserDashboard.vue')
+  const upstreams = read('src/views/AdminUpstreams.vue')
   const statusColors = read('src/utils/status-colors.ts')
-  assert.match(statusColors, /success: '#00802f'[\s\S]*?warning: '#855900'[\s\S]*?error: '#db0000'[\s\S]*?info: '#007aff'/)
+  assert.match(statusColors, /success: '#248a3d'[\s\S]*?warning: '#c93400'[\s\S]*?error: '#d70015'[\s\S]*?info: '#007aff'/)
+  assert.match(statusColors, /区分-状态牌[\s\S]*?CHART_STATUS_COLORS[\s\S]*?success: STATUS_COLORS\.success[\s\S]*?warning: STATUS_COLORS\.warning[\s\S]*?error: STATUS_COLORS\.error[\s\S]*?inactive: STATUS_COLORS\.inactive/)
+  assert.match(statusColors, /chartColorForPercent[\s\S]*?colorForPercent\(CHART_STATUS_COLORS/)
+  assert.match(statusColors, /chartColorForLevel[\s\S]*?colorForLevel\(CHART_STATUS_COLORS/)
   assert.match(globalCss, /\.n-tag\.n-tag--success-type,[\s\S]*?--n-text-color: #fff !important;/)
-  assert.match(monitor, /status-badge\.online \{ background: var\(--success\); color: #fff; \}/)
+  assert.match(monitor, /区分-状态牌[\s\S]*?status-badge\.online \{ background: var\(--success\); color: #fff; \}/)
+  assert.match(monitor, /:stroke="chartColorForLevel\(g\.lvl\)"/)
+  assert.match(monitor, /\.mini-fill\.ok \{ background: var\(--chart-success\); \}/)
+  assert.match(dashboard, /CHART_STATUS_COLORS\.inactive/)
+  assert.match(dashboard, /chartColorForPercent\(usedPct\.value\)/)
+  assert.match(upstreams, /:color="CHART_STATUS_COLORS\.success"/)
   assert.match(monitor, /emphasis: \{ scale: true, itemStyle: \{ borderColor: '#fff', borderWidth: 2 \} \}/)
   assert.doesNotMatch(monitor, /shadowBlur: 10|card-top-line/)
-  assert.match(adminMonitor, /color: STATUS_COLORS\.success[\s\S]*?color: STATUS_COLORS\.warning[\s\S]*?color: STATUS_COLORS\.error/)
+  assert.match(adminMonitor, /区分-状态牌[\s\S]*?color: CHART_STATUS_COLORS\.success[\s\S]*?color: CHART_STATUS_COLORS\.warning[\s\S]*?color: CHART_STATUS_COLORS\.error/)
+  assert.match(adminMonitor, /function pctColor\(v: number\) \{ return chartColorForPercent\(v\) \}/)
   assert.doesNotMatch(adminMonitor, /shadowBlur: 10/)
 })
 
@@ -492,7 +509,14 @@ test('monitor provider cards expose the shared drag and status surface contract'
   assert.match(monitor, /class="upstream-refresh-link"[^>]*>刷新/)
   assert.match(monitor, /\.upstream-refresh-link \{[\s\S]*?color: var\(--accent\);/)
   assert.match(monitor, /\.upstream-balance-item \{[\s\S]*?border: 0;[\s\S]*?box-shadow: none|\.upstream-balance-item \{[\s\S]*?border: 0;/)
-  assert.match(monitor, /\.tag\.price \{ background: var\(--warn\); color: #fff;/)
+  assert.match(monitor, /\.tag\.price \{ background: var\(--accent\); color: #fff;/)
+  assert.match(monitor, /\.upstream-balance-card \.status-badge\.online \{ background: var\(--accent\); color: #fff; \}/)
+  assert.match(monitor, /\.upstream-balance-item \{[\s\S]*?background: var\(--bg\);/)
+  assert.match(monitor, /展示卡片：上游子卡悬浮只增加中性阴影[\s\S]*?\.upstream-balance-item:hover \{ background: var\(--bg\); box-shadow: 0 8px 28px rgba\(0, 0, 0, \.08\); transform: none; \}/)
+  assert.match(monitor, /展示卡片：悬浮子卡时父级上游卡不切换蓝色边框或额外阴影[\s\S]*?\.upstream-balance-card:hover \{ box-shadow: var\(--shadow-sm\); border-color: var\(--border\); \}/)
+  assert.doesNotMatch(monitor, /\.upstream-balance-item:hover \{ background: var\(--card-hover\)/)
+  assert.match(monitor, /\.tag\.price \{[\s\S]*?font-family: var\(--ff-mono\);/)
+  assert.match(monitor, /\.upstream-balance-value \{[\s\S]*?font-family: var\(--ff-mono\);/)
   assert.doesNotMatch(monitor, /<span class="tag loc">OCI · Cloudflare<\/span>/)
   assert.match(monitor, /class="upstream-drag-hint"/)
   assert.match(upstreams, /class="provider-drag-hint" title="拖动调整供应商卡片顺序"/)
