@@ -1,24 +1,26 @@
 # Kreeper QingZhou 定制维护
 
-## 2026-09-28 Apple 状态编码可视化统一（本地未部署）
+## 2026-09-28 Apple 状态编码可视化统一（已发布并部署）
 
 - 热力图图例与实际可用性格子、资源仪表、配额环、百分比资源条和状态提示统一使用 Apple-derived 状态色：成功 `#248a3d`、警告 `#c93400`、错误 `#d70015`、非激活 `#636366`，信息继续为 Apple blue `#007aff`。普通分类图表仍保留独立分类色板。
 - `CHART_STATUS_COLORS` / `--chart-*` 作为状态编码入口复用 Apple 状态色；首页运行状态牌、首页与管理监控热力图代码均以“区分-状态牌”注释标记。OCI/Cloudflare 子卡 hover 只增加中性展示卡片阴影，不切换底色、不位移、不缩放。
-- 前端契约测试 `100/100`、`vue-tsc -b`、`vite build` 和 `git diff --check` 已通过；构建保留已知 ECharts `567.24 KB` 非阻塞 warning。本轮尚未重新构建 Go 二进制、创建 Release 或部署生产。
+- 前端契约测试 `100/100`、`vue-tsc -b`、`vite build`、Go 全量测试和 `git diff --check` 已通过；构建保留已知 ECharts `567.24 KB` 非阻塞 warning。
+- 提交 `84b9f0e` 已推送 Fork `main`，发布为 `v0.2.85-kreeper-20260928-apple-status`；GitHub Actions `36406243452` 成功，ARM64 面板资产 SHA-256 为 `b3347cb2fac549a1cf79e5b405617cd720619461a24c6e13a9bcd3fc4b6cce60`。Release signing key 未配置，资产未签名。
+- 生产 `/opt/qingzhou/qingzhou` 已原子替换并仅重启 `qingzhou.service`；运行版本同为 `v0.2.85-kreeper-20260928-apple-status`，备份为 `/opt/qingzhou/backups/fork-v0.2.85-kreeper-20260928-apple-status-20260928-095718/`。本机/公网 `/api/health`、三个服务、`8081`/`8882`/`18082` 监听和公网前端资源均验收通过。宿主无 `sqlite3` CLI，未执行 `PRAGMA integrity_check`；数据库副本已保留在备份目录。
 
 ## 2026-09-28 Apple 状态色、监控卡视觉与字体修正（已部署）
 
 - 普通界面状态色由 AWS 语义色切换为 Apple-derived palette：成功 `#248a3d`、警告 `#c93400`、错误 `#d70015`、非激活 `#636366`，信息继续使用 Apple 蓝 `#007aff`；实心状态牌继续白字，浅色提示改用对应 Apple 淡色底。
-- 上一版部署的图表状态色仍为 AWS 色，并通过 `CHART_STATUS_COLORS` / `--chart-*` / `chartColorFor*` 独立维护；当前本地覆盖已按上一节统一为 Apple 状态编码色。上游余额条的本地版本随同状态入口更新。
+- 图表状态色通过 `CHART_STATUS_COLORS` / `--chart-*` / `chartColorFor*` 兼容入口统一复用 Apple 状态编码色；普通分类图表色板仍独立维护。上游余额条随同状态入口更新。
 - 同批部署监控 OCI/Cloudflare 子卡页面底色、月费价格牌和“官方数据”牌的 Apple 蓝白字，以及仅对显式数字节点启用等宽字体的修正。
-- 发布前端 100 项测试、`vue-tsc -b`、`vite build`、Go 全量测试与 `git diff --check` 均通过；构建保留已知非阻塞的 ECharts 567 KB 异步 chunk warning。此次为固定 OCI 主机服务直接部署，未创建 GitHub Release。
-- 生产版本 `v0.2.84-kreeper-20260928-apple-status`，ARM64 二进制 SHA-256 为 `c3f8759ba1ac31a324649140aa72ed0afedfa9e913aa1cb9cae3cb3b34d3b283`。通过 `ubuntu@140.245.43.76` 与 `~/.ssh/oci-a1-20260730.key` 部署；备份目录 `/opt/qingzhou/backups/fork-v0.2.84-kreeper-20260928-apple-status-20260928-162537/`，SQLite 在线快照完整性为 `ok`。仅重启 `qingzhou.service`，数据库、env、服务定义、sing-box 与 Tunnel 配置未修改。
+- 发布前端 100 项测试、`vue-tsc -b`、`vite build`、Go 全量测试与 `git diff --check` 均通过；构建保留已知非阻塞的 ECharts 567 KB 异步 chunk warning。此次使用固定 OCI 主机服务直接部署。
+- 生产版本 `v0.2.85-kreeper-20260928-apple-status`，ARM64 二进制 SHA-256 为 `b3347cb2fac549a1cf79e5b405617cd720619461a24c6e13a9bcd3fc4b6cce60`。通过 `ubuntu@140.245.43.76` 与 `~/.ssh/oci-a1-20260730.key` 部署；备份目录 `/opt/qingzhou/backups/fork-v0.2.85-kreeper-20260928-apple-status-20260928-095718/`。仅重启 `qingzhou.service`，数据库、env、服务定义、sing-box 与 Tunnel 配置未修改；宿主无 `sqlite3` CLI，未执行数据库完整性检查。
 - 本机/公网 `/api/health` 返回新版本；三个服务 active，`8081`、`8882`、`18082` 正常监听。公网首页 JS、CSS 和状态色模块哈希与本地构建一致。
 
 ## 2026-09-28 首页监控上游卡片与价格牌（已部署，见上节）
 
 - 首页监控的 OCI/Cloudflare 可排序子卡改用页面背景 `var(--bg)`；月费价格牌和“官方数据”状态牌改为 Apple 蓝 `var(--accent)` 实心背景、白色文字。
-- 服务器“运行中/离线”状态牌使用 Apple-derived 语义色；上一版部署的热力图状态仍为 AWS 色，当前本地覆盖见本页最上方。
+- 服务器“运行中/离线”状态牌、热力图图例和可用性格子使用本页最上方统一的 Apple-derived 语义色；普通分类图表色板仍独立维护。
 
 ## 2026-09-28 字体覆盖修正（已部署，见上节）
 

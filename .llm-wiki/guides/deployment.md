@@ -5,30 +5,35 @@ updated: 2026-09-28
 
 ## 2026-09-28 Apple status palette and monitor visual deployment
 
-Deployed the Apple-derived ordinary UI status palette while preserving the
-existing AWS chart colors. Heatmaps, legends, gauges, quota rings, resource
-meters and progress visualizations remain on their prior AWS colors; the
-upstream balance progress bars retain their fixed-success green.
+The Apple-derived status palette now covers ordinary status surfaces and
+status-coded visualizations: success `#248a3d`, warning `#c93400`, error
+`#d70015`, inactive `#636366`, and Apple blue `#007aff` for information.
+Heatmaps, legends, gauges, quota rings, resource meters and progress
+visualizations reuse the same status entry point; ordinary categorical chart
+colors remain independent. Provider cards use the page surface, status/price
+badges use Apple blue with white text, and numeric font styling is opt-in on
+numeric nodes only.
 
-The same working-tree deployment includes monitor provider-card surfaces and
-labels plus the explicit numeric-font selector correction. Frontend tests
-(100), `vue-tsc -b`, `vite build`, `go test ./...`, and `git diff --check` passed.
-Vite reports the existing non-blocking 567 KB ECharts async chunk warning. No
-GitHub Release was created.
+The release gate passed 100 frontend contract tests, `vue-tsc -b`, `vite build`,
+`go test ./...`, and `git diff --check`. Vite reports the known non-blocking
+567 KB ECharts async chunk warning.
 
-Production runs `v0.2.84-kreeper-20260928-apple-status`; the ARM64 binary
-SHA-256 is
-`c3f8759ba1ac31a324649140aa72ed0afedfa9e913aa1cb9cae3cb3b34d3b283`.
-Deployment used `ubuntu@140.245.43.76` and
-`~/.ssh/oci-a1-20260730.key`; only `qingzhou.service` was restarted. Rollback
-material is `/opt/qingzhou/backups/fork-v0.2.84-kreeper-20260928-apple-status-20260928-162537/`;
-it contains the previous binary, a SQLite online backup (`PRAGMA integrity_check`
-returned `ok`), env, service definitions and sing-box configuration. The
-production database and configuration were not modified.
+Commit `84b9f0e` was pushed to `origin/main` and released as
+`v0.2.85-kreeper-20260928-apple-status`; Actions workflow `36406243452`
+completed successfully. The ARM64 panel asset SHA-256 is
+`b3347cb2fac549a1cf79e5b405617cd720619461a24c6e13a9bcd3fc4b6cce60`.
+Release signing is not configured, so assets are unsigned.
 
-Local and public `/api/health` return the deployed version. All three services
-are active, listeners `8081`, `8882` and `18082` are present, and the public
-hashed JS, CSS and status-color module hashes match the local build.
+Production runs the same version from `/opt/qingzhou/qingzhou`. Deployment used
+`ubuntu@140.245.43.76` and `~/.ssh/oci-a1-20260730.key`; only
+`qingzhou.service` was restarted. Rollback material is
+`/opt/qingzhou/backups/fork-v0.2.85-kreeper-20260928-apple-status-20260928-095718/`.
+The backup contains the previous binary, database copy, env, service
+definitions and sing-box configuration; production data and configuration
+were not replaced. Local/public `/api/health`, all three services, listeners
+`8081`, `8882`, `18082`, and public hashed resources passed. The host has no
+`sqlite3` CLI, so this deployment did not run `PRAGMA integrity_check`; the
+database copy remains available for rollback verification.
 
 ## 2026-09-28 Admin hierarchy and node card release
 

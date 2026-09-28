@@ -5,23 +5,23 @@ updated: 2026-09-28
 
 # Validation Guide
 
-## 2026-09-28 Admin hierarchy and node card release gate
+## 2026-09-28 Apple status palette and monitor release gate
 
-The admin sidebar now exposes “管理后台” as a first-level static group, with
-运营、节点服务 and 内容系统 as its expandable second-level groups. Node
-sorting cards use the page surface independently from their enclosing module;
-routes, search, permissions and status semantics are unchanged.
+The gate passed 100 frontend contract tests, `vue-tsc -b`, `vite build`,
+`go test ./...`, and `git diff --check`. The known ECharts async chunk warning
+(`567 KB` minified) remains non-blocking. Status-coded charts and ordinary
+status surfaces resolve through the Apple status palette; categorical chart
+colors remain separate.
 
-The release gate passed 99 front-end contract tests, `vue-tsc -b`, `vite build`,
-`go test ./...` and `git diff --check`. The existing ECharts async chunk warning
-(`567 KB` minified) remains non-blocking.
-
-Release `v0.2.84-kreeper-20260928` was published from commit `69786f0` and
-workflow `36344618817` uploaded the ARM64 panel with SHA-256
-`ce4b7cde25a1d17d81a6dc0b0667767a5804a25488c61ecc0f312a08f022dc9c`.
-Production validation is pending because the SSH host closes the connection
-before the banner; the public health endpoint still reports
-`v0.2.84-kreeper-edgefix2-20260927`.
+Commit `84b9f0e` was released as `v0.2.85-kreeper-20260928-apple-status` by
+workflow `36406243452`. The ARM64 panel asset SHA-256 is
+`b3347cb2fac549a1cf79e5b405617cd720619461a24c6e13a9bcd3fc4b6cce60`.
+Production and public validation returned the release version from
+`/api/health`; all three services were active, ports `8081`, `8882`, `18082`
+were listening, and the public hashed frontend resources returned `200` with
+matching local hashes. The host lacks the `sqlite3` CLI, so `PRAGMA
+integrity_check` was not run in this deployment; the database copy is retained
+in the rollback directory.
 
 Run from the repository root:
 
