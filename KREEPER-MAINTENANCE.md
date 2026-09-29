@@ -1,5 +1,9 @@
 # Kreeper QingZhou 定制维护
 
+## 2026-09-29 订单页状态数字 Apple 色（本地未发布）
+
+- 订单页退款 KPI、退款订单原价和返还积分提示标注为“区分-状态”，统一使用全局 Apple 状态 token；成功为 `var(--success)`、退款为 `var(--danger)`、返还提示为 `var(--warn)`，图表色板不变。前端 `102/102`、类型检查、构建和 `git diff --check` 已通过。本轮尚未创建 Release 或部署，生产仍为 `v0.2.86-kreeper-20260929-apple-soft`。
+
 ## 2026-09-29 商城信息牌 Apple 蓝样式（本地未发布）
 
 - 商城“订阅计划”类型标签和同续期组排队说明标注为“区分-信息牌”，使用全局 Apple 蓝 `var(--info)` 与 `var(--info-soft)`，不再使用绿色成功语义；前端 `101/101`、类型检查、构建和 `git diff --check` 已通过。本轮尚未创建 Release 或部署，生产仍为 `v0.2.86-kreeper-20260929-apple-soft`。

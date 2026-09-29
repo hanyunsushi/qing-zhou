@@ -766,6 +766,17 @@ test('order summary cards reuse the display-card hover treatment', () => {
   assert.match(source, /\/\* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 \*\/[\s\S]*?\.kpi-card:hover, \.kpi-card:focus-visible \{[\s\S]*?background: var\(--card\);[\s\S]*?box-shadow: 0 8px 28px rgba\(0, 0, 0, 0\.08\);[\s\S]*?transform: none;/)
 })
 
+test('order colored numbers use the shared Apple status contract', () => {
+  const source = read('src/views/UserOrders.vue')
+  assert.match(source, /区分-状态：退款数量是异常\/回退状态[\s\S]*?class="kpi-value down"/)
+  assert.match(source, /区分-状态：近 30 天消费数量使用 Apple 成功色[\s\S]*?class="kpi-value up"/)
+  assert.match(source, /区分-状态：退款订单金额使用 Apple 错误色[\s\S]*?class="oi-amt"/)
+  assert.match(source, /区分-状态：KPI 数字颜色只表达成功\/退款状态[\s\S]*?\.kpi-value\.up \{ color: var\(--success\); \}[\s\S]*?\.kpi-value\.down \{ color: var\(--danger\); \}/)
+  assert.match(source, /\.oi-amt\.down \{ color: var\(--danger\);[\s\S]*?color-mix\(in srgb, var\(--danger\) 45%, transparent\)/)
+  assert.match(source, /区分-状态：退款返还积分提示使用 Apple 警告色[\s\S]*?\.oi-refund \{[\s\S]*?color: var\(--warn\);/)
+  assert.doesNotMatch(source, /#4d7256|#a8564b/)
+})
+
 test('points summary cards reuse the display-card hover treatment', () => {
   const source = read('src/views/UserPoints.vue')
   assert.equal((source.match(/class="kpi-card"/g) || []).length, 4)

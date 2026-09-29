@@ -5,6 +5,15 @@ updated: 2026-09-29
 
 # Validation Guide
 
+## 2026-09-29 Order status numbers (local, not deployed)
+
+The order page's colored refund KPI, refunded order amount, and returned-points
+notice are classified as status-coded numbers. They reuse `var(--success)`,
+`var(--danger)`, and `var(--warn)` instead of local hex colors; categorical
+chart colors remain independent. The contract is covered by the 102 frontend
+tests, `vue-tsc -b`, `vite build`, and `git diff --check`. Production remains
+`v0.2.86-kreeper-20260929-apple-soft`.
+
 ## 2026-09-29 Shop information badges (local, not deployed)
 
 The shop's `订阅计划` badge and same-renewal-group queue note are classified as

@@ -25,11 +25,13 @@
         <div class="kpi-value">{{ orders.length }}</div>
         <div class="kpi-sub">成功 {{ successCount }} · 退款 {{ refundedCount }}</div>
       </div>
+      <!-- 区分-状态：退款数量是异常/回退状态，使用 Apple 错误色。 -->
       <div class="kpi-card">
         <div class="kpi-label">已退款</div>
         <div class="kpi-value down">{{ refundedCount }}</div>
         <div class="kpi-sub">退回 {{ refundedPoints }} 积分</div>
       </div>
+      <!-- 区分-状态：近 30 天消费数量使用 Apple 成功色。 -->
       <div class="kpi-card">
         <div class="kpi-label">近 30 天消费</div>
         <div class="kpi-value up">{{ dMonthSpend }}</div>
@@ -93,6 +95,7 @@
               </div>
             </div>
             <div class="oi-side">
+              <!-- 区分-状态：退款订单金额使用 Apple 错误色并保留原价划线。 -->
               <div class="oi-amt" :class="o.status === 'refunded' ? 'down' : ''">
                 {{ o.price_points }}<span class="oi-unit">积分</span>
               </div>
@@ -362,8 +365,9 @@ onUnmounted(() => {
 .kpi-label { font-size: 12px; color: var(--text-3); font-weight: 550; }
 .kpi-value { font-size: 24px; font-weight: 720; letter-spacing: -0.02em; margin-top: 6px; line-height: 1.15; font-variant-numeric: tabular-nums; }
 .kpi-value.accent { color: var(--text); }
-.kpi-value.up { color: #4d7256; }
-.kpi-value.down { color: #a8564b; }
+/* 区分-状态：KPI 数字颜色只表达成功/退款状态，不使用局部私有色。 */
+.kpi-value.up { color: var(--success); }
+.kpi-value.down { color: var(--danger); }
 .kpi-sub { font-size: 11.5px; color: var(--text-3); margin-top: 2px; }
 
 /* ---- 图表区块 ---- */
@@ -416,8 +420,9 @@ onUnmounted(() => {
 
 .oi-side { text-align: right; flex-shrink: 0; }
 .oi-amt { font-weight: 720; font-size: 16px; font-variant-numeric: tabular-nums; color: var(--text); }
-.oi-amt.down { color: #a8564b; text-decoration: line-through; text-decoration-color: rgba(168,86,75,.45); }
+.oi-amt.down { color: var(--danger); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--danger) 45%, transparent); }
 .oi-unit { font-size: 11px; font-weight: 500; color: var(--text-3); margin-left: 3px; }
+/* 区分-状态：退款返还积分提示使用 Apple 警告色。 */
 .oi-refund { font-size: 11.5px; color: var(--warn); margin-top: 2px; font-variant-numeric: tabular-nums; }
 
 /* 状态胶囊 */
