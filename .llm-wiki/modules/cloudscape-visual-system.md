@@ -79,6 +79,7 @@ semantic surfaces for ordinary badges, labels and notices.
 
 - `UserShop.vue` 的“订阅计划”类型标签和同续期组排队说明属于“区分-信息牌”，只传达商品类型或流程提示，不表达成功、警告或运行状态。
 - 两者统一复用全局 `var(--info)` / `var(--info-soft)` Apple 蓝信息语义；边框透明，避免局部绿色样式把信息牌误识别为成功状态。新增商城信息提示应复用该合同并在模板处保留“区分-信息牌”备注。
+- 帮助中心左侧当前文档选择也是“区分-信息牌”：使用 `var(--info)` / `var(--info-soft)`，透明边框、无阴影；不影响帮助导航的搜索与选择逻辑。
 
 ## Status-coded numbers
 

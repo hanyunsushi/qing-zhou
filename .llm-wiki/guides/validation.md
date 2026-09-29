@@ -5,6 +5,15 @@ updated: 2026-09-29
 
 # Validation Guide
 
+## 2026-09-29 Help navigation information badge (local, not deployed)
+
+The selected help-document navigation item uses the shared Apple blue
+information surface, `var(--info)` / `var(--info-soft)`, with a transparent
+border and no shadow. Search, selection geometry, document content and routing
+are unchanged. The contract is covered by 104 frontend tests, `vue-tsc -b`,
+`vite build`, and `git diff --check`; production remains
+`v0.2.86-kreeper-20260929-apple-soft`.
+
 ## 2026-09-29 Points status numbers (local, not deployed)
 
 The points page's income, expense, net-change KPI values and transaction

@@ -14,6 +14,7 @@
           :class="{ active: activeId === doc.id }"
           @click="activeId = doc.id"
         >
+          <!-- 区分-信息牌：当前帮助文档选择使用 Apple 蓝信息语义。 -->
           {{ doc.title }}
         </div>
         <n-empty v-if="!loading && filteredDocs.length === 0" :description="docs.length ? '没有匹配的文档' : '暂无文档'" size="small" />
@@ -83,7 +84,8 @@ onMounted(async () => {
   transition: 0.12s;
 }
 .help-nav-item:hover { background: var(--bg-soft); color: var(--text); }
-.help-nav-item.active { background: var(--accent-soft); color: var(--accent-strong); font-weight: 600; }
+/* 区分-信息牌：帮助文档当前选择只传达信息上下文，不表达业务状态。 */
+.help-nav-item.active { background: var(--info-soft); color: var(--info); border: 1px solid transparent; box-shadow: none; font-weight: 600; }
 .help-search { margin-bottom:10px; }
 .help-content h3 { margin:0 0 3px; font-size:18px; }
 .help-meta { margin-bottom:18px; padding-bottom:12px; border-bottom:1px solid var(--border); color:var(--text-3); font-size:11.5px; }

@@ -157,6 +157,13 @@ test('shop plan identity and queue note use the Apple blue information surface',
   assert.doesNotMatch(shop, /\.t-plan \{[^}]*#4b7a5c|\.sc-queue-note \{[^}]*#4b7a5c/)
 })
 
+test('help navigation selection uses the Apple blue information surface', () => {
+  const source = read('src/views/UserHelp.vue')
+  assert.match(source, /class="help-nav-item"[\s\S]*?<!-- 区分-信息牌：当前帮助文档选择使用 Apple 蓝信息语义。 -->/)
+  assert.match(source, /区分-信息牌：帮助文档当前选择只传达信息上下文[\s\S]*?\.help-nav-item\.active \{ background: var\(--info-soft\); color: var\(--info\); border: 1px solid transparent; box-shadow: none;/)
+  assert.doesNotMatch(source, /\.help-nav-item\.active \{[^}]*var\(--accent-soft\)|\.help-nav-item\.active \{[^}]*var\(--accent-strong\)/)
+})
+
 test('page-level primary actions use the shared highlighted arc button contract', () => {
   assert.match(read('src/views/UserOrders.vue'), /class="action-button action-button--emphasis"/)
   assert.match(read('src/views/UserOrders.vue'), />\s*去商城\s*<\/n-button>/)
