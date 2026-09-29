@@ -322,7 +322,7 @@ function removeProvider(provider: Provider) {
   })
 }
 function tagType(configured: boolean): 'success' | 'default' { return configured ? 'success' : 'default' }
-function usageClass(usage?: Usage) { return usage?.success ? 'ready' : usage?.error ? 'failed' : '' }
+function usageClass(usage?: Usage) { return usage?.success ? '' : usage?.error ? 'failed' : '' }
 function fmtUpdated(value?: string) { return value ? new Date(value).toLocaleString('zh-CN', { hour12: false }) : '尚未更新' }
 
 onMounted(async () => {
@@ -347,8 +347,8 @@ onUnmounted(() => {
 .provider-card-title { display: inline-flex; align-items: center; gap: 7px; min-width: 0; color: var(--text); font-size: 15px; font-weight: 650; line-height: 20px; }
 .provider-logo { width: 18px; height: 18px; flex: 0 0 18px; display: block; object-fit: contain; }
 .provider-drag-hint { margin-left: auto; color: var(--text-3); font-size: 14px; line-height: 1; letter-spacing: -3px; opacity: .7; }
-.balance-panel { padding: 14px; margin-bottom: 14px; border: 1px solid var(--border); border-radius: var(--r-sm); background: var(--bg-soft); min-height: 122px; }
-.balance-panel.ready { background: var(--success-soft); border-color: var(--success); }
+/* 展示卡片：上游余额数据不代表成功状态，常态纸面使用白色页面背景。 */
+.balance-panel { padding: 14px; margin-bottom: 14px; border: 1px solid var(--border); border-radius: var(--r-sm); background: var(--bg); min-height: 122px; }
 .balance-panel.failed { background: var(--danger-soft); border-color: var(--danger); }
 .balance-kicker, .balance-source, .secret-state, .field-note { font-size: 12px; color: var(--text-3); line-height: 1.65; }
 .balance-value { margin: 4px 0 1px; font-size: 28px; line-height: 1.18; font-weight: 720; letter-spacing: -.025em; color: var(--text); font-family: var(--ff-mono); font-variant-numeric: tabular-nums; }

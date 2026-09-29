@@ -519,6 +519,19 @@ test('semantic status colors use Apple soft badges and chart state semantics', (
   assert.doesNotMatch(adminMonitor, /shadowBlur: 10/)
 })
 
+test('admin upstream balance surfaces stay neutral when usage loads successfully', () => {
+  const upstreams = read('src/views/AdminUpstreams.vue')
+  const balancePanelStyle = upstreams.match(/展示卡片：上游余额数据不代表成功状态[\s\S]*?\.balance-panel\.failed \{[^}]+\}/)?.[0]
+
+  assert.ok(balancePanelStyle)
+  assert.match(balancePanelStyle, /\.balance-panel \{[^}]*background: var\(--bg\);/)
+  assert.match(balancePanelStyle, /\.balance-panel\.failed \{[^}]*background: var\(--danger-soft\); border-color: var\(--danger\);/)
+  assert.doesNotMatch(balancePanelStyle, /\.balance-panel\.ready/)
+  assert.match(upstreams, /function usageClass\(usage\?: Usage\) \{ return usage\?\.success \? '' : usage\?\.error \? 'failed' : '' \}/)
+  assert.equal((upstreams.match(/class="balance-panel" :class="usageClass\((?:oci|cf)Usage\)"/g) ?? []).length, 2)
+  assert.equal((upstreams.match(/:color="CHART_STATUS_COLORS\.success"/g) ?? []).length, 2)
+})
+
 test('monitor provider cards expose the shared drag and status surface contract', () => {
   const monitor = read('src/views/Monitor.vue')
   const upstreams = read('src/views/AdminUpstreams.vue')
