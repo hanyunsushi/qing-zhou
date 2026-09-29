@@ -40,7 +40,7 @@
     <n-spin :show="loading">
       <div v-if="filtered.length" class="card-grid">
         <div v-for="u in filtered" :key="u.id" class="user-card">
-          <!-- 身份 -->
+          <!-- 区分-身份牌：头像使用稳定分配的 Apple 身份色，不混用状态色。 -->
           <div class="uc-head">
             <span class="uc-avatar" :style="avatarStyle(u.username)">{{ initial(u.username) }}</span>
             <div class="uc-id">
@@ -542,6 +542,14 @@ const filtered = computed(() => {
 })
 
 // ---- 头像 ----
+const AVATAR_PALETTE = [
+  { background: '#5856d6', color: '#433f9f' },
+  { background: '#af52de', color: '#7d2a9f' },
+  { background: '#ff2d55', color: '#b51c3e' },
+  { background: '#5ac8fa', color: '#18789f' },
+  { background: '#32ade6', color: '#176785' },
+  { background: '#00c7be', color: '#087d78' },
+]
 function initial(name: string) { return (name || '?').charAt(0).toUpperCase() }
 function hashHue(name: string) {
   let h = 0
@@ -549,8 +557,11 @@ function hashHue(name: string) {
   return h
 }
 function avatarStyle(name: string) {
-  const h = hashHue(name)
-  return { background: `hsl(${h},38%,93%)`, color: `hsl(${h},42%,32%)` }
+  const color = AVATAR_PALETTE[hashHue(name) % AVATAR_PALETTE.length]
+  return {
+    background: `color-mix(in srgb, ${color.background} 12%, white)`,
+    color: color.color,
+  }
 }
 
 // ---- 更多操作 ----
@@ -1030,6 +1041,7 @@ onMounted(load)
   opacity: 1;
 }
 .uc-head { display: flex; align-items: center; gap: 10px; min-width: 0; }
+/* 区分-身份牌：Apple 身份色仅用于头像识别，状态语义由独立标签承载。 */
 .uc-avatar {
   width: 36px; height: 36px; flex-shrink: 0; border-radius: 10px;
   display: flex; align-items: center; justify-content: center;

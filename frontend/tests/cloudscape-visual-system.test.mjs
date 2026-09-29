@@ -574,6 +574,10 @@ test('admin monitor heatmap header wraps controls below the title on narrow scre
 
 test('admin users use neutral selected cards, semantic identity badges, and arc plan actions', () => {
   const source = read('src/views/AdminUsers.vue')
+  assert.match(source, /区分-身份牌：头像使用稳定分配的 Apple 身份色[\s\S]*?const AVATAR_PALETTE = \[[\s\S]*?#5856d6[\s\S]*?#af52de[\s\S]*?#ff2d55[\s\S]*?#5ac8fa[\s\S]*?#32ade6[\s\S]*?#00c7be/)
+  assert.doesNotMatch(source, /AVATAR_PALETTE[\s\S]*?#007aff|AVATAR_PALETTE[\s\S]*?#8e8e93/)
+  assert.match(source, /function avatarStyle\(name: string\) \{[\s\S]*?hashHue\(name\) % AVATAR_PALETTE\.length[\s\S]*?color-mix\(in srgb, \$\{color\.background\} 12%, white\)/)
+  assert.match(source, /区分-身份牌：Apple 身份色仅用于头像识别，状态语义由独立标签承载。/)
   assert.match(source, /区分-身份牌：使用 AWS 语义警告色底与白色文字[\s\S]*?class="identity-badge"[^>]*>管理员/)
   assert.match(source, /\.identity-badge \{ background: var\(--warn\) !important; color: #fff !important;/)
   assert.match(source, /\.ss-item \{[\s\S]*?background: var\(--card\); border: 0;[\s\S]*?\}/)
