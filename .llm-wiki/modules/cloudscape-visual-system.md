@@ -75,6 +75,11 @@ The Apple soft-surface contract is deployed in
 solid fills only for status-coded data visualizations and uses translucent
 semantic surfaces for ordinary badges, labels and notices.
 
+## Information badges
+
+- `UserShop.vue` 的“订阅计划”类型标签和同续期组排队说明属于“区分-信息牌”，只传达商品类型或流程提示，不表达成功、警告或运行状态。
+- 两者统一复用全局 `var(--info)` / `var(--info-soft)` Apple 蓝信息语义；边框透明，避免局部绿色样式把信息牌误识别为成功状态。新增商城信息提示应复用该合同并在模板处保留“区分-信息牌”备注。
+
 ## Login modal boundaries
 
 - Naive UI 的 `.n-modal-mask` 与 `.n-drawer-mask` 是全视口遮罩，固定为 `0` 圆角，不能被全局表面圆角兜底改成圆角。

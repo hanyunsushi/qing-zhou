@@ -5,6 +5,8 @@ updated: 2026-09-29
 
 # Working-tree audit
 
+- 2026-09-29 商城信息牌本地修正：`UserShop.vue` 的订阅计划标签与同续期组排队提示归入“区分-信息牌”，统一使用 `var(--info)` / `var(--info-soft)` Apple 蓝信息面；前端 101 项测试、类型检查和构建通过，生产未变更。
+
 - 2026-09-29 Apple 浅色状态面已发布部署：提交 `537e5be`、Release
   `v0.2.86-kreeper-20260929-apple-soft`、Actions `36545227310`，ARM64
   SHA-256 `c9f8248dda85e86f60e838dc2ee1f1e411d02098b1200bf0d80ab2f535b26942`。

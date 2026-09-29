@@ -5,6 +5,15 @@ updated: 2026-09-29
 
 # Validation Guide
 
+## 2026-09-29 Shop information badges (local, not deployed)
+
+The shop's `订阅计划` badge and same-renewal-group queue note are classified as
+information badges, not success/status badges. They use the shared Apple blue
+`var(--info)` text and `var(--info-soft)` surface with a transparent border.
+The focused contract passes as part of the 101 frontend tests, plus
+`vue-tsc -b`, `vite build`, and `git diff --check`. The production deployment
+remains `v0.2.86-kreeper-20260929-apple-soft`.
+
 ## 2026-09-29 Apple soft status surface release gate
 
 The local visual revision passed all 100 frontend contract tests, `vue-tsc -b`,

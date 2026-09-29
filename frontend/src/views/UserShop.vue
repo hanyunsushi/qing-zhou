@@ -18,6 +18,7 @@
       <div v-for="pkg in packages" :key="pkg.id" class="shop-card" :class="{ dim: !canAfford(pkg) }">
         <div class="sc-head">
           <div class="sc-name">{{ pkg.name }}</div>
+          <!-- 区分-信息牌：订阅计划类型使用 Apple 蓝信息语义，不表达成功状态。 -->
           <span class="sc-badge" :class="typeMeta(pkg.type).cls">{{ typeMeta(pkg.type).label }}</span>
         </div>
 
@@ -48,6 +49,7 @@
         </div>
 
         <div class="sc-foot">
+          <!-- 区分-信息牌：排队说明使用 Apple 蓝信息面，避免与成功状态混淆。 -->
           <div v-if="willQueue(pkg)" class="sc-queue-note">✓ 同续期组正在使用 · 本次将排队，当前份结束后自动启用</div>
           <div class="sc-price">
             <span class="sc-points">{{ priceOf(pkg) }}</span>
@@ -254,7 +256,7 @@ onMounted(async () => {
   border: 1px solid transparent;
 }
 .t-traffic { color: var(--info); background: #eef2f6; border-color: #dde6ef; }
-.t-plan { color: #4b7a5c; background: #edf4ef; border-color: #d9e8df; }
+.t-plan { color: var(--info); background: var(--info-soft); border-color: transparent; }
 .t-other { color: var(--warn); background: #f7f1e2; border-color: #ece0c6; }
 
 .sc-desc {
@@ -348,6 +350,6 @@ onMounted(async () => {
 .sc-yuan { font-size: 12px; color: var(--text-3); margin-top: 2px; }
 .sc-stock { font-size: 11px; color: var(--text-3); margin-top: 6px; }
 .sc-stock.hot { color: var(--warn); }
-.sc-queue-note { font-size: 11px; color: #4b7a5c; background: #edf4ef; border: 1px solid #d9e8df; border-radius: 8px; padding: 5px 8px; margin-bottom: 10px; line-height: 1.4; }
+.sc-queue-note { font-size: 11px; color: var(--info); background: var(--info-soft); border: 1px solid transparent; border-radius: 8px; padding: 5px 8px; margin-bottom: 10px; line-height: 1.4; }
 .sc-buy { margin-top: 12px; }
 </style>
