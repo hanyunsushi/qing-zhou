@@ -84,6 +84,7 @@ semantic surfaces for ordinary badges, labels and notices.
 
 - 订单页退款 KPI、退款订单原价和返还积分提示属于“区分-状态”；成功/退款/返还提示分别复用 `var(--success)`、`var(--danger)`、`var(--warn)`，并在模板或样式附近保留中文类型备注。
 - 这类数字状态与 ECharts 分类色板分离；分类图表不得因为订单状态数字的语义色而改变序列配色。
+- 积分明细页收入、支出、净增 KPI 和明细金额同样属于“区分-状态”，正值复用 `var(--success)`，负值复用 `var(--danger)`；图表分类色板不变。
 
 ## Login modal boundaries
 

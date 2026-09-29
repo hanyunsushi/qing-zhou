@@ -10,16 +10,19 @@
         <div class="kpi-value accent">{{ dBalance }}</div>
         <div class="kpi-sub">{{ yuan(dBalance) }}</div>
       </div>
+      <!-- 区分-状态：累计收入使用 Apple 成功色。 -->
       <div class="kpi-card">
         <div class="kpi-label">累计收入</div>
         <div class="kpi-value up">{{ dIncome }}</div>
         <div class="kpi-sub">{{ incomeCount }} 笔入账</div>
       </div>
+      <!-- 区分-状态：累计支出使用 Apple 错误色。 -->
       <div class="kpi-card">
         <div class="kpi-label">累计支出</div>
         <div class="kpi-value down">{{ dExpense }}</div>
         <div class="kpi-sub">{{ expenseCount }} 笔消费</div>
       </div>
+      <!-- 区分-状态：近 7 天净增按正负状态切换 Apple 成功/错误色。 -->
       <div class="kpi-card">
         <div class="kpi-label">近 7 天净增</div>
         <div class="kpi-value" :class="net7 >= 0 ? 'up' : 'down'">{{ dNet7 > 0 ? '+' : '' }}{{ dNet7 }}</div>
@@ -76,6 +79,7 @@
             </div>
           </div>
           <div class="tx-side">
+            <!-- 区分-状态：积分收支数字按正负状态使用 Apple 成功/错误色。 -->
             <div class="tx-amt" :class="t.amount > 0 ? 'up' : 'down'">{{ (t.amount > 0 ? '+' : '') + t.amount }}</div>
             <div class="tx-bal">余额 {{ t.balance_after }}</div>
           </div>
@@ -326,8 +330,9 @@ onUnmounted(() => {
 .kpi-label { font-size: 12px; color: var(--text-3); font-weight: 550; }
 .kpi-value { font-size: 24px; font-weight: 720; letter-spacing: -0.02em; margin-top: 6px; line-height: 1.15; font-variant-numeric: tabular-nums; }
 .kpi-value.accent { color: var(--text); }
-.kpi-value.up { color: #4d7256; }
-.kpi-value.down { color: #a8564b; }
+/* 区分-状态：积分 KPI 颜色只表达收入/支出状态，不使用局部私有色。 */
+.kpi-value.up { color: var(--success); }
+.kpi-value.down { color: var(--danger); }
 .kpi-sub { font-size: 11.5px; color: var(--text-3); margin-top: 2px; }
 
 /* 区块 */
@@ -374,8 +379,9 @@ onUnmounted(() => {
 
 .tx-side { text-align: right; flex-shrink: 0; }
 .tx-amt { font-weight: 720; font-size: 15px; font-variant-numeric: tabular-nums; }
-.tx-amt.up { color: #4d7256; }
-.tx-amt.down { color: #a8564b; }
+/* 区分-状态：明细金额按正负状态复用全局 Apple 状态色。 */
+.tx-amt.up { color: var(--success); }
+.tx-amt.down { color: var(--danger); }
 .tx-bal { font-size: 11.5px; color: var(--text-3); margin-top: 3px; font-variant-numeric: tabular-nums; }
 
 @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }

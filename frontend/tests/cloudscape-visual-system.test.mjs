@@ -784,6 +784,17 @@ test('points summary cards reuse the display-card hover treatment', () => {
   assert.match(source, /\/\* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 \*\/[\s\S]*?\.kpi-card:hover, \.kpi-card:focus-visible \{[\s\S]*?background: var\(--card\);[\s\S]*?box-shadow: 0 8px 28px rgba\(0, 0, 0, 0\.08\);[\s\S]*?transform: none;/)
 })
 
+test('points colored numbers use the shared Apple status contract', () => {
+  const source = read('src/views/UserPoints.vue')
+  assert.match(source, /区分-状态：累计收入使用 Apple 成功色[\s\S]*?class="kpi-value up"/)
+  assert.match(source, /区分-状态：累计支出使用 Apple 错误色[\s\S]*?class="kpi-value down"/)
+  assert.match(source, /区分-状态：近 7 天净增按正负状态切换 Apple 成功\/错误色[\s\S]*?:class="net7 >= 0 \? 'up' : 'down'"/)
+  assert.match(source, /区分-状态：积分收支数字按正负状态使用 Apple 成功\/错误色[\s\S]*?class="tx-amt"/)
+  assert.match(source, /区分-状态：积分 KPI 颜色只表达收入\/支出状态[\s\S]*?\.kpi-value\.up \{ color: var\(--success\); \}[\s\S]*?\.kpi-value\.down \{ color: var\(--danger\); \}/)
+  assert.match(source, /区分-状态：明细金额按正负状态复用全局 Apple 状态色[\s\S]*?\.tx-amt\.up \{ color: var\(--success\); \}[\s\S]*?\.tx-amt\.down \{ color: var\(--danger\); \}/)
+  assert.doesNotMatch(source, /#4d7256|#a8564b/)
+})
+
 test('admin overview KPI cards reuse the display-card hover treatment', () => {
   const source = read('src/views/AdminOverview.vue')
   assert.match(source, /class="kpi"/)

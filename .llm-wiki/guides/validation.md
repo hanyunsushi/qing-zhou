@@ -5,6 +5,15 @@ updated: 2026-09-29
 
 # Validation Guide
 
+## 2026-09-29 Points status numbers (local, not deployed)
+
+The points page's income, expense, net-change KPI values and transaction
+amounts are classified as status-coded numbers and reuse the shared Apple
+success/error tokens. Chart category colors remain independent. The contract
+is covered by the 103 frontend tests, `vue-tsc -b`, `vite build`, and
+`git diff --check`; production remains
+`v0.2.86-kreeper-20260929-apple-soft`.
+
 ## 2026-09-29 Order status numbers (local, not deployed)
 
 The order page's colored refund KPI, refunded order amount, and returned-points
