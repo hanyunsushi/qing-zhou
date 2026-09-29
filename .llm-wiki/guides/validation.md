@@ -5,6 +5,17 @@ updated: 2026-09-29
 
 # Validation Guide
 
+## 2026-09-30 Admin user avatar identity palette (local, not deployed)
+
+Admin user avatars now use a stable six-color Apple identity palette: indigo,
+purple, pink, cyan, cyan-blue and mint-cyan. Pure blue and gray-blue were
+removed. The avatar palette is separate from online, banned and administrator
+status colors; the avatar background is a light mix and the text remains a
+darker same-hue color. The contract passed 106 frontend tests, `vue-tsc -b`,
+`vite build`, and `git diff --check`; the known 567 KB ECharts async chunk
+warning remains non-blocking. Production is unchanged at
+`v0.2.86-kreeper-20260929-apple-soft`.
+
 ## 2026-09-29 Admin overview status surfaces (local, not deployed)
 
 Admin-overview KPI deltas and user-distribution values now use the shared Apple
