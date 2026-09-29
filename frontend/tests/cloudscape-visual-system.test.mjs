@@ -822,6 +822,20 @@ test('admin overview KPI cards reuse the display-card hover treatment', () => {
   assert.match(source, /\/\* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 \*\/[\s\S]*?\.kpi:hover, \.kpi:focus-visible \{[\s\S]*?background: var\(--card\);[\s\S]*?box-shadow: 0 8px 28px rgba\(0, 0, 0, 0\.08\);[\s\S]*?transform: none;/)
 })
 
+test('admin overview status numbers and distribution modules use semantic surfaces', () => {
+  const source = read('src/views/AdminOverview.vue')
+  assert.match(source, /区分-状态牌：KPI 环比只表达增长状态[\s\S]*?class="kpi-delta"/)
+  assert.match(source, /区分-状态牌：环比状态使用全局 Apple 语义色[\s\S]*?\.kpi-delta\.good \{ color: var\(--success\); background: var\(--success-soft\); \}[\s\S]*?\.kpi-delta\.bad \{ color: var\(--danger\); background: var\(--danger-soft\); \}/)
+  assert.match(source, /区分-状态牌：用户状态数字复用 Apple 语义色[\s\S]*?class="dist-item"/)
+  assert.match(source, /color: 'var\(--success\)'[\s\S]*?color: 'var\(--danger\)'[\s\S]*?color: 'var\(--warn\)'[\s\S]*?color: 'var\(--inactive\)'/)
+  assert.match(source, /展示信息模块：状态分布项使用普通白底[\s\S]*?\.dist-item \{[^}]*border: 0; background: var\(--bg\);[^}]*box-shadow: none;/)
+  assert.match(source, /悬浮效果：展示信息模块悬停只增加中性阴影/)
+  assert.match(source, /\.dist-item:hover, \.dist-item:focus-visible \{[\s\S]*?border: 0;[\s\S]*?background: var\(--bg\);[\s\S]*?box-shadow: 0 8px 28px rgba\(0, 0, 0, \.08\);/)
+  const kpiStatusStyles = source.match(/\/\* 区分-状态牌：环比状态使用全局 Apple 语义色[\s\S]*?\.kpi-value/)?.[0]
+  assert.ok(kpiStatusStyles)
+  assert.doesNotMatch(kpiStatusStyles, /#4d7256|#a8564b/)
+})
+
 test('admin user summary and user cards reuse the display-card hover treatment', () => {
   const source = read('src/views/AdminUsers.vue')
   assert.match(source, /class="ss-item"/)

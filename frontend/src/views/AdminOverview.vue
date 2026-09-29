@@ -22,6 +22,7 @@
       <div v-for="k in kpis" :key="k.key" class="kpi" :class="{ clickable: k.onClick }" @click="k.onClick?.()">
         <div class="kpi-top">
           <span class="kpi-label">{{ k.label }}</span>
+          <!-- 区分-状态牌：KPI 环比只表达增长状态，不使用图表分类色。 -->
           <span v-if="k.delta !== null" class="kpi-delta" :class="deltaClass(k.delta, k.goodUp)">
             {{ k.delta > 0 ? '↑' : k.delta < 0 ? '↓' : '–' }}{{ Math.abs(k.delta).toFixed(0) }}%
           </span>
@@ -67,6 +68,7 @@
         </div>
 
         <n-card size="small" class="sec" title="用户状态分布">
+          <!-- 区分-状态牌：用户状态数字复用 Apple 语义色，不使用图表分类色。 -->
           <div class="dist-row">
             <button v-for="d in distItems" :key="d.key" class="dist-item" @click="drillUsers(d.filter)">
               <span class="dist-val" :style="{ color: d.color }">{{ d.value }}</span>
@@ -307,11 +309,11 @@ const kpis = computed(() => {
 })
 
 const distItems = computed(() => [
-  { key: 'active', label: '正常', value: dist.value.status_active || 0, color: C.up, filter: { status: 'active' } },
-  { key: 'banned', label: '封禁', value: dist.value.status_banned || 0, color: C.red, filter: { status: 'banned' } },
-  { key: 'exp7', label: '7天内到期', value: dist.value.expire_7d || 0, color: C.gold, filter: { expiry: 'expiring_7d' } },
-  { key: 'exp30', label: '30天内到期', value: dist.value.expire_30d || 0, color: C.gold, filter: {} },
-  { key: 'expired', label: '已过期', value: dist.value.expired || 0, color: C.gray, filter: { expiry: 'expired' } },
+  { key: 'active', label: '正常', value: dist.value.status_active || 0, color: 'var(--success)', filter: { status: 'active' } },
+  { key: 'banned', label: '封禁', value: dist.value.status_banned || 0, color: 'var(--danger)', filter: { status: 'banned' } },
+  { key: 'exp7', label: '7天内到期', value: dist.value.expire_7d || 0, color: 'var(--warn)', filter: { expiry: 'expiring_7d' } },
+  { key: 'exp30', label: '30天内到期', value: dist.value.expire_30d || 0, color: 'var(--warn)', filter: {} },
+  { key: 'expired', label: '已过期', value: dist.value.expired || 0, color: 'var(--inactive)', filter: { expiry: 'expired' } },
 ])
 
 // ---- 迷你趋势线（KPI 卡内联，不值得为它开一个 echarts 实例）----
@@ -760,8 +762,9 @@ onUnmounted(() => {
 .kpi-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .kpi-label { font-size: 12.5px; color: var(--text-2); font-weight: 550; }
 .kpi-delta { font-size: 11px; font-weight: 650; padding: 1px 6px; border-radius: var(--r); background: var(--bg-soft); color: var(--text-3); }
-.kpi-delta.good { color: #4d7256; background: #eef4ef; }
-.kpi-delta.bad { color: #a8564b; background: #f9eeec; }
+/* 区分-状态牌：环比状态使用全局 Apple 语义色和柔和状态面。 */
+.kpi-delta.good { color: var(--success); background: var(--success-soft); }
+.kpi-delta.bad { color: var(--danger); background: var(--danger-soft); }
 .kpi-value { font-size: 26px; font-weight: 720; letter-spacing: -0.02em; margin-top: 6px; line-height: 1.15; }
 .kpi-sub { font-size: 11.5px; color: var(--text-3); margin-top: 2px; }
 .kpi-spark { height: 24px; margin: 6px -16px -10px; }
@@ -788,12 +791,14 @@ onUnmounted(() => {
 
 /* 分布 */
 .dist-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; }
+/* 展示信息模块：状态分布项使用普通白底，不绘制边框。 */
 .dist-item {
-  font: inherit; cursor: pointer; border: 1px solid var(--border); background: var(--bg-soft);
+  font: inherit; cursor: pointer; border: 0; background: var(--bg);
   padding: 12px 10px; border-radius: var(--r-sm); text-align: center;
-  display: flex; flex-direction: column; gap: 2px; transition: border-color .15s, background .15s;
+  display: flex; flex-direction: column; gap: 2px; box-shadow: none; transition: box-shadow .25s ease;
 }
-.dist-item:hover { border-color: #cfcfcf; background: #fff; }
+/* 悬浮效果：展示信息模块悬停只增加中性阴影，纸面与位置保持不变。 */
+.dist-item:hover, .dist-item:focus-visible { border: 0; background: var(--bg); box-shadow: 0 8px 28px rgba(0, 0, 0, .08); }
 .dist-val { font-size: 22px; font-weight: 720; letter-spacing: -0.01em; }
 .dist-label { font-size: 11.5px; color: var(--text-3); }
 
