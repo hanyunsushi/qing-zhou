@@ -5,6 +5,16 @@ updated: 2026-09-29
 
 # Validation Guide
 
+## 2026-09-29 Admin upstream balance surface (local, not deployed)
+
+The OCI and Cloudflare balance panels remain neutral display cards after a
+successful usage query: `AdminUpstreams.vue` uses `var(--bg)` for the normal
+surface and keeps the danger-tinted surface only for failed queries. The
+progress bars still use the Apple success chart token. The contract passed 105
+frontend tests, `vue-tsc -b`, `vite build`, and `git diff --check`; the known
+567 KB ECharts async chunk warning remains non-blocking. Production is
+unchanged at `v0.2.86-kreeper-20260929-apple-soft`.
+
 ## 2026-09-29 Help navigation information badge (local, not deployed)
 
 The selected help-document navigation item uses the shared Apple blue

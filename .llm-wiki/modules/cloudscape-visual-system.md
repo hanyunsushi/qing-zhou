@@ -564,6 +564,12 @@ See Also: `frontend/src/utils/shift5.ts`, `frontend/src/router/index.ts`, `front
   in the title row. Their normal surfaces are borderless and shadowless; hover
   adds only a neutral display-card shadow without changing the page surface,
   position, or scale, while the refresh action remains Apple blue.
+- Admin upstream balance panels are展示卡片, not success status badges: a
+  successful OCI/Cloudflare query keeps the panel on the page surface
+  (`var(--bg)`) with the normal border. Only a failed query uses the danger
+  soft surface; the usage progress bar remains a status-coded visualization and
+  keeps `CHART_STATUS_COLORS.success`. The panel class must not turn a
+  successful response into a green card background.
 - Provider scope text is omitted from the public upstream balance card when the
   individual provider logos and titles already identify OCI and Cloudflare.
 - Price tags use the product's Apple blue interaction color (`--accent`)
