@@ -1,10 +1,10 @@
 // 区分-状态牌：Apple semantic status palette adapted for QingZhou.
 export const STATUS_COLORS = {
-  success: '#248a3d',
-  warning: '#c93400',
-  error: '#d70015',
+  success: '#34c759',
+  warning: '#ff9500',
+  error: '#ff3b30',
   info: '#007aff',
-  inactive: '#636366',
+  inactive: '#8e8e93',
 } as const
 
 // 区分-状态牌：status-encoded charts and meters intentionally reuse the same

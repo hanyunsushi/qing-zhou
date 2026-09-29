@@ -422,8 +422,8 @@ onUnmounted(() => {
 
 /* 状态胶囊 */
 .pill { display: inline-flex; align-items: center; padding: 1px 9px; border-radius: var(--r); font-size: 11.5px; font-weight: 600; line-height: 1.6; }
-.pill-ok { background: rgba(16,185,129,.12); color: #0f9d6f; }
-.pill-warn { background: rgba(191,149,64,.15); color: var(--warn); }
+.pill-ok { background: var(--success-soft); color: var(--success); }
+.pill-warn { background: var(--warn-soft); color: var(--warn); }
 
 @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
 </style>

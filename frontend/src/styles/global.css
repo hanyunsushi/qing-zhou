@@ -26,16 +26,17 @@
   --accent-soft: #e9f3ff;
   --accent-subtle: #f2f8ff;
   --selection-bg: rgba(0, 122, 255, .2);
-  /* Apple semantic palette, darkened only where white text needs contrast. */
-  --danger: #d70015;
-  --danger-soft: #fff1f0;
-  --warn: #c93400;
-  --warn-soft: #fff4e5;
+  /* Apple system semantic palette. Status surfaces use the soft companions below. */
+  --danger: #ff3b30;
+  --danger-soft: rgba(255, 59, 48, .12);
+  --warn: #ff9500;
+  --warn-soft: rgba(255, 149, 0, .14);
   --info: #007aff;
-  --info-soft: #eaf3ff;
-  --success: #248a3d;
-  --success-soft: #edf9ef;
-  --inactive: #636366;
+  --info-soft: rgba(0, 122, 255, .12);
+  --success: #34c759;
+  --success-soft: rgba(52, 199, 89, .12);
+  --inactive: #8e8e93;
+  --inactive-soft: rgba(142, 142, 147, .14);
   /* 区分-状态牌：status-encoded charts/meters share Apple status colors. */
   --chart-success: var(--success);
   --chart-warning: var(--warn);
@@ -908,28 +909,28 @@ button, input, textarea, select { font-family: inherit; }
   box-shadow: none !important;
 }
 .n-tag { border-radius: var(--r-control) !important; font-weight: 600; }
-/* 区分-状态牌：Apple semantic status color as solid background with white text. */
+/* 区分-状态牌：Apple semantic color as a soft surface with colored text. */
 .n-tag.n-tag--success-type,
 .n-tag.n-tag--warning-type,
 .n-tag.n-tag--error-type,
 .n-tag.n-tag--info-type {
-  --n-color: var(--status-solid-bg) !important;
-  --n-color-hover: var(--status-solid-bg) !important;
-  --n-color-pressed: var(--status-solid-bg) !important;
-  --n-text-color: #fff !important;
-  --n-text-color-hover: #fff !important;
-  --n-text-color-pressed: #fff !important;
+  --n-color: var(--status-soft-bg) !important;
+  --n-color-hover: var(--status-soft-bg) !important;
+  --n-color-pressed: var(--status-soft-bg) !important;
+  --n-text-color: var(--status-color) !important;
+  --n-text-color-hover: var(--status-color) !important;
+  --n-text-color-pressed: var(--status-color) !important;
   --n-border: 1px solid transparent !important;
   --n-border-hover: 1px solid transparent !important;
   --n-border-pressed: 1px solid transparent !important;
-  background: var(--status-solid-bg) !important;
-  color: #fff !important;
+  background: var(--status-soft-bg) !important;
+  color: var(--status-color) !important;
   border-color: transparent !important;
 }
-.n-tag.n-tag--success-type { --status-solid-bg: var(--success); }
-.n-tag.n-tag--warning-type { --status-solid-bg: var(--warn); }
-.n-tag.n-tag--error-type { --status-solid-bg: var(--danger); }
-.n-tag.n-tag--info-type { --status-solid-bg: var(--info); }
+.n-tag.n-tag--success-type { --status-color: var(--success); --status-soft-bg: var(--success-soft); }
+.n-tag.n-tag--warning-type { --status-color: var(--warn); --status-soft-bg: var(--warn-soft); }
+.n-tag.n-tag--error-type { --status-color: var(--danger); --status-soft-bg: var(--danger-soft); }
+.n-tag.n-tag--info-type { --status-color: var(--info); --status-soft-bg: var(--info-soft); }
 .n-alert { border-radius: var(--r-overlay) !important; }
 .n-empty { color: var(--text-3); }
 .n-empty .n-empty__icon { opacity: .62; filter: saturate(.65); }

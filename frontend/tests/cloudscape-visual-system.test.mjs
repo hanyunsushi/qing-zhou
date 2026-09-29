@@ -9,7 +9,7 @@ test('Cloudscape visual tokens keep the existing Vue component system', () => {
   const globalCss = read('src/styles/global.css')
   const app = read('src/App.vue')
 
-  for (const token of ['--accent: #007aff', '--accent-button-hover: color-mix(in srgb, var(--accent) 84%, white)', '--success: #248a3d', '--warn: #c93400', '--danger: #d70015', '--info: #007aff', '--inactive: #636366', '--chart-success: var(--success)', '--chart-warning: var(--warn)', '--chart-error: var(--danger)', '--chart-inactive: var(--inactive)', '--chart-1: #688ae8', '--chart-8: #096f64']) {
+  for (const token of ['--accent: #007aff', '--accent-button-hover: color-mix(in srgb, var(--accent) 84%, white)', '--success: #34c759', '--success-soft: rgba(52, 199, 89, .12)', '--warn: #ff9500', '--warn-soft: rgba(255, 149, 0, .14)', '--danger: #ff3b30', '--danger-soft: rgba(255, 59, 48, .12)', '--info: #007aff', '--info-soft: rgba(0, 122, 255, .12)', '--inactive: #8e8e93', '--inactive-soft: rgba(142, 142, 147, .14)', '--chart-success: var(--success)', '--chart-warning: var(--warn)', '--chart-error: var(--danger)', '--chart-inactive: var(--inactive)', '--chart-1: #688ae8', '--chart-8: #096f64']) {
     assert.match(globalCss, new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')))
   }
   assert.match(app, /primaryColor: '#007aff'/)
@@ -25,8 +25,8 @@ test('Cloudscape visual tokens keep the existing Vue component system', () => {
   assert.match(app, /borderRadius: '18px'/)
   assert.doesNotMatch(app, /@cloudscape-design\/components/)
   assert.match(globalCss, /\.n-button\.n-button--primary-type:not\(\.n-button--secondary\):not\(\.n-button--ghost\):not\(\.n-button--disabled\):hover \{\s*background: var\(--accent-button-hover\) !important;/)
-  assert.match(globalCss, /\.n-tag\.n-tag--success-type[\s\S]*?background: var\(--status-solid-bg\) !important;/)
-  assert.match(globalCss, /\.n-tag\.n-tag--warning-type \{ --status-solid-bg: var\(--warn\); \}/)
+  assert.match(globalCss, /\.n-tag\.n-tag--success-type[\s\S]*?background: var\(--status-soft-bg\) !important;/)
+  assert.match(globalCss, /\.n-tag\.n-tag--warning-type \{ --status-color: var\(--warn\); --status-soft-bg: var\(--warn-soft\); \}/)
 })
 
 test('typography applies numeric font only through explicit utility classes', () => {
@@ -478,19 +478,19 @@ test('admin monitor summary SVGs use the same neutral icon treatment', () => {
   assert.doesNotMatch(source, /class="sum-ic" style=/)
 })
 
-test('semantic status colors use solid white-label badges and chart state semantics', () => {
+test('semantic status colors use Apple soft badges and chart state semantics', () => {
   const globalCss = read('src/styles/global.css')
   const monitor = read('src/views/Monitor.vue')
   const adminMonitor = read('src/views/AdminMonitor.vue')
   const dashboard = read('src/views/UserDashboard.vue')
   const upstreams = read('src/views/AdminUpstreams.vue')
   const statusColors = read('src/utils/status-colors.ts')
-  assert.match(statusColors, /success: '#248a3d'[\s\S]*?warning: '#c93400'[\s\S]*?error: '#d70015'[\s\S]*?info: '#007aff'/)
+  assert.match(statusColors, /success: '#34c759'[\s\S]*?warning: '#ff9500'[\s\S]*?error: '#ff3b30'[\s\S]*?info: '#007aff'/)
   assert.match(statusColors, /区分-状态牌[\s\S]*?CHART_STATUS_COLORS[\s\S]*?success: STATUS_COLORS\.success[\s\S]*?warning: STATUS_COLORS\.warning[\s\S]*?error: STATUS_COLORS\.error[\s\S]*?inactive: STATUS_COLORS\.inactive/)
   assert.match(statusColors, /chartColorForPercent[\s\S]*?colorForPercent\(CHART_STATUS_COLORS/)
   assert.match(statusColors, /chartColorForLevel[\s\S]*?colorForLevel\(CHART_STATUS_COLORS/)
-  assert.match(globalCss, /\.n-tag\.n-tag--success-type,[\s\S]*?--n-text-color: #fff !important;/)
-  assert.match(monitor, /区分-状态牌[\s\S]*?status-badge\.online \{ background: var\(--success\); color: #fff; \}/)
+  assert.match(globalCss, /\.n-tag\.n-tag--success-type,[\s\S]*?--n-text-color: var\(--status-color\) !important;/)
+  assert.match(monitor, /区分-状态牌[\s\S]*?status-badge\.online \{ background: var\(--success-soft\); color: var\(--success\); \}/)
   assert.match(monitor, /:stroke="chartColorForLevel\(g\.lvl\)"/)
   assert.match(monitor, /\.mini-fill\.ok \{ background: var\(--chart-success\); \}/)
   assert.match(dashboard, /CHART_STATUS_COLORS\.inactive/)
@@ -510,7 +510,7 @@ test('monitor provider cards expose the shared drag and status surface contract'
   assert.match(monitor, /\.upstream-refresh-link \{[\s\S]*?color: var\(--accent\);/)
   assert.match(monitor, /\.upstream-balance-item \{[\s\S]*?border: 0;[\s\S]*?box-shadow: none|\.upstream-balance-item \{[\s\S]*?border: 0;/)
   assert.match(monitor, /\.tag\.price \{ background: var\(--accent\); color: #fff;/)
-  assert.match(monitor, /\.upstream-balance-card \.status-badge\.online \{ background: var\(--accent\); color: #fff; \}/)
+  assert.match(monitor, /\.upstream-balance-card \.status-badge\.online \{ background: var\(--info-soft\); color: var\(--info\); \}/)
   assert.match(monitor, /\.upstream-balance-item \{[\s\S]*?background: var\(--bg\);/)
   assert.match(monitor, /展示卡片：上游子卡悬浮只增加中性阴影[\s\S]*?\.upstream-balance-item:hover \{ background: var\(--bg\); box-shadow: 0 8px 28px rgba\(0, 0, 0, \.08\); transform: none; \}/)
   assert.match(monitor, /展示卡片：悬浮子卡时父级上游卡不切换蓝色边框或额外阴影[\s\S]*?\.upstream-balance-card:hover \{ box-shadow: var\(--shadow-sm\); border-color: var\(--border\); \}/)
@@ -566,10 +566,10 @@ test('sing-box machine groups use the page surface and neutral identity badges',
   assert.doesNotMatch(source, /\.machine-list :deep\(\.n-collapse-item--active > \.n-collapse-item__header\)/)
 })
 
-test('server version cards use dark status badges for missing traffic statistics', () => {
+test('server version cards use a soft inactive status badge for missing traffic statistics', () => {
   const source = read('src/views/AdminServers.vue')
-  assert.match(source, /<!-- 卡片-状态牌：无流量统计是能力状态，使用原文本次级色底与白字。 -->[\s\S]*?<n-tag v-if="n\.version && !n\.has_v2ray_api" size="tiny" :bordered="false" class="card-status-badge">无流量统计<\/n-tag>/)
-  assert.match(source, /\.card-status-badge \{ background:var\(--text-2\) !important; color:#fff !important; border-color:transparent !important; font-weight:600; \}/)
+  assert.match(source, /<!-- 卡片-状态牌：无流量统计使用 Apple 非激活色浅底与文字。 -->[\s\S]*?<n-tag v-if="n\.version && !n\.has_v2ray_api" size="tiny" :bordered="false" class="card-status-badge">无流量统计<\/n-tag>/)
+  assert.match(source, /\.card-status-badge \{ background:var\(--inactive-soft\) !important; color:var\(--inactive\) !important; border-color:transparent !important; font-weight:600; \}/)
   assert.doesNotMatch(source, /n\.version && !n\.has_v2ray_api" type="warning"/)
 })
 

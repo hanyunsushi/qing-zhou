@@ -5,6 +5,8 @@ updated: 2026-09-28
 
 # Working-tree audit
 
+- 2026-09-29 Apple 浅色状态面本地修正（未发布）：普通状态牌从高饱和实色背景+白字改为 Apple `#34c759` / `#ff9500` / `#ff3b30` / `#8e8e93` / `#007aff` 状态色文字与对应半透明浅色面；热力图格子、图例点、仪表、配额环和百分比进度仍使用同一主色实色填充。前端 `100/100`、`vue-tsc -b`、`vite build` 和 `git diff --check` 已通过；生产仍为 `v0.2.85-kreeper-20260928-apple-status`，本轮未发布、未部署。
+
 - 2026-09-28 release/deployment sync: commit `84b9f0e`, tag
   `v0.2.85-kreeper-20260928-apple-status`, Actions `36406243452`, ARM64
   SHA-256 `b3347cb2fac549a1cf79e5b405617cd720619461a24c6e13a9bcd3fc4b6cce60`.

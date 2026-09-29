@@ -33,7 +33,7 @@
             <span class="nv-ver">{{ n.version || '—' }}</span>
             <n-tag v-if="n.too_old" type="error" size="tiny" :bordered="false">版本过低</n-tag>
             <n-tag v-else-if="!n.version" type="default" size="tiny" :bordered="false">未知</n-tag>
-            <!-- 卡片-状态牌：无流量统计是能力状态，使用原文本次级色底与白字。 -->
+            <!-- 卡片-状态牌：无流量统计使用 Apple 非激活色浅底与文字。 -->
             <n-tag v-if="n.version && !n.has_v2ray_api" size="tiny" :bordered="false" class="card-status-badge">无流量统计</n-tag>
           </div>
           <div class="nv-side">
@@ -438,7 +438,7 @@ onUnmounted(() => trafficChart.value?.dispose())
 </script>
 
 <style scoped>
-.card-status-badge { background:var(--text-2) !important; color:#fff !important; border-color:transparent !important; font-weight:600; }
+.card-status-badge { background:var(--inactive-soft) !important; color:var(--inactive) !important; border-color:transparent !important; font-weight:600; }
 .nv-note { font-size:12px; color:var(--text-3); line-height:1.75; margin:0 0 12px; }
 .nv-list { display:flex; flex-direction:column; gap:2px; }
 .nv-row {

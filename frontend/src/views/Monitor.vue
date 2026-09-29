@@ -893,14 +893,14 @@ onUnmounted(() => {
   font-weight: 680; font-size: 14.5px; line-height: 1.35; min-width: 0; color: var(--text);
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;
 }
-/* 区分-状态牌：状态牌使用实心 Apple 语义色与白色文字。 */
+/* 区分-状态牌：状态牌使用 Apple 语义色文字与低强调浅色面。 */
 .status-badge {
   display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0; white-space: nowrap;
   padding: 3px 9px; border-radius: var(--r); font-size: 11px; font-weight: 650;
 }
 .status-badge .badge-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
-.status-badge.online { background: var(--success); color: #fff; }
-.status-badge.offline { background: var(--danger); color: #fff; }
+.status-badge.online { background: var(--success-soft); color: var(--success); }
+.status-badge.offline { background: var(--danger-soft); color: var(--danger); }
 
 .tag-line { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 12px; }
 .tag { padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 500; background: var(--bg-soft); color: var(--text-2); white-space: nowrap; }
@@ -910,7 +910,7 @@ onUnmounted(() => {
 .tag.expiry { display: inline-flex; align-items: center; gap: 5px; font-variant-numeric: tabular-nums; }
 .tag.expiry .exp-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
 .tag.expiry.ok { background: var(--success-soft); color: var(--success); }
-.tag.expiry.warn { background: #f6edd6; color: #a97e1f; }
+.tag.expiry.warn { background: var(--warn-soft); color: var(--warn); }
 .tag.expiry.crit { background: var(--danger-soft); color: var(--danger); }
 
 /* 仪表盘 */
@@ -967,7 +967,7 @@ onUnmounted(() => {
 
 /* 管理员专属上游余额：两个官方数据源合并在一张卡片里，可拖动子卡片调整顺序。 */
 .upstream-balance-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; padding: 0 12px 12px; }
-.upstream-balance-card .status-badge.online { background: var(--accent); color: #fff; }
+.upstream-balance-card .status-badge.online { background: var(--info-soft); color: var(--info); }
 .upstream-balance-item {
   min-width: 0; padding: 11px 12px; border: 0; border-radius: 10px; background: var(--bg);
   box-shadow: none; cursor: grab; transition: box-shadow .25s ease, opacity .2s ease;

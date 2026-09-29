@@ -3,6 +3,18 @@ title: QingZhou Deployment and Artifact Retention
 updated: 2026-09-28
 ---
 
+## 2026-09-29 Apple soft status surfaces (local, not deployed)
+
+The next local visual revision changes ordinary status badges from saturated
+solid backgrounds with white labels to Apple Light system colors as colored
+text/icons on translucent soft surfaces: success `#34c759`, warning `#ff9500`,
+error `#ff3b30`, inactive `#8e8e93`, and information blue `#007aff`.
+Status-coded heatmap cells, legend dots, gauges, rings and progress fills keep
+solid Apple colors for legibility. Frontend tests (100), `vue-tsc -b`, `vite
+build`, and `git diff --check` pass. This revision is local only; production
+remains `v0.2.85-kreeper-20260928-apple-status` until a separate release and
+deployment is requested.
+
 ## 2026-09-28 Apple status palette and monitor visual deployment
 
 The Apple-derived status palette now covers ordinary status surfaces and

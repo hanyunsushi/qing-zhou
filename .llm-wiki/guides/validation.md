@@ -5,6 +5,14 @@ updated: 2026-09-28
 
 # Validation Guide
 
+## 2026-09-29 Apple soft status surface gate (local, not deployed)
+
+The local visual revision passed all 100 frontend contract tests, `vue-tsc -b`,
+`vite build`, and `git diff --check`. It changes compact status badges to
+translucent Apple-tinted surfaces with Apple semantic text/icons while keeping
+solid fills for status-coded visualizations. No production release or restart
+was performed; the deployed version remains the 2026-09-28 release.
+
 ## 2026-09-28 Apple status palette and monitor release gate
 
 The gate passed 100 frontend contract tests, `vue-tsc -b`, `vite build`,

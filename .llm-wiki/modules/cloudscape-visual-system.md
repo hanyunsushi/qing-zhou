@@ -62,12 +62,12 @@ updated: 2026-09-28
 
 ## Server status badges
 
-- 服务器管理版本卡的“无流量统计”属于“卡片-状态牌”，使用原文本次级色 `var(--text-2)` 实心背景、白色文字和透明边框；“版本过低”和“未知”继续使用各自语义色。
+- 服务器管理版本卡的“无流量统计”属于“卡片-状态牌”，使用 Apple 非激活色浅底 `var(--inactive-soft)` 和 `var(--inactive)` 文字，不绘制外框；“版本过低”和“未知”继续使用各自语义色。
 
 ## Semantic status palette
 
-- `STATUS_COLORS` 是 QingZhou 的 Apple-derived 语义状态色：成功 `#248a3d`、警告 `#c93400`、错误 `#d70015`、信息 Apple blue `#007aff`、非激活 `#636366`；实心“区分-状态牌”使用状态色作为背景并配白色文字。
-- `CHART_STATUS_COLORS` 与 `--chart-success/warning/error/inactive` 是状态编码可视化的兼容入口，明确复用同一 Apple 状态色；因此热力图图例/格子、资源仪表、配额环、百分比进度条和状态提示不会再出现另一套 AWS 状态色。
+- `STATUS_COLORS` 使用 Apple Light system colors：成功 `#34c759`、警告 `#ff9500`、错误 `#ff3b30`、信息 Apple blue `#007aff`、非激活 `#8e8e93`。普通状态牌使用对应 `*-soft` 浅色面和状态色文字/图标，不使用高饱和实色背景或白字。
+- `CHART_STATUS_COLORS` 与 `--chart-success/warning/error/inactive` 是状态编码可视化的入口，继续复用 Apple 主色；热力图格子、图例点、资源仪表、配额环和百分比进度条保留实色填充以确保数据区分，状态标签/状态牌使用浅色面。
 - 普通分类图表仍使用独立的 `--chart-1` 至 `--chart-8` 色板，不把分类序列误当成状态牌。相关模板、CSS 和工具函数用“区分-状态牌”注释标出边界。
 
 ## Login modal boundaries
@@ -514,25 +514,24 @@ See Also: `frontend/src/utils/shift5.ts`, `frontend/src/router/index.ts`, `front
 
 ### Semantic status palette customization
 
-- QingZhou's ordinary UI status palette follows Apple's system semantics:
-  success `#248a3d`, warning `#c93400`, error `#d70015`, inactive/loading
-  `#636366`, and information Apple blue `#007aff`. The success/warning/error
-  values are intentionally darkened Apple-derived colors so white text remains
-  readable on solid status badges.
-- Compact status badges use these Apple-derived semantic colors as solid
-  backgrounds with white labels. This applies to online/offline,
+- QingZhou's ordinary UI status palette follows Apple's Light system colors:
+  success `#34c759`, warning `#ff9500`, error `#ff3b30`, inactive/loading
+  `#8e8e93`, and information Apple blue `#007aff`.
+- Compact status badges use soft Apple-tinted backgrounds with Apple semantic
+  labels and icons. This applies to online/offline,
   enabled/disabled, published/draft, pending/running/synced, warning, error,
   and similar status labels. It does not turn ordinary buttons, links, focus
   rings, or identity badges into status colors unless their component contract
   explicitly says so.
-- Low-emphasis notices use the corresponding Apple-tinted surfaces:
-  `--success-soft: #edf9ef`, `--warn-soft: #fff4e5`, `--danger-soft: #fff1f0`,
-  and `--info-soft: #eaf3ff`.
+- Low-emphasis notices and status badges use the corresponding translucent
+  Apple-tinted surfaces: `--success-soft`, `--warn-soft`, `--danger-soft`,
+  `--inactive-soft`, and `--info-soft`.
 - Status-encoded visualizations are included in this palette contract. Heatmap
-  cells and legends, percentage meters, rings, gauges, and progress visuals
+  cells and legend dots, percentage meters, rings, gauges, and progress visuals
   use the same Apple status colors through `CHART_STATUS_COLORS` and
   `--chart-success`, `--chart-warning`, `--chart-error`, and `--chart-inactive`;
-  categorical chart series colors remain separate.
+  categorical chart series colors remain separate. Visualizations retain solid
+  fills for data legibility; compact status badges use the soft surfaces above.
 - Ordinary status indicators use the Apple semantic thresholds below 70%
   success, 70-89% warning, and 90% or higher error. The shared
   `frontend/src/utils/status-colors.ts` helper is the only source for ordinary
@@ -551,10 +550,10 @@ See Also: `frontend/src/utils/shift5.ts`, `frontend/src/router/index.ts`, `front
 - Provider scope text is omitted from the public upstream balance card when the
   individual provider logos and titles already identify OCI and Cloudflare.
 - Price tags use the product's Apple blue interaction color (`--accent`)
-  background with white text. The monitor's “官方数据” badge follows the same
-  informational blue treatment; server online/offline badges remain semantic
-  Apple success/error colors. Heatmap legends use the same AWS chart
-  success/warning/error/inactive tokens as their cells.
+  background with white text. The monitor's “官方数据” badge uses the
+  informational blue soft surface and blue text; server online/offline badges
+  use the semantic Apple soft surfaces and colored text. Heatmap legends use
+  the same Apple chart success/warning/error/inactive tokens as their cells.
 
 ### Global surface hierarchy (2026-09-23)
 

@@ -826,7 +826,7 @@ onUnmounted(() => {
 .mini-range { width:max-content; margin-bottom:6px; }
 
 /* 告警 */
-.alert-cnt { display: inline-block; margin-left: 6px; padding: 0 6px; border-radius: 9px; background: var(--danger); color: #fff; font-size: 11px; font-weight: 650; }
+.alert-cnt { display: inline-block; margin-left: 6px; padding: 0 6px; border-radius: 9px; background: var(--danger-soft); color: var(--danger); font-size: 11px; font-weight: 650; }
 .alert-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border-soft, #f1efe8); }
 .alert-row:last-child { border-bottom: none; }
 .alert-main { min-width: 0; }

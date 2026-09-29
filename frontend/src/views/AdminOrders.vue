@@ -325,8 +325,8 @@ onUnmounted(() => window.removeEventListener('resize', repositionRouteIndicators
 
 /* 状态胶囊 */
 .pill { display: inline-flex; align-items: center; padding: 1px 9px; border-radius: var(--r); font-size: 12px; font-weight: 600; line-height: 1.6; }
-.pill-ok { background: rgba(16,185,129,.12); color: #0f9d6f; }
-.pill-warn { background: rgba(191,149,64,.15); color: var(--warn); }
+.pill-ok { background: var(--success-soft); color: var(--success); }
+.pill-warn { background: var(--warn-soft); color: var(--warn); }
 
 /* 桌面表格 */
 .orders-table-wrap { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-sm); overflow-x: auto; }
