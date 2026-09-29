@@ -1,10 +1,11 @@
 # Kreeper QingZhou 定制维护
 
-## 2026-09-29 Apple 浅色状态面本地修正（未发布）
+## 2026-09-29 Apple 浅色状态面发布部署
 
 - 普通状态牌、状态标签和提示状态改用 Apple 浅色系统色：成功 `#34c759`、警告 `#ff9500`、错误 `#ff3b30`、非激活 `#8e8e93`、信息蓝 `#007aff`；背景为对应半透明浅色面，文字/图标使用对应主色，不再使用高饱和实色背景配白字。
 - 热力图格子、图例点、资源仪表、配额环和百分比进度条仍使用同一 Apple 主色实色填充，以保持数据可读性；普通分类图表色板不变。
-- 前端 `100/100`、`vue-tsc -b`、`vite build` 和 `git diff --check` 通过。此修正尚未创建 Release 或部署，生产仍运行 `v0.2.85-kreeper-20260928-apple-status`。
+- 前端 `100/100`、`vue-tsc -b`、`vite build` 和 `git diff --check` 通过；已知 ECharts 异步 chunk 约 `567 KB` 的 warning 非阻塞。提交 `537e5be` 已推送 `origin/main`，Actions `36545227310` 成功发布 `v0.2.86-kreeper-20260929-apple-soft`，ARM64 面板 SHA-256 为 `c9f8248dda85e86f60e838dc2ee1f1e411d02098b1200bf0d80ab2f535b26942`；Release signing key 未配置，资产未签名。
+- 生产通过固定 SSH `ubuntu@140.245.43.76` 原子替换 `/opt/qingzhou/qingzhou`，仅重启 `qingzhou.service`。备份为 `/opt/qingzhou/backups/fork-v0.2.86-kreeper-20260929-apple-soft-20260929-165909/`，包含旧二进制、数据库快照、env、systemd unit 和 sing-box 配置；数据库副本已保留，宿主无 `sqlite3` CLI，未执行 `PRAGMA integrity_check`。本机/公网健康、三项服务、`8081`/`8882`/`18082`、公网首页和 hashed JS/CSS 均通过，公开 bundle 含 Apple 状态色 token，面板错误日志为空。
 
 ## 2026-09-28 Apple 状态编码可视化统一（已发布并部署）
 

@@ -1,19 +1,36 @@
 ---
 title: QingZhou Deployment and Artifact Retention
-updated: 2026-09-28
+updated: 2026-09-29
 ---
 
-## 2026-09-29 Apple soft status surfaces (local, not deployed)
+## 2026-09-29 Apple soft status surfaces (released and deployed)
 
-The next local visual revision changes ordinary status badges from saturated
+This visual revision changes ordinary status badges from saturated
 solid backgrounds with white labels to Apple Light system colors as colored
 text/icons on translucent soft surfaces: success `#34c759`, warning `#ff9500`,
 error `#ff3b30`, inactive `#8e8e93`, and information blue `#007aff`.
 Status-coded heatmap cells, legend dots, gauges, rings and progress fills keep
 solid Apple colors for legibility. Frontend tests (100), `vue-tsc -b`, `vite
-build`, and `git diff --check` pass. This revision is local only; production
-remains `v0.2.85-kreeper-20260928-apple-status` until a separate release and
-deployment is requested.
+build`, and `git diff --check` pass; the known 567 KB ECharts async chunk
+warning is non-blocking.
+
+Commit `537e5be` was pushed to `origin/main` and released as
+`v0.2.86-kreeper-20260929-apple-soft`; Actions workflow `36545227310`
+completed successfully. The ARM64 panel asset SHA-256 is
+`c9f8248dda85e86f60e838dc2ee1f1e411d02098b1200bf0d80ab2f535b26942`.
+Release signing is not configured, so assets are unsigned.
+
+Production was atomically updated at `/opt/qingzhou/qingzhou` through
+`ubuntu@140.245.43.76` using `~/.ssh/oci-a1-20260730.key`; only
+`qingzhou.service` was restarted. Rollback material is
+`/opt/qingzhou/backups/fork-v0.2.86-kreeper-20260929-apple-soft-20260929-165909/`
+and contains the old binary, database snapshot, env, service definitions and
+sing-box configuration. The host has no `sqlite3` CLI, so this deployment did
+not run `PRAGMA integrity_check`; the database copy remains available.
+Local/public `/api/health` returned the release version, all three services
+were active, listeners `8081`, `8882`, `18082` were present, public hashed JS
+and CSS resources returned `200`, the public bundle contained the Apple soft
+status tokens, and the post-restart `qingzhou.service` error log was empty.
 
 ## 2026-09-28 Apple status palette and monitor visual deployment
 

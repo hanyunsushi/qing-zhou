@@ -1,6 +1,6 @@
 ---
 title: Cloudscape Visual System
-updated: 2026-09-28
+updated: 2026-09-29
 ---
 
 # Cloudscape Visual System
@@ -69,6 +69,11 @@ updated: 2026-09-28
 - `STATUS_COLORS` 使用 Apple Light system colors：成功 `#34c759`、警告 `#ff9500`、错误 `#ff3b30`、信息 Apple blue `#007aff`、非激活 `#8e8e93`。普通状态牌使用对应 `*-soft` 浅色面和状态色文字/图标，不使用高饱和实色背景或白字。
 - `CHART_STATUS_COLORS` 与 `--chart-success/warning/error/inactive` 是状态编码可视化的入口，继续复用 Apple 主色；热力图格子、图例点、资源仪表、配额环和百分比进度条保留实色填充以确保数据区分，状态标签/状态牌使用浅色面。
 - 普通分类图表仍使用独立的 `--chart-1` 至 `--chart-8` 色板，不把分类序列误当成状态牌。相关模板、CSS 和工具函数用“区分-状态牌”注释标出边界。
+
+The Apple soft-surface contract is deployed in
+`v0.2.86-kreeper-20260929-apple-soft` (source `537e5be`). The release keeps
+solid fills only for status-coded data visualizations and uses translucent
+semantic surfaces for ordinary badges, labels and notices.
 
 ## Login modal boundaries
 

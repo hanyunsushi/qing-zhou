@@ -1,17 +1,27 @@
 ---
 title: Validation Guide
-updated: 2026-09-28
+updated: 2026-09-29
 ---
 
 # Validation Guide
 
-## 2026-09-29 Apple soft status surface gate (local, not deployed)
+## 2026-09-29 Apple soft status surface release gate
 
 The local visual revision passed all 100 frontend contract tests, `vue-tsc -b`,
 `vite build`, and `git diff --check`. It changes compact status badges to
 translucent Apple-tinted surfaces with Apple semantic text/icons while keeping
-solid fills for status-coded visualizations. No production release or restart
-was performed; the deployed version remains the 2026-09-28 release.
+solid fills for status-coded visualizations. Commit `537e5be` was released by
+Actions run `36545227310` as
+`v0.2.86-kreeper-20260929-apple-soft`; the ARM64 asset SHA-256 is
+`c9f8248dda85e86f60e838dc2ee1f1e411d02098b1200bf0d80ab2f535b26942`.
+After deployment, local and public health returned the release version, all
+three services were active, ports `8081`, `8882`, `18082` were listening, the
+public homepage and hashed JS/CSS returned `200`, the public bundle contained
+the five Apple status tokens, and the panel error log was empty. The rollback
+directory is
+`/opt/qingzhou/backups/fork-v0.2.86-kreeper-20260929-apple-soft-20260929-165909/`.
+The host lacks the `sqlite3` CLI, so `PRAGMA integrity_check` was not run; the
+database snapshot is retained.
 
 ## 2026-09-28 Apple status palette and monitor release gate
 

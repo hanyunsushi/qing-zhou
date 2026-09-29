@@ -1,11 +1,21 @@
 ---
 title: Current Wiki Sync State
-updated: 2026-09-28
+updated: 2026-09-29
 ---
 
 # Working-tree audit
 
-- 2026-09-29 Apple 浅色状态面本地修正（未发布）：普通状态牌从高饱和实色背景+白字改为 Apple `#34c759` / `#ff9500` / `#ff3b30` / `#8e8e93` / `#007aff` 状态色文字与对应半透明浅色面；热力图格子、图例点、仪表、配额环和百分比进度仍使用同一主色实色填充。前端 `100/100`、`vue-tsc -b`、`vite build` 和 `git diff --check` 已通过；生产仍为 `v0.2.85-kreeper-20260928-apple-status`，本轮未发布、未部署。
+- 2026-09-29 Apple 浅色状态面已发布部署：提交 `537e5be`、Release
+  `v0.2.86-kreeper-20260929-apple-soft`、Actions `36545227310`，ARM64
+  SHA-256 `c9f8248dda85e86f60e838dc2ee1f1e411d02098b1200bf0d80ab2f535b26942`。
+  生产备份为
+  `/opt/qingzhou/backups/fork-v0.2.86-kreeper-20260929-apple-soft-20260929-165909/`；
+  本机/公网健康、三项服务、`8081`/`8882`/`18082`、公网首页和 hashed
+  JS/CSS 均验收通过，`qingzhou.service` 错误日志为空。仅重启
+  `qingzhou.service`，数据库、env、systemd、sing-box 和 Tunnel 配置未改动；
+  宿主无 `sqlite3` CLI，未执行 `PRAGMA integrity_check`。
+
+- 2026-09-29 Apple 浅色状态面开发验证已由上方发布部署记录覆盖：普通状态牌使用半透明 Apple 状态面，图表状态编码保留实色填充；源码门禁通过后已发布并部署到生产。
 
 - 2026-09-28 release/deployment sync: commit `84b9f0e`, tag
   `v0.2.85-kreeper-20260928-apple-status`, Actions `36406243452`, ARM64
