@@ -5,6 +5,17 @@ updated: 2026-09-29
 
 # Validation Guide
 
+## 2026-09-29 Admin overview status surfaces (local, not deployed)
+
+Admin-overview KPI deltas and user-distribution values now use the shared Apple
+semantic status tokens instead of categorical chart colors. Distribution items
+are borderless white display-information modules; hover/focus adds only the
+neutral display-card shadow and leaves drill-down behavior unchanged. The
+contract passed 106 frontend tests, `vue-tsc -b`, `vite build`, and
+`git diff --check`; the known 567 KB ECharts async chunk warning remains
+non-blocking. Production is unchanged at
+`v0.2.86-kreeper-20260929-apple-soft`.
+
 ## 2026-09-29 Admin upstream balance surface (local, not deployed)
 
 The OCI and Cloudflare balance panels remain neutral display cards after a

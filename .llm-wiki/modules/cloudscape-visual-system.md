@@ -420,6 +420,13 @@ Cloudscape system through the custom `cloudscape-design-system` skill.
   admin-user summary cards in `frontend/src/views/AdminUsers.vue` use the same
   展示卡片 and 悬浮效果 contract. Admin user cards use it as well; the summary
   strip retains its selected filter state.
+- Admin-overview KPI deltas and user-distribution values are 区分-状态牌, not
+  Cloudscape/AWS categorical chart colors: positive, negative, expiring and
+  inactive values use the shared Apple `var(--success)`, `var(--danger)`,
+  `var(--warn)` and `var(--inactive)` tokens. The user-distribution buttons are
+  also 展示信息模块 with a normal white page surface and no border; their
+  悬浮效果 adds only the neutral display-module shadow and preserves the
+  drill-down interaction.
 - The three user-group resource summary cards use the same contract through the
   page-specific `.group-summary-card` type layer in `frontend/src/views/AdminUserGroups.vue`.
 - The four package-management resource summary cards use the same contract through
