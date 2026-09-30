@@ -1,9 +1,11 @@
 ---
 title: Current Wiki Sync State
-updated: 2026-09-29
+updated: 2026-09-30
 ---
 
 # Working-tree audit
+
+- 2026-09-30 字体角色与 Cloudscape 文字刻度统一已发布部署：提交 `125631a`、Release `v0.2.87-kreeper-20260930-font-contract`、Actions `36727439609`，ARM64 SHA-256 `9feaafc8e0c736ac04a81972015b0aebe2fcdb1e8133d0c8025dae3c229ffc11`。生产备份为 `/opt/qingzhou/backups/fork-v0.2.87-kreeper-20260930-font-contract-20260930-222853/`；本机/公网健康、三项服务、三个端口、首页、hashed JS/CSS 和 Inter 字体资源均验收通过，仅重启 `qingzhou.service`，未覆盖数据库或配置，宿主无 `sqlite3` CLI，未执行完整性检查。
 
 - 2026-09-30 用户头像身份色本地修正：头像改用稳定分配的 6 色 Apple 身份调色板，移除纯蓝和灰蓝；状态牌颜色保持独立。前端 106 项测试、类型检查、构建和差异检查通过，生产未变更。
 

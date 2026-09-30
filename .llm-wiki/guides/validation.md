@@ -1,7 +1,23 @@
 ---
 title: Validation Guide
-updated: 2026-09-29
+updated: 2026-09-30
 ---
+
+## 2026-09-30 Typography contract release gate
+
+The release gate passed `go test ./...`, 108 frontend contract tests,
+`vue-tsc -b`, `vite build`, and `git diff --check`. The known 567 KB ECharts
+async chunk warning remains non-blocking. Commit `125631a` was released as
+`v0.2.87-kreeper-20260930-font-contract` by Actions `36727439609`; the ARM64
+asset SHA-256 is
+`9feaafc8e0c736ac04a81972015b0aebe2fcdb1e8133d0c8025dae3c229ffc11`.
+
+After deployment, local/public `/api/health` returned the release version;
+`qingzhou.service`, `qingzhou-sing-box.service` and `cloudflared.service` were
+active; `8081`, `8882` and `18082` were listening; public root, hashed JS/CSS
+and `/fonts/inter/Inter-Variable.ttf` returned `200`; and the post-restart
+`qingzhou.service` error log was empty. Rollback material is retained at
+`/opt/qingzhou/backups/fork-v0.2.87-kreeper-20260930-font-contract-20260930-222853/`.
 
 # Validation Guide
 

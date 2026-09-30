@@ -1,7 +1,33 @@
 ---
 title: QingZhou Deployment and Artifact Retention
-updated: 2026-09-29
+updated: 2026-09-30
 ---
+
+## 2026-09-30 Typography contract release
+
+The typography contract was unified across Vue components, Go-generated HTML,
+and the repository tutorial pages. The release uses four roles: display
+headings (`var(--ff-heading)`), body/UI (`var(--ff-body)`), and numeric/code
+content (`var(--ff-mono)`), with a bundled `Inter-Variable.ttf` covering
+weights `100-900`. The release also removes local mono-stack overrides,
+undefined mono variables, and negative tracking from text and numeric surfaces.
+
+Commit `125631a` was pushed to `origin/main` and released as
+`v0.2.87-kreeper-20260930-font-contract`; Actions workflow `36727439609`
+completed successfully. The ARM64 panel asset SHA-256 is
+`9feaafc8e0c736ac04a81972015b0aebe2fcdb1e8133d0c8025dae3c229ffc11`.
+Release signing is not configured, so assets are unsigned.
+
+Production was atomically updated at `/opt/qingzhou/qingzhou` through
+`ubuntu@140.245.43.76`; only `qingzhou.service` was restarted. Rollback
+material is `/opt/qingzhou/backups/fork-v0.2.87-kreeper-20260930-font-contract-20260930-222853/`
+and contains the previous binary, the SQLite database plus WAL/SHM files,
+environment, both systemd units and `/etc/qingzhou-sing-box`. The database and
+service configuration were not overwritten; the host has no `sqlite3` CLI, so
+`PRAGMA integrity_check` was not run. Local/public `/api/health` returned the
+new version, all three services were active, listeners `8081`, `8882`, `18082`
+were present, public HTML, hashed JS/CSS and `Inter-Variable.ttf` returned
+`200`, and the post-restart `qingzhou.service` error log was empty.
 
 ## 2026-09-29 Apple soft status surfaces (released and deployed)
 
