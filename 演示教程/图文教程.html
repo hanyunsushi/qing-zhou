@@ -1,11 +1,11 @@
 <!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>轻舟 · 图文使用教程</title>
 <style>
-:root{--bg:#f5f6f7;--card:#fff;--ink:#1a1a1a;--sub:#6b7280;--line:#e6e8eb;--accent:#111;--user:#2f7d5b;--admin:#8a5cf6;--code:#f0f1f3}
+:root{--bg:#f5f6f7;--card:#fff;--ink:#1a1a1a;--sub:#6b7280;--line:#e6e8eb;--accent:#111;--user:#2f7d5b;--admin:#8a5cf6;--code:#f0f1f3;--ff-heading:"Fraunces","Source Han Serif SC",Georgia,serif;--ff-body:"Inter","Resource Han Rounded CN",-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;--ff-mono:"Amazon Ember Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 *{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.65}
+body{margin:0;font-family:var(--ff-body);font-size:14px;line-height:20px;letter-spacing:0;background:var(--bg);color:var(--ink)}
 .wrap{max-width:1080px;margin:0 auto;padding:0 20px 80px}
 header.top{padding:56px 20px 40px;text-align:center}
-.logo{display:inline-flex;align-items:center;gap:12px;font-weight:800;font-size:30px}
+.logo{display:inline-flex;align-items:center;gap:12px;font-family:var(--ff-heading);font-weight:800;font-size:30px;letter-spacing:0}
 .logo .m{background:#111;color:#fff;border-radius:12px;width:46px;height:46px;display:grid;place-items:center;font-size:24px}
 header.top p{color:var(--sub);margin:14px 0 0;font-size:16px}
 .toc{max-width:1080px;margin:0 auto 30px;padding:18px 22px;background:var(--card);border:1px solid var(--line);border-radius:16px;display:flex;flex-wrap:wrap;gap:10px 18px;font-size:14px}
@@ -25,7 +25,7 @@ header.top p{color:var(--sub);margin:14px 0 0;font-size:16px}
 .bl{margin:14px 0 0;padding-left:18px;color:#374151;font-size:13.5px}
 .bl li{margin:4px 0}
 .fn{margin-top:16px;font-size:12px;color:var(--sub)}
-code{background:var(--code);padding:1px 7px;border-radius:6px;font-size:12.5px;font-family:"SFMono-Regular",Consolas,monospace}
+code{background:var(--code);padding:1px 7px;border-radius:6px;font-size:12.5px;font-family:var(--ff-mono)}
 .card-img{margin:0;background:#eceef0;border-left:1px solid var(--line);display:flex;align-items:flex-start}
 .card-img img{width:100%;display:block}
 @media(max-width:820px){.card{grid-template-columns:1fr}.card-img{border-left:0;border-top:1px solid var(--line)}}

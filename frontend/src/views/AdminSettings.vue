@@ -149,7 +149,7 @@
             <div style="width:100%;max-width:560px;">
               <!-- 复制栏：安装命令仅用于查看和复制，不使用填写框的点击焦点高亮。 -->
               <n-input-group class="copy-field">
-                <n-input :value="installCmd" readonly style="font-family:monospace;font-size:12px;" />
+                <n-input :value="installCmd" readonly style="font-family:var(--ff-mono);font-size:12px;" />
                 <!-- 普通按钮：安装命令复制动作不使用主色高亮。 -->
                 <n-button class="action-button action-button--normal" @click="copyInstall">复制</n-button>
               </n-input-group>
@@ -424,7 +424,7 @@
             <p v-else class="form-hint" style="margin:0;">加载模板说明后会显示占位符。</p>
           </div>
           <n-input ref="tgTplInput" v-model:value="currentTgTplBody" type="textarea" :rows="12"
-                   placeholder="留空用内置模板" style="font-family:ui-monospace,Consolas,monospace;font-size:12.5px;line-height:1.55;" />
+                   placeholder="留空用内置模板" style="font-family:var(--ff-mono);font-size:12.5px;line-height:1.55;" />
           <div class="tg-preview">
             <div class="tg-preview-h">预览（示例数据）</div>
             <pre class="tg-preview-body">{{ tgTplPreview }}</pre>
@@ -487,7 +487,7 @@
           </n-form-item>
           <n-form-item label="Clash 模板 (YAML)">
             <div style="width:100%;">
-              <n-input v-model:value="form.sub_clash_template" type="textarea" :rows="8" placeholder="留空用内置模板" style="font-family:monospace;font-size:12px;" />
+              <n-input v-model:value="form.sub_clash_template" type="textarea" :rows="8" placeholder="留空用内置模板" style="font-family:var(--ff-mono);font-size:12px;" />
               <n-space size="small" style="margin-top:6px;">
                 <n-button size="tiny" @click="loadDefaultTemplate('clash')">载入内置默认（可编辑）</n-button>
                 <n-button size="tiny" @click="form.sub_clash_template = ''">恢复内置默认（清空）</n-button>
@@ -496,7 +496,7 @@
           </n-form-item>
           <n-form-item label="sing-box 模板 (JSON)">
             <div style="width:100%;">
-              <n-input v-model:value="form.sub_singbox_template" type="textarea" :rows="8" placeholder="留空用内置模板" style="font-family:monospace;font-size:12px;" />
+              <n-input v-model:value="form.sub_singbox_template" type="textarea" :rows="8" placeholder="留空用内置模板" style="font-family:var(--ff-mono);font-size:12px;" />
               <n-space size="small" style="margin-top:6px;">
                 <n-button size="tiny" @click="loadDefaultTemplate('singbox')">载入内置默认（可编辑）</n-button>
                 <n-button size="tiny" @click="form.sub_singbox_template = ''">恢复内置默认（清空）</n-button>
@@ -1587,7 +1587,7 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', handleBeforeUnl
 .settings-main { min-width:0; max-width:920px; }
 .settings-section-head { margin:1px 0 13px; }
 .settings-section-group { margin-bottom:3px; color:var(--accent); font-size:10.5px; font-weight:700; letter-spacing:.08em; }
-.settings-section-head h3 { margin:0; color:var(--text); font-size:20px; font-weight:680; letter-spacing:-.02em; }
+.settings-section-head h3 { margin:0; color:var(--text); font-size:20px; font-weight:680; letter-spacing:0; }
 .settings-section-head p { margin:4px 0 0; color:var(--text-2); font-size:12.5px; line-height:1.6; }
 .settings-load-error { margin-bottom:16px; }
 .settings-retry { margin-left:10px; }
@@ -1647,7 +1647,7 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', handleBeforeUnl
   text-align: left; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 8px;
   padding: 8px 10px; cursor: pointer; font: inherit; }
 .host-cand:hover { border-color: var(--accent-strong); }
-.host-cand-v { font-family: monospace; font-size: 13px; color: var(--text); }
+.host-cand-v { font-family: var(--ff-mono); font-size: 13px; color: var(--text); }
 .host-cand-l { font-size: 12px; color: var(--text-2); align-self: center; }
 .host-cand-n { grid-column: 1 / -1; font-size: 11.5px; color: var(--text-3); line-height: 1.6; }
 .cf-guide-n { margin-top: 10px; font-size: 12px; color: var(--text-3); line-height: 1.55; }
@@ -1700,7 +1700,7 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', handleBeforeUnl
 .tg-preview-h { font-size: 11px; color: #93a4b8; margin-bottom: 6px; }
 .tg-preview-body {
   margin: 0; white-space: pre-wrap; word-break: break-word;
-  font-family: ui-sans-serif, system-ui, "Segoe UI", "PingFang SC", sans-serif;
+  font-family: var(--ff-body);
   font-size: 13.5px; line-height: 1.55;
 }
 .tg-vars { margin: 0 0 10px; }

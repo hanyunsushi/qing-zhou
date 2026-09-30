@@ -30,7 +30,7 @@
           <span style="font-size:12px;font-weight:600;">已生成 {{ generatedCodes.length }} 个</span>
           <n-button size="tiny" @click="copyAll">复制全部</n-button>
         </div>
-        <div style="font-family:monospace;font-size:12px;word-break:break-all;color:var(--text-2);">{{ generatedCodes.join('\n') }}</div>
+        <div style="font-family:var(--ff-mono);font-size:12px;word-break:break-all;color:var(--text-2);">{{ generatedCodes.join('\n') }}</div>
       </div>
     </n-card>
 
@@ -39,7 +39,7 @@
       <div v-if="codes.length" class="card-grid">
         <div v-for="r in codes" :key="r.id" class="list-card">
           <div class="lc-head">
-            <span class="lc-title" style="font-family:monospace;font-size:12.5px;">{{ r.code }}</span>
+            <span class="lc-title" style="font-family:var(--ff-mono);font-size:12.5px;">{{ r.code }}</span>
             <n-tag :type="regStatusType(r)" size="tiny" :bordered="false">{{ regStatusLabel(r) }}</n-tag>
           </div>
           <div class="lc-meta">

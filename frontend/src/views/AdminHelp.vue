@@ -461,7 +461,7 @@ onMounted(load)
 .editor-body.write .editor-ta, .editor-body.preview .editor-pv { flex: 1; }
 .editor-body.split .editor-ta, .editor-body.split .editor-pv { flex: 1 1 50%; width: 50%; }
 .editor-body.split .editor-ta { border-right: 1px solid var(--border); }
-.editor-ta { width: 100%; min-height: 390px; padding: 17px; border: none; outline: none; resize: none; background: var(--card); color: var(--text); font: 13px/1.7 'SF Mono', ui-monospace, Menlo, Consolas, monospace; }
+.editor-ta { width: 100%; min-height: 390px; padding: 17px; border: none; outline: none; resize: none; background: var(--card); color: var(--text); font: 13px/1.7 var(--ff-mono); }
 .editor-ta::placeholder { color: var(--text-3); }
 .editor-pv { min-height: 390px; max-height: 52vh; overflow: auto; padding: 18px 20px; background: color-mix(in srgb, var(--bg-soft) 65%, var(--card)); }
 .editor-pv:empty::before { content: '预览内容将显示在这里'; color: var(--text-3); font-size: 13px; }

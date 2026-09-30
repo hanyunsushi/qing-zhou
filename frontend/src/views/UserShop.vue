@@ -345,7 +345,7 @@ onMounted(async () => {
 
 .sc-foot { margin-top: 16px; }
 .sc-price { display: flex; align-items: baseline; gap: 6px; }
-.sc-points { font-size: 24px; font-weight: 740; color: var(--accent-strong); letter-spacing: -.01em; }
+.sc-points { font-size: 24px; font-weight: 740; color: var(--accent-strong); letter-spacing: 0; }
 .sc-unit { font-size: 13px; color: var(--text-2); }
 .sc-yuan { font-size: 12px; color: var(--text-3); margin-top: 2px; }
 .sc-stock { font-size: 11px; color: var(--text-3); margin-top: 6px; }

@@ -328,7 +328,7 @@ onUnmounted(() => {
   opacity: 1;
 }
 .kpi-label { font-size: 12px; color: var(--text-3); font-weight: 550; }
-.kpi-value { font-size: 24px; font-weight: 720; letter-spacing: -0.02em; margin-top: 6px; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.kpi-value { font-size: 24px; font-weight: 720; letter-spacing: 0; margin-top: 6px; line-height: 1.15; font-variant-numeric: tabular-nums; }
 .kpi-value.accent { color: var(--text); }
 /* 区分-状态：积分 KPI 颜色只表达收入/支出状态，不使用局部私有色。 */
 .kpi-value.up { color: var(--success); }

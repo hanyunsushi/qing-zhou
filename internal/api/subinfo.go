@@ -205,10 +205,11 @@ var subInfoPage = template.Must(template.New("subinfo").Parse(`<!doctype html>
 @media(prefers-color-scheme:dark){:root{--bg:#16181d;--card:#1f2228;--fg:#e6e8eb;--dim:#9aa1ab;--line:#31353d;--warn:#fbbf24;--warnbg:#3b2f12}}
 *{box-sizing:border-box}
 body{margin:0;padding:24px 16px;background:var(--bg);color:var(--fg);
- font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+ font-family:"Inter","Resource Han Rounded CN",-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px;line-height:20px;letter-spacing:0}
 .wrap{max-width:560px;margin:0 auto}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:16px}
-h1{font-size:19px;margin:0 0 4px}
+h1{margin:0 0 4px}
+h1,h2{font-family:"Fraunces","Source Han Serif SC",Georgia,serif;font-size:20px;line-height:24px;font-weight:500;letter-spacing:0}
 .sub{color:var(--dim);font-size:13px;margin:0 0 20px}
 .row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--line);font-size:14px}
 .row:last-child{border-bottom:0}
@@ -219,11 +220,11 @@ h1{font-size:19px;margin:0 0 4px}
 .pct{font-size:12px;color:var(--dim);text-align:right}
 .notice{background:var(--warnbg);color:var(--warn);border-radius:8px;padding:10px 12px;font-size:13px;margin-bottom:16px}
 .urlbox{display:flex;gap:8px;margin-top:10px}
-input{flex:1;min-width:0;font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;padding:9px 10px;
+input{flex:1;min-width:0;font-family:"Amazon Ember Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;line-height:20px;letter-spacing:0;padding:9px 10px;
  border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg)}
-button{padding:9px 14px;border:0;border-radius:8px;background:var(--accent);color:#fff;font-size:13px;cursor:pointer;white-space:nowrap}
+button{padding:9px 14px;border:0;border-radius:8px;background:var(--accent);color:#fff;font-family:"Inter","Resource Han Rounded CN",-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;font-size:13px;line-height:20px;letter-spacing:0;cursor:pointer;white-space:nowrap}
 button:active{opacity:.8}
-h2{font-size:14px;margin:0 0 8px}
+h2{margin:0 0 8px}
 .links{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
 .links a{font-size:13px;color:var(--accent);text-decoration:none;border:1px solid var(--line);border-radius:7px;padding:5px 11px}
 .tip{color:var(--dim);font-size:12px;margin:10px 0 0}

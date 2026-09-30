@@ -449,14 +449,14 @@ onUnmounted(() => trafficChart.value?.dispose())
 .nv-main { display:flex; align-items:center; gap:8px; flex:1; min-width:0; flex-wrap:wrap; }
 .nv-name { font-weight:600; font-size:13px; }
 .nv-host { color:var(--text-3); font-weight:400; font-size:12px; margin-left:6px; }
-.nv-ver { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13px; }
+.nv-ver { font-family:var(--ff-mono); font-size:13px; }
 .nv-side { display:flex; align-items:center; gap:10px; }
 .nv-time { font-size:11px; color:var(--text-3); }
 .nv-err { flex-basis:100%; font-size:11px; line-height:1.7; color:var(--warning,#d97706); }
 /* 脚本输出可能很长，限高 + 可滚动，免得一次失败把整页撑开。 */
 .nv-out {
   margin:4px 0 0; padding:8px 10px; max-height:220px; overflow:auto;
-  font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; line-height:1.6;
+  font-family:var(--ff-mono); font-size:11px; line-height:1.6;
   white-space:pre-wrap; word-break:break-all;
   background:var(--code-bg,rgba(128,128,128,.1)); border-radius:6px; color:var(--text-2);
 }

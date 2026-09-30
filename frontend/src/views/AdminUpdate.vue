@@ -430,7 +430,7 @@ onUnmounted(() => { if (pollTimer) window.clearTimeout(pollTimer) })
 .ver-card:hover, .ver-card:focus-visible { background: var(--card); border-color: transparent; box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08); transform: none; opacity: 1; }
 .ver-card.hot { border-color: transparent; }
 .ver-label { font-size: 12px; color: var(--text-3); }
-.ver-value { font-size: 22px; font-weight: 750; letter-spacing: -0.02em; }
+.ver-value { font-size: 22px; font-weight: 750; letter-spacing: 0; }
 .ver-arrow { display: grid; place-items: center; color: var(--text-3); font-size: 20px; }
 
 .toolbar { display: flex; align-items: center; gap: 12px; margin-top: 16px; }

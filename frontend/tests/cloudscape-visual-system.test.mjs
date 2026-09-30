@@ -21,12 +21,67 @@ test('Cloudscape visual tokens keep the existing Vue component system', () => {
   assert.match(globalCss, /--r: 18px;[\s\S]*?--r-sm: 18px;[\s\S]*?--r-control: 18px;[\s\S]*?--r-overlay: 18px;[\s\S]*?--r-logo: 18px;[\s\S]*?--r-pill: 18px;/)
   assert.match(globalCss, /\.n-card \{\s*background: var\(--card\) !important;/)
   assert.match(read('src/components/BrandMark.vue'), /\/\* Logo \*\/[\s\S]*?border-radius: 8px !important;/)
-  assert.match(app, /fontFamily: '"Inter", "Resource Han Rounded CN", sans-serif'/)
+  assert.match(app, /fontFamily: 'var\(--ff-body\)'/)
   assert.match(app, /borderRadius: '18px'/)
   assert.doesNotMatch(app, /@cloudscape-design\/components/)
   assert.match(globalCss, /\.n-button\.n-button--primary-type:not\(\.n-button--secondary\):not\(\.n-button--ghost\):not\(\.n-button--disabled\):hover \{\s*background: var\(--accent-button-hover\) !important;/)
   assert.match(globalCss, /\.n-tag\.n-tag--success-type[\s\S]*?background: var\(--status-soft-bg\) !important;/)
   assert.match(globalCss, /\.n-tag\.n-tag--warning-type \{ --status-color: var\(--warn\); --status-soft-bg: var\(--warn-soft\); \}/)
+})
+
+test('typography roles cover frontend local overrides and standalone HTML surfaces', () => {
+  const sources = [
+    read('src/styles/global.css'),
+    read('src/views/AdminSettings.vue'),
+    read('src/views/AdminHelp.vue'),
+    read('src/views/AdminSingbox.vue'),
+    read('src/views/AdminCerts.vue'),
+    read('src/views/AdminRegCodes.vue'),
+    read('src/views/AdminAPITokens.vue'),
+    read('src/views/AdminServers.vue'),
+    read('src/views/AdminMonitor.vue'),
+    read('src/views/AdminNodes.vue'),
+    read('src/views/UserSub.vue'),
+  ]
+  const combined = sources.join('\n')
+  assert.doesNotMatch(combined, /font-family\s*:\s*(?:monospace|ui-monospace|['"]SF Mono|ui-sans-serif|system-ui)/i)
+  assert.doesNotMatch(combined, /var\(--font-mono/)
+  assert.match(read('src/styles/global.css'), /\.md pre\.md-pre code \{[\s\S]*?font-family: var\(--ff-mono\);/)
+  assert.match(read('src/views/AdminHelp.vue'), /\.editor-ta \{[\s\S]*?font: 13px\/1\.7 var\(--ff-mono\);/)
+
+  const resetPage = readFileSync(new URL('../../internal/api/resetpage.go', import.meta.url), 'utf8')
+  const email = readFileSync(new URL('../../internal/api/email.go', import.meta.url), 'utf8')
+  const subInfo = readFileSync(new URL('../../internal/api/subinfo.go', import.meta.url), 'utf8')
+  const tutorial = readFileSync(new URL('../../演示教程/图文教程.html', import.meta.url), 'utf8')
+  const animation = readFileSync(new URL('../../演示教程/产品演示动画.html', import.meta.url), 'utf8')
+  for (const source of [resetPage, email, subInfo]) {
+    assert.match(source, /Inter.*Resource Han Rounded CN/)
+    assert.match(source, /font-size:14px|font-size: 14px/)
+    assert.match(source, /letter-spacing:0|letter-spacing: 0/)
+  }
+  assert.match(resetPage, /Amazon Ember Mono/)
+  assert.match(subInfo, /Amazon Ember Mono/)
+  for (const source of [tutorial, animation]) {
+    assert.match(source, /--ff-heading/)
+    assert.match(source, /--ff-body/)
+    assert.match(source, /--ff-mono/)
+    assert.doesNotMatch(source, /font-family\s*:\s*(?:-apple-system|['"]SFMono-Regular)/)
+  }
+})
+
+test('typography keeps Cloudscape zero tracking for text and numeric values', () => {
+  const globalCss = read('src/styles/global.css')
+  const files = [
+    'src/components/AdminUsageReport.vue', 'src/components/StatCard.vue',
+    'src/views/AdminOverview.vue', 'src/views/AdminSettings.vue',
+    'src/views/AdminSingbox.vue', 'src/views/AdminUpdate.vue',
+    'src/views/AdminUsers.vue', 'src/views/Monitor.vue',
+    'src/views/UserDashboard.vue', 'src/views/UserOrders.vue',
+    'src/views/UserPoints.vue', 'src/views/UserShop.vue',
+    'src/views/AdminUpstreams.vue',
+  ]
+  assert.doesNotMatch(globalCss, /letter-spacing\s*:\s*-[^;]+;/)
+  for (const file of files) assert.doesNotMatch(read(file), /letter-spacing\s*:\s*-[^;]+;/, file)
 })
 
 test('typography applies numeric font only through explicit utility classes', () => {
@@ -214,7 +269,7 @@ test('Sub2 font assets are bundled for the global typography roles', () => {
     'public/fonts/brand/Fraunces-Variable.ttf',
     'public/fonts/source-han/SourceHanSerifCN-VF.woff2',
     'public/fonts/brand/ResourceHanRoundedCN-Regular.woff2',
-    'public/fonts/inter/Inter-18pt-Light.ttf',
+    'public/fonts/inter/Inter-Variable.ttf',
   ]) assert.ok(readFileSync(new URL(`../${path}`, import.meta.url)).length > 0, path)
 })
 

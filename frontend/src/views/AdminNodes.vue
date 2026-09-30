@@ -911,7 +911,7 @@ async function load() {
 .reuse-proto { background: var(--accent-soft); color: var(--accent-strong); }
 .reuse-current { background: rgba(24, 160, 88, .1); color: #168a4c; }
 .reuse-machine { overflow: hidden; color: var(--text-2); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
-.reuse-tag { overflow: hidden; color: var(--text-3); font: 10.5px/1.35 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-overflow: ellipsis; white-space: nowrap; }
+.reuse-tag { overflow: hidden; color: var(--text-3); font: 10.5px/1.35 var(--ff-mono); text-overflow: ellipsis; white-space: nowrap; }
 .reuse-groups { color: var(--text-3); font-size: 10.5px; }
 .reuse-pick { display: inline-flex; flex: none; align-items: center; gap: 5px; color: var(--accent-strong); font-size: 12px; font-weight: 600; }
 .reuse-pick i { font-style: normal; transition: transform .18s ease; }
@@ -948,7 +948,7 @@ async function load() {
 .node-sort-card.dragging { opacity: .45; transform: scale(.985); }
 .node-sort-card.drag-over { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
 .order-hint { display: inline-flex; align-items: center; gap: 5px; color: var(--text-3); font-size: 11px; user-select: none; }
-.order-hint:first-letter { letter-spacing: -3px; }
+.order-hint:first-letter { letter-spacing: 0; }
 .node-actions { margin-left: auto; }
 
 /* 完整拓扑：节点块 + 连接线，避免一整行彩色标签和文字箭头。 */

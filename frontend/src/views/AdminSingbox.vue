@@ -1800,7 +1800,7 @@ async function load() {
 .sb-overview button:hover { background:var(--card); box-shadow:0 8px 28px rgba(0, 0, 0, 0.08); transform:none; opacity:1; }
 .sb-overview button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; box-shadow:none; }
 .sb-overview button > span:last-child { display:flex; min-width:0; flex-direction:column; }
-.sb-overview b { color:var(--text); font-size:18px; line-height:1.15; letter-spacing:-.02em; }
+.sb-overview b { color:var(--text); font-size:18px; line-height:1.15; letter-spacing:0; }
 .sb-overview small { overflow:hidden; margin-top:3px; color:var(--text-3); font-size:10.5px; white-space:nowrap; text-overflow:ellipsis; }
 /* 卡片 SVG：统一中性前景与首页摘要卡同款灰色底框。 */
 .sb-icon { display:grid; place-items:center; flex:none; width:32px; height:32px; border-radius:10px; background:var(--bg-subtle); color:var(--text-2); }
@@ -1835,7 +1835,7 @@ async function load() {
 .probe-hint { margin-top: 4px; opacity: 0.85; }
 .import-head { font-size: 13px; font-weight: 600; margin: 14px 0 6px; }
 .import-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 6px 0; border-top: 1px solid var(--n-border-color, rgba(128,128,128,0.18)); font-size: 12px; }
-.import-addr { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; word-break: break-all; }
+.import-addr { font-family: var(--ff-mono); word-break: break-all; }
 .import-user { opacity: 0.7; word-break: break-all; }
 
 /* 链路拓扑 */
@@ -1925,7 +1925,7 @@ async function load() {
   padding: 8px 10px;
   border-radius: 6px;
   background: var(--n-color, rgba(0, 0, 0, 0.04));
-  font-family: var(--font-mono, ui-monospace, Menlo, Consolas, monospace);
+  font-family: var(--ff-mono);
   font-size: 12px;
   line-height: 1.5;
   white-space: pre-wrap;

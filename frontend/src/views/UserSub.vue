@@ -947,7 +947,7 @@ onMounted(async () => {
 /* 一行放不下时按钮整体换行，地址不被挤成省略号 */
 .px-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .px-name { font-weight: 600; }
-.px-addr { font-size: 12px; color: var(--text-2); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.px-addr { font-size: 12px; color: var(--text-2); font-family: var(--ff-mono); }
 /* margin-left:auto 把整组按钮推到右端；宽度不够时它整块换到下一行 */
 .px-actions { display: flex; align-items: center; gap: 6px; margin-left: auto; flex-wrap: wrap; }
 .px-hint { font-size: 11px; color: var(--text-3); margin-top: 6px; }

@@ -877,7 +877,7 @@ onUnmounted(() => {
 .tag-mini { padding: 2px 6px; background: var(--bg-soft); border-radius: 4px; font-size: 11px; color: var(--text-2); }
 .tag-mini.danger { background: var(--danger-soft); color: var(--danger); }
 .probe-job { margin-bottom: 10px; font-size: 12px; }
-.probe-out { margin: 5px 0 0; white-space: pre-wrap; word-break: break-word; font: 11px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; }
+.probe-out { margin: 5px 0 0; white-space: pre-wrap; word-break: break-word; font: 11px/1.5 var(--ff-mono); }
 
 .metric { margin-bottom: 8px; }
 .m-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 3px; }

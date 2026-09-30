@@ -51,7 +51,7 @@ const themeOverrides: GlobalThemeOverrides = {
     borderRadius: '18px',
     borderColor: '#d5dbdb',
     textColorBase: '#16191f',
-    fontFamily: '"Inter", "Resource Han Rounded CN", sans-serif',
+    fontFamily: 'var(--ff-body)',
   },
 }
 

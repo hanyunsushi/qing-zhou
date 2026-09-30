@@ -359,14 +359,14 @@ func writeHTMLPage(w http.ResponseWriter, status int, title, body string) {
 	fmt.Fprintf(w, `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>%s - Kreeproxy</title>
-<style>body{font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;background:#f5f6f8;margin:0;display:flex;min-height:100vh;align-items:center;justify-content:center}
+<style>:root{--ff-heading:"Fraunces","Source Han Serif SC",Georgia,serif;--ff-body:"Inter","Resource Han Rounded CN",-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;--font-size-body:14px;--line-height-body:20px}body{font-family:var(--ff-body);font-size:var(--font-size-body);line-height:var(--line-height-body);letter-spacing:0;background:#f5f6f8;margin:0;display:flex;min-height:100vh;align-items:center;justify-content:center}
 .card{background:#fff;padding:32px 28px;border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.08);max-width:360px;text-align:center}
-h1{font-size:20px;margin:0 0 12px;color:#1f2937}p{color:#4b5563;line-height:1.6;margin:0}</style></head>
+h1,h2{font-family:var(--ff-heading);font-size:20px;line-height:24px;font-weight:500;letter-spacing:0;margin:0 0 12px;color:#1f2937}p{color:#4b5563;line-height:1.6;margin:0}</style></head>
 <body><div class="card"><h1>%s</h1><p>%s</p></div></body></html>`, title, title, body)
 }
 
 func verifyEmailHTML(link string) string {
-	return fmt.Sprintf(`<div style="font-family:system-ui,sans-serif;max-width:480px;margin:0 auto">
+	return fmt.Sprintf(`<div style="font-family:'Inter','Resource Han Rounded CN',-apple-system,'Segoe UI','Microsoft YaHei',sans-serif;font-size:14px;line-height:20px;letter-spacing:0;max-width:480px;margin:0 auto">
 <h2>欢迎注册 Kreeproxy</h2>
 <p>请点击下面的按钮验证你的邮箱并激活账号（24 小时内有效）：</p>
 <p><a href="%s" style="display:inline-block;background:#2563eb;color:#fff;padding:10px 22px;border-radius:8px;text-decoration:none">验证邮箱</a></p>
@@ -374,7 +374,7 @@ func verifyEmailHTML(link string) string {
 }
 
 func resetEmailHTML(link string) string {
-	return fmt.Sprintf(`<div style="font-family:system-ui,sans-serif;max-width:480px;margin:0 auto">
+	return fmt.Sprintf(`<div style="font-family:'Inter','Resource Han Rounded CN',-apple-system,'Segoe UI','Microsoft YaHei',sans-serif;font-size:14px;line-height:20px;letter-spacing:0;max-width:480px;margin:0 auto">
 <h2>重置你的密码</h2>
 <p>我们收到了重置密码的请求。点击下面的链接设置新密码（1 小时内有效）：</p>
 <p><a href="%s" style="display:inline-block;background:#2563eb;color:#fff;padding:10px 22px;border-radius:8px;text-decoration:none">重置密码</a></p>

@@ -346,12 +346,12 @@ onUnmounted(() => {
 .upstream-card { min-width: 0; }
 .provider-card-title { display: inline-flex; align-items: center; gap: 7px; min-width: 0; color: var(--text); font-size: 15px; font-weight: 650; line-height: 20px; }
 .provider-logo { width: 18px; height: 18px; flex: 0 0 18px; display: block; object-fit: contain; }
-.provider-drag-hint { margin-left: auto; color: var(--text-3); font-size: 14px; line-height: 1; letter-spacing: -3px; opacity: .7; }
+.provider-drag-hint { margin-left: auto; color: var(--text-3); font-size: 14px; line-height: 1; letter-spacing: 0; opacity: .7; }
 /* 展示卡片：上游余额数据不代表成功状态，常态纸面使用白色页面背景。 */
 .balance-panel { padding: 14px; margin-bottom: 14px; border: 1px solid var(--border); border-radius: var(--r-sm); background: var(--bg); min-height: 122px; }
 .balance-panel.failed { background: var(--danger-soft); border-color: var(--danger); }
 .balance-kicker, .balance-source, .secret-state, .field-note { font-size: 12px; color: var(--text-3); line-height: 1.65; }
-.balance-value { margin: 4px 0 1px; font-size: 28px; line-height: 1.18; font-weight: 720; letter-spacing: -.025em; color: var(--text); font-family: var(--ff-mono); font-variant-numeric: tabular-nums; }
+.balance-value { margin: 4px 0 1px; font-size: 28px; line-height: 1.18; font-weight: 720; letter-spacing: 0; color: var(--text); font-family: var(--ff-mono); font-variant-numeric: tabular-nums; }
 .balance-meta { margin-bottom: 8px; font-size: 12.5px; color: var(--text-2); font-variant-numeric: tabular-nums; }
 .balance-source { margin-top: 8px; }
 .balance-empty { margin: 9px 0; min-height: 26px; font-size: 14px; color: var(--text-2); line-height: 1.55; }

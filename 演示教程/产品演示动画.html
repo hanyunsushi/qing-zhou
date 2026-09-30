@@ -9,9 +9,12 @@
     --ink:#f5f6f7; --sub:#9aa3ad; --bg0:#0d0f12; --bg1:#15181d;
     --card:#1b1f26; --line:#2a2f38; --accent:#ffffff; --green:#38b676;
     --violet:#8a5cf6; --blue:#4f8cff; --gold:#d9a441;
+    --ff-heading:"Fraunces","Source Han Serif SC",Georgia,serif;
+    --ff-body:"Inter","Resource Han Rounded CN",-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;
+    --ff-mono:"Amazon Ember Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%;background:#000;overflow:hidden;font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+  html,body{height:100%;background:#000;overflow:hidden;font-family:var(--ff-body);font-size:14px;line-height:20px;letter-spacing:0}
   /* 16:9 letterboxed stage, scales to viewport */
   .stage{
     position:absolute;inset:0;margin:auto;

@@ -1,7 +1,7 @@
 /* Sub2 typography assets: display, Chinese display, body Latin and Chinese body. */
 @font-face { font-family: 'Fraunces'; src: url('/fonts/brand/Fraunces-Variable.ttf') format('truetype'); font-style: normal; font-weight: 400 900; font-display: swap; }
 @font-face { font-family: 'Source Han Serif SC'; src: url('/fonts/source-han/SourceHanSerifCN-VF.woff2') format('woff2'); font-style: normal; font-weight: 200 900; font-display: swap; }
-@font-face { font-family: 'Inter'; src: url('/fonts/inter/Inter-18pt-Light.ttf') format('truetype'); font-style: normal; font-weight: 300; font-display: swap; }
+@font-face { font-family: 'Inter'; src: url('/fonts/inter/Inter-Variable.ttf') format('truetype'); font-style: normal; font-weight: 100 900; font-display: swap; }
 @font-face { font-family: 'Resource Han Rounded CN'; src: url('/fonts/brand/ResourceHanRoundedCN-Regular.woff2') format('woff2'); font-style: normal; font-weight: 200 449; font-display: swap; }
 @font-face { font-family: 'Resource Han Rounded CN'; src: url('/fonts/brand/ResourceHanRoundedCN-Medium.woff2') format('woff2'); font-style: normal; font-weight: 450 649; font-display: swap; }
 @font-face { font-family: 'Resource Han Rounded CN'; src: url('/fonts/brand/ResourceHanRoundedCN-Bold.woff2') format('woff2'); font-style: normal; font-weight: 650 900; font-display: swap; }
@@ -959,7 +959,7 @@ button, input, textarea, select { font-family: inherit; }
 .md a { color: var(--accent); text-decoration: underline; }
 .md code.md-code { background: var(--bg-subtle); border: 0; border-radius: 4px; padding: 2px 5px; color: var(--text-2); font-size: 12px; font-family: var(--ff-mono); line-height: 1.35; }
 .md pre.md-pre { background: #1e1e1e; color: #eee; border-radius: var(--r); padding: 12px 14px; overflow-x: auto; margin: 12px 0; }
-.md pre.md-pre code { font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; color: #eee; background: none; border: none; padding: 0; }
+.md pre.md-pre code { font-family: var(--ff-mono); font-size: 12.5px; color: #eee; background: none; border: none; padding: 0; }
 .md blockquote { margin: 12px 0; padding: 6px 14px; border-left: 3px solid var(--accent); background: var(--bg-soft); border-radius: 0 var(--r) var(--r) 0; color: var(--text-2); }
 .md hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
 .md img { max-width: 100%; border-radius: var(--r); }
@@ -1007,7 +1007,7 @@ button, input, textarea, select { font-family: inherit; }
   border-color:transparent; background:var(--card); box-shadow:0 8px 28px rgba(0, 0, 0, 0.08); transform:none; opacity:1;
 }
 button.resource-metric { color:inherit; text-align:left; font:inherit; cursor:pointer; }
-.resource-metric b { display:block; color:var(--text); font-size:19px; line-height:1.2; font-variant-numeric:tabular-nums; letter-spacing:-.02em; }
+.resource-metric b { display:block; color:var(--text); font-size:19px; line-height:1.2; font-variant-numeric:tabular-nums; letter-spacing:0; }
 .resource-metric span { display:block; overflow:hidden; margin-top:3px; color:var(--text-3); font-size:11.5px; white-space:nowrap; text-overflow:ellipsis; }
 .resource-metric.warn b { color:var(--warn); }
 .resource-metric.danger b { color:var(--danger); }
@@ -1074,7 +1074,7 @@ button.resource-metric { color:inherit; text-align:left; font:inherit; cursor:po
 /* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 */
 .stat-card:hover, .stat-card:focus-visible { border-color: var(--border); background: var(--card); box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08); transform: none; opacity: 1; }
 .stat-card .s-label { font-size: 12px; color: var(--text-3); margin-bottom: 4px; }
-.stat-card .s-value { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
+.stat-card .s-value { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: 0; }
 
 /* 全局圆角兜底：所有非圆形界面表面统一 18px。 */
 :where(

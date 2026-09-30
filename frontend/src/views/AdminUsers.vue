@@ -1023,7 +1023,7 @@ onMounted(load)
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
 }
 .ss-item:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 2px; }
-.ss-val { font-size: 20px; font-weight: 720; line-height: 1.1; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.ss-val { font-size: 20px; font-weight: 720; line-height: 1.1; font-variant-numeric: tabular-nums; letter-spacing: 0; }
 .ss-label { font-size: 11.5px; color: var(--text-3); }
 
 /* 展示卡片 */

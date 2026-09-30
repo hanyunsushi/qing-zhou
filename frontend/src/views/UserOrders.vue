@@ -363,7 +363,7 @@ onUnmounted(() => {
   opacity: 1;
 }
 .kpi-label { font-size: 12px; color: var(--text-3); font-weight: 550; }
-.kpi-value { font-size: 24px; font-weight: 720; letter-spacing: -0.02em; margin-top: 6px; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.kpi-value { font-size: 24px; font-weight: 720; letter-spacing: 0; margin-top: 6px; line-height: 1.15; font-variant-numeric: tabular-nums; }
 .kpi-value.accent { color: var(--text); }
 /* 区分-状态：KPI 数字颜色只表达成功/退款状态，不使用局部私有色。 */
 .kpi-value.up { color: var(--success); }
@@ -391,7 +391,7 @@ onUnmounted(() => {
 }
 .group-head:first-child { margin-top: 0; }
 .group-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
-.group-name { font-weight: 700; font-size: 13.5px; color: var(--text); letter-spacing: -0.01em; }
+.group-name { font-weight: 700; font-size: 13.5px; color: var(--text); letter-spacing: 0; }
 .group-meta { font-size: 11.5px; color: var(--text-3); font-variant-numeric: tabular-nums; }
 
 .order-item {

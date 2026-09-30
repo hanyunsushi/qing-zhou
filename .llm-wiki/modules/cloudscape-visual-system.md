@@ -1,6 +1,6 @@
 ---
 title: Cloudscape Visual System
-updated: 2026-09-29
+updated: 2026-09-30
 ---
 
 # Cloudscape Visual System
@@ -313,6 +313,17 @@ Cloudscape system through the custom `cloudscape-design-system` skill.
   asset is not used.
   Numeric values keep the AWS-style `Amazon Ember Mono` fallback stack and
   `tabular-nums`.
+- Font roles are strict across local Vue overrides: headings and brand text use
+  `var(--ff-heading)`, body and controls use `var(--ff-body)`, and numbers,
+  code, addresses, certificates, tokens, templates and probe output use
+  `var(--ff-mono)`. Do not add local `system-ui`, `SF Mono`, `monospace`,
+  `ui-monospace` or an undefined mono variable. The bundled `Inter-Variable.ttf`
+  covers weights `100–900`; standalone Go-generated HTML uses the same role
+  stacks and the `14px/20px` body, `20px/24px` heading and zero-tracking
+  contract because it cannot inherit the Vue stylesheet.
+- Numeric and display selectors use zero letter spacing. A negative tracking
+  value is not part of the QingZhou Cloudscape adaptation, including compact
+  KPI, balance, percentage and drag-hint displays.
 - Numeric typography is opt-in through the explicit `.numeric`, `.mono` and
   `.tabular-nums` utility classes or a direct component selector on the actual
   numeric node. Do not infer font roles from class-name substrings such as

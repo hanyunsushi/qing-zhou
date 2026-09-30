@@ -146,13 +146,13 @@
       <n-form label-placement="top">
         <n-form-item label="证书 PEM（fullchain）">
           <div style="width:100%;">
-            <n-input :value="exp.certificate" type="textarea" :rows="6" readonly style="font-family:monospace;font-size:11px;" />
+            <n-input :value="exp.certificate" type="textarea" :rows="6" readonly style="font-family:var(--ff-mono);font-size:11px;" />
             <n-button size="tiny" style="margin-top:4px;" @click="copy(exp.certificate)">复制证书</n-button>
           </div>
         </n-form-item>
         <n-form-item label="私钥 PEM">
           <div style="width:100%;">
-            <n-input :value="exp.key" type="textarea" :rows="6" readonly style="font-family:monospace;font-size:11px;" />
+            <n-input :value="exp.key" type="textarea" :rows="6" readonly style="font-family:var(--ff-mono);font-size:11px;" />
             <n-button size="tiny" style="margin-top:4px;" @click="copy(exp.key)">复制私钥</n-button>
           </div>
         </n-form-item>

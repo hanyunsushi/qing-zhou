@@ -58,7 +58,7 @@ defineEmits<{ (e: 'click'): void }>()
 .sc-label { font-size: 12.5px; color: var(--text-2); font-weight: 550; }
 .sc-badge { font-size: 10.5px; font-weight: 650; padding: 2px 8px; border-radius: var(--r); letter-spacing: .01em; }
 .sc-value {
-  font-size: 26px; font-weight: 720; letter-spacing: -0.02em; line-height: 1.15;
+  font-size: 26px; font-weight: 720; letter-spacing: 0; line-height: 1.15;
   margin-top: 8px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }

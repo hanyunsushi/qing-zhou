@@ -606,7 +606,7 @@ onUnmounted(() => {
 /* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 */
 .kpi:hover, .kpi:focus-visible { border-color: var(--border); background: var(--card); box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08); transform: none; opacity: 1; }
 .kpi-label { font-size: 12px; color: var(--text-2); font-weight: 550; }
-.kpi-value { font-size: 21px; font-weight: 720; letter-spacing: -0.02em; margin-top: 5px; line-height: 1.2; }
+.kpi-value { font-size: 21px; font-weight: 720; letter-spacing: 0; margin-top: 5px; line-height: 1.2; }
 .kpi-sub { font-size: 11px; color: var(--text-3); margin-top: 3px; }
 
 /* minmax(0, 1fr), not 1fr: a bare `1fr` is minmax(auto, 1fr), and `auto` floors

@@ -412,7 +412,7 @@ a{color:var(--accent)}
 .ring-svg{width:100%;height:100%;transform:rotate(-90deg)}
 .ring-arc{transition:stroke-dashoffset .8s cubic-bezier(.22,1,.36,1),stroke .4s ease}
 .ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.ring-pct{font-size:26px;font-weight:750;letter-spacing:-0.02em;line-height:1;font-variant-numeric:tabular-nums}
+.ring-pct{font-size:26px;font-weight:750;letter-spacing:0;line-height:1;font-variant-numeric:tabular-nums}
 .ring-pct i{font-style:normal;font-size:15px;font-weight:650;margin-left:1px}
 .ring-inf{font-size:30px}
 .ring-label{font-size:11px;color:var(--text-3);margin-top:4px}

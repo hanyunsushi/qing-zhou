@@ -765,7 +765,7 @@ onUnmounted(() => {
 /* 区分-状态牌：环比状态使用全局 Apple 语义色和柔和状态面。 */
 .kpi-delta.good { color: var(--success); background: var(--success-soft); }
 .kpi-delta.bad { color: var(--danger); background: var(--danger-soft); }
-.kpi-value { font-size: 26px; font-weight: 720; letter-spacing: -0.02em; margin-top: 6px; line-height: 1.15; }
+.kpi-value { font-size: 26px; font-weight: 720; letter-spacing: 0; margin-top: 6px; line-height: 1.15; }
 .kpi-sub { font-size: 11.5px; color: var(--text-3); margin-top: 2px; }
 .kpi-spark { height: 24px; margin: 6px -16px -10px; }
 :deep(.spark) { width: 100%; height: 24px; display: block; }
@@ -799,7 +799,7 @@ onUnmounted(() => {
 }
 /* 悬浮效果：展示信息模块悬停只增加中性阴影，纸面与位置保持不变。 */
 .dist-item:hover, .dist-item:focus-visible { border: 0; background: var(--bg); box-shadow: 0 8px 28px rgba(0, 0, 0, .08); }
-.dist-val { font-size: 22px; font-weight: 720; letter-spacing: -0.01em; }
+.dist-val { font-size: 22px; font-weight: 720; letter-spacing: 0; }
 .dist-label { font-size: 11.5px; color: var(--text-3); }
 
 /* 表格 */

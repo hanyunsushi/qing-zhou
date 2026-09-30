@@ -58,14 +58,14 @@ func writeResetFormPage(w http.ResponseWriter, token string) {
 const resetPageHTML = `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>重置密码 - Kreeproxy</title>
-<style>body{font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;background:#f5f6f8;margin:0;display:flex;min-height:100vh;align-items:center;justify-content:center}
+<style>:root{--ff-heading:"Fraunces","Source Han Serif SC",Georgia,serif;--ff-body:"Inter","Resource Han Rounded CN",-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;--ff-mono:"Amazon Ember Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;--font-size-body:14px;--line-height-body:20px}body{font-family:var(--ff-body);font-size:var(--font-size-body);line-height:var(--line-height-body);letter-spacing:0;background:#f5f6f8;margin:0;display:flex;min-height:100vh;align-items:center;justify-content:center}
 .card{background:#fff;padding:32px 28px;border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.08);width:100%%;max-width:360px;box-sizing:border-box}
-h1{font-size:20px;margin:0 0 6px;color:#1f2937;text-align:center}
+h1{font-family:var(--ff-heading);font-size:20px;line-height:24px;font-weight:500;letter-spacing:0;margin:0 0 6px;color:#1f2937;text-align:center}
 .sub{color:#6b7280;font-size:13px;line-height:1.6;margin:0 0 6px;text-align:center}
 label{display:block;font-size:13px;color:#4b5563;margin:14px 0 6px}
-input{width:100%%;box-sizing:border-box;padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:14px}
+input{width:100%%;box-sizing:border-box;padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;font-family:var(--ff-body);font-size:14px;line-height:20px;letter-spacing:0}
 input:focus{outline:none;border-color:#2563eb}
-button{width:100%%;margin-top:20px;padding:11px;background:#2563eb;color:#fff;border:0;border-radius:8px;font-size:15px;cursor:pointer}
+button{width:100%%;margin-top:20px;padding:11px;background:#2563eb;color:#fff;border:0;border-radius:8px;font-family:var(--ff-body);font-size:15px;line-height:20px;letter-spacing:0;cursor:pointer}
 button:disabled{background:#9ca3af;cursor:not-allowed}
 .msg{margin-top:14px;font-size:13px;line-height:1.6;text-align:center;min-height:19px}
 .err{color:#dc2626}.ok{color:#059669}

@@ -34,7 +34,7 @@
           <span style="font-size:12px;font-weight:600;color:var(--warning);">请立即复制，关闭后无法再查看明文</span>
           <n-button size="tiny" @click="copyPlain">复制</n-button>
         </div>
-        <div style="font-family:monospace;font-size:12px;word-break:break-all;">{{ createdPlain }}</div>
+        <div style="font-family:var(--ff-mono);font-size:12px;word-break:break-all;">{{ createdPlain }}</div>
       </div>
     </n-card>
 
@@ -46,7 +46,7 @@
             <n-tag :type="statusType(t)" size="tiny" :bordered="false">{{ statusLabel(t) }}</n-tag>
           </div>
           <div class="lc-meta">
-            <span class="kv">前缀 <b style="font-family:monospace;">{{ t.prefix }}…</b></span>
+            <span class="kv">前缀 <b style="font-family:var(--ff-mono);">{{ t.prefix }}…</b></span>
             <span class="kv">创建 {{ fmtDateTime(t.created_at) }}</span>
           </div>
           <div class="lc-meta">
