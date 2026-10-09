@@ -1,9 +1,19 @@
 ---
 title: Cloudscape Visual System
-updated: 2026-09-30
+updated: 2026-10-09
 ---
 
 # Cloudscape Visual System
+
+## Dashboard dual usage rings
+
+- `frontend/src/views/UserDashboard.vue` 的“用量概览”使用同心双圈：外圈为套餐流量使用率，内圈为当前用户今日 Edge 请求使用率，界面统一称“Edge 次数”。布局参考 Apple 健身环的同心几何，不引入另一套视觉 token 或图表分类色。SVG 外圈半径 58、内圈半径 43，两圈线宽均为 14，圈间净空为 1 个 viewBox 单位。
+- 两圈独立调用 `chartColorForPercent`：低于 70% 绿色、70% 至不足 90% 橙色、90% 起红色。低强调轨道使用各自状态色的 14% 透明度，进度段为实色；零用量不绘制圆头进度段，避免假进度。
+- 中心以较小的数字字体显示流量和 Edge 两项百分比；下方两行显示 `已用流量 / 总流量` 与 `已用次数 / 日次数额度 次`，不再保留单独固定橙色次数进度条或剩余次数主值。
+- Edge 数据继续来自 `GET /api/user/dashboard` 的 `edge_requests`，不是上游管理的 Cloudflare 账户级用量。流量按套餐计量周期、Edge 次数按 UTC 日重置，两者只在同一模块展示，不混合计量或相加。
+- 无 Edge 额度时内圈为灰色空轨道，中心显示 `—`；不限额时显示正文 `不限` 和灰色空轨道，下方已用数字单独使用 `.numeric`，`不限额` 保持正文体。SVG 有包含两项使用状态的无障碍标签；百分比和实际数值用数字字体，说明文字保持正文体。
+
+See Also: `frontend/tests/dashboard-usage.test.mjs`, [Edge Usage Callback](../apis/edge-usage.md).
 
 ## Admin sidebar hierarchy and node surfaces
 

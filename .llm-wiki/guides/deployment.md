@@ -1,7 +1,24 @@
 ---
 title: QingZhou Deployment and Artifact Retention
-updated: 2026-09-30
+updated: 2026-10-09
 ---
+
+## Dual-ring dashboard rollout
+
+The dashboard dual-ring change is released from an isolated source archive;
+only the traffic/Edge view and its regression tests enter the application
+change. The release workflow builds Vite assets before Go embedding and resolves
+the selected release tag to its exact commit.
+
+The host rollout verifies the ARM64 release checksum, creates a SQLite backup
+with the backup API and checks `PRAGMA integrity_check`, and retains the old
+binary, environment, service units and sing-box configuration. It atomically
+replaces the panel and restarts only `qingzhou.service`; a failed local health
+check restores the old binary. Acceptance compares the active binary hash,
+configuration hashes and the unchanged sing-box/Tunnel process IDs, then
+checks public assets and the authenticated desktop/mobile dashboard. Current
+version, checksum, backup path and verification evidence are owned by the
+[project authority](../../agent.md).
 
 ## 2026-09-30 Typography contract release
 

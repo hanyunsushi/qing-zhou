@@ -1,7 +1,21 @@
 ---
 title: Validation Guide
-updated: 2026-09-30
+updated: 2026-10-09
 ---
+
+## Dashboard dual usage ring release gate
+
+The exact release source is exported with `git archive` before validation, so
+uncommitted monitor or provider-documentation changes cannot enter the build.
+`go test ./...`, 112 frontend tests, `vue-tsc -b`, Vite build and
+`git diff --check` pass. The known ECharts asynchronous chunk warning remains.
+
+Local fixture QA covers desktop, 390px and 360px widths, independent ring
+thresholds at 70% and 90%, zero/full usage, missing quota and unlimited quota.
+Production acceptance reloads the authenticated dashboard, exercises refresh,
+checks the visible Edge label and dual-ring geometry, and verifies downloaded
+hashed assets against the release binary. Deployment evidence belongs to the
+[project authority](../../agent.md).
 
 ## 2026-09-30 Typography contract release gate
 
