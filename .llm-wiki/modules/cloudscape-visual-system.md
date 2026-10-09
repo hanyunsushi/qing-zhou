@@ -5,6 +5,10 @@ updated: 2026-10-09
 
 # Cloudscape Visual System
 
+## Typography role boundary
+
+The monitor's upstream balance card keeps provider names, status text (`查询中` / `未配置`), metadata, timestamps, and drag hints in `var(--ff-body)`. Only actual numeric balances and other tabular values use `var(--ff-mono)`. The status-text class is intentionally separate from the numeric balance class so a loading or configuration state cannot inherit the mono role.
+
 ## Dashboard dual usage rings
 
 - `frontend/src/views/UserDashboard.vue` 的“用量概览”使用同心双圈：外圈为套餐流量使用率，内圈为当前用户今日 Edge 请求使用率，界面统一称“Edge 次数”。布局参考 Apple 健身环的同心几何，不引入另一套视觉 token 或图表分类色。SVG 外圈半径 58、内圈半径 43，两圈线宽均为 14，圈间净空为 1 个 viewBox 单位。

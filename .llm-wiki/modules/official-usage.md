@@ -1,6 +1,6 @@
 ---
 title: Official Usage Module
-updated: 2026-09-25
+updated: 2026-10-09
 ---
 
 # Official Usage Module
@@ -28,6 +28,28 @@ based on the unit returned by OCI.
 Oracle can return `Outbound Data Transfer Zone 2` with unit `GB Months`; the parser treats that official outbound-transfer unit as decimal GB and preserves the high-precision `attributedUsage` value before converting to bytes. Oracle's price list names the free and overage rows as `First 10 TB / Month` and `Over 10 TB / Month`, with unit `Gigabyte outbound data transfer per month`. The parser accepts both official unit forms and marks a returned overage SKU. An overage row forces `remaining` to zero even if its returned overage quantity is smaller than the configured free allowance. `remaining = max(configured_monthly_limit - used, 0)` otherwise. The account total is the configured OCI allowance; OCI Usage API supplies the official used amount, not a universal balance field. The admin page refreshes both provider snapshots every 15 minutes and refreshes on foreground return. A non-zero official `GB Months` response is covered by `internal/officialusage/officialusage_test.go`.
 
 Oracle's networking pricing page lists first-10-TB/month outbound tiers and the verbose unit above; its overage rows identify B88327, B93455, and B93456. These are reference evidence, not an account-validated allowlist. Before exact balance support, verify the account's free and overage rows, aggregation scope, unit conversion, and publication delay against the Console. Sources: `https://www.oracle.com/cloud/networking/pricing/` and Oracle SDK `usageapi/request_summarized_usages_request_response.go` in `oracle/oci-go-sdk`.
+
+### Comparison With Personal Usage
+
+The personal dashboard quota card is not a current-month OCI meter.
+`internal/api/user.go:dashboardTraffic` sums `UsedUp + UsedDown` from valid,
+non-free, non-queued, positive-quota buckets. These counters follow the bucket's
+metering history, including retained usage from earlier calendar months; a
+calendar-month boundary does not automatically reset them. They originate from
+sing-box user statistics through `internal/sbctl/controller.go:CollectStats`,
+not from OCI billing or EdgeTunnel callbacks.
+
+OCI usage instead covers account-wide outbound transfer in the current UTC
+month, ending at today's UTC midnight, and only includes published provider
+rows. Personal usage includes both upload and download, so even aligned windows
+and units do not establish identical accounting scopes. `traffic_daily` uses
+the host's local calendar; use timestamped `server_user_traffic_samples` to
+align a comparison to the OCI UTC window. Provider publication completeness and
+differences in metering scope must be verified, not called a loss percentage.
+
+EdgeTunnel callbacks update daily request counters only. They do not add bytes,
+apply a traffic multiplier, or add an Edge transport-loss allowance to personal
+quota usage. See [Edge Usage Callback API](../apis/edge-usage.md).
 
 ## Cloudflare
 

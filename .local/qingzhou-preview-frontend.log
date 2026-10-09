@@ -1,0 +1,341 @@
+
+  VITE v6.4.3  ready in 1465 ms
+
+  ➜  Local:   http://127.0.0.1:5173/
+9:16:29 PM [vite] http proxy error: /api/health
+Error: connect ECONNREFUSED 127.0.0.1:8081
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+9:16:29 PM [vite] http proxy error: /api/auth/me
+Error: connect ECONNREFUSED 127.0.0.1:8081
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+9:16:46 PM [vite] http proxy error: /api/monitor/public
+Error: connect ECONNREFUSED 127.0.0.1:8081
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+9:16:46 PM [vite] http proxy error: /api/monitor/public/sparklines?range=1h
+Error: connect ECONNREFUSED 127.0.0.1:8081
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+9:16:46 PM [vite] http proxy error: /api/monitor/public
+Error: connect ECONNREFUSED 127.0.0.1:8081
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+9:16:46 PM [vite] http proxy error: /api/monitor/public/sparklines?range=1h
+Error: connect ECONNREFUSED 127.0.0.1:8081
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+9:17:16 PM [vite] http proxy error: /api/monitor/public
+Error: connect ECONNREFUSED 127.0.0.1:8081
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+9:17:16 PM [vite] http proxy error: /api/monitor/public/sparklines?range=1h
+Error: connect ECONNREFUSED 127.0.0.1:8081
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+9:17:16 PM [vite] http proxy error: /api/monitor/public
+Error: connect ECONNREFUSED 127.0.0.1:8081
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+9:17:16 PM [vite] http proxy error: /api/monitor/public/sparklines?range=1h
+Error: connect ECONNREFUSED 127.0.0.1:8081
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+9:17:46 PM [vite] http proxy error: /api/monitor/public
+Error: connect ECONNREFUSED 127.0.0.1:8081
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+9:17:46 PM [vite] http proxy error: /api/monitor/public/sparklines?range=1h
+Error: connect ECONNREFUSED 127.0.0.1:8081
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+9:17:46 PM [vite] http proxy error: /api/monitor/public
+Error: connect ECONNREFUSED 127.0.0.1:8081
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+9:17:46 PM [vite] http proxy error: /api/monitor/public/sparklines?range=1h
+Error: connect ECONNREFUSED 127.0.0.1:8081
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1636:16)
+10:11:12 PM [vite] (client) hmr update /src/styles/global.css
+10:48:57 PM [vite] (client) hmr update /src/styles/global.css
+11:08:19 PM [vite] (client) hmr update /src/styles/global.css
+11:08:19 PM [vite] (client) hmr update /src/components/DashboardLayout.vue, /src/components/DashboardLayout.vue?vue&type=style&index=0&scoped=430db805&lang.css
+11:09:15 PM [vite] (client) hmr update /src/styles/global.css
+11:09:15 PM [vite] (client) hmr update /src/components/TopbarHoverMenu.vue
+11:09:34 PM [vite] (client) hmr update /src/components/DashboardLayout.vue
+11:25:30 PM [vite] (client) hmr update /src/styles/global.css
+11:29:05 PM [vite] (client) hmr update /src/styles/global.css
+11:50:22 PM [vite] (client) hmr update /src/styles/global.css
+11:50:22 PM [vite] (client) hmr update /src/views/AdminUpstreams.vue
+11:50:22 PM [vite] (client) hmr update /src/views/AdminSingbox.vue?vue&type=style&index=0&scoped=a6d39ab9&lang.css
+11:52:59 PM [vite] (client) hmr update /src/styles/global.css
+11:52:59 PM [vite] (client) hmr update /src/views/UserShop.vue?vue&type=style&index=0&scoped=b6ab1e05&lang.css
+11:52:59 PM [vite] (client) hmr update /src/views/UserPoints.vue?vue&type=style&index=0&scoped=dfeb02d3&lang.css
+11:52:59 PM [vite] (client) hmr update /src/views/UserOrders.vue?vue&type=style&index=0&scoped=89e33904&lang.css
+11:52:59 PM [vite] (client) hmr update /src/views/AdminServers.vue?vue&type=style&index=0&scoped=cee1c592&lang.css
+12:02:43 AM [vite] (client) hmr update /src/views/AdminServers.vue
+12:02:43 AM [vite] (client) hmr update /src/views/AdminUserGroups.vue
+12:02:43 AM [vite] (client) hmr update /src/views/UserSub.vue
+12:04:02 AM [vite] (client) hmr update /src/views/AdminNodes.vue
+12:04:02 AM [vite] (client) hmr update /src/views/AdminUsers.vue
+12:04:02 AM [vite] (client) hmr update /src/views/AdminSingbox.vue
+12:04:55 AM [vite] (client) hmr update /src/views/UserShop.vue
+12:07:29 AM [vite] (client) hmr update /src/components/TopbarHoverMenu.vue
+12:08:29 AM [vite] (client) hmr update /src/views/AdminUpstreams.vue
+12:09:06 AM [vite] (client) hmr update /src/views/AdminUpstreams.vue, /src/views/AdminUpstreams.vue?vue&type=style&index=0&scoped=298435d2&lang.css
+12:14:27 AM [vite] (client) hmr update /src/components/LoginDialog.vue
+12:14:28 AM [vite] (client) hmr update /src/views/AdminNodes.vue
+12:19:56 AM [vite] (client) hmr update /src/views/Monitor.vue
+12:20:18 AM [vite] (client) hmr update /src/views/Monitor.vue
+12:20:20 AM [vite] (client) hmr update /src/styles/global.css
+12:20:47 AM [vite] (client) hmr update /src/views/Monitor.vue?vue&type=style&index=0&scoped=3c56ed69&lang.css
+12:24:05 AM [vite] (client) hmr update /src/components/TopbarHoverMenu.vue
+12:30:56 AM [vite] (client) hmr update /src/styles/global.css
+12:35:57 AM [vite] (client) hmr update /src/styles/global.css
+12:36:22 AM [vite] (client) hmr update /src/styles/global.css
+12:40:47 AM [vite] (client) hmr update /src/styles/global.css
+12:42:48 AM [vite] (client) hmr update /src/views/UserSub.vue
+12:47:14 AM [vite] (client) hmr update /src/views/Monitor.vue?vue&type=style&index=0&scoped=3c56ed69&lang.css
+12:50:30 AM [vite] (client) hmr update /src/views/AdminSingbox.vue, /src/views/AdminSingbox.vue?vue&type=style&index=0&scoped=a6d39ab9&lang.css
+12:55:52 AM [vite] (client) hmr update /src/components/TopbarHoverMenu.vue
+12:56:07 AM [vite] (client) hmr update /src/views/AdminSingbox.vue?vue&type=style&index=0&scoped=a6d39ab9&lang.css
+12:57:10 AM [vite] (client) hmr update /src/views/AdminSingbox.vue?vue&type=style&index=0&scoped=a6d39ab9&lang.css
+1:02:24 AM [vite] (client) hmr update /src/views/AdminServers.vue, /src/views/AdminServers.vue?vue&type=style&index=0&scoped=cee1c592&lang.css
+1:04:40 AM [vite] (client) hmr update /src/styles/global.css
+1:04:41 AM [vite] (client) hmr update /src/components/TopbarHoverMenu.vue
+1:12:06 AM [vite] (client) hmr update /src/styles/global.css
+1:12:06 AM [vite] (client) hmr update /src/components/TopbarHoverMenu.vue
+1:12:40 AM [vite] (client) hmr update /src/components/TopbarHoverMenu.vue
+1:18:49 AM [vite] (client) hmr update /src/views/AdminSingbox.vue?vue&type=style&index=0&scoped=a6d39ab9&lang.css
+1:23:44 AM [vite] (client) hmr update /src/views/AdminServers.vue, /src/views/AdminServers.vue?vue&type=style&index=0&scoped=cee1c592&lang.css
+1:28:39 AM [vite] (client) hmr update /src/styles/global.css
+1:28:39 AM [vite] (client) hmr update /src/components/LoginDialog.vue
+1:32:28 AM [vite] (client) hmr update /src/components/LoginDialog.vue?vue&type=style&index=0&scoped=75167b83&lang.css
+2:16:01 AM [vite] (client) hmr update /src/styles/global.css
+2:16:01 AM [vite] (client) hmr update /src/views/UserSub.vue
+2:16:01 AM [vite] (client) hmr update /src/views/AdminUpdate.vue
+2:16:01 AM [vite] (client) hmr update /src/views/AdminManualNotifications.vue
+2:16:02 AM [vite] (client) hmr update /src/views/AdminSingbox.vue
+2:19:19 AM [vite] (client) hmr update /src/styles/global.css
+2:19:19 AM [vite] (client) hmr update /src/views/UserSub.vue
+2:19:19 AM [vite] (client) hmr update /src/views/AdminUsers.vue
+2:20:04 AM [vite] (client) hmr update /src/styles/global.css
+2:20:48 AM [vite] (client) hmr update /src/views/AdminUpdate.vue
+2:21:44 AM [vite] (client) hmr update /src/views/UserSub.vue
+2:29:23 AM [vite] (client) hmr update /src/styles/global.css
+2:29:56 AM [vite] (client) hmr update /src/styles/global.css
+2:30:06 AM [vite] (client) page reload src/main.ts
+2:30:06 AM [vite] (client) page reload src/router/index.ts
+2:30:06 AM [vite] (client) hmr update /src/App.vue
+2:30:06 AM [vite] (client) hmr update /src/components/DashboardLayout.vue
+2:30:47 AM [vite] (client) hmr update /src/styles/global.css
+2:30:47 AM [vite] (client) hmr update /src/components/DashboardLayout.vue
+2:33:23 AM [vite] (client) hmr update /src/components/DashboardLayout.vue?vue&type=style&index=0&scoped=430db805&lang.css
+2:33:23 AM [vite] (client) hmr update /src/views/Monitor.vue?vue&type=style&index=0&scoped=3c56ed69&lang.css
+2:33:23 AM [vite] (client) hmr update /src/views/UserOrders.vue?vue&type=style&index=0&scoped=89e33904&lang.css
+2:33:23 AM [vite] (client) hmr update /src/views/UserPoints.vue?vue&type=style&index=0&scoped=dfeb02d3&lang.css
+2:33:36 AM [vite] (client) hmr update /src/styles/global.css
+2:33:55 AM [vite] (client) page reload src/router/index.ts
+2:33:55 AM [vite] (client) hmr update /src/styles/global.css
+2:35:27 AM [vite] (client) page reload src/utils/shift5.ts
+2:37:55 AM [vite] (client) page reload src/utils/shift5.ts
+2:37:55 AM [vite] (client) hmr update /src/App.vue
+2:39:49 AM [vite] (client) hmr update /src/views/AdminManualNotifications.vue?vue&type=style&index=0&scoped=27b9f77d&lang.css
+2:40:19 AM [vite] (client) hmr update /src/views/AdminManualNotifications.vue, /src/views/AdminManualNotifications.vue?vue&type=style&index=0&scoped=27b9f77d&lang.css
+2:40:28 AM [vite] (client) page reload src/utils/shift5.ts
+2:40:28 AM [vite] (client) page reload src/router/index.ts
+2:40:28 AM [vite] (client) hmr update /src/styles/global.css
+2:41:47 AM [vite] (client) page reload src/utils/shift5.ts
+2:41:48 AM [vite] (client) hmr update /src/styles/global.css
+2:45:23 AM [vite] (client) page reload src/utils/shift5.ts
+2:45:23 AM [vite] (client) page reload src/router/index.ts
+2:47:10 AM [vite] (client) page reload index.html
+2:48:30 AM [vite] (client) page reload src/main.ts
+3:00:35 AM [vite] (client) page reload src/utils/shift5.ts
+3:00:35 AM [vite] (client) page reload src/router/index.ts
+3:00:35 AM [vite] (client) hmr update /src/components/DashboardLayout.vue
+3:01:27 AM [vite] (client) page reload src/utils/shift5.ts
+3:01:28 AM [vite] (client) hmr update /src/views/AdminSettings.vue
+3:04:57 AM [vite] (client) hmr update /src/views/AdminSettings.vue
+3:07:32 AM [vite] (client) hmr update /src/views/AdminSettings.vue?vue&type=style&index=0&scoped=dfe757ba&lang.css
+3:09:27 AM [vite] (client) page reload src/utils/shift5.ts
+3:10:57 AM [vite] (client) page reload src/utils/shift5.ts
+3:11:01 AM [vite] (client) hmr update /src/styles/global.css
+3:11:01 AM [vite] (client) hmr update /src/views/UserSub.vue
+3:16:19 AM [vite] (client) hmr update /src/styles/global.css
+3:16:58 AM [vite] (client) page reload src/utils/shift5.ts
+3:30:37 AM [vite] (client) page reload src/utils/shift5.ts
+3:30:37 AM [vite] (client) hmr update /src/styles/global.css
+3:31:12 AM [vite] (client) page reload src/utils/shift5.ts
+3:33:03 AM [vite] (client) hmr update /src/views/AdminUpdate.vue
+3:34:15 AM [vite] (client) hmr update /src/views/AdminSettings.vue, /src/views/AdminSettings.vue?vue&type=style&index=0&scoped=dfe757ba&lang.css
+3:36:36 AM [vite] (client) page reload src/utils/shift5.ts
+3:40:42 AM [vite] (client) hmr update /src/views/AdminManualNotifications.vue
+3:40:43 AM [vite] (client) hmr update /src/views/AdminSettings.vue, /src/views/AdminSettings.vue?vue&type=style&index=0&scoped=dfe757ba&lang.css
+3:40:43 AM [vite] (client) hmr update /src/views/AdminUpdate.vue, /src/views/AdminUpdate.vue?vue&type=style&index=0&scoped=a9f77a24&lang.css
+3:43:03 AM [vite] (client) hmr update /src/components/InfoNotice.vue?vue&type=style&index=0&scoped=357a5f64&lang.css
+3:43:03 AM [vite] (client) hmr update /src/views/AdminManualNotifications.vue
+3:43:04 AM [vite] (client) hmr update /src/views/AdminUpdate.vue
+3:43:04 AM [vite] (client) hmr update /src/views/AdminSettings.vue
+3:54:51 AM [vite] (client) hmr update /src/styles/global.css
+3:55:22 AM [vite] (client) hmr update /src/styles/global.css
+4:29:57 AM [vite] (client) hmr update /src/styles/global.css
+4:29:57 AM [vite] (client) hmr update /src/components/AppHeader.vue, /src/components/AppHeader.vue?vue&type=style&index=0&scoped=48a13218&lang.css
+4:29:57 AM [vite] (client) hmr update /src/components/DashboardLayout.vue, /src/components/DashboardLayout.vue?vue&type=style&index=0&scoped=430db805&lang.css
+4:31:33 AM [vite] (client) hmr update /src/styles/global.css
+4:31:33 AM [vite] (client) hmr update /src/components/AppHeader.vue?vue&type=style&index=0&scoped=48a13218&lang.css
+4:31:33 AM [vite] (client) hmr update /src/components/DashboardLayout.vue?vue&type=style&index=0&scoped=430db805&lang.css
+4:37:28 AM [vite] (client) hmr update /src/styles/global.css
+4:37:28 AM [vite] (client) hmr update /src/components/AppHeader.vue?vue&type=style&index=0&scoped=48a13218&lang.css
+4:37:29 AM [vite] (client) hmr update /src/components/DashboardLayout.vue?vue&type=style&index=0&scoped=430db805&lang.css
+4:39:45 AM [vite] (client) hmr update /src/styles/global.css
+5:03:02 PM [vite] (client) hmr update /src/styles/global.css
+5:03:03 PM [vite] (client) hmr update /src/components/DashboardLayout.vue?vue&type=style&index=0&scoped=430db805&lang.css
+5:03:03 PM [vite] (client) hmr update /src/components/AppHeader.vue?vue&type=style&index=0&scoped=48a13218&lang.css
+5:14:06 PM [vite] (client) hmr update /src/components/AppHeader.vue?vue&type=style&index=0&scoped=48a13218&lang.css
+5:14:06 PM [vite] (client) hmr update /src/components/DashboardLayout.vue?vue&type=style&index=0&scoped=430db805&lang.css
+8:04:37 PM [vite] (client) hmr update /src/styles/global.css
+8:04:37 PM [vite] (client) hmr update /src/components/AppHeader.vue?vue&type=style&index=0&scoped=48a13218&lang.css
+8:04:37 PM [vite] (client) hmr update /src/components/DashboardLayout.vue?vue&type=style&index=0&scoped=430db805&lang.css
+8:29:45 PM [vite] (client) hmr update /src/styles/global.css
+8:33:46 PM [vite] (client) hmr update /src/styles/global.css
+9:19:59 PM [vite] (client) hmr update /src/views/Monitor.vue, /src/views/UserDashboard.vue, /src/components/TrafficTrendChart.vue, /src/views/AdminUpstreams.vue, /src/views/UserAccount.vue, /src/views/UserShop.vue, /src/views/UserSub.vue, /src/views/UserOrders.vue, /src/views/AdminServers.vue, /src/views/UserNotices.vue, /src/views/UserPoints.vue, /src/views/AdminUsers.vue, /src/components/RefundDialog.vue, /src/components/AdminPlanItem.vue, /src/views/AdminOrders.vue, /src/views/AdminNodes.vue, /src/views/AdminOverview.vue, /src/components/AdminUsageReport.vue, /src/views/AdminAnnouncements.vue, /src/views/AdminManualNotifications.vue, /src/views/AdminSettings.vue, /src/views/AdminHelp.vue, /src/views/AdminUpdate.vue, /src/views/AdminRegCodes.vue, /src/views/AdminAPITokens.vue, /src/views/AdminCerts.vue, /src/views/AdminMonitor.vue, /src/views/AdminPackages.vue
+9:20:00 PM [vite] (client) hmr update /src/views/AdminUpstreams.vue
+9:20:00 PM [vite] (client) hmr update /src/views/Monitor.vue
+9:33:07 PM [vite] (client) hmr update /src/views/AdminUpstreams.vue
+9:33:07 PM [vite] (client) hmr update /src/views/Monitor.vue
+9:33:47 PM [vite] (client) hmr update /src/views/Monitor.vue
+9:33:47 PM [vite] (client) hmr update /src/views/AdminUpstreams.vue
+9:33:47 PM [vite] (client) hmr update /src/views/Monitor.vue
+12:03:11 AM [vite] (client) hmr update /src/styles/global.css
+12:13:41 AM [vite] (client) hmr update /src/styles/global.css
+12:31:42 AM [vite] (client) hmr update /src/styles/global.css
+1:27:24 AM [vite] (client) hmr update /src/styles/global.css
+1:51:51 AM [vite] (client) hmr update /src/styles/global.css
+2:49:40 AM [vite] (client) hmr update /src/styles/global.css
+3:19:40 AM [vite] (client) hmr update /src/styles/global.css
+3:25:20 AM [vite] (client) hmr update /src/styles/global.css
+4:04:40 AM [vite] (client) hmr update /src/styles/global.css
+4:04:40 AM [vite] (client) hmr update /src/App.vue
+4:15:11 AM [vite] (client) hmr update /src/components/AppHeader.vue, /src/components/DashboardLayout.vue
+4:15:11 AM [vite] (client) hmr update /src/components/PageScrollbar.vue, /src/components/PageScrollbar.vue?vue&type=style&index=0&scoped=bbbd51ae&lang.css
+4:15:11 AM [vite] (client) hmr update /src/views/AdminSettings.vue
+4:15:33 AM [vite] (client) hmr update /src/components/PageScrollbar.vue
+4:18:27 AM [vite] (client) hmr update /src/styles/global.css
+4:18:27 AM [vite] (client) hmr update /src/components/AppHeader.vue, /src/components/DashboardLayout.vue
+4:20:13 AM [vite] (client) hmr update /src/components/PageScrollbar.vue
+4:21:14 AM [vite] (client) hmr update /src/components/PageScrollbar.vue
+4:22:26 AM [vite] (client) hmr update /src/components/PageScrollbar.vue?vue&type=style&index=0&scoped=bbbd51ae&lang.css
+8:49:46 AM [vite] (client) hmr update /src/styles/global.css
+8:49:48 AM [vite] (client) hmr update /src/components/PageScrollbar.vue?vue&type=style&index=0&scoped=bbbd51ae&lang.css
+8:54:43 AM [vite] (client) hmr update /src/components/PageScrollbar.vue?vue&type=style&index=0&scoped=bbbd51ae&lang.css
+10:07:52 AM [vite] (client) hmr update /src/styles/global.css
+10:16:30 AM [vite] (client) hmr update /src/styles/global.css
+10:17:49 AM [vite] (client) hmr update /src/styles/global.css
+10:26:42 AM [vite] (client) hmr update /src/components/PageScrollbar.vue?vue&type=style&index=0&scoped=bbbd51ae&lang.css
+10:34:57 AM [vite] (client) hmr update /src/components/PageScrollbar.vue?vue&type=style&index=0&scoped=bbbd51ae&lang.css
+10:40:39 AM [vite] (client) hmr update /src/components/AppHeader.vue?vue&type=style&index=0&scoped=48a13218&lang.css
+10:40:39 AM [vite] (client) hmr update /src/components/DashboardLayout.vue?vue&type=style&index=0&scoped=430db805&lang.css
+10:46:03 AM [vite] (client) hmr update /src/styles/global.css
+11:35:02 AM [vite] (client) hmr update /src/views/AdminMonitor.vue, /src/views/AdminMonitor.vue?vue&type=style&index=0&scoped=d41c03d6&lang.css
+12:32:46 PM [vite] (client) hmr update /src/styles/global.css
+1:43:29 PM [vite] (client) hmr update /src/styles/global.css
+1:46:48 PM [vite] (client) hmr update /src/styles/global.css
+2:58:54 PM [vite] (client) hmr update /src/views/AdminHelp.vue?vue&type=style&index=0&scoped=665d589b&lang.css
+3:23:53 PM [vite] (client) hmr update /src/styles/global.css
+4:28:41 PM [vite] (client) hmr update /src/styles/global.css
+5:21:23 PM [vite] (client) page reload src/main.ts
+5:25:07 PM [vite] (client) page reload src/main.ts
+6:08:37 PM [vite] (client) hmr update /src/components/AppHeader.vue
+6:08:50 PM [vite] (client) page reload src/router/index.ts
+6:09:40 PM [vite] (client) page reload src/api/index.ts
+6:10:44 PM [vite] (client) hmr update /src/App.vue
+6:19:24 PM [vite] (client) hmr update /src/views/AuthPage.vue
+6:19:53 PM [vite] (client) hmr update /src/App.vue
+6:20:01 PM [vite] (client) hmr update /src/components/LoginDialog.vue, /src/components/LoginDialog.vue?vue&type=style&index=0&scoped=75167b83&lang.css
+6:21:35 PM [vite] (client) hmr update /src/views/AuthPage.vue
+6:23:53 PM [vite] (client) hmr update /src/views/AdminSingbox.vue?vue&type=style&index=0&scoped=a6d39ab9&lang.css
+6:26:03 PM [vite] (client) hmr update /src/views/AuthPage.vue
+6:30:54 PM [vite] (client) hmr update /src/App.vue, /src/views/Monitor.vue, /src/views/UserDashboard.vue, /src/components/TrafficTrendChart.vue, /src/views/AdminUpstreams.vue, /src/views/UserAccount.vue, /src/views/UserShop.vue, /src/views/UserSub.vue, /src/views/UserOrders.vue, /src/views/AdminServers.vue, /src/views/UserNotices.vue, /src/views/UserPoints.vue, /src/views/AdminUsers.vue, /src/components/RefundDialog.vue, /src/components/AdminPlanItem.vue, /src/views/AdminOrders.vue, /src/views/AdminNodes.vue, /src/views/AdminOverview.vue, /src/components/AdminUsageReport.vue, /src/views/AdminAnnouncements.vue, /src/views/AdminManualNotifications.vue, /src/views/AdminSettings.vue, /src/views/AdminHelp.vue, /src/views/AdminUpdate.vue, /src/views/AdminRegCodes.vue, /src/views/AdminAPITokens.vue, /src/views/AdminCerts.vue, /src/views/AdminMonitor.vue, /src/views/AdminPackages.vue, /src/components/AppHeader.vue, /src/components/BrandMark.vue, /src/components/DashboardLayout.vue, /src/views/UserHelp.vue, /src/components/OAuth2Settings.vue, /src/views/AuthPage.vue
+6:30:55 PM [vite] (client) hmr update /src/views/AuthPage.vue
+7:04:57 PM [vite] (client) hmr update /src/views/AuthPage.vue, /src/views/AuthPage.vue?vue&type=style&index=0&scoped=5043e747&lang.css
+7:34:55 PM [vite] (client) page reload src/router/index.ts
+7:34:55 PM [vite] (client) hmr update /src/App.vue
+8:06:32 PM [vite] (client) hmr update /src/styles/global.css
+8:06:34 PM [vite] (client) hmr update /src/views/AuthPage.vue?vue&type=style&index=0&scoped=5043e747&lang.css
+9:02:52 PM [vite] (client) hmr update /src/styles/global.css
+11:59:41 PM [vite] (client) hmr update /src/components/AdminUsageReport.vue
+11:59:41 PM [vite] (client) hmr update /src/components/TrafficTrendChart.vue
+11:59:41 PM [vite] (client) hmr update /src/views/AdminMonitor.vue
+11:59:41 PM [vite] (client) hmr update /src/views/AdminOverview.vue
+11:59:41 PM [vite] (client) hmr update /src/views/AdminServers.vue
+11:59:41 PM [vite] (client) hmr update /src/views/UserOrders.vue
+11:59:41 PM [vite] (client) hmr update /src/views/Monitor.vue
+11:59:41 PM [vite] (client) hmr update /src/views/UserPoints.vue
+11:59:47 PM [vite] (client) ✨ new dependencies optimized: echarts/core, echarts/charts, echarts/components, echarts/renderers
+11:59:47 PM [vite] (client) ✨ optimized dependencies changed. reloading
+12:01:38 AM [vite] (client) hmr update /src/components/TrafficTrendChart.vue, /src/views/UserOrders.vue
+1:33:24 AM [vite] (client) hmr update /src/styles/global.css
+1:33:24 AM [vite] (client) hmr update /src/App.vue
+1:34:51 AM [vite] (client) hmr update /src/views/Monitor.vue
+1:35:13 AM [vite] (client) hmr update /src/views/Monitor.vue?vue&type=style&index=0&scoped=3c56ed69&lang.css
+1:37:01 AM [vite] (client) hmr update /src/views/AdminMonitor.vue, /src/views/AdminMonitor.vue?vue&type=style&index=0&scoped=d41c03d6&lang.css
+1:37:33 AM [vite] (client) hmr update /src/views/UserDashboard.vue
+1:38:25 AM [vite] (client) hmr update /src/views/UserSub.vue
+1:39:34 AM [vite] (client) hmr update /src/views/AdminMonitor.vue
+1:39:34 AM [vite] (client) hmr update /src/views/AdminServers.vue
+1:40:23 AM [vite] (client) hmr update /src/views/AdminServers.vue
+1:40:47 AM [vite] (client) hmr update /src/views/AdminUsers.vue
+1:40:47 AM [vite] (client) hmr update /src/components/AdminPlanItem.vue
+1:41:44 AM [vite] (client) hmr update /src/views/AdminSettings.vue
+1:41:44 AM [vite] (client) hmr update /src/views/AdminMonitor.vue?vue&type=style&index=0&scoped=d41c03d6&lang.css
+1:42:46 AM [vite] (client) hmr update /src/views/Monitor.vue
+1:46:57 AM [vite] (client) hmr update /src/views/UserSub.vue
+2:48:12 AM [vite] (client) hmr update /src/views/Monitor.vue, /src/views/Monitor.vue?vue&type=style&index=0&scoped=3c56ed69&lang.css
+2:48:12 AM [vite] (client) hmr update /src/views/AdminUpstreams.vue, /src/views/AdminUpstreams.vue?vue&type=style&index=0&scoped=298435d2&lang.css
+3:21:55 AM [vite] (client) hmr update /src/components/DashboardLayout.vue
+3:21:59 AM [vite] (client) hmr update /src/views/AdminNodes.vue?vue&type=style&index=0&scoped=4c76afed&lang.css
+3:22:41 AM [vite] (client) hmr update /src/components/DashboardLayout.vue
+10:42:40 AM [vite] (client) hmr update /src/views/Monitor.vue?vue&type=style&index=0&scoped=3c56ed69&lang.css
+10:49:50 AM [vite] (client) hmr update /src/styles/global.css
+10:58:58 AM [vite] (client) hmr update /src/views/AdminUpstreams.vue?vue&type=style&index=0&scoped=298435d2&lang.css
+10:58:58 AM [vite] (client) hmr update /src/views/Monitor.vue?vue&type=style&index=0&scoped=3c56ed69&lang.css
+11:04:43 AM [vite] (client) hmr update /src/styles/global.css
+11:04:43 AM [vite] (client) hmr update /src/App.vue
+11:04:44 AM [vite] (client) hmr update /src/views/Monitor.vue, /src/views/Monitor.vue?vue&type=style&index=0&scoped=3c56ed69&lang.css
+11:04:44 AM [vite] (client) hmr update /src/views/AdminMonitor.vue, /src/views/AdminMonitor.vue?vue&type=style&index=0&scoped=d41c03d6&lang.css
+11:11:21 AM [vite] (client) hmr update /src/components/AdminPlanItem.vue
+11:11:21 AM [vite] (client) hmr update /src/views/UserDashboard.vue
+11:13:40 AM [vite] (client) hmr update /src/components/AdminPlanItem.vue
+11:13:40 AM [vite] (client) hmr update /src/views/UserDashboard.vue
+11:27:15 AM [vite] (client) hmr update /src/views/Monitor.vue
+11:27:24 AM [vite] (client) hmr update /src/views/Monitor.vue
+11:27:40 AM [vite] (client) hmr update /src/views/Monitor.vue?vue&type=style&index=0&scoped=3c56ed69&lang.css
+11:28:07 AM [vite] (client) hmr update /src/views/AdminMonitor.vue
+11:28:07 AM [vite] (client) hmr update /src/views/AdminServers.vue
+11:28:07 AM [vite] (client) hmr update /src/views/AdminUsers.vue
+11:28:40 AM [vite] (client) hmr update /src/views/UserSub.vue
+11:28:40 AM [vite] (client) hmr update /src/views/UserDashboard.vue
+11:29:04 AM [vite] (client) hmr update /src/views/UserDashboard.vue
+11:29:04 AM [vite] (client) hmr update /src/views/AdminUpstreams.vue
+11:30:05 AM [vite] (client) hmr update /src/components/AdminPlanItem.vue
+11:31:00 AM [vite] (client) hmr update /src/components/AdminPlanItem.vue
+11:31:00 AM [vite] (client) hmr update /src/views/UserDashboard.vue
+11:31:11 AM [vite] (client) hmr update /src/views/UserDashboard.vue
+11:34:38 AM [vite] (client) hmr update /src/components/AdminPlanItem.vue
+11:34:38 AM [vite] (client) hmr update /src/views/UserDashboard.vue
+11:41:50 AM [vite] (client) hmr update /src/views/AdminUpstreams.vue
+5:07:59 PM [vite] (client) hmr update /src/styles/global.css
+5:07:59 PM [vite] (client) hmr update /src/views/Monitor.vue, /src/views/Monitor.vue?vue&type=style&index=0&scoped=3c56ed69&lang.css
+5:08:00 PM [vite] (client) hmr update /src/views/AdminMonitor.vue, /src/views/AdminMonitor.vue?vue&type=style&index=0&scoped=d41c03d6&lang.css
+5:15:49 PM [vite] (client) hmr update /src/styles/global.css
+5:33:39 PM [vite] (client) hmr update /src/views/AdminUpstreams.vue
+5:33:39 PM [vite] (client) hmr update /src/views/UserDashboard.vue
+5:33:39 PM [vite] (client) hmr update /src/components/AdminPlanItem.vue
+5:33:39 PM [vite] (client) hmr update /src/views/AdminServers.vue
+5:33:39 PM [vite] (client) hmr update /src/views/AdminUsers.vue
+5:33:39 PM [vite] (client) hmr update /src/views/UserSub.vue
+5:39:48 PM [vite] (client) hmr update /src/views/Monitor.vue?vue&type=style&index=0&scoped=3c56ed69&lang.css
+
+  VITE v6.4.3  ready in 395159 ms
+
+  ➜  Local:   http://127.0.0.1:5173/
+
+  VITE v6.4.3  ready in 171641 ms
+
+  ➜  Local:   http://127.0.0.1:5173/
+
+  VITE v6.4.3  ready in 70492 ms
+
+  ➜  Local:   http://127.0.0.1:5173/
+6:56:58 PM [vite] (client) hmr update /src/styles/global.css
+6:56:59 PM [vite] (client) hmr update /src/App.vue
+7:09:49 PM [vite] (client) hmr update /src/styles/global.css

@@ -1,0 +1,45 @@
+- generic [ref=e5]:
+  - banner [ref=e6]:
+    - generic [ref=e10] [cursor=pointer]:
+      - generic [ref=e11]: Kreeproxy
+      - generic [ref=e12]: 服务控制台
+    - button "登录" [ref=e14] [cursor=pointer]
+  - generic [ref=e16]:
+    - generic [ref=e17]:
+      - generic [ref=e18]:
+        - heading "服务器监控" [level=1] [ref=e19]
+        - paragraph [ref=e20]: 实时掌握每台节点的运行状态
+      - generic [ref=e21]:
+        - generic [ref=e22]: 20:00:21
+        - generic [ref=e26]: 自动刷新 · 30s
+        - button "立即刷新" [ref=e28] [cursor=pointer]
+    - generic [ref=e32]:
+      - generic [ref=e38]:
+        - generic [ref=e39]: "0"
+        - generic [ref=e40]: 服务器 · 0 在线
+      - generic [ref=e46]:
+        - generic [ref=e47]: —%
+        - generic [ref=e48]: 平均 CPU
+      - generic [ref=e54]:
+        - generic [ref=e55]: —%
+        - generic [ref=e56]: 平均内存
+      - generic [ref=e63]:
+        - generic [ref=e64]: —%
+        - generic [ref=e65]: 平均磁盘
+      - generic [ref=e71]:
+        - generic [ref=e72]: 0 B/s
+        - generic [ref=e73]: 总上行
+      - generic [ref=e78]:
+        - generic [ref=e79]: 0 B/s
+        - generic [ref=e80]: 总下行
+    - generic [ref=e81]:
+      - generic [ref=e82]: 可用性热力图
+      - generic [ref=e83]:
+        - generic [ref=e84]:
+          - button "1h" [ref=e85] [cursor=pointer]
+          - button "6h" [ref=e86] [cursor=pointer]
+          - button "24h" [ref=e87] [cursor=pointer]
+          - button "7d" [ref=e88] [cursor=pointer]
+        - generic [ref=e89]: 正常 高负载 严重 无数据
+    - generic [ref=e94]: 暂无探针服务器
+    - generic [ref=e96]: 暂无服务器数据

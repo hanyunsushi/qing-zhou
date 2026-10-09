@@ -174,7 +174,7 @@
                     <circle class="gauge-fg" cx="32" cy="32" r="26"
                       :stroke="chartColorForLevel(g.lvl)"
                       :stroke-dasharray="GAUGE_C"
-                      :stroke-dashoffset="g.off" />
+                      :stroke-dashoffset="gaugeAnimated ? g.off : GAUGE_C" />
                   </svg>
                   <div class="gauge-center">
                     <span class="gauge-val" :class="g.lvl">{{ g.val.toFixed(0) }}<i>%</i></span>
@@ -297,7 +297,7 @@
                   <div class="upstream-balance-foot">{{ item.usage.period || '当前周期' }} · {{ fmtUpdated(item.usage.updated_at) }}</div>
                 </template>
                 <template v-else>
-                  <div class="upstream-balance-value muted">{{ item.view.configured ? '查询中' : '未配置' }}</div>
+                  <div class="upstream-balance-state">{{ item.view.configured ? '查询中' : '未配置' }}</div>
                   <div class="upstream-balance-meta">{{ item.view.configured ? (item.usage?.error || '等待官方接口返回') : '前往上游管理配置' }}</div>
                   <div class="upstream-balance-foot">{{ item.provider === 'oci' ? 'OCI Usage API' : 'Cloudflare Analytics GraphQL' }}</div>
                 </template>
@@ -374,6 +374,7 @@ const auth = useAuthStore()
 const servers = ref<Server[]>([])
 const loading = ref(false)
 const refreshing = ref(false)
+const gaugeAnimated = ref(false)
 let timer: ReturnType<typeof setInterval> | null = null
 
 const upstreamOrder = ref<UpstreamProvider[]>([...defaultUpstreamOrder])
@@ -768,6 +769,9 @@ onMounted(async () => {
   await fetchData()
   loading.value = false
   timer = setInterval(fetchData, 30000)
+  await nextTick()
+  // 触发仪表盘圆环首次加载动画
+  gaugeAnimated.value = true
   loadHeatmap('24h')
   await nextTick()
   moveHeatIndicatorToSelected()
@@ -982,7 +986,8 @@ onUnmounted(() => {
 .upstream-provider-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11.5px; font-weight: 650; color: var(--text-2); }
 .upstream-drag-hint { margin-left: auto; color: var(--text-3); font-size: 14px; line-height: 1; letter-spacing: 0; opacity: .7; }
 .upstream-balance-value { margin-top: 10px; font-size: 20px; line-height: 1.15; font-weight: 750; color: var(--text); font-family: var(--ff-mono); font-variant-numeric: tabular-nums; letter-spacing: 0; }
-.upstream-balance-value.muted { color: var(--text-2); font-size: 18px; }
+/* 纯文字状态不是额度数字：保持正文角色，避免“查询中/未配置”误用 mono。 */
+.upstream-balance-state { margin-top: 10px; color: var(--text-2); font-family: var(--ff-body); font-size: 18px; font-weight: 650; line-height: 1.15; letter-spacing: 0; }
 .upstream-balance-meta { min-height: 30px; margin-top: 4px; color: var(--text-3); font-size: 10.5px; line-height: 1.45; font-variant-numeric: tabular-nums; }
 .upstream-balance-track { height: 4px; margin-top: 7px; overflow: hidden; border-radius: 4px; background: var(--bg); }
 .upstream-balance-track i { display: block; height: 100%; border-radius: inherit; transition: width .5s var(--ease-emphasized); }
