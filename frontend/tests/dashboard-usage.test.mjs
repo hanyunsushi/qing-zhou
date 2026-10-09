@@ -21,7 +21,7 @@ function usageModel(value) {
     compilerOptions: { target: ts.ScriptTarget.ESNext },
   }).outputText
   const model = runInNewContext(script, {
-    dash, computed, CHART_STATUS_COLORS, chartColorForPercent, STATUS_COLORS,
+    dash, computed, ringsReady: ref(true), CHART_STATUS_COLORS, chartColorForPercent, STATUS_COLORS,
     useCountUp: (getter) => computed(getter),
     pct: (used, total) => total > 0 ? Math.min(100, Math.round((used || 0) / total * 1000) / 10) : 0,
   })

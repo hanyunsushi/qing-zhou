@@ -5,6 +5,14 @@ updated: 2026-10-09
 
 ## Dashboard dual usage ring release gate
 
+The motion gate includes `dashboard-motion.test.mjs`: empty progress before the
+page reveal, intermediate frames for both rings, synchronized percentages,
+continuous updates, reduced-motion snapping, background fallback and disposal.
+Rendered acceptance samples the actual `.ring-arc` offsets, not only the
+presence of a CSS transition or a successful asset HTTP response. Test normal
+and delayed dashboard responses, refreshed data, zero/missing/unlimited quotas,
+route re-entry, desktop and 390px/360px layouts before rollout.
+
 The exact release source is exported with `git archive` before validation, so
 uncommitted monitor or provider-documentation changes cannot enter the build.
 `go test ./...`, 112 frontend tests, `vue-tsc -b`, Vite build and

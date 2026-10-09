@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div ref="dashboardRoot">
     <!-- 页面头 -->
     <div class="dash-head">
       <div>
@@ -109,7 +109,7 @@
                 <span class="ring-label">流量</span>
               </div>
               <div class="ring-center-item">
-                <span class="ring-pct" :class="{ numeric: edgeMetered }">{{ edgeRequests.unlimited ? '不限' : edgeMetered ? edgeQuotaPct : '—' }}<i v-if="edgeMetered">%</i></span>
+                <span class="ring-pct" :class="{ numeric: edgeMetered }">{{ edgeRequests.unlimited ? '不限' : edgeMetered ? edgeRingPctText : '—' }}<i v-if="edgeMetered">%</i></span>
                 <span class="ring-label">Edge 次数</span>
               </div>
             </div>
@@ -192,6 +192,8 @@ function showHelp() { openHelp(config.config, router) }
 const dash = ref<any>({}); const notices = ref<any[]>([])
 const trendRange = ref('7d'); const trendTabsRef = ref<HTMLElement | null>(null); const trendData = ref<any[]>([]); const trendLoading = ref(false)
 const refreshing = ref(false)
+const dashboardRoot = ref<HTMLElement | null>(null)
+const ringsReady = ref(false)
 const showNotice = ref(false); const activeNotice = ref<any>(null)
 function openNotice(n: any) { activeNotice.value = n; showNotice.value = true }
 
@@ -241,19 +243,21 @@ const trafficSub = computed(() => {
   return parts.join(' · ') || '还没有可用套餐'
 })
 
-// 环形：dashoffset 过渡比改 dasharray 更平滑（后者会连虚线间隔一起跳）
+// 组件绘制动画：双圈与中心数字共用逐帧进度，页面揭示后从空环开始。
 const CIRC = 2 * Math.PI * 58
 const EDGE_CIRC = 2 * Math.PI * 43
-const dRingPct = useCountUp(() => (metered.value ? usedPct.value : 0), { round: false })
-const ringPctText = computed(() => {
-  const v = dRingPct.value
+const dRingPct = useCountUp(() => (ringsReady.value && metered.value ? usedPct.value : 0), { duration: 1100, round: false })
+const dEdgeRingPct = useCountUp(() => (ringsReady.value && edgeMetered.value ? edgeQuotaPct.value : 0), { duration: 1100, round: false })
+function formatRingPct(v: number) {
   return v >= 100 || Math.abs(v - Math.round(v)) < 0.05 ? String(Math.round(v)) : v.toFixed(1)
-})
+}
+const ringPctText = computed(() => formatRingPct(dRingPct.value))
+const edgeRingPctText = computed(() => formatRingPct(dEdgeRingPct.value))
 const ringOffset = computed(() => {
   if (!metered.value) return CIRC
-  return CIRC * (1 - Math.min(usedPct.value, 100) / 100)
+  return CIRC * (1 - Math.min(dRingPct.value, 100) / 100)
 })
-const edgeRingOffset = computed(() => EDGE_CIRC * (1 - edgeQuotaPct.value / 100))
+const edgeRingOffset = computed(() => EDGE_CIRC * (1 - dEdgeRingPct.value / 100))
 const ringFoot = computed(() => {
   if (!dash.value.traffic) return '—'
   if (metered.value) return `${fmtBytes(traffic.value.used)} / ${fmtBytes(traffic.value.total)}`
@@ -365,15 +369,28 @@ async function reload() {
   try { await Promise.all([loadDash(), loadTrend()]) } finally { refreshing.value = false }
 }
 
+function handlePageRevealed(event: Event) {
+  if (event.target instanceof HTMLElement && dashboardRoot.value && event.target.contains(dashboardRoot.value)) ringsReady.value = true
+}
+
 onMounted(async () => {
+  document.addEventListener('qz-shift5-entered', handlePageRevealed)
   await loadDash()
+  await nextTick()
+  // 无页面过渡的挂载路径也能绘制；正常路由由揭示完成事件启动。
+  if (!document.documentElement.classList.contains('qz-shift5-route-transition-pending')
+    && !dashboardRoot.value?.closest('.qz-shift5-enter-pending')
+    && !document.querySelector('.qz-shift5-route-transition')) ringsReady.value = true
   try { notices.value = await apiList('/api/user/announcements') } catch {}
   await loadTrend()
   await nextTick()
   moveTrendIndicatorToSelected()
   window.addEventListener('resize', moveTrendIndicatorToSelected)
 })
-onUnmounted(() => window.removeEventListener('resize', moveTrendIndicatorToSelected))
+onUnmounted(() => {
+  window.removeEventListener('resize', moveTrendIndicatorToSelected)
+  document.removeEventListener('qz-shift5-entered', handlePageRevealed)
+})
 </script>
 
 <style scoped>
@@ -426,7 +443,7 @@ a{color:var(--accent)}
 .ring-box{position:relative;width:172px;height:172px;max-width:100%;flex-shrink:0}
 .ring-svg{width:100%;height:100%;transform:rotate(-90deg)}
 .ring-track{opacity:.14}
-.ring-arc{transition:stroke-dashoffset .8s cubic-bezier(.22,1,.36,1),stroke .4s ease}
+.ring-arc{transition:stroke .4s ease}
 .ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
 .ring-center-item{display:flex;flex-direction:column;align-items:center;gap:0}
 .ring-pct{display:flex;align-items:baseline;font-size:18px;font-weight:750;letter-spacing:0;line-height:20px;text-align:center}

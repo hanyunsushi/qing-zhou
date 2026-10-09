@@ -1,6 +1,6 @@
 ---
 title: Cloudscape Visual System
-updated: 2026-10-09
+updated: 2026-10-10
 ---
 
 # Cloudscape Visual System
@@ -16,8 +16,10 @@ The monitor's upstream balance card keeps provider names, status text (`查询�
 - 中心以较小的数字字体显示流量和 Edge 两项百分比；下方两行显示 `已用流量 / 总流量` 与 `已用次数 / 日次数额度 次`，不再保留单独固定橙色次数进度条或剩余次数主值。
 - Edge 数据继续来自 `GET /api/user/dashboard` 的 `edge_requests`，不是上游管理的 Cloudflare 账户级用量。流量按套餐计量周期、Edge 次数按 UTC 日重置，两者只在同一模块展示，不混合计量或相加。
 - 无 Edge 额度时内圈为灰色空轨道，中心显示 `—`；不限额时显示正文 `不限` 和灰色空轨道，下方已用数字单独使用 `.numeric`，`不限额` 保持正文体。SVG 有包含两项使用状态的无障碍标签；百分比和实际数值用数字字体，说明文字保持正文体。
+- 双圈的圆弧与中心数字使用 `useCountUp` 的同一逐帧百分比，时长 1100ms；`stroke-dashoffset` 不再叠加 CSS transition。首次数据到达时从空环绘制，后续数据变更从当前进度过渡，减弱动态效果时直接显示准确终值，后台 rAF 停顿由共享定时兜底落到终值。
+- 首次绘制等待包含本页的 Shift5 根节点发出 `qz-shift5-entered`，避免动画在页面遮罩下完成；事件在 pending gate 和遮罩清除后发出。慢接口在揭示之后返回也会正常启动绘制，组件卸载时解除事件监听。此逻辑仅属于控制台双圈，服务器监控的资源仪表不使用额外的全局重置开关。
 
-See Also: `frontend/tests/dashboard-usage.test.mjs`, [Edge Usage Callback](../apis/edge-usage.md).
+See Also: `frontend/tests/dashboard-usage.test.mjs`, `frontend/tests/dashboard-motion.test.mjs`, [Edge Usage Callback](../apis/edge-usage.md).
 
 ## Admin sidebar hierarchy and node surfaces
 

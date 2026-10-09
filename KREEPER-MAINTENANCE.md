@@ -1,5 +1,11 @@
 # Kreeper QingZhou 定制维护
 
+## 双圈绘制与发布边界
+
+- 控制台双圈位于 `UserDashboard.vue`，不在 `Monitor.vue`；动画与页面揭示协作合同见 [.llm-wiki/modules/cloudscape-visual-system.md](.llm-wiki/modules/cloudscape-visual-system.md)。误加的服务器仪表 `gaugeAnimated` 重置逻辑已撤销，原有独立字体修复保留。
+- 生产发布必须使用带 Release 版本号的 Linux ARM64 ELF 资产，恢复嵌入前端方式；不得部署 macOS Mach-O、无版本 `dev` 二进制或用静态目录绕过动画问题。运行版本、哈希、备份和验收事实由 [agent.md](agent.md) 维护。
+- `.local/`、`.playwright-cli/`、`output/`、`.DS_Store` 与补丁残留不跟踪，已误入历史的临时文件通过普通修正提交退出跟踪，不重写共享历史，也不删除其本地副本。
+
 ## 2026-09-29 帮助导航信息牌 Apple 蓝（本地未发布）
 
 - 帮助中心当前文档选择标注为“区分-信息牌”，采用 `var(--info)` / `var(--info-soft)`，保持透明边框和无阴影，选择和路由行为不变。前端 `104/104`、类型检查、构建和 `git diff --check` 已通过。本轮尚未创建 Release 或部署，生产仍为 `v0.2.86-kreeper-20260929-apple-soft`。

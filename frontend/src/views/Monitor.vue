@@ -174,7 +174,7 @@
                     <circle class="gauge-fg" cx="32" cy="32" r="26"
                       :stroke="chartColorForLevel(g.lvl)"
                       :stroke-dasharray="GAUGE_C"
-                      :stroke-dashoffset="gaugeAnimated ? g.off : GAUGE_C" />
+                      :stroke-dashoffset="g.off" />
                   </svg>
                   <div class="gauge-center">
                     <span class="gauge-val" :class="g.lvl">{{ g.val.toFixed(0) }}<i>%</i></span>
@@ -374,7 +374,6 @@ const auth = useAuthStore()
 const servers = ref<Server[]>([])
 const loading = ref(false)
 const refreshing = ref(false)
-const gaugeAnimated = ref(false)
 let timer: ReturnType<typeof setInterval> | null = null
 
 const upstreamOrder = ref<UpstreamProvider[]>([...defaultUpstreamOrder])
@@ -592,17 +591,11 @@ function sparkArea(arr: number[]) {
 
 async function fetchData() {
   try {
-    // 重置动画状态，让新出现的圆环从头播放
-    gaugeAnimated.value = false
     const [pub, spk, adminServers] = await Promise.all([
       apiGet<{ servers: Server[] }>('/api/monitor/public'),
       apiGet<{ servers: Spark[] }>('/api/monitor/public/sparklines?range=1h').catch(() => null),
       auth.isAdmin ? apiList<any>('/api/admin/monitor/servers').catch(() => []) : Promise.resolve([] as any[]),
     ])
-    // 在 nextTick 后触发动画
-    await nextTick()
-    gaugeAnimated.value = true
-
     const sparks: Record<string, Spark> = {}
     if (spk?.servers) for (const s of spk.servers) sparks[s.name] = s
     const list = Array.isArray(pub?.servers) ? [...pub.servers] : []

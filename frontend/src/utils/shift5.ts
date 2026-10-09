@@ -75,10 +75,13 @@ function finish(token: number) {
   if (overlay?.isConnected) overlay.remove()
   overlay = null
   activeScope = 'full'
-  pendingRoot?.classList.remove('qz-shift5-enter-pending')
+  const revealedRoot = pendingRoot
+  revealedRoot?.classList.remove('qz-shift5-enter-pending')
   pendingRoot = null
   document.documentElement.classList.remove(PENDING_CLASS)
   leavePromise = null
+  // 组件绘制在页面揭示后开始，避免短动画全部发生在遮罩下面。
+  revealedRoot?.dispatchEvent(new Event('qz-shift5-entered', { bubbles: true }))
 }
 
 function waitForReady(root: HTMLElement) {

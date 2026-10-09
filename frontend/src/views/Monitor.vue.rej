@@ -1,8 +1,0 @@
-@@ -374,6 +374,7 @@
- const servers = ref<Server[]>([])
- const loading = ref(false)
- const refreshing = ref(false)
-+const gaugeAnimated = ref(false)
- 
- async function fetchData() {
-   try {

@@ -22,3 +22,14 @@ SHA256SUMS.txt
 # TypeScript incremental build cache — a build artifact, must not be tracked.
 /frontend/tsconfig.tsbuildinfo
 .codegraph/
+
+# Local previews, diagnostics, and editor/OS artifacts are not release source.
+.DS_Store
+/.local/
+/.playwright-cli/
+/output/
+/qingzhou-arm64
+/qingzhou-deploy
+*.orig
+*.rej
+*.backup

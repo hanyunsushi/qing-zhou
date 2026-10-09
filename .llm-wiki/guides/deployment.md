@@ -5,6 +5,15 @@ updated: 2026-10-09
 
 ## Dual-ring dashboard rollout
 
+Production uses embedded `frontend/dist` and an explicit release version; do not
+work around motion bugs by setting `QZ_WEB_DIR` or appending `Environment` under
+systemd's `[Install]` section. Compare the unit against its verified backup and
+preserve `qingzhou.env`. Check `systemctl show -p Environment` and the running
+process environment rather than assuming that a line in the unit is effective.
+Local preview binaries, diagnostic logs, screenshots and patch rejects are
+ignored and excluded from the release source, while their local copies can be
+retained. Retired erroneous releases must not remain the recommended version.
+
 The dashboard dual-ring change is released from an isolated source archive;
 only the traffic/Edge view and its regression tests enter the application
 change. The release workflow builds Vite assets before Go embedding and resolves
