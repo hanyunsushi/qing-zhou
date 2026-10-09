@@ -592,11 +592,17 @@ function sparkArea(arr: number[]) {
 
 async function fetchData() {
   try {
+    // 重置动画状态，让新出现的圆环从头播放
+    gaugeAnimated.value = false
     const [pub, spk, adminServers] = await Promise.all([
       apiGet<{ servers: Server[] }>('/api/monitor/public'),
       apiGet<{ servers: Spark[] }>('/api/monitor/public/sparklines?range=1h').catch(() => null),
       auth.isAdmin ? apiList<any>('/api/admin/monitor/servers').catch(() => []) : Promise.resolve([] as any[]),
     ])
+    // 在 nextTick 后触发动画
+    await nextTick()
+    gaugeAnimated.value = true
+
     const sparks: Record<string, Spark> = {}
     if (spk?.servers) for (const s of spk.servers) sparks[s.name] = s
     const list = Array.isArray(pub?.servers) ? [...pub.servers] : []
@@ -769,9 +775,6 @@ onMounted(async () => {
   await fetchData()
   loading.value = false
   timer = setInterval(fetchData, 30000)
-  await nextTick()
-  // 触发仪表盘圆环首次加载动画
-  gaugeAnimated.value = true
   loadHeatmap('24h')
   await nextTick()
   moveHeatIndicatorToSelected()
