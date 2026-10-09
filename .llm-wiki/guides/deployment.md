@@ -1,6 +1,6 @@
 ---
 title: QingZhou Deployment and Artifact Retention
-updated: 2026-10-09
+updated: 2026-10-10
 ---
 
 ## Dual-ring dashboard rollout

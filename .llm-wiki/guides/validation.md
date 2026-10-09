@@ -1,6 +1,6 @@
 ---
 title: Validation Guide
-updated: 2026-10-09
+updated: 2026-10-10
 ---
 
 ## Dashboard dual usage ring release gate
@@ -13,9 +13,9 @@ presence of a CSS transition or a successful asset HTTP response. Test normal
 and delayed dashboard responses, refreshed data, zero/missing/unlimited quotas,
 route re-entry, desktop and 390px/360px layouts before rollout.
 
-The exact release source is exported with `git archive` before validation, so
-uncommitted monitor or provider-documentation changes cannot enter the build.
-`go test ./...`, 112 frontend tests, `vue-tsc -b`, Vite build and
+Release source is checked against `git archive`; its dashboard assets match
+the validated build. Only explicitly staged files enter the release commit.
+`go test ./...`, 116 frontend tests, `vue-tsc -b`, Vite build and
 `git diff --check` pass. The known ECharts asynchronous chunk warning remains.
 
 Local fixture QA covers desktop, 390px and 360px widths, independent ring
