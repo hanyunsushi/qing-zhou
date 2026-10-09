@@ -82,35 +82,45 @@
       </n-list>
     </n-card>
 
-    <!-- 主区域：左侧用量环，右侧流量趋势 -->
+    <!-- 主区域：左侧双圈用量环，右侧流量趋势 -->
     <div class="dash-grid">
       <n-card size="small" class="sec usage-card" style="margin-bottom:0;">
-        <template #header><span class="sec-title">流量用量</span></template>
+        <template #header><span class="sec-title">用量概览</span></template>
         <div class="ring-wrap">
+          <!-- 区分-状态牌：外圈流量、内圈 Edge 日次数，独立按使用率着色。 -->
           <div class="ring-box">
-            <svg viewBox="0 0 140 140" class="ring-svg">
-              <circle cx="70" cy="70" r="58" fill="none" stroke="var(--bg-soft)" stroke-width="12" />
+            <svg viewBox="0 0 140 140" class="ring-svg" role="img" :aria-label="ringAriaLabel">
+              <circle cx="70" cy="70" r="58" fill="none" :stroke="ringColor" stroke-width="14" class="ring-track" />
               <circle
-                cx="70" cy="70" r="58" fill="none" :stroke="ringColor" stroke-width="12" stroke-linecap="round"
-                :stroke-dasharray="CIRC" :stroke-dashoffset="ringOffset" class="ring-arc"
+                v-if="metered && usedPct > 0"
+                cx="70" cy="70" r="58" fill="none" :stroke="ringColor" stroke-width="14" stroke-linecap="round"
+                :stroke-dasharray="CIRC" :stroke-dashoffset="ringOffset" class="ring-arc ring-arc--traffic"
+              />
+              <circle cx="70" cy="70" r="43" fill="none" :stroke="edgeRingColor" stroke-width="14" class="ring-track" />
+              <circle
+                v-if="edgeMetered && edgeQuotaPct > 0"
+                cx="70" cy="70" r="43" fill="none" :stroke="edgeRingColor" stroke-width="14" stroke-linecap="round"
+                :stroke-dasharray="EDGE_CIRC" :stroke-dashoffset="edgeRingOffset" class="ring-arc ring-arc--edge"
               />
             </svg>
-            <div class="ring-center">
-              <template v-if="metered">
-                <span class="ring-pct">{{ ringPctText }}<i>%</i></span>
-                <span class="ring-label">已使用</span>
-              </template>
-              <template v-else>
-                <span class="ring-pct ring-inf">—</span>
-                <span class="ring-label">暂无额度</span>
-              </template>
+            <div class="ring-center" aria-hidden="true">
+              <div class="ring-center-item">
+                <span class="ring-pct" :class="{ numeric: metered }">{{ metered ? ringPctText : '—' }}<i v-if="metered">%</i></span>
+                <span class="ring-label">流量</span>
+              </div>
+              <div class="ring-center-item">
+                <span class="ring-pct" :class="{ numeric: edgeMetered }">{{ edgeRequests.unlimited ? '不限' : edgeMetered ? edgeQuotaPct : '—' }}<i v-if="edgeMetered">%</i></span>
+                <span class="ring-label">Edge 次数</span>
+              </div>
             </div>
           </div>
-          <div class="ring-foot">{{ ringFoot }}</div>
-          <div class="edge-quota">
-            <div class="edge-quota-head"><span>Edge 每日次数</span><b>{{ edgeQuotaValue }}</b></div>
-            <div class="edge-quota-track"><i :style="{ width: edgeQuotaPct + '%' }" /></div>
-            <div class="edge-quota-foot">{{ edgeQuotaFoot }}</div>
+          <div class="ring-foot">
+            <div class="ring-foot-row"><span class="ring-foot-label">流量</span><span :class="{ numeric: metered }">{{ ringFoot }}</span></div>
+            <div class="ring-foot-row">
+              <span class="ring-foot-label">Edge 今日</span>
+              <span v-if="edgeRequests.unlimited"><span class="numeric">{{ edgeQuotaUsed }}</span> 次 / 不限额</span>
+              <span v-else :class="{ numeric: edgeMetered }">{{ edgeQuotaFoot }}</span>
+            </div>
           </div>
         </div>
         <n-space vertical size="small" style="margin-top:14px;">
@@ -194,16 +204,17 @@ const greeting = computed(() => {
 // 所有流量额度都是有限数字；total=0 就是没有额度。
 const traffic = computed(() => dash.value.traffic || {})
 const edgeRequests = computed(() => dash.value.edge_requests || {})
-const edgeQuotaValue = computed(() => edgeRequests.value.unlimited ? '不限' : `${Number(edgeRequests.value.remaining || 0).toLocaleString()} 次`)
+const edgeMetered = computed(() => !edgeRequests.value.unlimited && Number(edgeRequests.value.total || 0) > 0)
+const edgeQuotaUsed = computed(() => Number(edgeRequests.value.used || 0).toLocaleString('zh-CN'))
 const edgeQuotaPct = computed(() => {
   const total = Number(edgeRequests.value.total || 0)
-  if (!total || edgeRequests.value.unlimited) return 0
+  if (!edgeMetered.value) return 0
   return Math.min(100, Math.max(0, Math.round(Number(edgeRequests.value.used || 0) / total * 1000) / 10))
 })
 const edgeQuotaFoot = computed(() => {
-  if (edgeRequests.value.unlimited) return `今日已用 ${Number(edgeRequests.value.used || 0).toLocaleString()} 次 · 不限额`
+  if (edgeRequests.value.unlimited) return `${edgeQuotaUsed.value} 次 / 不限额`
   const total = Number(edgeRequests.value.total || 0)
-  return total ? `今日已用 ${Number(edgeRequests.value.used || 0).toLocaleString()} / ${total.toLocaleString()} 次` : '暂无 Edge 日次数额度'
+  return edgeMetered.value ? `${edgeQuotaUsed.value} / ${total.toLocaleString('zh-CN')} 次` : '暂无 Edge 日次数额度'
 })
 // metered = 存在可以算百分比的额度。没有它，环形图和进度条都无意义。
 const metered = computed(() => (traffic.value.total || 0) > 0)
@@ -211,6 +222,8 @@ const usedPct = computed(() => pct(traffic.value.used, traffic.value.total))
 const usedBadge = computed(() => metered.value && usedPct.value > 0 ? '已用 ' + usedPct.value + '%' : '')
 // 区分-状态牌：额度环按 Apple 状态色表达使用率，未配置时使用非激活色。
 const ringColor = computed(() => metered.value ? chartColorForPercent(usedPct.value) : CHART_STATUS_COLORS.inactive)
+const edgeRingColor = computed(() => edgeMetered.value ? chartColorForPercent(edgeQuotaPct.value) : CHART_STATUS_COLORS.inactive)
+const ringAriaLabel = computed(() => `流量${metered.value ? `已使用 ${usedPct.value}%` : '暂无额度'}；Edge 今日次数${edgeRequests.value.unlimited ? '不限额' : edgeMetered.value ? `已使用 ${edgeQuotaPct.value}%` : '暂无额度'}`)
 const badgeColor = computed(() => metered.value
   ? (usedPct.value > 90 ? STATUS_COLORS.error : usedPct.value > 70 ? STATUS_COLORS.warning : STATUS_COLORS.success)
   : STATUS_COLORS.inactive)
@@ -230,6 +243,7 @@ const trafficSub = computed(() => {
 
 // 环形：dashoffset 过渡比改 dasharray 更平滑（后者会连虚线间隔一起跳）
 const CIRC = 2 * Math.PI * 58
+const EDGE_CIRC = 2 * Math.PI * 43
 const dRingPct = useCountUp(() => (metered.value ? usedPct.value : 0), { round: false })
 const ringPctText = computed(() => {
   const v = dRingPct.value
@@ -239,6 +253,7 @@ const ringOffset = computed(() => {
   if (!metered.value) return CIRC
   return CIRC * (1 - Math.min(usedPct.value, 100) / 100)
 })
+const edgeRingOffset = computed(() => EDGE_CIRC * (1 - edgeQuotaPct.value / 100))
 const ringFoot = computed(() => {
   if (!dash.value.traffic) return '—'
   if (metered.value) return `${fmtBytes(traffic.value.used)} / ${fmtBytes(traffic.value.total)}`
@@ -406,23 +421,20 @@ a{color:var(--accent)}
 .dash-main{display:flex;flex-direction:column;gap:16px;min-width:0}
 .usage-card :deep(.n-card__content){padding-bottom:10px}
 
-/* 环形 */
+/* 区分-状态牌：同心双圈用量，颜色取共享 Apple 状态色而非分类图表色。 */
 .ring-wrap{display:flex;flex-direction:column;align-items:center;padding:4px 0 2px}
-.ring-box{position:relative;width:150px;height:150px}
+.ring-box{position:relative;width:172px;height:172px;max-width:100%;flex-shrink:0}
 .ring-svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring-track{opacity:.14}
 .ring-arc{transition:stroke-dashoffset .8s cubic-bezier(.22,1,.36,1),stroke .4s ease}
-.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.ring-pct{font-size:26px;font-weight:750;letter-spacing:0;line-height:1;font-variant-numeric:tabular-nums}
-.ring-pct i{font-style:normal;font-size:15px;font-weight:650;margin-left:1px}
-.ring-inf{font-size:30px}
-.ring-label{font-size:11px;color:var(--text-3);margin-top:4px}
-.ring-foot{font-size:12px;color:var(--text-2);margin-top:10px;text-align:center}
-.edge-quota{width:100%;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:12px}
-.edge-quota-head,.edge-quota-foot{display:flex;justify-content:space-between;gap:8px;color:var(--text-2)}
-.edge-quota-head b{color:var(--text);font-variant-numeric:tabular-nums}
-.edge-quota-track{height:4px;margin:7px 0 6px;border-radius:var(--r);background:var(--bg-soft);overflow:hidden}
-.edge-quota-track i{display:block;height:100%;background:var(--warn);border-radius:var(--r);transition:width .6s cubic-bezier(.22,1,.36,1)}
-.edge-quota-foot{font-size:11px;color:var(--text-3)}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.ring-center-item{display:flex;flex-direction:column;align-items:center;gap:0}
+.ring-pct{display:flex;align-items:baseline;font-size:18px;font-weight:750;letter-spacing:0;line-height:20px;text-align:center}
+.ring-pct i{font-style:normal;font-size:11px;font-weight:650;margin-left:1px}
+.ring-label{font-size:10px;line-height:12px;color:var(--text-3)}
+.ring-foot{display:grid;gap:6px;width:100%;font-size:12px;line-height:16px;color:var(--text-2);margin-top:10px;text-align:center}
+.ring-foot-row{display:flex;justify-content:center;align-items:baseline;flex-wrap:wrap;gap:4px 8px;min-width:0}
+.ring-foot-label{color:var(--text-3)}
 .usage-card :deep(.n-space){gap:6px!important}
 
 /* 趋势页脚汇总 */
