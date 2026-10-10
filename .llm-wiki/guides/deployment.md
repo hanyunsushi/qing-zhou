@@ -14,7 +14,7 @@ Local preview binaries, diagnostic logs, screenshots and patch rejects are
 ignored and excluded from the release source, while their local copies can be
 retained. Retired erroneous releases must not remain the recommended version.
 
-The dashboard dual-ring change is released from an isolated source archive;
+Circle style/motion changes are released from an isolated source archive;
 only the requested view/components and their regression tests enter the application
 change. The release workflow builds Vite assets before Go embedding and resolves
 the selected release tag to its exact commit.
