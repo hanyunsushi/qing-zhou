@@ -549,6 +549,13 @@ test('admin monitor summary SVGs use the same neutral icon treatment', () => {
   assert.doesNotMatch(source, /class="sum-ic" style=/)
 })
 
+test('monitor monthly price keeps currency and amount numeric but the unit in body font', () => {
+  const monitor = read('src/views/Monitor.vue')
+  assert.match(monitor, /class="tag price"><span class="numeric">¥\{\{ Number\(s\.price\)\.toFixed\(2\) \}\}<\/span><span class="price-unit">\/月<\/span>/)
+  assert.match(monitor, /\.tag\.price \{[^}]*font-family: var\(--ff-body\)/)
+  assert.doesNotMatch(monitor, /\.tag\.price \{[^}]*font-family: var\(--ff-mono\)/)
+})
+
 test('semantic status colors use Apple soft badges and chart state semantics', () => {
   const globalCss = read('src/styles/global.css')
   const monitor = read('src/views/Monitor.vue')

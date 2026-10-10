@@ -54,6 +54,13 @@ test('home resource rings match dual-ring geometry and use one animated value fo
   assert.doesNotMatch(monitor, /gaugeAnimated|GAUGE_C|transition: stroke-dashoffset/)
 })
 
+test('resource percentages remain neutral while only arcs and tracks carry status color', () => {
+  assert.match(gauge, /\.gauge-val \{[^}]*color: var\(--text\)/)
+  assert.doesNotMatch(gauge, /class="gauge-val"[^>]*:style=/)
+  assert.match(gauge, /class="gauge-bg"[^>]*:stroke="color"/)
+  assert.match(gauge, /class="gauge-fg"[\s\S]*?:stroke="color"/)
+})
+
 test('each resource starts after reveal, refreshes from its current value, and cleans up', async () => {
   const c = clock(), scope = effectScope()
   const props = [41, 73, 95].map(percent => reactive({ percent, ready: false, label: 'resource', sub: '' }))

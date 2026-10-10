@@ -9,7 +9,9 @@ updated: 2026-10-10
 controlled frame clock. It covers the reveal gate, synchronized arc/text,
 continuous increases/decreases, zero/full/decimal/invalid values, 70/90 status
 thresholds, late mounts, reduced motion, background fallback and disposal.
-The frontend suite contains 121 passing tests; typecheck, Vite build,
+The frontend suite contains 123 passing tests, including neutral percentage
+text independent of status-colored arcs and numeric/body price-label roles;
+typecheck, Vite build,
 `go test ./...` and `git diff --check` pass. The existing ECharts async chunk
 warning remains non-blocking.
 

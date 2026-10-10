@@ -9,6 +9,11 @@ updated: 2026-10-10
 
 The monitor's upstream balance card keeps provider names, status text (`查询中` / `未配置`), metadata, timestamps, and drag hints in `var(--ff-body)`. Only actual numeric balances and other tabular values use `var(--ff-mono)`. The status-text class is intentionally separate from the numeric balance class so a loading or configuration state cannot inherit the mono role.
 
+The monthly-price badge is a mixed numeric/body label: `.tag.price` uses
+`var(--ff-body)`, its currency and amount are scoped to `.numeric`, and
+`.price-unit` (`/月`) inherits the body role. Do not set the whole badge to
+mono or change the global font stack to fix this local role boundary.
+
 ## Dashboard dual usage rings
 
 - `frontend/src/views/UserDashboard.vue` 的“用量概览”使用同心双圈：外圈为套餐流量使用率，内圈为当前用户今日 Edge 请求使用率，界面统一称“Edge 次数”。布局参考 Apple 健身环的同心几何，不引入另一套视觉 token 或图表分类色。SVG 外圈半径 58、内圈半径 43，两圈线宽均为 14，圈间净空为 1 个 viewBox 单位。
@@ -24,7 +29,7 @@ See Also: `frontend/tests/dashboard-usage.test.mjs`, `frontend/tests/dashboard-m
 ## Homepage resource rings
 
 - `Monitor.vue` 每台服务器的 CPU、内存、磁盘保持三个独立单圈和原有三列位置，不合并指标。`ResourceGauge.vue` 使用双圈外环同款几何（140 viewBox、半径 58、线宽 14）、圆头进度和状态色 14% 透明轨道；数字使用 mono、说明文字使用正文角色。
-- 各圈按真实使用率独立调用 `chartColorForPercent`，阈值与双圈一致。中心保留一位小数以表达低于 1% 的 CPU/资源占用；零值不绘制前景圆弧，100% 为整圈。SVG 的无障碍标签使用准确终值。
+- 各圈按真实使用率独立调用 `chartColorForPercent`，阈值与双圈一致，状态色仅用于圆弧和轨道。中心百分比及 `%` 固定使用 `var(--text)`，不跟随状态变色；保留一位小数以表达低于 1% 的 CPU/资源占用。零值不绘制前景圆弧，100% 为整圈。SVG 的无障碍标签使用准确终值。
 - `Monitor.vue` 等待所属页面 `qz-shift5-entered` 后启用各圈；每个 keyed 组件独立使用 `useCountUp`，1100ms 内用同一逐帧值更新圆弧和中心数字。刷新从当前值过渡，迟到指标/新服务器独立入场，其他圈不回零。组件卸载清理帧与兜底定时器，页面卸载移除揭示监听；减弱动态效果直接显示终值。
 - 颜色 transition 仅控制 stroke；不为逐帧 dashoffset 叠加 CSS transition。原监控接口、30s 自动刷新、汇总、其他资源条和卡片布局保持不变。
 

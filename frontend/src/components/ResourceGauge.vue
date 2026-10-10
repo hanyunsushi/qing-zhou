@@ -8,7 +8,7 @@
           :stroke="color" :stroke-dasharray="CIRC" :stroke-dashoffset="offset" />
       </svg>
       <div class="gauge-center" aria-hidden="true">
-        <span class="gauge-val" :style="{ color }">{{ dPercent.toFixed(1) }}<i>%</i></span>
+        <span class="gauge-val">{{ dPercent.toFixed(1) }}<i>%</i></span>
       </div>
     </div>
     <div class="gauge-meta">
@@ -40,7 +40,8 @@ const offset = computed(() => CIRC * (1 - dPercent.value / 100))
 .gauge-bg { fill: none; stroke-width: 14; opacity: .14; }
 .gauge-fg { fill: none; stroke-width: 14; stroke-linecap: round; transition: stroke .4s ease; }
 .gauge-center { display: grid; place-items: center; pointer-events: none; }
-.gauge-val { display: flex; align-items: baseline; font-size: 13px; font-weight: 750; font-family: var(--ff-mono); font-variant-numeric: tabular-nums; letter-spacing: 0; line-height: 1; }
+/* 数字展示：圈内百分比保持正文颜色，状态色只用于圆弧和轨道。 */
+.gauge-val { display: flex; align-items: baseline; color: var(--text); font-size: 13px; font-weight: 750; font-family: var(--ff-mono); font-variant-numeric: tabular-nums; letter-spacing: 0; line-height: 1; }
 .gauge-val i { font-size: 9px; font-weight: 650; font-style: normal; margin-left: 1px; }
 .gauge-meta { display: flex; flex-direction: column; gap: 1px; margin-top: 3px; width: 100%; min-width: 0; }
 .gauge-label { font-size: 11px; font-weight: 650; color: var(--text-2); }
