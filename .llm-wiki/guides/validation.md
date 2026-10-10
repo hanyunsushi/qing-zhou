@@ -3,6 +3,23 @@ title: Validation Guide
 updated: 2026-10-10
 ---
 
+## Dashboard automatic renewal reminder gate
+
+`frontend/tests/dashboard-alerts.test.mjs` executes the dashboard's actual Vue
+computed logic. It covers enabled/disabled/missing preferences, reactive refresh,
+nearest-plan selection, mixed simultaneous expiries, ineligible buckets, the
+seven-day boundary, and the existing banned/exhausted/no-active warnings.
+The complete frontend suite has 130 passing tests; typecheck, Vite build and
+`go test ./...` pass with the existing ECharts asynchronous chunk warning.
+
+Browser acceptance checks the information message and `/sub` link with renewal
+enabled, the manual-renewal warning with renewal disabled, refresh-driven state
+changes, and desktop/390x844/360x800 wrapping without overflow. Validate the
+existing subscription control by reading its checked state, never by toggling a
+production financial preference. Public dashboard assets must match the isolated
+build before claiming deployment. Runtime proof belongs to
+[project authority](../../agent.md).
+
 ## Homepage resource ring gate
 
 `resource-gauge.test.mjs` executes the component's computed/countup logic with a

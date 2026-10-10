@@ -1,12 +1,30 @@
 ---
 title: Subscription Auto Renewal
-updated: 2026-09-16
+updated: 2026-10-10
 source_commit: 834cd3e
 ---
 
 # Subscription Auto Renewal
 
 Automatic renewal is a user opt-out feature for real subscription plans. It is stored as `user_plans.auto_renew`, defaults to `1` for new and migrated rows, and is exposed on every user-plan response as `auto_renew`.
+
+## Dashboard expiry reminders
+
+`frontend/src/views/UserDashboard.vue` reads `auto_renew` from the existing
+dashboard plan response. Within the existing seven-day reminder window, the
+nearest active expiry determines the message, not another active or queued plan.
+An opted-in real package plan gets an information alert explaining automatic
+renewal and linking to `/sub` (订阅管理) for cancellation. A disabled or missing
+preference retains the warning and `/shop` manual-renewal link.
+
+When multiple plans share the nearest expiry, all opted-in plans get the automatic
+renewal message; mixed settings report the enabled count and link to subscription
+management. Pools and package-less buckets cannot promise automatic renewal.
+The message reflects the saved preference, not a guarantee of a successful charge;
+the scheduler and failure conditions below are unchanged.
+
+See [User Plans API](../apis/user-plans.md) and the
+[validation guide](../guides/validation.md) for response and test contracts.
 
 ## Renewal-line semantics
 

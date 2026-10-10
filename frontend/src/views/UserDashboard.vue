@@ -24,7 +24,7 @@
       </div>
     </div>
 
-    <!-- 状态提醒：按套餐维度判定，不再拿单一 expiry_at 代表整个账号 -->
+    <!-- 状态提醒：按套餐到期与自动续订状态区分信息提示和手动续费提醒。 -->
     <transition-group name="alert" tag="div">
       <n-alert v-for="a in alerts" :key="a.key" :type="a.type" class="dash-alert">
         {{ a.text }}
@@ -275,6 +275,7 @@ const nextExpiry = computed<number | null>(() => {
   return ts.length ? Math.min(...ts) : null
 })
 const nextExpiryDays = computed(() => daysLeft(nextExpiry.value))
+const nextExpiringPlans = computed(() => activePlans.value.filter(p => p.expiry_at === nextExpiry.value))
 const planSub = computed(() => {
   if (!plans.value.length) return '还没有套餐，去商城看看'
   if (!activeCount.value) return '全部已到期或用尽'
@@ -300,12 +301,25 @@ const alerts = computed(() => {
       to: '/shop', action: '去续费',
     })
   } else if (nextExpiryDays.value !== null && nextExpiryDays.value <= 7) {
-    const many = activeCount.value > 1
-    out.push({
-      key: 'expiring', type: 'warning',
-      text: `${many ? '最近一份套餐' : '套餐'}将在 ${Math.max(nextExpiryDays.value, 0)} 天后到期，`,
-      to: '/shop', action: '去续费',
-    })
+    const expiring = nextExpiringPlans.value
+    const renewCount = expiring.filter(p => p.kind === 'plan' && p.package_id > 0 && p.auto_renew === true).length
+    const subject = activeCount.value === 1 ? '套餐' : expiring.length > 1 ? '最近到期的套餐' : '最近一份套餐'
+    const text = `${subject}将在 ${Math.max(nextExpiryDays.value, 0)} 天后到期`
+    if (renewCount === expiring.length) {
+      out.push({
+        key: 'expiring', type: 'info',
+        text: `${text}并自动续订，如需取消，请前往`,
+        to: '/sub', action: '订阅管理',
+      })
+    } else if (renewCount > 0) {
+      out.push({
+        key: 'expiring', type: 'warning',
+        text: `${text}，其中 ${renewCount} 份已开启自动续订，其余需手动续费，请前往`,
+        to: '/sub', action: '订阅管理',
+      })
+    } else {
+      out.push({ key: 'expiring', type: 'warning', text: `${text}，`, to: '/shop', action: '去续费' })
+    }
   }
   if (metered.value && (traffic.value.used || 0) >= traffic.value.total) {
     out.push({ key: 'exhausted', type: 'warning', text: '流量已用尽，', to: '/shop', action: '购买流量包' })
