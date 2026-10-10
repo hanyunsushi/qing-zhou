@@ -1,5 +1,5 @@
 <template>
-  <div class="monitor-page">
+  <div ref="monitorRoot" class="monitor-page">
     <AppHeader />
 
     <!-- SVG 渐变定义（供仪表盘 / 迷你图引用） -->
@@ -165,25 +165,10 @@
             </div>
 
             <template v-if="s.metrics">
-              <!-- 三仪表盘 -->
+              <!-- 区分-状态牌：三资源圈沿用用量双圈的样式与绘制动画。 -->
               <div class="gauges">
-                <div class="gauge" v-for="g in gauges(s)" :key="g.key">
-                  <svg viewBox="0 0 64 64" class="gauge-svg">
-                    <circle class="gauge-bg" cx="32" cy="32" r="26" />
-                    <!-- 区分-状态牌：资源仪表使用 Apple 状态色。 -->
-                    <circle class="gauge-fg" cx="32" cy="32" r="26"
-                      :stroke="chartColorForLevel(g.lvl)"
-                      :stroke-dasharray="GAUGE_C"
-                      :stroke-dashoffset="g.off" />
-                  </svg>
-                  <div class="gauge-center">
-                    <span class="gauge-val" :class="g.lvl">{{ g.val.toFixed(0) }}<i>%</i></span>
-                  </div>
-                  <div class="gauge-meta">
-                    <span class="gauge-label">{{ g.key }}</span>
-                    <span class="gauge-sub">{{ g.sub }}</span>
-                  </div>
-                </div>
+                <ResourceGauge v-for="g in gauges(s)" :key="g.key"
+                  :label="g.key" :percent="g.val" :sub="g.sub" :ready="ringsReady" />
               </div>
 
               <!-- CPU 迷你趋势图 -->
@@ -325,10 +310,11 @@ import { fmtBytes, fmtRequests, fmtUptime, timeAgo, pct } from '@/utils/format'
 import { defaultUpstreamOrder, normalizeUpstreamOrder, type UpstreamProvider } from '@/utils/upstreams'
 import { useCountUp } from '@/utils/countup'
 import AppHeader from '@/components/AppHeader.vue'
+import ResourceGauge from '@/components/ResourceGauge.vue'
 import ociLogo from '@/assets/provider-oci.svg'
 import cloudflareLogo from '@/assets/provider-cloudflare.svg'
 import * as echarts from '@/utils/echarts'
-import { CHART_STATUS_COLORS, chartColorForLevel } from '@/utils/status-colors'
+import { CHART_STATUS_COLORS } from '@/utils/status-colors'
 
 interface ServerMetrics {
   cpu_percent: number; mem_used: number; mem_total: number
@@ -553,17 +539,13 @@ function fmtShortDate(ts: number, withTime = false) {
   return withTime ? `${date} ${pad(d.getHours())}:${pad(d.getMinutes())}` : date
 }
 
-// 仪表盘几何
-const GAUGE_R = 26
-const GAUGE_C = 2 * Math.PI * GAUGE_R
-function dashOff(v: number) { return GAUGE_C * (1 - Math.min(Math.max(v, 0), 100) / 100) }
 function gauges(s: Server) {
   const cpu = s.metrics!.cpu_percent
   const mp = memPct(s), dp = diskPct(s)
   return [
-    { key: 'CPU', val: cpu, lvl: lvl(cpu), off: dashOff(cpu), sub: '' },
-    { key: '内存', val: mp, lvl: lvl(mp), off: dashOff(mp), sub: `${fmtBytes(s.metrics!.mem_used)} / ${fmtBytes(s.metrics!.mem_total)}` },
-    { key: '磁盘', val: dp, lvl: lvl(dp), off: dashOff(dp), sub: `${fmtBytes(s.metrics!.disk_used)} / ${fmtBytes(s.metrics!.disk_total)}` },
+    { key: 'CPU', val: cpu, sub: '' },
+    { key: '内存', val: mp, sub: `${fmtBytes(s.metrics!.mem_used)} / ${fmtBytes(s.metrics!.mem_total)}` },
+    { key: '磁盘', val: dp, sub: `${fmtBytes(s.metrics!.disk_used)} / ${fmtBytes(s.metrics!.disk_total)}` },
   ]
 }
 
@@ -761,7 +743,14 @@ function onWinResize() {
   moveHeatIndicatorToSelected()
 }
 
+const monitorRoot = ref<HTMLElement | null>(null)
+const ringsReady = ref(false)
+function handlePageRevealed(event: Event) {
+  if (event.target instanceof HTMLElement && monitorRoot.value && event.target.contains(monitorRoot.value)) ringsReady.value = true
+}
+
 onMounted(async () => {
+  document.addEventListener('qz-shift5-entered', handlePageRevealed)
   loading.value = true
   tickClock()
   clockTimer = setInterval(tickClock, 1000)
@@ -770,6 +759,10 @@ onMounted(async () => {
   timer = setInterval(fetchData, 30000)
   loadHeatmap('24h')
   await nextTick()
+  // 无页面过渡的挂载路径也能绘制；正常路由等待揭示完成事件。
+  if (!document.documentElement.classList.contains('qz-shift5-route-transition-pending')
+    && !monitorRoot.value?.closest('.qz-shift5-enter-pending')
+    && !document.querySelector('.qz-shift5-route-transition')) ringsReady.value = true
   moveHeatIndicatorToSelected()
   if (auth.isAdmin) void loadUpstreamBalances()
   upstreamTimer = setInterval(() => {
@@ -778,6 +771,7 @@ onMounted(async () => {
   window.addEventListener('resize', onWinResize)
 })
 onUnmounted(() => {
+  document.removeEventListener('qz-shift5-entered', handlePageRevealed)
   if (timer) clearInterval(timer)
   if (clockTimer) clearInterval(clockTimer)
   if (upstreamTimer) clearInterval(upstreamTimer)
@@ -913,21 +907,8 @@ onUnmounted(() => {
 .tag.expiry.warn { background: var(--warn-soft); color: var(--warn); }
 .tag.expiry.crit { background: var(--danger-soft); color: var(--danger); }
 
-/* 仪表盘 */
-.gauges { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 2px 12px 12px; }
-.gauge { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; }
-.gauge-svg { width: 100%; max-width: 76px; aspect-ratio: 1; transform: rotate(-90deg); }
-.gauge-bg { fill: none; stroke: var(--bg); stroke-width: 5; }
-.gauge-fg { fill: none; stroke-width: 5; stroke-linecap: round; transition: stroke-dashoffset 1.15s var(--ease-emphasized); }
-.gauge-center { position: absolute; top: 0; left: 0; right: 0; display: grid; place-items: center; pointer-events: none; }
-.gauge-svg + .gauge-center { height: 100%; max-height: 76px; }
-.gauge-center { height: min(76px, 100%); }
-.gauge-val { font-size: 15px; font-weight: 750; color: var(--text); font-family: var(--ff-mono); font-variant-numeric: tabular-nums; line-height: 1; }
-.gauge-val i { font-size: 9px; font-weight: 600; font-style: normal; color: var(--text-3); margin-left: 1px; }
-.gauge-val.warn { color: var(--chart-warning); } .gauge-val.crit { color: var(--chart-error); }
-.gauge-meta { display: flex; flex-direction: column; gap: 1px; margin-top: 3px; width: 100%; }
-.gauge-label { font-size: 11px; font-weight: 650; color: var(--text-2); }
-.gauge-sub { font-size: 9.5px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+/* 区分-状态牌：固定三列资源圈，内部几何与数字由 ResourceGauge 维护。 */
+.gauges { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; padding: 2px 12px 12px; }
 
 /* 迷你趋势图 */
 .spark-wrap { position: relative; margin: 0 16px 12px; height: 40px; border-radius: var(--r); background: var(--bg-soft); overflow: hidden; }

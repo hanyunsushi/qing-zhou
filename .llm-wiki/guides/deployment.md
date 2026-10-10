@@ -15,7 +15,7 @@ ignored and excluded from the release source, while their local copies can be
 retained. Retired erroneous releases must not remain the recommended version.
 
 The dashboard dual-ring change is released from an isolated source archive;
-only the traffic/Edge view and its regression tests enter the application
+only the requested view/components and their regression tests enter the application
 change. The release workflow builds Vite assets before Go embedding and resolves
 the selected release tag to its exact commit.
 
@@ -25,7 +25,8 @@ binary, environment, service units and sing-box configuration. It atomically
 replaces the panel and restarts only `qingzhou.service`; a failed local health
 check restores the old binary. Acceptance compares the active binary hash,
 configuration hashes and the unchanged sing-box/Tunnel process IDs, then
-checks public assets and the authenticated desktop/mobile dashboard. Current
+checks public assets and the actual desktop/mobile page modified by the release
+(dashboard dual rings or homepage resource rings). Current
 version, checksum, backup path and verification evidence are owned by the
 [project authority](../../agent.md).
 

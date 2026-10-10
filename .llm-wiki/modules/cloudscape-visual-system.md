@@ -17,9 +17,18 @@ The monitor's upstream balance card keeps provider names, status text (`查询�
 - Edge 数据继续来自 `GET /api/user/dashboard` 的 `edge_requests`，不是上游管理的 Cloudflare 账户级用量。流量按套餐计量周期、Edge 次数按 UTC 日重置，两者只在同一模块展示，不混合计量或相加。
 - 无 Edge 额度时内圈为灰色空轨道，中心显示 `—`；不限额时显示正文 `不限` 和灰色空轨道，下方已用数字单独使用 `.numeric`，`不限额` 保持正文体。SVG 有包含两项使用状态的无障碍标签；百分比和实际数值用数字字体，说明文字保持正文体。
 - 双圈的圆弧与中心数字使用 `useCountUp` 的同一逐帧百分比，时长 1100ms；`stroke-dashoffset` 不再叠加 CSS transition。首次数据到达时从空环绘制，后续数据变更从当前进度过渡，减弱动态效果时直接显示准确终值，后台 rAF 停顿由共享定时兜底落到终值。
-- 首次绘制等待包含本页的 Shift5 根节点发出 `qz-shift5-entered`，避免动画在页面遮罩下完成；事件在 pending gate 和遮罩清除后发出。慢接口在揭示之后返回也会正常启动绘制，组件卸载时解除事件监听。此逻辑仅属于控制台双圈，服务器监控的资源仪表不使用额外的全局重置开关。
+- 首次绘制等待包含本页的 Shift5 根节点发出 `qz-shift5-entered`，避免动画在页面遮罩下完成；事件在 pending gate 和遮罩清除后发出。慢接口在揭示之后返回也会正常启动绘制，组件卸载时解除事件监听。首页资源圈采用相同页面揭示合同，不使用额外的全局重置开关。
 
 See Also: `frontend/tests/dashboard-usage.test.mjs`, `frontend/tests/dashboard-motion.test.mjs`, [Edge Usage Callback](../apis/edge-usage.md).
+
+## Homepage resource rings
+
+- `Monitor.vue` 每台服务器的 CPU、内存、磁盘保持三个独立单圈和原有三列位置，不合并指标。`ResourceGauge.vue` 使用双圈外环同款几何（140 viewBox、半径 58、线宽 14）、圆头进度和状态色 14% 透明轨道；数字使用 mono、说明文字使用正文角色。
+- 各圈按真实使用率独立调用 `chartColorForPercent`，阈值与双圈一致。中心保留一位小数以表达低于 1% 的 CPU/资源占用；零值不绘制前景圆弧，100% 为整圈。SVG 的无障碍标签使用准确终值。
+- `Monitor.vue` 等待所属页面 `qz-shift5-entered` 后启用各圈；每个 keyed 组件独立使用 `useCountUp`，1100ms 内用同一逐帧值更新圆弧和中心数字。刷新从当前值过渡，迟到指标/新服务器独立入场，其他圈不回零。组件卸载清理帧与兜底定时器，页面卸载移除揭示监听；减弱动态效果直接显示终值。
+- 颜色 transition 仅控制 stroke；不为逐帧 dashoffset 叠加 CSS transition。原监控接口、30s 自动刷新、汇总、其他资源条和卡片布局保持不变。
+
+See Also: `frontend/tests/resource-gauge.test.mjs`, [Validation](../guides/validation.md).
 
 ## Admin sidebar hierarchy and node surfaces
 

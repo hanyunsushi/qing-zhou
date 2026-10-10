@@ -3,6 +3,23 @@ title: Validation Guide
 updated: 2026-10-10
 ---
 
+## Homepage resource ring gate
+
+`resource-gauge.test.mjs` executes the component's computed/countup logic with a
+controlled frame clock. It covers the reveal gate, synchronized arc/text,
+continuous increases/decreases, zero/full/decimal/invalid values, 70/90 status
+thresholds, late mounts, reduced motion, background fallback and disposal.
+The frontend suite contains 121 passing tests; typecheck, Vite build,
+`go test ./...` and `git diff --check` pass. The existing ECharts async chunk
+warning remains non-blocking.
+
+Browser acceptance samples the actual homepage `.gauge-fg` offsets and
+`.gauge-val` numbers across reveal and refresh, including delayed metrics.
+Check three resource rings per server, zero/full/low-decimal usage,
+route re-entry, desktop and real 390x844/360x800 viewport geometry. Source
+tests and HTTP 200 alone do not establish visible motion or deployment.
+Current release/production proof belongs to [project authority](../../agent.md).
+
 ## Dashboard dual usage ring release gate
 
 The motion gate includes `dashboard-motion.test.mjs`: empty progress before the

@@ -2,7 +2,7 @@
 
 ## 双圈绘制与发布边界
 
-- 控制台双圈位于 `UserDashboard.vue`，不在 `Monitor.vue`；动画与页面揭示协作合同见 [.llm-wiki/modules/cloudscape-visual-system.md](.llm-wiki/modules/cloudscape-visual-system.md)。误加的服务器仪表 `gaugeAnimated` 重置逻辑已撤销，原有独立字体修复保留。
+- 控制台双圈位于 `UserDashboard.vue`，首页 CPU/内存/磁盘单圈位于 `Monitor.vue` 并由 `ResourceGauge.vue` 独立维护。两者沿用相同样式和页面揭示后的绘制合同，见 [.llm-wiki/modules/cloudscape-visual-system.md](.llm-wiki/modules/cloudscape-visual-system.md)。不得混淆验收目标或恢复旧 `gaugeAnimated` 全局重置逻辑；原有独立字体修复保留。
 - 生产发布必须使用带 Release 版本号的 Linux ARM64 ELF 资产，恢复嵌入前端方式；不得部署 macOS Mach-O、无版本 `dev` 二进制或用静态目录绕过动画问题。运行版本、哈希、备份和验收事实由 [agent.md](agent.md) 维护。
 - `.local/`、`.playwright-cli/`、`output/`、`.DS_Store` 与补丁残留不跟踪，已误入历史的临时文件通过普通修正提交退出跟踪，不重写共享历史，也不删除其本地副本。
 
