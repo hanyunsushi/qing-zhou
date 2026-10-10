@@ -5,6 +5,17 @@ updated: 2026-10-10
 
 # Cloudscape Visual System
 
+## Desktop topbar divider
+
+`frontend/src/components/DashboardLayout.vue` aligns the desktop `.app-sider .sidebar-brand`
+and `.layout-header` to `--app-header-height` (64px). Both use the same 1px
+`--topbar-divider` bottom border, keeping the line continuous when the sidebar is
+expanded or collapsed. The desktop brand has a fixed flex basis and border-box
+sizing, so navigation overflow cannot shrink it or move the line. The shared
+mobile drawer brand retains its existing borderless appearance.
+
+See Also: `frontend/tests/header-divider.test.mjs`, [Validation](../guides/validation.md).
+
 ## Typography role boundary
 
 The monitor's upstream balance card keeps provider names, status text (`查询中` / `未配置`), metadata, timestamps, and drag hints in `var(--ff-body)`. Only actual numeric balances and other tabular values use `var(--ff-mono)`. The status-text class is intentionally separate from the numeric balance class so a loading or configuration state cannot inherit the mono role.

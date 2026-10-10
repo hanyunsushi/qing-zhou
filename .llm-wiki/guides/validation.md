@@ -3,6 +3,15 @@ title: Validation Guide
 updated: 2026-10-10
 ---
 
+## Desktop topbar divider gate
+
+`frontend/tests/header-divider.test.mjs` covers shared height, border-box sizing,
+non-shrinking desktop brand, identical divider tokens, and the unchanged mobile
+drawer. Browser acceptance checks the actual 64px lower edge and 1px computed
+border on both sides, expanded/collapsed desktop states, and 390x844/360x800
+viewports with no horizontal overflow. Deployment evidence belongs to
+[project authority](../../agent.md).
+
 ## Dashboard automatic renewal reminder gate
 
 `frontend/tests/dashboard-alerts.test.mjs` executes the dashboard's actual Vue

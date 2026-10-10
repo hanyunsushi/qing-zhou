@@ -423,6 +423,12 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
   min-height: 64px; padding: 10px 16px;
   cursor: pointer;
 }
+/* 桌面品牌区：与右侧顶栏共享高度和底部分界线。 */
+.app-sider .sidebar-brand {
+  box-sizing: border-box; flex: 0 0 var(--app-header-height);
+  height: var(--app-header-height); min-height: var(--app-header-height);
+  border-bottom: 1px solid var(--topbar-divider);
+}
 .sidebar-logo {
   width: 40px; height: 40px; display: grid; place-items: center;
   flex-shrink: 0;
@@ -477,7 +483,7 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
      A viewport width here hides the right-side account controls whenever the
      document has a scrollbar or Naive UI temporarily locks the page. */
   width: 100%; max-width: 100%;
-  height: 64px; display: grid; grid-template-columns: minmax(140px, 1fr) minmax(280px, 480px) minmax(140px, 1fr);
+  height: var(--app-header-height); display: grid; grid-template-columns: minmax(140px, 1fr) minmax(280px, 480px) minmax(140px, 1fr);
   align-items: center; gap: 24px; padding: 0 24px;
   background: var(--topbar-background);
   /* 顶栏分界线：与页面一级布局使用同一中性边线。 */
