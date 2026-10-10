@@ -5,12 +5,11 @@ updated: 2026-10-10
 
 # Current synchronization evidence
 
-- Source and behavior owner: [Subscription Auto Renewal](modules/subscription-auto-renew.md) and [Validation Guide](guides/validation.md). The dashboard reminder now reads the existing plan `auto_renew` value: enabled real plans show the automatic renewal information message and `/sub` cancellation link; disabled or missing values retain manual renewal and `/shop`.
-- Published source commit: `f87ee95c507d3091bb9b7a5ac2a5ec9a16bec33a`; release: `v0.2.94-kreeper-20261010-renewal-alert`. Deployment and rollback facts remain canonical in [project authority](../agent.md); they are not duplicated here.
-- Validation evidence: frontend 130/130, typecheck, Vite build, `go test ./...`, and `git diff --check` passed. The known ECharts asynchronous chunk warning and existing dependency audit alerts remain documented in the authority.
-- Browser acceptance: authenticated production showed the automatic renewal message and `/sub` link; the subscription page showed the existing 自动续订 checkbox checked, without changing the preference. Production dashboard was verified at desktop, 390x844, and 360x800: the notice wrapped, `scrollWidth === clientWidth`, and no browser console errors were recorded. Temporary QA tabs and the viewport override were cleaned up.
-- Scope boundary: this release changes the dashboard reminder presentation only. Renewal scheduling, charging, subscription controls, dual rings, homepage rings, and unrelated dirty worktree edits were not changed by this task.
+- Source and behavior owner: [Cloudscape Visual System](modules/cloudscape-visual-system.md) and [Validation Guide](guides/validation.md). The desktop dashboard brand block and layout header now share the fixed 64px topbar height and bottom divider; the mobile drawer brand remains borderless.
+- Published source commit: `c3aecf0c622f7df1263becc3d377f1021b3e556a`; release: `v0.2.95-kreeper-20261010-topbar-divider`. Deployment and rollback facts remain canonical in [project authority](../agent.md).
+- Validation evidence: frontend 132/132, typecheck, Vite build, `go test ./...`, release checksum, runtime hash and public asset comparison passed. Authenticated production desktop expanded/collapsed and 390x844/360x800 checks passed without horizontal overflow; production screenshots are retained in the visualization directory. The known ECharts asynchronous chunk warning and existing dependency audit alerts remain documented in the authority.
+- Scope boundary: this release changes the desktop sidebar brand/header divider only. Mobile drawer styling, navigation, typography, dual rings, homepage resource rings, renewal reminders, APIs, database and protected service configuration were not changed.
 
 # Working-tree boundary
 
-Concurrent uncommitted frontend and visual documentation edits remain outside this synchronization and release. Only `_schema.md` and this scoped sync-state record are staged for the documentation follow-up. The published source was verified from the isolated `f87ee95` archive; this task does not rebuild, deploy, stage, or revert concurrent edits.
+Concurrent uncommitted frontend and visual documentation edits remain outside this synchronization and release. The documentation follow-up stages only `_schema.md`, this scoped sync-state record, validation test count, and the divider-specific visual contract correction. The published source was verified from the isolated `c3aecf0` archive; this task does not rebuild, deploy, stage, or revert concurrent edits.

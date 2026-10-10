@@ -18,7 +18,7 @@ viewports with no horizontal overflow. Deployment evidence belongs to
 computed logic. It covers enabled/disabled/missing preferences, reactive refresh,
 nearest-plan selection, mixed simultaneous expiries, ineligible buckets, the
 seven-day boundary, and the existing banned/exhausted/no-active warnings.
-The complete frontend suite has 130 passing tests; typecheck, Vite build and
+The complete frontend suite has 132 passing tests; typecheck, Vite build and
 `go test ./...` pass with the existing ECharts asynchronous chunk warning.
 
 Browser acceptance checks the information message and `/sub` link with renewal

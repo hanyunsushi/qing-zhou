@@ -499,7 +499,8 @@ Cloudscape system through the custom `cloudscape-design-system` skill.
   nested left rules, rotating chevrons and inset focus outlines. Routes and mobile
   drawer behavior remain unchanged.
 - The desktop sidebar rail uses a `1px var(--sidebar-border)` right divider, and
-  the Dashboard layout header uses a `1px var(--border)` bottom divider. The
+  its brand and the Dashboard layout header share the `1px var(--topbar-divider)`
+  bottom border at `--app-header-height`; see Desktop topbar divider. The
   mobile Drawer remains borderless as a separate overlay surface.
 - The public home `AppHeader` brand block mirrors the sidebar brand hierarchy:
   a `40px` mark, `16px` display site name, and `12px/16px` `服务控制台` caption.
