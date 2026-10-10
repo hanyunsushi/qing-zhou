@@ -556,6 +556,13 @@ test('monitor monthly price keeps currency and amount numeric but the unit in bo
   assert.doesNotMatch(monitor, /\.tag\.price \{[^}]*font-family: var\(--ff-mono\)/)
 })
 
+test('monitor monthly price is annotated as an ordinary soft information badge', () => {
+  const monitor = read('src/views/Monitor.vue')
+  assert.match(monitor, /<!-- 区分-信息牌：普通信息牌使用浅蓝底和蓝色文字，金额使用数字字体，计费单位保持正文角色。 -->\s*<span v-if="s\.price != null" class="tag price">/)
+  assert.match(monitor, /\.tag\.price \{[^}]*background: var\(--info-soft\); color: var\(--info\);/)
+  assert.doesNotMatch(monitor, /\.tag\.price \{[^}]*(?:background: var\(--accent\)|color: #fff|box-shadow:)/)
+})
+
 test('semantic status colors use Apple soft badges and chart state semantics', () => {
   const globalCss = read('src/styles/global.css')
   const monitor = read('src/views/Monitor.vue')
@@ -601,13 +608,13 @@ test('monitor provider cards expose the shared drag and status surface contract'
   assert.match(monitor, /class="upstream-refresh-link"[^>]*>刷新/)
   assert.match(monitor, /\.upstream-refresh-link \{[\s\S]*?color: var\(--accent\);/)
   assert.match(monitor, /\.upstream-balance-item \{[\s\S]*?border: 0;[\s\S]*?box-shadow: none|\.upstream-balance-item \{[\s\S]*?border: 0;/)
-  assert.match(monitor, /\.tag\.price \{ background: var\(--accent\); color: #fff;/)
+  assert.match(monitor, /\.tag\.price \{ background: var\(--info-soft\); color: var\(--info\);/)
   assert.match(monitor, /\.upstream-balance-card \.status-badge\.online \{ background: var\(--info-soft\); color: var\(--info\); \}/)
   assert.match(monitor, /\.upstream-balance-item \{[\s\S]*?background: var\(--bg\);/)
   assert.match(monitor, /展示卡片：上游子卡悬浮只增加中性阴影[\s\S]*?\.upstream-balance-item:hover \{ background: var\(--bg\); box-shadow: 0 8px 28px rgba\(0, 0, 0, \.08\); transform: none; \}/)
   assert.match(monitor, /展示卡片：悬浮子卡时父级上游卡不切换蓝色边框或额外阴影[\s\S]*?\.upstream-balance-card:hover \{ box-shadow: var\(--shadow-sm\); border-color: var\(--border\); \}/)
   assert.doesNotMatch(monitor, /\.upstream-balance-item:hover \{ background: var\(--card-hover\)/)
-  assert.match(monitor, /\.tag\.price \{[\s\S]*?font-family: var\(--ff-mono\);/)
+  assert.match(monitor, /\.tag\.price \{[^}]*font-family: var\(--ff-body\);/)
   assert.match(monitor, /\.upstream-balance-value \{[\s\S]*?font-family: var\(--ff-mono\);/)
   assert.match(monitor, /class="upstream-balance-state"[^>]*>\{\{ item\.view\.configured \? '查询中' : '未配置' \}\}</)
   assert.match(monitor, /\.upstream-balance-state \{[\s\S]*?font-family: var\(--ff-body\);/)

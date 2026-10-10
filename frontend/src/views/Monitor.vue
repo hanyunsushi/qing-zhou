@@ -158,7 +158,7 @@
               <span v-if="s.location" class="tag loc">{{ s.location }}</span>
               <span v-if="s.provider" class="tag">{{ s.provider }}</span>
               <span v-if="s.spec" class="tag spec">{{ s.spec }}</span>
-              <!-- 区分-信息牌：金额使用数字字体，计费单位保持正文角色。 -->
+              <!-- 区分-信息牌：普通信息牌使用浅蓝底和蓝色文字，金额使用数字字体，计费单位保持正文角色。 -->
               <span v-if="s.price != null" class="tag price"><span class="numeric">¥{{ Number(s.price).toFixed(2) }}</span><span class="price-unit">/月</span></span>
               <span v-if="s.days_left != null" class="tag expiry" :class="expiryCls(s.days_left)" title="距离到期剩余天数">
                 <i class="exp-dot" />剩 {{ s.days_left }} 天
@@ -901,7 +901,7 @@ onUnmounted(() => {
 .tag { padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 500; background: var(--bg-soft); color: var(--text-2); white-space: nowrap; }
 .tag.loc { background: var(--accent-soft); color: var(--accent-strong); }
 .tag.spec { font-variant-numeric: tabular-nums; }
-.tag.price { background: var(--accent); color: #fff; font-family: var(--ff-body); font-variant-numeric: tabular-nums; }
+.tag.price { background: var(--info-soft); color: var(--info); font-family: var(--ff-body); font-variant-numeric: tabular-nums; }
 .tag.expiry { display: inline-flex; align-items: center; gap: 5px; font-variant-numeric: tabular-nums; }
 .tag.expiry .exp-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
 .tag.expiry.ok { background: var(--success-soft); color: var(--success); }

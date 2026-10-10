@@ -9,8 +9,9 @@ updated: 2026-10-10
 controlled frame clock. It covers the reveal gate, synchronized arc/text,
 continuous increases/decreases, zero/full/decimal/invalid values, 70/90 status
 thresholds, late mounts, reduced motion, background fallback and disposal.
-The frontend suite contains 123 passing tests, including neutral percentage
-text independent of status-colored arcs and numeric/body price-label roles;
+The frontend suite contains 124 passing tests, including neutral percentage
+text independent of status-colored arcs, numeric/body price-label roles, and
+the annotated ordinary price information badge using soft blue tokens;
 typecheck, Vite build,
 `go test ./...` and `git diff --check` pass. The existing ECharts async chunk
 warning remains non-blocking.
@@ -21,6 +22,11 @@ Check three resource rings per server, zero/full/low-decimal usage,
 route re-entry, desktop and real 390x844/360x800 viewport geometry. Source
 tests and HTTP 200 alone do not establish visible motion or deployment.
 Current release/production proof belongs to [project authority](../../agent.md).
+
+Price badge acceptance checks both zero and nonzero monthly prices, computed
+`--info` text and `--info-soft` backgrounds, no border/shadow, unchanged font
+roles, refresh persistence and desktop/390px/360px overflow. Public hashed
+Monitor assets must match the isolated release build before claiming rollout.
 
 ## Dashboard dual usage ring release gate
 
