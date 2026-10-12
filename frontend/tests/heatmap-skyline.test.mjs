@@ -16,15 +16,15 @@ test('availability folding retains each timestamp once and keeps servers separat
   const input = {state_count:4,servers:[{name:'first'},{name:'second'}],buckets:Array.from({length:48},(_,i)=>100000+i*1800),matrix:[Array.from({length:48},(_,i)=>i<4?i:0),Array(48).fill(2)]}
   const models = heatmap.availabilityModels(input)
   assert.equal(models.length,2)
-  for(const row of models){assert.equal(row.model.columns,8);assert.equal(row.model.rows,6);assert.equal(row.model.cells.length,48);assert.equal(new Set(row.model.cells.map(c=>c.key)).size,48);assert.deepEqual(row.model.cells.map(c=>Number(c.key)),input.buckets)}
+  for(const row of models){assert.equal(row.model.columns,16);assert.equal(row.model.rows,3);assert.equal(row.model.cells.length,48);assert.equal(new Set(row.model.cells.map(c=>c.key)).size,48);assert.deepEqual(row.model.cells.map(c=>Number(c.key)),input.buckets)}
   assert.equal(models[0].model.cells[0].detail,'运行正常')
   assert.equal(models[1].model.cells[0].detail,'严重负载')
-  assert.deepEqual(models[0].model.axes.x.ticks.map(t=>t.at),[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5])
+  assert.deepEqual(models[0].model.axes.x.ticks.map(t=>t.at),Array.from({length:16},(_,column)=>column+0.5))
   const timeLabels=models[0].model.axes.x.ticks.map(t=>t.label)
   assert.equal(new Set(timeLabels).size,timeLabels.length,'x-axis labels identify distinct times instead of repeating the date')
   assert.equal(models[0].model.axes.x.title,'时间')
-  assert.equal(models[0].model.axes.y.title,'桶序')
-  assert.deepEqual(models[0].model.axes.y.ticks.map(t=>t.label),['1','2','3','4','5','6'])
+  assert.equal(models[0].model.axes.y.title,'时间分组')
+  assert.deepEqual(models[0].model.axes.y.ticks.map(t=>t.label),['1','2','3'])
   assert.deepEqual(models[0].model.cells.slice(0,4).map(c=>c.color),['#34c759','#ff9500','#ff3b30','#8e8e93'])
   assert.equal('colorRamp' in models[0].model,false,'availability uses only QingZhou native severity colors plus neutral missing data')
   assert.equal('colorProgress' in models[0].model.cells[0],false)
@@ -93,8 +93,8 @@ test('reduced motion draws native status colors without a synthetic ramp and dis
   assert.deepEqual(model.cells.map(cell=>cell.color),['#34c759','#ff9500','#ff3b30','#8e8e93'],'only native severity colors and the neutral missing-data color are present')
   assert.equal('colorRamp' in model,false)
   assert.equal(closedStrokes,0,'pillar faces are filled without stroked outlines')
-  assert.ok(axisLabels.includes('时间') && axisLabels.includes('桶序'),'axis titles remain visible in a narrow canvas')
-  assert.ok(axisLabels.includes('1') && axisLabels.includes('4'),'narrow canvases retain y-axis tick labels')
+  assert.ok(axisLabels.includes('时间') && axisLabels.includes('时间分组'),'axis titles remain visible in a narrow canvas')
+  assert.ok(axisLabels.includes('1') && axisLabels.includes('3'),'narrow canvases retain y-axis tick labels')
   assert.match(source,/1\s*-\s*Math\.exp\(-dt\s*\*\s*6\)/,'hover feedback eases in over several frames rather than snapping')
   assert.equal(canvas.width,640)
   instance.dispose()
@@ -118,7 +118,7 @@ test('3D hover lift and color respond over multiple frames without outlining a p
   const exports={}
   const rendererDependencies={...heatmap,projectSkyline(camera,x,y,z){if(Math.abs(x-.1)<1e-8&&Math.abs(y-.1)<1e-8)selectedHeights.push(z);return heatmap.projectSkyline(camera,x,y,z)}}
   runInNewContext(code,{exports,require:()=>rendererDependencies,matchMedia:()=>({matches:false,addEventListener(){},removeEventListener(){}}),performance:{now:()=>now},requestAnimationFrame:fn=>{frames.set(++serial,fn);return serial},cancelAnimationFrame:id=>frames.delete(id),devicePixelRatio:1,ResizeObserver:Observer,IntersectionObserver:Observer,getComputedStyle:()=>({fontFamily:'sans-serif'})})
-  const model={columns:1,rows:1,cells:[{key:'one',column:0,row:0,label:'12:00',detail:'运行正常',value:0,height:.55,color:'#34c759',group:0}],axes:{x:{title:'时间',ticks:[{at:.5,label:'12:00'}]},y:{title:'桶序',ticks:[{at:.5,label:'1'}]}}}
+  const model={columns:1,rows:1,cells:[{key:'one',column:0,row:0,label:'12:00',detail:'运行正常',value:0,height:.55,color:'#34c759',group:0}],axes:{x:{title:'时间',ticks:[{at:.5,label:'12:00'}]},y:{title:'时间分组',ticks:[{at:.5,label:'1'}]}}}
   exports.createSkylineRenderer(canvas,{model,view:'3d',ready:true,filter:null,onActive(){},onSelect(){}})
   observers[1].callback([{isIntersecting:true}])
   const advance=()=>{const entry=[...frames.entries()][0];assert.ok(entry,'animation should schedule a frame');frames.delete(entry[0]);now+=16;entry[1](now)}
@@ -152,4 +152,15 @@ test('homepage keeps the most recent range when older requests finish late',asyn
   const failure=load('6h');await flush();pending[2].reject(new Error('offline'));await failure
   assert.equal(heatData.value.range,'7d','retain last valid data instead of replacing it with zeros')
   assert.match(heatError.value,/无法获取/)
+})
+
+test('homepage omits requested explanatory copy without removing drag affordances',async()=>{
+  const availability=await readFile(new URL('../src/components/AvailabilityHeatmap.vue',import.meta.url),'utf8')
+  const skyline=await readFile(new URL('../src/components/SkylineHeatmap.vue',import.meta.url),'utf8')
+  const monitor=await readFile(new URL('../src/views/Monitor.vue',import.meta.url),'utf8')
+  assert.doesNotMatch(availability,/高度表示状态级别|非负载百分比/)
+  assert.match(skyline,/<span v-if="description" class="skyline-description">/)
+  assert.doesNotMatch(monitor,/余额卡片可拖动排序/)
+  assert.match(monitor,/upstream-drag-hint[\s\S]*?拖动调整余额顺序/)
+  assert.match(monitor,/handleUpstreamDragStart/)
 })

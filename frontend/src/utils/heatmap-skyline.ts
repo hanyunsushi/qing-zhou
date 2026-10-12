@@ -57,7 +57,7 @@ function formatAxisBucket(ts: number, spanSeconds: number, detailed = false) {
 // 区分-状态牌：每台服务器独立折叠时间桶；高度只编码状态级别，不捏造负载百分比。
 export function availabilityModels(data: AvailabilityData) {
   return data.servers.map((server, serverIndex) => {
-    const rows = Math.min(6, Math.max(1, data.buckets.length))
+    const rows = Math.min(3, Math.max(1, data.buckets.length))
     const cells = data.buckets.map((ts, index): SkylineCell => {
       const state = normalizeHeatState(data.matrix[serverIndex]?.[index], data.state_count ?? 3)
       const item = HEATMAP_STATES[state]
@@ -80,7 +80,7 @@ export function availabilityModels(data: AvailabilityData) {
     return { key: String(server.id ?? serverIndex), name: server.name,
       latest: cells[cells.length - 1], model: {
         cells, columns, rows,
-        axes: { x: { title: '时间', ticks: xTicks.map((tick, index) => ({ at: tick.at, label: axisLabels[index]! })) }, y: { title: '桶序', ticks: Array.from({ length: rows }, (_, row) => ({ at: row + 0.5, label: String(row + 1) })) } },
+        axes: { x: { title: '时间', ticks: xTicks.map((tick, index) => ({ at: tick.at, label: axisLabels[index]! })) }, y: { title: '时间分组', ticks: Array.from({ length: rows }, (_, row) => ({ at: row + 0.5, label: String(row + 1) })) } },
       } }
   })
 }

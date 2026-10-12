@@ -127,7 +127,7 @@
 
         <!-- 可用性热力图 -->
         <div class="heatmap-card">
-          <!-- 区分-状态牌：原48个时间桶折为8列6行，平面/立体共用状态数据；服务器名完整换行。 -->
+          <!-- 区分-状态牌：原48个时间桶折为16列3行，平面/立体共用状态数据；服务器名完整换行。 -->
           <AvailabilityHeatmap v-if="heatData" :data="heatData" :ready="ringsReady" />
           <div v-else class="heat-empty">{{ heatError || '正在获取可用性数据…' }}</div>
           <div v-if="heatError && heatData" class="heat-empty" role="status">{{ heatError }}</div>
@@ -291,7 +291,6 @@
               </div>
             </div>
             <div class="card-footer upstream-card-footer">
-              <span class="footer-time"><span class="dot online" />余额卡片可拖动排序</span>
               <button class="upstream-refresh-link" type="button" :disabled="upstreamRefreshing" @click="refreshUpstreamBalances">刷新</button>
             </div>
           </div>

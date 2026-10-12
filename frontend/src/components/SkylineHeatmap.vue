@@ -2,7 +2,7 @@
   <!-- 展示信息模块 / 组件绘制动画：平面矩阵与立体投影共用一份数据，不切换或伪造图表。 -->
   <div class="skyline-heatmap">
     <div class="skyline-toolbar">
-      <span class="skyline-description">{{ description }}</span>
+      <span v-if="description" class="skyline-description">{{ description }}</span>
       <!-- 路由切换组件：外16/内12/内距4，单跟随面选择矩阵或立体。 -->
       <div class="skyline-view route-switch" role="group" aria-label="热力图视图" @mouseleave="preview = null" @focusout="leaveViewFocus">
         <span class="skyline-view-indicator" :style="{ transform: `translateX(${(preview ?? view) === '3d' ? 100 : 0}%)` }" aria-hidden="true"/>

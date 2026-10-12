@@ -4,7 +4,7 @@
     <div v-if="!models.length" class="availability-empty">暂无探针服务器</div>
     <article v-for="server in models" :key="server.key" class="availability-row">
       <header class="availability-label"><strong>{{ server.name }}</strong><span v-if="server.latest" class="availability-time">{{ server.latest.label }}</span><span v-if="server.latest" class="availability-current"><i :style="{background: server.latest.color}"/>{{ server.latest.detail }}</span></header>
-      <SkylineHeatmap :model="server.model" :title="server.name + '可用性热力图'" :ready="ready" :legend="legend" description="高度表示状态级别，灰色薄格为离线 / 无数据；非负载百分比。" @select="$emit('select', $event)"/>
+      <SkylineHeatmap :model="server.model" :title="server.name + '可用性热力图'" :ready="ready" :legend="legend" @select="$emit('select', $event)"/>
     </article>
   </div>
 </template>
