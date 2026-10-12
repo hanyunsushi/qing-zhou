@@ -12,6 +12,8 @@
 
 ## 2026-10-12 首页三状态可用性矩阵（已发布部署）
 
+- 2026-10-12 首页可用性热力图更正已部署：`v0.2.97-kreeper-20261012-heatmap-3row`，提交 `898da68fb6e117fdbe2393e1fbe750c55ce04399`，Actions `38231175720`。每台48桶改为16列×3行，纵轴“时间分组”；删除图表可见说明与上游余额卡片底部排序句，保留Canvas无障碍名称、可见顶部拖动把手与排序行为。ARM64面板SHA-256 `ec2d6f7309612c5ed8a99f27ee40e1128b01b82cff2e904d08bf7cb85d3c195d`。仅原子替换面板并重启 `qingzhou.service`；备份 `/opt/qingzhou/backups/fork-v0.2.97-kreeper-20261012-heatmap-3row-20261012-175232/` 中SQLite Backup API快照完整性ok。公网/本机健康、认证首页、配置哈希、三项服务、监听、进程边界均通过，error日志为空；一条非致命托管probe发布版本查找提示与本次面板无关。完整证据见 [deployment Wiki](.llm-wiki/guides/deployment.md)。
+
 - 提交 `4a99e11` 已推送 Fork `main`，Release 为 `v0.2.96-kreeper-20261012-heatmap`，Actions `38225056376` 成功。Linux ARM64 面板资产 SHA-256 为 `870fd8e0091753388a2e78e111f8a970917399a6da69ab7281846c9f948ebb46`，资产未签名。
 - 仅原子替换 `/opt/qingzhou/qingzhou` 并重启 `qingzhou.service`；回滚材料为 `/opt/qingzhou/backups/fork-v0.2.96-kreeper-20261012-heatmap-20261012-1651/`，其中 `qingzhou.db.backupapi` 为 SQLite Backup API 快照且 `PRAGMA integrity_check=ok`。未改数据库、env、systemd、sing-box、Tunnel 或 probe。
 - 本机/公网健康、面板 ARM64 哈希、三项服务、四个监听端口和空错误日志通过；保护配置哈希与 sing-box/Tunnel PID 未变化，无 `QZ_WEB_DIR`。认证生产监控页已核对 3D 矩阵、时间/服务器坐标轴和绿/橙/红/灰图例；侧栏收起及移动端细节本轮未在生产重新交互验收。

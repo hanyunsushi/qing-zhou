@@ -43,7 +43,7 @@ the homepage ECharts heatmap with a shared Canvas matrix/isometric scene;
 admin monitoring remains separate. The current API `state_count: 4` consists of
 three native severity states (normal/high/critical) plus the offline/no-data
 sentinel; it is not four health colors. Verify each of the 48 bucket timestamps
-occurs once per server, chronological 8x6 layout, only green/orange/red plus a
+occurs once per server, chronological 16x3 layout (48 buckets, time-major order; do not label the Y axis “bucket index”), only green/orange/red plus a
 neutral missing value, legacy three-state offline handling, all-grey and empty
 rows. Column height is a state level, not resource percent. Server labels wrap as DOM text; at <=640px they
 move above the matrix. Activity counts use the independent AWS sequential
@@ -61,10 +61,7 @@ Current local gates: frontend 142/142, typecheck, Vite build, `go test ./...`
 and `git diff --check`; skill 18/18 contracts, typecheck/build and 71 source
 files/50 patterns/220 hashes. Tests include the actual Canvas lifecycle and
 cleanup, not only source matching. Build warnings retain the existing 567.24kB
-ECharts async chunk and the full showcase chunk. The exact source was released
-as `v0.2.96-kreeper-20261012-heatmap` and deployed; production acceptance is
-recorded in [project authority](../../agent.md), while local and production
-evidence remain separate.
+ECharts async chunk and the full showcase chunk. The initial matrix release was `v0.2.96-kreeper-20261012-heatmap`; the corrected 16x3 source is released as `v0.2.97-kreeper-20261012-heatmap-3row` and deployed. Production acceptance is recorded in [project authority](../../agent.md), while local and production evidence remain separate.
 
 The activity and availability showcase renderers pass real browser checks at
 390x844 and 360x800: both canvases render at positive size with readable X/Y
@@ -447,3 +444,21 @@ Cloudflare Tunnel and expected listeners were healthy; retired `:8881` remained
 absent. Administrator-page rendering was not browser-tested because the stored
 administrator password was not available to the deployment process and was not
 reset.
+
+
+## 2026-10-12 compact homepage heatmap release
+
+The regression gate covers all 48 unique chronological timestamps per server in
+a 16-column by 3-row matrix, X axis “时间”, Y axis “时间分组” with ticks 1–3,
+three native status colors plus neutral missing data, and no explanatory copy in
+the Canvas toolbar. The Canvas accessible name still explains the chart and
+keyboard navigation. The upstream-balance footer's “余额卡片可拖动排序” copy is
+removed, while the visible drag handle, accessible drag affordance and sorting
+handler remain.
+
+Release `v0.2.97-kreeper-20261012-heatmap-3row` passed 143 frontend tests,
+Vue typecheck, Vite build, `go test ./...` and diff check before release; Actions
+`38231175720` succeeded. Production verification is recorded in
+[project authority](../../agent.md). The authenticated production page showed the
+3-row layout, “时间分组” axis, no visual explanatory copy, and retained both
+keyboard-accessible balance drag handles.

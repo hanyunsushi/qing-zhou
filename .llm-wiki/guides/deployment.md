@@ -3,6 +3,38 @@ title: QingZhou Deployment and Artifact Retention
 updated: 2026-10-12
 ---
 
+## 2026-10-12 Homepage availability matrix correction
+
+Commit `898da68fb6e117fdbe2393e1fbe750c55ce04399` was pushed to `origin/main`
+and released as `v0.2.97-kreeper-20261012-heatmap-3row`. GitHub Actions run
+`38231175720` succeeded. The Linux ARM64 panel asset SHA-256 is
+`ec2d6f7309612c5ed8a99f27ee40e1128b01b82cff2e904d08bf7cb85d3c195d`; the
+release and asset are unsigned.
+
+The 48 availability buckets are now displayed in 16 columns by 3 rows, retaining
+chronological order and the existing three native status colors plus a gray
+missing-data sentinel. The Y axis is labeled “时间分组”; the toolbar explanation
+and the balance-card footer drag hint were removed without removing chart
+accessibility text or the balance drag handle and sorting behavior.
+
+Production was updated by atomically replacing only `/opt/qingzhou/qingzhou` and
+restarting only `qingzhou.service`. Pre-change material is in
+`/opt/qingzhou/backups/fork-v0.2.97-kreeper-20261012-heatmap-3row-20261012-175232/`;
+it contains the previous binary, environment and service files, sing-box config,
+and SQLite Backup API snapshot (`PRAGMA integrity_check=ok`). No database, env,
+systemd definition, sing-box or Cloudflare Tunnel config was changed.
+
+Local/public `/api/health` report `v0.2.97-kreeper-20261012-heatmap-3row`; the
+public homepage returns HTTP 200. All three services are active with zero
+restarts, expected listeners `8081`, `8882`, `18082` and `19000` are present,
+protected configuration hashes match their backups, and sing-box/Tunnel
+processes were not restarted. The authenticated production dashboard visibly
+shows the three-row chart, updated axis and no toolbar/footer explanation; the
+balance drag handles remain. The only warning after restart was a non-fatal
+startup message that the separately hosted probe release could not be found;
+there were no error-level journal entries. The panel process itself uses the
+released ARM64 binary hash above.
+
 ## 2026-10-12 Homepage availability matrix release
 
 Commit `4a99e11` was pushed to the fork `main` branch and released as

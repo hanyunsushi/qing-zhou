@@ -42,9 +42,9 @@ Vue 3 + Naive UI + Ionicons + ECharts。实际视觉入口仍是 `frontend/src/s
 
 `frontend/src/views/Monitor.vue` 使用 `frontend/src/components/RefreshButton.vue`、`frontend/src/components/AvailabilityHeatmap.vue` 和 `frontend/src/components/SkylineHeatmap.vue`。状态适配/投影位于 `frontend/src/utils/heatmap-skyline.ts`，绘制及生命周期位于 `frontend/src/utils/skyline-renderer.ts`；活动适配另有 `frontend/src/components/ContributionSkyline.vue`，首页仅采用可用性。
 
-原API仍给48个时间桶状态矩阵，`state_count: 4`表示三种真实负载状态（0正常/1高负载/2严重负载）加3离线/无数据哨兵，不是四种健康状态。可用性只保留Apple绿/橙/红三种原生状态色与灰色缺失色；撤销此前5级渐变，不生成中间色或渐变标尺。立体侧面的84%/68%是同一色的光影，不表示新增状态。每台独立8列×6行、时间顺序不变。名称与最新时间用DOM换行，640px下移到矩阵上方。柱高只编码三个状态的严重级别，灰格为薄格且不作严重柱；平面/立体共用同场景，首揭示由ringsReady接入。AWS蓝色连续刻度仅属于活动量示范，未改。完整交互、尺寸和复用输入由skill refresh/skyline专页维护，本页不复制平行规范。
+原API仍给48个时间桶状态矩阵，`state_count: 4`表示三种真实负载状态（0正常/1高负载/2严重负载）加3离线/无数据哨兵，不是四种健康状态。可用性只保留Apple绿/橙/红三种原生状态色与灰色缺失色；撤销此前5级渐变，不生成中间色或渐变标尺。立体侧面的84%/68%是同一色的光影，不表示新增状态。根据 2026-10-12 首页验收改为每台16列×3行（48桶不变），从上到下再从左到右按时间排列；不会把时间纵轴称作“桶序”。说明性文案已从工具栏移除，但 Canvas 的无障碍名称继续说明格数、坐标和键盘操作；余额卡片底部“余额卡片可拖动排序”文案删除，顶部拖动入口与拖拽排序保留。名称与最新时间用DOM换行，640px下移到矩阵上方。柱高只编码三个状态的严重级别，灰格为薄格且不作严重柱；平面/立体共用同场景，首揭示由ringsReady接入。AWS蓝色连续刻度仅属于活动量示范，未改。完整交互、尺寸和复用输入由skill refresh/skyline专页维护，本页不复制平行规范。
 
-RefreshButton请求期间aria-busy/禁用，SVG悬浮与loading旋转分离；首页手动刷新同时更新指标与当前热图，30秒自动刷新保留。范围请求序号防迟到结果覆盖；失败保留现有数据并显示重试说明。`frontend/tests/heatmap-skyline.test.mjs` 覆盖数据折叠、缺值/旧接口、活动零/缺失、投影与减少动态效果/卸载。管理员监控页保留ECharts，不据首页变化声称所有监控页面已迁移。当前改动是本地未部署。
+RefreshButton请求期间aria-busy/禁用，SVG悬浮与loading旋转分离；首页手动刷新同时更新指标与当前热图，30秒自动刷新保留。范围请求序号防迟到结果覆盖；失败保留现有数据并显示重试说明。`frontend/tests/heatmap-skyline.test.mjs` 覆盖数据折叠、缺值/旧接口、活动零/缺失、投影与减少动态效果/卸载。管理员监控页保留ECharts，不据首页变化声称所有监控页面已迁移。首页16×3、去除说明性文案与保留拖拽能力的改动已发布，部署证据见 [Deployment](../guides/deployment.md) 与 [Validation](../guides/validation.md)。
 
 ## 已核实的兼容边界
 
