@@ -1,8 +1,12 @@
 # Kreeper QingZhou 定制维护
 
+## 当前设计系统入口
+
+完整设计合同由 `kreeper-first-design-system` skill 维护，青舟集成边界见 [.llm-wiki/modules/kreeper-first-design-system.md](.llm-wiki/modules/kreeper-first-design-system.md)。下方带日期条目保留当时发布/局部实验事实，不作为当前数值来源；不得恢复其中已被取代的输入外晕、旧圆角或字体。旧 Anthropic/Cloudscape 独立 skill 已退役，历史记录不构成活动路由。
+
 ## 双圈绘制与发布边界
 
-- 控制台双圈位于 `UserDashboard.vue`，首页 CPU/内存/磁盘单圈位于 `Monitor.vue` 并由 `ResourceGauge.vue` 独立维护。两者沿用相同样式和页面揭示后的绘制合同，见 [.llm-wiki/modules/cloudscape-visual-system.md](.llm-wiki/modules/cloudscape-visual-system.md)。不得混淆验收目标或恢复旧 `gaugeAnimated` 全局重置逻辑；原有独立字体修复保留。
+- 控制台双圈位于 `UserDashboard.vue`，首页 CPU/内存/磁盘单圈位于 `Monitor.vue` 并由 `ResourceGauge.vue` 独立维护。两者沿用相同样式和页面揭示后的绘制合同，见 [.llm-wiki/modules/kreeper-first-design-system.md](.llm-wiki/modules/kreeper-first-design-system.md)。不得混淆验收目标或恢复旧 `gaugeAnimated` 全局重置逻辑；原有独立字体修复保留。
 - 生产发布必须使用带 Release 版本号的 Linux ARM64 ELF 资产，恢复嵌入前端方式；不得部署 macOS Mach-O、无版本 `dev` 二进制或用静态目录绕过动画问题。运行版本、哈希、备份和验收事实由 [agent.md](agent.md) 维护。
 - `.local/`、`.playwright-cli/`、`output/`、`.DS_Store` 与补丁残留不跟踪，已误入历史的临时文件通过普通修正提交退出跟踪，不重写共享历史，也不删除其本地副本。
 
@@ -120,7 +124,7 @@
 - “订阅管理”及引导区三个普通按钮常态文字更浅，悬浮/聚焦后提升至中性深色；引导按钮的 ring 使用透明 spacer，保持与“订阅管理”相同的可见 2px 描边，不再被白色内层遮细。
 - 全局 Naive UI 主按钮悬浮统一为浅亮蓝 `#298fff`（`--accent-button-hover`）；“去商城”背景和描边同步使用该值。深色 `--accent-hover` 保留给链接等非按钮交互。
 - 移除引导区原先蓝色 hover 背景与投影；文本、SVG、布局和点击行为不变。
-- 组件规则见 `frontend/src/views/UserDashboard.vue`，状态契约与回归断言见 Cloudscape Visual System。
+- 组件规则见 `frontend/src/views/UserDashboard.vue`，状态契约与回归断言见 kreeper第一设计系统。
 
 ## 2026-09-23 二级切换路由与填写框边界（本地未部署）
 
@@ -129,7 +133,7 @@
 
 ## 2026-09-23 顶栏悬浮下拉菜单圆角（本地未部署）
 
-- “控制台”“管理”和账户三个顶栏按钮及菜单项悬浮面为 14px，菜单外框为 18px；菜单项伪元素四边各内缩 3px，另计 1px 菜单边框，构成 4px 同心内缩。按钮 4px focus ring 外缘与 18px 菜单框对应。规则详见 Cloudscape Visual System，且属于 QingZhou 适配而非 AWS 官方 token。
+- “控制台”“管理”和账户三个顶栏按钮及菜单项悬浮面为 14px，菜单外框为 18px；菜单项伪元素四边各内缩 3px，另计 1px 菜单边框，构成 4px 同心内缩。按钮 4px focus ring 外缘与 18px 菜单框对应。规则详见 kreeper第一设计系统，且属于 QingZhou 适配而非 AWS 官方 token。
 
 ## 2026-09-23 侧边栏层级线对齐（本地未部署）
 
@@ -243,7 +247,7 @@
 - 已移除本轮范围内的玻璃背景、装饰性渐变、悬浮抬升、发光状态和旧蓝绿色硬编码；页面级卡片、筛选器、登录框、监控、上游管理、套餐、用户、节点、订单、积分和帮助界面均复用统一 token。布局、组件类型、组件位置和业务逻辑不变。
 - 本轮交付包含 `frontend/tests/cloudscape-visual-system.test.mjs`，验证 token、Naive UI 映射和代表性图表色板。验证命令为 `npm test`、`npm run typecheck`、`npm run build` 和 `git diff --check`。
 - 监控首页六张卡片标注为展示卡片，悬浮效果为默认无阴影，悬停/聚焦只增加 `0 8px 28px rgba(0, 0, 0, 0.08)`，不改变背景、边框、位置或透明度；对应类型注释位于 `frontend/src/views/Monitor.vue`。
-- 监控首页六个摘要 SVG 使用中性图标色与底色；可用性热力图时间范围是“路由切换组件”，使用独立跟随指示面，图例不属于切换器。详见 [Cloudscape Visual System](.llm-wiki/modules/cloudscape-visual-system.md)。
+- 监控首页六个摘要 SVG 使用中性图标色与底色；可用性热力图时间范围是“路由切换组件”，使用独立跟随指示面，图例不属于切换器。详见 [kreeper第一设计系统](.llm-wiki/modules/kreeper-first-design-system.md)。
 - 用户控制台四张核心指标卡片复用同一展示卡片和悬浮效果；统一由 `frontend/src/components/StatCard.vue` 控制，悬停/聚焦只增加同样的阴影，不改变卡片背景、边框和位置。
 - 订阅管理页四张状态摘要卡片复用同一展示卡片和悬浮效果；对应类型备注位于 `frontend/src/views/UserSub.vue` 的 `.sub-stat` 样式区域。
 - 订单记录页四张消费摘要卡片复用同一展示卡片和悬浮效果；对应类型备注位于 `frontend/src/views/UserOrders.vue` 的 `.kpi-card` 样式区域。

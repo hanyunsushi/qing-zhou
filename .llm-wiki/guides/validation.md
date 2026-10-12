@@ -1,7 +1,119 @@
 ---
 title: Validation Guide
-updated: 2026-10-10
+updated: 2026-10-12
 ---
+
+## Unified design skill gate
+
+Use `kreeper-first-design-system` through its complete SKILL entry. Run
+`scripts/audit.mjs /Users/hinaw/qing-zhou-fork` for source/snapshot coverage,
+package hashes, patterns and internal links, then
+`scripts/verify-assets.mjs /Users/hinaw/qing-zhou-fork/frontend` for isolated
+typecheck, 15 meaningful contracts and build. Rebuild the complete showcase with
+`scripts/preview-showcase.mjs`; its 25-topic matrix maps 15 sections and the
+50 source component/page contracts. Console, public topbar and complete
+login/register/recovery are separate interactive scenes.
+
+Require Chinese semantic comments at template/style/rendering boundaries.
+Unknown categories need a proposal and user confirmation. When a project generated
+with this system proposes a change that breaks a specification, actively ask
+whether to update the corresponding design-system rule; do not silently register
+an exception. Responsive behavior is required for every component.
+
+Background levels follow nested module depth: page white, level one #fafafa,
+level two white. Typography has four CJK/Latin family roles; AWS typography,
+weights, line heights, spacing, numeric/monospace use and chart palettes are read
+from the official linked pages when used, not a parallel local AWS snapshot.
+Courier Prime is the showcase's named implementation choice. Validate file URLs,
+actual weights/axes and browser glyph loading separately from CSS family strings.
+
+Browser gates include 1440/1280, 1024/768, 390x844 and 360x800, no page horizontal
+overflow, 264/72px desktop sidebar, 300px mobile Drawer, 64px topbar, menu mutual
+exclusion and 8px hit bridge, ordinary selectors/flyouts, hover/focus/pressed/disabled,
+selection foreground inheritance, 28px auth feedback slots, form-relative geometry
+before/after errors, Canvas rendering, ring refresh and reduced motion. Record
+actual evidence and uncovered paths; project-source tests and production checks
+remain separate. Current evidence is in [sync state](../_sync-state.md) and the
+[integration boundary](../modules/kreeper-first-design-system.md).
+
+## Matrix / skyline and refresh gate
+
+Read the skill refresh/skyline specifications. The local source replaces only
+the homepage ECharts heatmap with a shared Canvas matrix/isometric scene;
+admin monitoring remains separate. The current API `state_count: 4` consists of
+three native severity states (normal/high/critical) plus the offline/no-data
+sentinel; it is not four health colors. Verify each of the 48 bucket timestamps
+occurs once per server, chronological 8x6 layout, only green/orange/red plus a
+neutral missing value, legacy three-state offline handling, all-grey and empty
+rows. Column height is a state level, not resource percent. Server labels wrap as DOM text; at <=640px they
+move above the matrix. Activity counts use the independent AWS sequential
+adapter, with missing distinct from zero and no implicit mock data.
+
+Browser acceptance must include 2D/3D reversal, visible Canvas render, orbit and
+double-click reset, exact tooltip/keyboard dates, Home/End/Escape, legend filter,
+full data table, latest range under request races, refresh loading/disabled and
+no page overflow at desktop/390x844/360x800. Reduced-motion and disposal are
+executed in a renderer test with controlled frame/media/observer inputs; do not
+claim that unit evidence is an OS-level browser setting test. The 21st refresh
+reference is 404; record independent implementation instead of fabricated source.
+
+Current local gates: frontend 142/142, typecheck and Vite build; skill
+18/18 contracts, typecheck/build and 71 source files/50 patterns/220 hashes.
+Tests include the actual Canvas lifecycle and cleanup, not only source matching.
+Build warnings retain the existing 567.24kB ECharts async chunk and the full
+showcase chunk. No production deployment; browser evidence is in sync state.
+
+The activity and availability showcase renderers pass real browser checks at
+390x844 and 360x800: both canvases render at positive size with readable X/Y
+axes and the document has no horizontal overflow. The availability server name
+wraps fully above its matrix instead of truncating; keyboard date/status hints
+remain available. The refresh sample is busy during its request and increments
+its completed count. Existing ECharts ChartSpecimens emitted four initial-size
+warnings on the first narrow-screen load, then rendered; no application error
+was observed. Keep that warning boundary separate from the new Canvas charts.
+
+## Warning and error feedback gate
+
+`frontend/src/App.vue` and the skill reusable theme set
+`Alert.borderWarning` and `Alert.borderError` to `none`. Existing warning/error
+backgrounds, icons, text and layout keep their semantic roles. Use the existing
+Chinese `提示信息 / 警告信息` comments at the theme and showcase responsibility
+boundaries. In Naive 2.44.1, inspect the actual `.n-alert__border` layer: its
+computed border width must be 0px and the alert must have no base shadow. A root
+border of 0px does not prove this; Alert does not guarantee type classes.
+
+Local browser acceptance covers the showcase and built QingZhou dashboard with
+a virtual user API fixture: expiry warning and banned-account error at desktop,
+390x844 and 360x800. Warning/error backgrounds are rgb(255,247,235) /
+rgb(255,239,238), icons retain Apple orange/red, both have 0px internal borders,
+and pages have no horizontal overflow. Frontend 133/133 tests, typecheck and
+isolated build passed; skill typecheck, 10/10 contracts and build also passed.
+This is local evidence, with no production deployment.
+
+## Sidebar collapse gate
+
+`frontend/tests/admin-upstreams.test.mjs` executes the actual `toggleSidebar`
+and `updateSidebarExpandedKeys` handlers. Collapse must clear every nested key
+and the hidden filter, reopening must keep the tree closed, and a group SVG must
+expand the sidebar before opening its children. The desktop menu uses controlled
+`expanded-keys`; collapsed child containers are immediately hidden, including
+closing animations. Static group titles retain no SVG. The mobile Drawer uses
+its independent default expansion state.
+
+The 2026-10-12 sidebar gate passed 133/133 frontend tests, typecheck and isolated
+Vite build. The skill passed source coverage, isolated typecheck, 10/10 contracts
+and build. The later matrix/skyline gate passed 142/142 frontend tests, typecheck
+and Vite build; skill coverage passed with 18/18 contracts, typecheck and build. Browser acceptance verified the 72px outer-icon rail, cleared children,
+reopen behavior, group activation, keyboard Enter/Space and filter clearing;
+390x844/360x800 kept the 300px complete mobile Drawer, working selection/close
+buttons and no page horizontal overflow. Icon centering also requires an explicit
+collapsed single-column override, symmetric native scrollbar gutters and alignment
+with the brand/footer center. Validate with genuine overflow in a 1024x400
+viewport, not only an unscrolled screenshot. The showcase quota-state switch
+uses the existing 16/12/4 route-switch contract and one moving surface for all
+three states; keyboard activation and 390/360px wrapping were verified.
+This is local fixture evidence, with no
+production deployment. Existing chunk warnings remain.
 
 ## Desktop topbar divider gate
 

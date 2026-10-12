@@ -169,7 +169,7 @@ test('dashboard trend range uses the route-switch contract and brand uses displa
   assert.match(dashboard, /\.sec-title\{font-weight:650;font-size:16px;line-height:20px;letter-spacing:0\}/)
 })
 
-test('dashboard and subscription actions share the same Sub2 button contract', () => {
+test('dashboard and subscription actions share the same compact button contract', () => {
   const dashboard = read('src/views/UserDashboard.vue')
   const subscription = read('src/views/UserSub.vue')
   const globalCss = read('src/styles/global.css')
@@ -264,7 +264,7 @@ test('global selection treatment removes mouse blue borders but keeps keyboard f
   assert.doesNotMatch(source, /\.n-button:not\(\.n-button--disabled\):hover,\s*\.n-button:not\(\.n-button--disabled\):focus-visible \{ box-shadow: var\(--focus-ring\); \}/)
 })
 
-test('Sub2 font assets are bundled for the global typography roles', () => {
+test('font assets are bundled for the global typography roles', () => {
   for (const path of [
     'public/fonts/brand/Fraunces-Variable.ttf',
     'public/fonts/source-han/SourceHanSerifCN-VF.woff2',
@@ -438,7 +438,7 @@ test('all secondary route switches share the non-clipping tab contract', () => {
   assert.match(globalCss, /\.n-tabs\.route-switch-2 \.n-tabs-nav::after \{[\s\S]*?background: var\(--border\);/)
 })
 
-test('public and dashboard topbar navigation copy the Sub2 language-control geometry', () => {
+test('public and dashboard topbar navigation share the compact control geometry', () => {
   const header = read('src/components/AppHeader.vue')
   const dashboardLayout = read('src/components/DashboardLayout.vue')
   const hoverMenu = read('src/components/TopbarHoverMenu.vue')
@@ -485,10 +485,10 @@ test('public and dashboard topbar navigation copy the Sub2 language-control geom
   assert.match(dashboardLayout, /class="topbar-account-icon"/)
   assert.equal((dashboardLayout.match(/class="dashboard-dropdown-trigger/g) || []).length, 1)
   assert.equal((dashboardLayout.match(/class="account-button dashboard-dropdown-trigger topbar-language-reference-trigger topbar-account-trigger"/g) || []).length, 1)
-  assert.match(dashboardLayout, /悬浮下拉菜单：管理入口复制 Sub2 语言切换的控件几何。/)
+  assert.match(dashboardLayout, /悬浮下拉菜单：管理入口与账户入口共享顶栏控件几何。/)
   assert.match(dashboardLayout, /:open="openMenu === 'admin'"[^>]*@open="setMenuOpen\('admin', true\)"[^>]*@close="setMenuOpen\('admin', false\)"/)
   assert.match(dashboardLayout, /:open="openMenu === 'account'"[^>]*@open="setMenuOpen\('account', true\)"[^>]*@close="setMenuOpen\('account', false\)"/)
-  assert.match(globalCss, /顶栏悬浮菜单：复用 Anthropic Learn 的渐入与内容展开节奏；父级持有唯一 open 状态。/)
+  assert.match(globalCss, /顶栏悬浮菜单：使用统一的渐入与内容展开节奏；父级持有唯一 open 状态。/)
   assert.match(globalCss, /--topbar-menu-open-duration: 400ms;/)
   assert.match(globalCss, /--topbar-menu-dropdown-duration: 200ms;/)
   assert.match(globalCss, /\/\* 悬浮下拉菜单命中桥：面板与按钮保留 8px 视觉间距，经过空隙时仍留在同一悬浮区域。 \*\/[\s\S]*?\.topbar-hover-menu-hit-bridge \{[\s\S]*?top: 100%;[\s\S]*?width: var\(--topbar-menu-bridge-width, max\(100%, 160px\)\);[\s\S]*?height: 8px;/)
@@ -532,7 +532,8 @@ test('monitor summary SVGs are neutral and heatmap range uses the route-switch c
   assert.match(monitor, /\.heat-range\.route-switch::before[\s\S]*?transform: translateX\(var\(--heat-indicator-x\)\)/)
   assert.match(monitor, /<span class="heat-legend">/)
   assert.match(monitor, /\.heat-range-btn:hover, \.heat-range-btn:focus-visible \{[\s\S]*?color: var\(--text\); background: transparent; box-shadow: none; outline: none; \}/)
-  assert.match(monitor, /\.refresh-btn:hover:not\(:disabled\) \{[\s\S]*?color: var\(--text\); border-color: var\(--border-strong\); background: var\(--card\); box-shadow: 0 0 0 1px var\(--border-strong\); \}/)
+  assert.match(monitor, /<RefreshButton :loading="refreshing" @refresh="doRefresh"/)
+  assert.match(read('src/components/RefreshButton.vue'), /\.kreeper-refresh:hover:not\(:disabled\) \{[^}]*color: var\(--text\); border-color: var\(--border-strong\);/)
   assert.match(monitor, /\.clock \{[\s\S]*?background: transparent; border: 0; border-radius: 0; box-shadow: none;/)
 })
 
@@ -582,7 +583,10 @@ test('semantic status colors use Apple soft badges and chart state semantics', (
   assert.match(dashboard, /CHART_STATUS_COLORS\.inactive/)
   assert.match(dashboard, /chartColorForPercent\(usedPct\.value\)/)
   assert.match(upstreams, /:color="CHART_STATUS_COLORS\.success"/)
-  assert.match(monitor, /emphasis: \{ scale: true, itemStyle: \{ borderColor: '#fff', borderWidth: 2 \} \}/)
+  assert.match(monitor, /<AvailabilityHeatmap v-if="heatData" :data="heatData" :ready="ringsReady"/)
+  const skyline = read('src/utils/heatmap-skyline.ts')
+  assert.doesNotMatch(skyline, /SEVERITY_SCALE|severityRamp|colorProgress|colorRamp/)
+  assert.match(skyline, /HEATMAP_STATES[\s\S]*?color: CHART_STATUS_COLORS\.success[\s\S]*?color: CHART_STATUS_COLORS\.warning[\s\S]*?color: CHART_STATUS_COLORS\.error[\s\S]*?color: CHART_STATUS_COLORS\.inactive/)
   assert.doesNotMatch(monitor, /shadowBlur: 10|card-top-line/)
   assert.match(adminMonitor, /区分-状态牌[\s\S]*?color: CHART_STATUS_COLORS\.success[\s\S]*?color: CHART_STATUS_COLORS\.warning[\s\S]*?color: CHART_STATUS_COLORS\.error/)
   assert.match(adminMonitor, /function pctColor\(v: number\) \{ return chartColorForPercent\(v\) \}/)
@@ -651,7 +655,7 @@ test('admin users use neutral selected cards, semantic identity badges, and arc 
   assert.doesNotMatch(source, /AVATAR_PALETTE[\s\S]*?#007aff|AVATAR_PALETTE[\s\S]*?#8e8e93/)
   assert.match(source, /function avatarStyle\(name: string\) \{[\s\S]*?hashHue\(name\) % AVATAR_PALETTE\.length[\s\S]*?color-mix\(in srgb, \$\{color\.background\} 12%, white\)/)
   assert.match(source, /区分-身份牌：Apple 身份色仅用于头像识别，状态语义由独立标签承载。/)
-  assert.match(source, /区分-身份牌：使用 AWS 语义警告色底与白色文字[\s\S]*?class="identity-badge"[^>]*>管理员/)
+  assert.match(source, /区分-身份牌：管理员使用 Apple 警告色实心底与白色文字，独立于头像身份色。[\s\S]*?class="identity-badge"[^>]*>管理员/)
   assert.match(source, /\.identity-badge \{ background: var\(--warn\) !important; color: #fff !important;/)
   assert.match(source, /\.ss-item \{[\s\S]*?background: var\(--card\); border: 0;[\s\S]*?\}/)
   assert.match(source, /\.ss-item\.on \{ border-color: transparent; background: var\(--card-hover\); box-shadow: none; \}/)
@@ -817,13 +821,14 @@ test('ECharts uses one tree-shakable registry with only rendered chart features'
     'src/views/AdminMonitor.vue',
     'src/views/AdminOverview.vue',
     'src/views/AdminServers.vue',
-    'src/views/Monitor.vue',
     'src/views/UserOrders.vue',
     'src/views/UserPoints.vue',
   ]) {
     assert.match(read(path), /import \* as echarts from '@\/utils\/echarts'/, path)
     assert.doesNotMatch(read(path), /import \* as echarts from 'echarts'/, path)
   }
+  assert.match(read('src/views/Monitor.vue'), /import AvailabilityHeatmap from/)
+  assert.doesNotMatch(read('src/views/Monitor.vue'), /import \* as echarts/)
 })
 
 test('shared resource metrics use the display-card hover treatment', () => {

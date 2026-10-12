@@ -11,12 +11,12 @@
           <template #icon><n-icon><RefreshOutline /></n-icon></template>
           刷新
         </n-button>
-        <!-- 普通按钮：沿用 Sub2 账号管理页刷新按钮的紧凑描边几何，不改文字和 SVG。 -->
+        <!-- 普通按钮：使用紧凑描边几何，不改文字和 SVG。 -->
         <n-button size="small" secondary class="action-button action-button--normal" @click="router.push('/sub')">
           <template #icon><n-icon><LinkOutline /></n-icon></template>
           订阅管理
         </n-button>
-        <!-- 强调按钮：保留现有蓝色主按钮，仅采用 Sub2 的紧凑几何。 -->
+        <!-- 强调按钮：保留现有蓝色主按钮，仅采用紧凑几何。 -->
         <n-button size="small" type="primary" class="action-button action-button--emphasis" @click="router.push('/shop')">
           <template #icon><n-icon><CartOutline /></n-icon></template>
           去商城

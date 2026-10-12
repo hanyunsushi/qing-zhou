@@ -1,4 +1,4 @@
-/* Sub2 typography assets: display, Chinese display, body Latin and Chinese body. */
+/* QingZhou typography assets: display, Chinese display, body Latin and Chinese body. */
 @font-face { font-family: 'Fraunces'; src: url('/fonts/brand/Fraunces-Variable.ttf') format('truetype'); font-style: normal; font-weight: 400 900; font-display: swap; }
 @font-face { font-family: 'Source Han Serif SC'; src: url('/fonts/source-han/SourceHanSerifCN-VF.woff2') format('woff2'); font-style: normal; font-weight: 200 900; font-display: swap; }
 @font-face { font-family: 'Inter'; src: url('/fonts/inter/Inter-Variable.ttf') format('truetype'); font-style: normal; font-weight: 100 900; font-display: swap; }
@@ -68,7 +68,7 @@
   --r-overlay: 18px;
   --r-logo: 18px;
   --r-pill: 18px;
-  /* Sub2 active typography roles. Numeric content keeps the AWS mono/tabular rule. */
+  /* Active typography roles. Numeric content keeps the mono/tabular rule. */
   --ff-heading: "Fraunces", "Source Han Serif SC", serif;
   --ff-body: "Inter", "Resource Han Rounded CN", sans-serif;
   --ff: var(--ff-body);
@@ -244,7 +244,7 @@ button, input, textarea, select { font-family: inherit; }
   color: #fff !important;
   border-color: var(--accent-arc-hover) !important;
 }
-/* 普通按钮：紧凑 32px 几何、浅色文字与 Sub2 中性 ring 状态。 */
+/* 普通按钮：紧凑 32px 几何、浅色文字与中性 ring 状态。 */
 .n-button.action-button { min-height:32px !important; height:32px; padding:0 10px !important; border-radius:8px !important; border:0 !important; font-size:13px; font-weight:500; line-height:20px; letter-spacing:0; transition:color .1s ease-in-out,background-color .2s ease-in-out,box-shadow .2s ease-in-out,opacity .2s ease-in-out,transform .2s ease-in-out !important; }
 .n-button.action-button--normal { --action-button-bg: transparent; --action-button-fg: var(--text-3); --action-button-border: var(--border); --action-button-bg-hover: transparent; --action-button-fg-hover: var(--text-2); --action-button-border-hover: var(--border-strong); --n-border: 0 solid transparent !important; --n-border-hover: 0 solid transparent !important; --n-border-focus: 0 solid transparent !important; background:var(--action-button-bg) !important; color:var(--action-button-fg) !important; box-shadow:0 0 0 1px var(--action-button-border) !important; }
 .n-button.action-button--normal:hover:not(.n-button--disabled), .n-button.action-button--normal:focus-visible:not(.n-button--disabled) { background:var(--action-button-bg-hover) !important; color:var(--action-button-fg-hover) !important; box-shadow:0 0 0 2px var(--action-button-border-hover) !important; }
@@ -383,7 +383,7 @@ button, input, textarea, select { font-family: inherit; }
 .n-alert, .n-message, .n-notification, .n-tooltip {
   border-radius: var(--r-overlay) !important;
 }
-/* 顶栏语言切换式控件：共享 Sub2 的几何状态，颜色继续使用 QingZhou token。 */
+/* 顶栏语言切换式控件：共享顶栏控件的几何状态，颜色继续使用 QingZhou token。 */
 .n-button.topbar-language-reference-trigger {
   display: inline-flex !important;
   align-items: center !important;
@@ -394,7 +394,7 @@ button, input, textarea, select { font-family: inherit; }
   padding: 0 10px !important;
   border: 1px solid var(--border) !important;
   border-radius: 12px !important;
-  /* Apple globalnav links remain transparent so the header material reads as one surface. */
+  /* 顶栏控件常态背景跟随共享玻璃材质，悬浮时切换到中性面。 */
   background: var(--topbar-background) !important;
   color: var(--text-2) !important;
   font-size: 13px !important;
@@ -553,7 +553,7 @@ button, input, textarea, select { font-family: inherit; }
 .n-base-select-menu.popover-transition-leave-active {
   transition: none !important;
 }
-/* 顶栏悬浮菜单：复用 Anthropic Learn 的渐入与内容展开节奏；父级持有唯一 open 状态。 */
+/* 顶栏悬浮菜单：使用统一的渐入与内容展开节奏；父级持有唯一 open 状态。 */
 .topbar-hover-menu {
   position: relative;
   display: inline-flex;
@@ -1108,7 +1108,7 @@ button.resource-metric { color:inherit; text-align:left; font:inherit; cursor:po
 .topbar-hover-menu-panel { border-radius: 16px !important; }
 
 /* 侧边栏例外：全局 [class*="-item"] 圆角兜底会匹配 Naive UI 的
-   .n-menu-item-content，必须在全局层明确恢复 Cloudflare 的 8px 行圆角。 */
+   .n-menu-item-content，必须在全局层明确恢复侧栏的 8px 行圆角。 */
 .sidebar-menu .n-menu,
 .sidebar-menu .n-menu-item,
 .sidebar-menu .n-submenu,

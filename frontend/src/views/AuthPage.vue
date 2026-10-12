@@ -17,7 +17,7 @@
           <header class="auth-view-header"><span class="auth-kicker">{{ isRegister ? '创建账户' : isForgot ? '账户恢复' : '欢迎回来' }}</span><h2 class="auth-title">{{ isRegister ? '注册' : isForgot ? '找回密码' : '登录' }}</h2><p class="auth-sub">{{ pageSubtitle }}</p></header>
           <nav class="auth-mode-nav" aria-label="认证方式"><router-link to="/login" :class="{ active: !isRegister && !isForgot }">登录</router-link><router-link to="/register" :class="{ active: isRegister }">注册</router-link></nav>
           <div v-if="isRegister && !config.config.registration_open" class="auth-notice" role="status">当前暂未开放注册，请联系管理员获取账户。</div>
-          <!-- 填写框：登录与注册共用同一组 Cloudscape 表单控件和错误槽位。 -->
+          <!-- 填写框：登录与注册共用同一组表单控件和错误槽位。 -->
           <n-form v-else-if="!isForgot" ref="formRef" class="auth-fields" :model="form" :rules="isRegister ? registerRules : loginRules" label-placement="top" @submit.prevent="submit">
             <!-- 填写框 -->
             <n-form-item v-if="isRegister" label="邮箱" path="email"><n-input v-model:value="form.email" :input-props="{ autocomplete: 'email' }" placeholder="请输入邮箱" /></n-form-item>

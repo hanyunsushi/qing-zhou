@@ -53,6 +53,11 @@ const themeOverrides: GlobalThemeOverrides = {
     textColorBase: '#16191f',
     fontFamily: 'var(--ff-body)',
   },
+  // 提示信息 / 警告信息：警告、错误沿用浅色语义面，不附加边框线。
+  Alert: {
+    borderWarning: 'none',
+    borderError: 'none',
+  },
 }
 
 // 只拉站点配置；auth 由 router guard 负责初始化

@@ -1,7 +1,7 @@
 ---
 title: Wiki Schema
-updated: 2026-10-10
-last_synced_commit: c3aecf0
+updated: 2026-10-12
+last_synced_commit: e90a2161cac8f03cfaaac8356d0c669b7793c6df
 commit_policy: committed
 authority_entry: ../agent.md
 ---

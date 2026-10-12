@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import test from 'node:test'
+import { runInNewContext } from 'node:vm'
+import ts from 'typescript'
+import { ref } from 'vue'
 
 const source = await readFile(new URL('../src/views/AdminUpstreams.vue', import.meta.url), 'utf8')
 const overview = await readFile(new URL('../src/views/AdminOverview.vue', import.meta.url), 'utf8')
@@ -88,7 +91,7 @@ test('branding, subscription label, and input focus contract match production', 
   assert.match(controlSources.at(-1), /<!-- 复制栏：订阅地址仅用于查看和复制，不使用填写框的点击焦点高亮或过渡特效。 -->/)
 })
 
-test('admin overview range switch uses the Sub2 route-switch geometry without changing colors', () => {
+test('admin overview range switch uses the shared route-switch geometry without changing colors', () => {
   assert.match(overview, /class="overview-range-tabs"/)
   assert.match(overview, /class="ov-tabs route-switch-2"/)
   assert.match(overview, /二级切换路由（切换路由2）/)
@@ -146,7 +149,7 @@ test('sidebar uses the Cloudflare documentation sidebar treatment', () => {
   assert.match(layout, /\.sidebar-filter \{[\s\S]*?margin: 20px 0;/)
   assert.match(layout, /\.sidebar-menu \{[\s\S]*?flex: 1 1 auto;[\s\S]*?overflow-y: auto; scrollbar-gutter: stable; contain: inline-size; padding: 0 0 var\(--sidebar-content-gap\) 16px;/)
   assert.match(layout, /\.mobile-sidebar \.sidebar-menu \{ flex: 1 1 auto; \}/)
-  assert.match(layout, /\.app-sider\.is-collapsed \.sidebar-menu \{ padding: 8px 8px var\(--sidebar-content-gap\); \}/)
+  assert.match(layout, /\.app-sider\.is-collapsed \.sidebar-menu \{ padding: 8px 0 var\(--sidebar-content-gap\); scrollbar-gutter: stable both-edges; \}/)
   assert.match(layout, /\.sidebar-footer \{ flex: 0 0 64px; box-sizing: border-box; height: 64px; min-height: 64px; max-height: 64px; padding: calc\(var\(--sidebar-content-gap\) - 1px\) 16px 12px; border-top: 1px solid var\(--sidebar-border\); \}/)
   assert.match(layout, /\.app-sider\.is-collapsed \.sidebar-footer \{ padding: calc\(var\(--sidebar-content-gap\) - 1px\) 8px 12px; \}/)
   assert.match(layout, /\.sidebar-menu \{[\s\S]*?contain: inline-size;/)
@@ -169,7 +172,7 @@ test('sidebar uses the Cloudflare documentation sidebar treatment', () => {
   assert.match(layout, /:deep\(\.n-menu-item-content--selected::before\), :deep\(\.n-menu-item-content--child-active::before\) \{ background: var\(--sidebar-selected\) !important; \}/)
   assert.match(layout, /:deep\(\.n-menu-item-content--selected \.n-menu-item-content__icon \.n-icon svg\),[\s\S]*?color: var\(--accent\) !important;/)
   assert.match(layout, /:deep\(\.n-menu\) \{[\s\S]*?contain: inline-size;/)
-  assert.doesNotMatch(layout, /:deep\(\.n-submenu(?:-children)?(?: \.n-menu-item(?:-content)?)?\) \{/)
+  assert.doesNotMatch(layout, /^:deep\(\.n-submenu(?:-children)?(?: \.n-menu-item(?:-content)?)?\) \{/m)
   assert.match(layout, /:deep\(\.n-menu-item-content--selected::after\) \{ display: none; \}/)
   assert.match(globalStyles, /侧边栏例外：全局 \[class\*="-item"\] 圆角兜底会匹配 Naive UI 的/)
   assert.match(globalStyles, /\.sidebar-menu \.n-menu-item-content,[\s\S]*?border-radius: 8px !important;/)
@@ -184,15 +187,46 @@ test('sidebar uses the Cloudflare documentation sidebar treatment', () => {
 test('desktop sidebar collapses to an accessible icon rail and keeps the mobile drawer unchanged', () => {
   assert.match(layout, /class="app-sider sidebar-surface" :class="\{ 'is-collapsed': sidebarCollapsed \}"/)
   assert.match(layout, /侧边栏折叠按钮：桌面切换完整导航与图标轨道，移动端继续使用抽屉；桌面与移动 Drawer 共用同一 footer 样式。[\s\S]*?aria-label="sidebarCollapsed \? '展开侧栏' : '收起侧栏'"[\s\S]*?aria-expanded="!sidebarCollapsed"[\s\S]*?aria-controls="desktop-sidebar-nav"[\s\S]*?@click="toggleSidebar"/)
-  assert.match(layout, /function toggleSidebar\(\) \{\s*sidebarCollapsed\.value = !sidebarCollapsed\.value\s*\}/)
+  assert.match(layout, /:expanded-keys="sidebarExpandedKeys"[\s\S]*?@update:expanded-keys="updateSidebarExpandedKeys"/)
   assert.match(layout, /function menuNodeProps\(option: MenuOption \| MenuGroupOption\)[\s\S]*?return sidebarCollapsed\.value && label \? \{ title: label \} : \{\}/)
   assert.match(layout, /\.app-sider\.is-collapsed \{ width: 72px; min-width: 72px; max-width: 72px; flex-basis: 72px; \}/)
   assert.match(layout, /\.app-sider\.is-collapsed :deep\(\.n-menu-item-content-header\)[\s\S]*?clip: rect\(0, 0, 0, 0\) !important;/)
+  assert.match(layout, /\.app-sider\.is-collapsed :deep\(\.n-submenu-children\) \{ display: none !important; \}/)
+  assert.match(layout, /\.app-sider\.is-collapsed \.sidebar-menu \{[^}]*scrollbar-gutter: stable both-edges;/)
+  assert.match(layout, /\.app-sider\.is-collapsed :deep\(\.n-menu-item-content\) \{[^}]*grid-template-columns: minmax\(0, 1fr\) !important;[^}]*place-items: center;/)
   assert.match(layout, /:global\(\.mobile-sidebar-drawer\) \{\s*width: 300px !important;/)
 })
 
-test('mobile menu trigger copies the Sub2 portrait sidebar toggle contract', () => {
-  assert.match(layout, /悬浮菜单按钮：复用 Sub2 竖屏侧栏按钮的路径、尺寸与透明状态。/)
+test('sidebar collapse resets every nested expansion and hidden filter without restoring them on reopen', () => {
+  const sidebarCollapsed = ref(false)
+  const sidebarQuery = ref('上游')
+  const defaultExpandedKeys = ['ag-ops', 'ag-node', 'ag-sys']
+  const sidebarExpandedKeys = ref([...defaultExpandedKeys, 'nested-third-level'])
+  const methods = ['toggleSidebar', 'updateSidebarExpandedKeys'].map(name => {
+    const method = layout.match(new RegExp(`function ${name}\\([^]*?^}`, 'm'))?.[0]
+    assert.ok(method, name)
+    return method
+  }).join('\n')
+  const js = ts.transpileModule(methods, { compilerOptions: { target: ts.ScriptTarget.ESNext } }).outputText
+  const handlers = runInNewContext(js + '\n({ toggleSidebar, updateSidebarExpandedKeys })', {
+    sidebarCollapsed, sidebarQuery, sidebarExpandedKeys,
+  })
+  handlers.toggleSidebar()
+  assert.equal(sidebarCollapsed.value, true)
+  assert.equal(sidebarQuery.value, '')
+  assert.equal(sidebarExpandedKeys.value.length, 0)
+  handlers.toggleSidebar()
+  assert.equal(sidebarCollapsed.value, false)
+  assert.equal(sidebarExpandedKeys.value.length, 0)
+  assert.deepEqual(defaultExpandedKeys, ['ag-ops', 'ag-node', 'ag-sys'])
+  handlers.toggleSidebar()
+  handlers.updateSidebarExpandedKeys(['ag-node'])
+  assert.equal(sidebarCollapsed.value, false)
+  assert.deepEqual(Array.from(sidebarExpandedKeys.value), ['ag-node'])
+})
+
+test('mobile menu trigger keeps the shared sidebar toggle contract', () => {
+  assert.match(layout, /悬浮菜单按钮：沿用移动端侧栏按钮的路径、尺寸与透明状态。/)
   assert.match(layout, /<button v-if="isMobile" class="icon-btn app-header-menu-toggle"[^>]*aria-label="菜单">[\s\S]*?class="app-header-menu-toggle-icon"[^>]*viewBox="0 0 32 32"[^>]*stroke-width="2\.5"[\s\S]*?stroke-dasharray="12 63" d="M27 10 13 10C10\.8 10 9 8\.2 9 6 9 3\.5 10\.8 2 13 2 15\.2 2 17 3\.8 17 6L17 26C17 28\.2 18\.8 30 21 30 23\.2 30 25 28\.2 25 26 25 23\.8 23\.2 22 21 22L7 22"[\s\S]*?<path d="M7 16 27 16" \/>/)
   assert.match(layout, /\.icon-btn \{[\s\S]*?width: 42px; height: 42px; flex: 0 0 42px; padding: 10px;[\s\S]*?border: 0; border-radius: 8px; background: transparent;/)
   assert.match(layout, /\.app-header-menu-toggle-icon \{ display: block; width: 22px; height: 22px; flex: 0 0 22px; \}/)

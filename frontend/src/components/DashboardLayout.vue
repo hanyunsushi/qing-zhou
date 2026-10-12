@@ -16,7 +16,8 @@
           <input v-model="sidebarQuery" type="search" placeholder="筛选导航" aria-label="筛选导航" autocomplete="off" @keydown.esc="sidebarQuery = ''" />
           <kbd v-if="!sidebarQuery" aria-hidden="true">/</kbd>
         </div>
-        <n-menu :value="activeKey" :options="menuOptions" :default-expanded-keys="defaultExpandedKeys" :indent="18" :node-props="menuNodeProps" @update:value="handleMenuSelect" />
+        <!-- 侧边栏 / 菜单归类级别：桌面展开状态受控；收起后仅保留最外层可操作入口的 SVG。 -->
+        <n-menu :value="activeKey" :options="menuOptions" :expanded-keys="sidebarExpandedKeys" :indent="18" :node-props="menuNodeProps" @update:expanded-keys="updateSidebarExpandedKeys" @update:value="handleMenuSelect" />
       </nav>
       <!-- 侧边栏折叠按钮：桌面切换完整导航与图标轨道，移动端继续使用抽屉；桌面与移动 Drawer 共用同一 footer 样式。 -->
       <div class="sidebar-footer">
@@ -85,7 +86,7 @@
     <div class="app-main">
       <header class="layout-header" :class="{ 'is-scrolled': isScrolled, 'is-menu-open': openMenu !== null }">
         <div class="header-left">
-          <!-- 悬浮菜单按钮：复用 Sub2 竖屏侧栏按钮的路径、尺寸与透明状态。 -->
+          <!-- 悬浮菜单按钮：沿用移动端侧栏按钮的路径、尺寸与透明状态。 -->
           <button v-if="isMobile" class="icon-btn app-header-menu-toggle" @click="drawerShow = true" aria-label="菜单">
             <svg class="app-header-menu-toggle-icon" aria-hidden="true" fill="none" viewBox="0 0 32 32" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <path stroke-dasharray="12 63" d="M27 10 13 10C10.8 10 9 8.2 9 6 9 3.5 10.8 2 13 2 15.2 2 17 3.8 17 6L17 26C17 28.2 18.8 30 21 30 23.2 30 25 28.2 25 26 25 23.8 23.2 22 21 22L7 22" />
@@ -111,7 +112,7 @@
           <template v-if="auth.isAdmin && !isMobile">
             <TopbarHoverMenu :open="openMenu === 'admin'" :options="adminQuickMenu" @open="setMenuOpen('admin', true)" @close="setMenuOpen('admin', false)" @select="handleAdminSelect">
               <template #trigger>
-              <!-- 悬浮下拉菜单：管理入口复制 Sub2 语言切换的控件几何。 -->
+              <!-- 悬浮下拉菜单：管理入口与账户入口共享顶栏控件几何。 -->
               <n-button quaternary size="small" class="dashboard-dropdown-trigger topbar-language-reference-trigger" :aria-expanded="openMenu === 'admin'" aria-haspopup="menu">管理</n-button>
               </template>
             </TopbarHoverMenu>
@@ -206,6 +207,16 @@ function menuNodeProps(option: MenuOption | MenuGroupOption) {
 
 function toggleSidebar() {
   sidebarCollapsed.value = !sidebarCollapsed.value
+  if (sidebarCollapsed.value) {
+    sidebarExpandedKeys.value = []
+    sidebarQuery.value = ''
+  }
+}
+
+// 侧边栏 / 菜单归类级别：折叠轨道中的分组入口先展开侧栏，子项不留在图标轨道内。
+function updateSidebarExpandedKeys(keys: Array<string | number>) {
+  if (sidebarCollapsed.value && keys.length) sidebarCollapsed.value = false
+  sidebarExpandedKeys.value = keys
 }
 
 // 侧边栏菜单归类级别：二级菜单项，直接挂在一级归类下，保留 SVG 图标。
@@ -228,7 +239,7 @@ const infoLeafItems: MenuOption[] = [
   { label: '账户设置', key: '/account', icon: renderIcon(PersonOutline) },
 ]
 
-// 侧边栏菜单归类级别：三级归类下的页面项，继续保留 SVG 图标。
+// 侧边栏菜单归类级别：管理后台二级归类下的三级页面项，继续保留 SVG 图标。
 const adminOpsItems: MenuOption[] = [
   { label: '上游管理', key: '/admin/upstreams', icon: renderIcon(CloudOutline) },
   { label: '管理概览', key: '/admin', icon: renderIcon(SpeedometerOutline) },
@@ -276,6 +287,7 @@ const allMenuOptions = computed<MenuOption[]>(() => {
 })
 
 const defaultExpandedKeys = ['ag-ops', 'ag-node', 'ag-sys']
+const sidebarExpandedKeys = ref<Array<string | number>>([...defaultExpandedKeys])
 
 function filterMenuOptions(options: MenuOption[], query: string): MenuOption[] {
   if (!query) return options
@@ -471,7 +483,9 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
 }
 /* 侧边栏：菜单承接剩余空间，内容不足时只扩大菜单空白，不改变折叠按钮高度。 */
 .mobile-sidebar .sidebar-menu { flex: 1 1 auto; }
-.app-sider.is-collapsed .sidebar-menu { padding: 8px 8px var(--sidebar-content-gap); }
+/* 侧边栏：折叠轨道对称预留原生滚动槽，40px菜单面与品牌/底部按钮共用中心线。 */
+.app-sider.is-collapsed .sidebar-menu { padding: 8px 0 var(--sidebar-content-gap); scrollbar-gutter: stable both-edges; }
+.app-sider.is-collapsed :deep(.n-menu) { width: 40px !important; max-width: 100% !important; margin-inline: auto; }
 .app-sider.is-collapsed .sidebar-filter { display: none; }
 .sidebar-menu::-webkit-scrollbar { width: auto; height: auto; }
 .sidebar-menu::-webkit-scrollbar-track { background: revert; }
@@ -601,7 +615,8 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
   display: inline-flex; align-items: center; justify-content: center; align-self: center; justify-self: center; width: 16px; height: 20px; margin: 0; color: var(--sidebar-muted); opacity: .5; transform: rotate(-90deg) !important; transform-origin: center;
   transition: transform .25s cubic-bezier(.87, 0, .13, 1), color .25s cubic-bezier(.87, 0, .13, 1) !important;
 }
-.app-sider.is-collapsed :deep(.n-menu-item-content) { grid-template-columns: minmax(0, 1fr); justify-items: center; padding: 6px 0 !important; }
+/* 侧边栏：单列优先于全局三列网格，SVG水平/垂直居中，隐藏文字不占列。 */
+.app-sider.is-collapsed :deep(.n-menu-item-content) { grid-template-columns: minmax(0, 1fr) !important; place-items: center; padding: 6px 0 !important; }
 .app-sider.is-collapsed :deep(.n-menu-item-content-header) {
   position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important;
   overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important;
@@ -609,6 +624,8 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
 .app-sider.is-collapsed :deep(.n-menu-item-content__arrow) { display: none !important; }
 .app-sider.is-collapsed :deep(.n-menu-item-group-title) { height: 8px; min-height: 8px; margin: 6px 0 2px !important; padding: 0 !important; overflow: hidden; opacity: 0; }
 .app-sider.is-collapsed :deep(.n-menu-item-content .n-menu-item-content__icon) { margin: 0 !important; }
+/* 侧边栏 / 菜单归类级别：收起时立即移除子树，关闭动画中的二、三级 SVG 也不能进入图标轨道。 */
+.app-sider.is-collapsed :deep(.n-submenu-children) { display: none !important; }
 :deep(.n-submenu[aria-expanded="false"] > .n-menu-item > .n-menu-item-content .n-menu-item-content__arrow) { transform: rotate(-90deg) !important; }
 :deep(.n-submenu[aria-expanded="true"] > .n-menu-item > .n-menu-item-content .n-menu-item-content__arrow) { transform: rotate(0deg) !important; }
 .sidebar-footer { flex: 0 0 64px; box-sizing: border-box; height: 64px; min-height: 64px; max-height: 64px; padding: calc(var(--sidebar-content-gap) - 1px) 16px 12px; border-top: 1px solid var(--sidebar-border); }

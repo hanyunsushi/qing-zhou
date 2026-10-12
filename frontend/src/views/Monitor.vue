@@ -39,9 +39,8 @@
               <span class="auto-dot" :class="{ active: refreshing }"></span>
               自动刷新 · 30s
             </div>
-            <button class="refresh-btn" :class="{ spinning: refreshing }" @click="doRefresh" :disabled="refreshing" title="立即刷新">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-            </button>
+            <!-- 普通按钮 / 悬浮效果：标准刷新SVG单次旋转，加载反馈不改变按钮位置。 -->
+            <RefreshButton :loading="refreshing" @refresh="doRefresh" />
           </div>
         </div>
 
@@ -128,8 +127,10 @@
 
         <!-- 可用性热力图 -->
         <div class="heatmap-card">
-          <div ref="heatEl" class="heat-chart"></div>
-          <div v-if="!heatData?.servers?.length" class="heat-empty">暂无探针服务器</div>
+          <!-- 区分-状态牌：原48个时间桶折为8列6行，平面/立体共用状态数据；服务器名完整换行。 -->
+          <AvailabilityHeatmap v-if="heatData" :data="heatData" :ready="ringsReady" />
+          <div v-else class="heat-empty">{{ heatError || '正在获取可用性数据…' }}</div>
+          <div v-if="heatError && heatData" class="heat-empty" role="status">{{ heatError }}</div>
         </div>
 
         <!-- 空状态 -->
@@ -147,7 +148,7 @@
                 <span class="status-beacon" :class="s.status" />
                 <span class="server-name" :title="s.name">{{ s.name }}</span>
               </div>
-              <!-- 区分-状态牌：服务器运行状态使用 Apple 语义色实心底与白字。 -->
+              <!-- 区分-状态牌：服务器运行状态使用 Apple 语义色浅色面与彩色文字。 -->
               <span class="status-badge" :class="s.status">
                 <i class="badge-dot" /> {{ s.status === 'online' ? '运行中' : '离线' }}
               </span>
@@ -302,7 +303,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, nextTick, shallowRef, reactive, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, reactive, watch } from 'vue'
 import { NEmpty } from 'naive-ui'
 import { apiGet, apiList, apiPost, apiPut } from '@/api'
 import { useAuthStore } from '@/stores/auth'
@@ -314,8 +315,9 @@ import AppHeader from '@/components/AppHeader.vue'
 import ResourceGauge from '@/components/ResourceGauge.vue'
 import ociLogo from '@/assets/provider-oci.svg'
 import cloudflareLogo from '@/assets/provider-cloudflare.svg'
-import * as echarts from '@/utils/echarts'
-import { CHART_STATUS_COLORS } from '@/utils/status-colors'
+import RefreshButton from '@/components/RefreshButton.vue'
+import AvailabilityHeatmap from '@/components/AvailabilityHeatmap.vue'
+import type { AvailabilityData } from '@/utils/heatmap-skyline'
 
 interface ServerMetrics {
   cpu_percent: number; mem_used: number; mem_total: number
@@ -616,15 +618,15 @@ async function fetchData() {
 async function doRefresh() {
   if (refreshing.value) return
   refreshing.value = true
-  await fetchData()
-  setTimeout(() => { refreshing.value = false }, 600)
+  try { await Promise.all([fetchData(), loadHeatmap(heatRange.value)]) }
+  finally { refreshing.value = false }
 }
 
-// --- 可用性热力图（Y=机器, X=时间桶）---
-const heatEl = ref<HTMLElement | null>(null)
+// 区分-状态牌：每台服务器独立时间矩阵，状态数据保持原接口口径。
 const heatRangeRef = ref<HTMLElement | null>(null)
-const heatChart = shallowRef<echarts.ECharts | null>(null)
-const heatData = ref<any>(null)
+const heatData = ref<AvailabilityData | null>(null)
+const heatError = ref('')
+let heatRequest = 0
 const heatRange = ref('24h')
 const heatRanges = [
   { label: '1h', value: '1h' }, { label: '6h', value: '6h' },
@@ -651,96 +653,21 @@ function handleHeatRangeFocusout(event: FocusEvent) {
   const nextTarget = event.relatedTarget
   if (!(nextTarget instanceof Node) || !heatRangeRef.value?.contains(nextTarget)) moveHeatIndicatorToSelected()
 }
-function fmtHeatTime(ts: number, range: string): string {
-  const d = new Date(ts * 1000)
-  const pad = (n: number) => String(n).padStart(2, '0')
-  if (range === '7d' || range === '24h') return `${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`
-  return `${pad(d.getHours())}:${pad(d.getMinutes())}`
-}
-function fmtHeatAxisTime(ts: number, range: string): string {
-  const d = new Date(ts * 1000)
-  const pad = (n: number) => String(n).padStart(2, '0')
-  if (range === '7d') return `${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
-  return `${pad(d.getHours())}:${pad(d.getMinutes())}`
-}
-function escapeHeatHtml(value: unknown): string {
-  return String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] || c))
-}
 async function loadHeatmap(range: string) {
   heatRange.value = range
+  const request = ++heatRequest
   await nextTick()
   moveHeatIndicatorToSelected()
   try {
-    const data = await apiGet<any>(`/api/monitor/heatmap?range=${range}`)
+    const data = await apiGet<AvailabilityData>(`/api/monitor/heatmap?range=${range}`)
+    if (request !== heatRequest) return
     heatData.value = data
-    await nextTick()
-    renderHeatmap()
-  } catch {}
-}
-function renderHeatmap() {
-  const data = heatData.value
-  if (!heatEl.value || !data) return
-  const servers: any[] = data.servers || []
-  if (!servers.length) { heatChart.value?.clear(); return }
-  if (!heatChart.value) heatChart.value = echarts.init(heatEl.value)
-  const chart = heatChart.value
-  const buckets: number[] = data.buckets || []
-  const matrix: number[][] = data.matrix || []
-  const range = data.range || '24h'
-  const pts: [number, number, number][] = []
-  const hasDistinctNoData = Number(data.state_count || 0) >= 4
-  for (let y = 0; y < servers.length; y++) {
-    const row = matrix[y] || []
-    for (let x = 0; x < buckets.length; x++) {
-      const raw = row[x] ?? 3
-      pts.push([x, y, !hasDistinctNoData && raw === 2 ? 3 : raw])
-    }
+    heatError.value = ''
+  } catch {
+    if (request === heatRequest) heatError.value = '无法获取可用性数据，请刷新重试。'
   }
-  const xLabels = buckets.map((t: number) => fmtHeatAxisTime(t, range))
-  const yLabels = servers.map((s: any) => s.name)
-  const cw = heatEl.value.clientWidth || 600
-  const maxNameLen = Math.max(...yLabels.map((n: string) => String(n).length), 4)
-  const yLabelW = Math.min(maxNameLen * 7 + 18, cw < 640 ? 92 : 150)
-  const padR = 4, padT = 5, padB = 30
-  const rowHeight = cw < 640 ? 18 : 22
-  const gridHeight = Math.max(1, servers.length) * rowHeight
-  const chartH = gridHeight + padT + padB
-  const labelCount = cw < 520 ? 4 : cw < 900 ? 6 : 8
-  const labelInterval = Math.max(0, Math.ceil(buckets.length / labelCount) - 1)
-  // 区分-状态牌：ECharts 可用性格子与图例共用 Apple 状态色。
-  const states = [
-    { label: '运行正常', color: CHART_STATUS_COLORS.success },
-    { label: '高负载', color: CHART_STATUS_COLORS.warning },
-    { label: '严重负载', color: CHART_STATUS_COLORS.error },
-    { label: '离线 / 无数据', color: CHART_STATUS_COLORS.inactive },
-  ]
-  heatEl.value.style.height = chartH + 'px'
-  chart.setOption({
-    animationDuration: 560,
-    animationDurationUpdate: 380,
-    animationEasing: 'cubicOut',
-    animationEasingUpdate: 'cubicOut',
-    tooltip: {
-      backgroundColor: 'rgba(255,255,255,.98)', borderColor: '#dfe4ea', borderWidth: 1,
-      padding: [10, 12], textStyle: { color: '#26323f', fontSize: 12 },
-      extraCssText: 'border-radius:10px;box-shadow:0 10px 30px rgba(42,55,70,.14);',
-      formatter: (p: any) => {
-        const [x, y, v] = p.value
-        const state = states[v] || states[3]
-        const time = buckets[x] ? fmtHeatTime(buckets[x], range) : ''
-        return `<div style="font-weight:650;margin-bottom:4px">${escapeHeatHtml(yLabels[y])}</div><div style="color:#7b8794;margin-bottom:7px">${escapeHeatHtml(time)}</div><div style="display:flex;align-items:center;gap:7px"><i style="width:8px;height:8px;border-radius:3px;background:${state.color};display:inline-block"></i>${state.label}</div>`
-      },
-    },
-    grid: { left: yLabelW, right: padR, top: padT, height: gridHeight },
-    xAxis: { type: 'category', data: xLabels, axisLabel: { interval: labelInterval, color: '#7b8794', fontSize: 10, margin: 10, hideOverlap: true }, axisTick: { show: false }, axisLine: { show: false } },
-    yAxis: { type: 'category', data: yLabels, axisLabel: { color: '#606d7b', fontSize: 11, width: yLabelW - 12, overflow: 'truncate', margin: 10 }, axisTick: { show: false }, axisLine: { show: false } },
-    visualMap: { type: 'piecewise', show: false, pieces: states.map((state, value) => ({ value, color: state.color })) },
-    series: [{ type: 'heatmap', data: pts, progressive: 0, itemStyle: { borderColor: 'rgba(255,255,255,.96)', borderWidth: 3, borderRadius: 5 }, emphasis: { scale: true, itemStyle: { borderColor: '#fff', borderWidth: 2 } } }],
-  }, true)
-  chart.resize()
 }
 function onWinResize() {
-  if (heatData.value) renderHeatmap()
   moveHeatIndicatorToSelected()
 }
 
@@ -757,7 +684,7 @@ onMounted(async () => {
   clockTimer = setInterval(tickClock, 1000)
   await fetchData()
   loading.value = false
-  timer = setInterval(fetchData, 30000)
+  timer = setInterval(() => { void fetchData(); void loadHeatmap(heatRange.value) }, 30000)
   loadHeatmap('24h')
   await nextTick()
   // 无页面过渡的挂载路径也能绘制；正常路由等待揭示完成事件。
@@ -777,7 +704,7 @@ onUnmounted(() => {
   if (clockTimer) clearInterval(clockTimer)
   if (upstreamTimer) clearInterval(upstreamTimer)
   window.removeEventListener('resize', onWinResize)
-  heatChart.value?.dispose()
+  heatRequest++
 })
 </script>
 
@@ -803,15 +730,6 @@ onUnmounted(() => {
 .auto-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: none; }
 .auto-dot.active { animation: ping 1s ease-out; }
 @keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(9,114,211,.35); } 100% { box-shadow: 0 0 0 9px rgba(9,114,211,0); } }
-.refresh-btn {
-  display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: var(--r);
-  border: 1px solid var(--border); background: var(--card); color: var(--text-2); cursor: pointer; transition: color .18s var(--ease-standard), background .18s var(--ease-standard), box-shadow .18s var(--ease-standard), border-color .18s var(--ease-standard);
-}
-.refresh-btn:hover:not(:disabled) { color: var(--text); border-color: var(--border-strong); background: var(--card); box-shadow: 0 0 0 1px var(--border-strong); }
-.refresh-btn:disabled { opacity: .5; cursor: not-allowed; }
-.refresh-btn.spinning svg { animation: spin .8s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
 /* ===== 汇总卡片 ===== */
 /* 展示卡片 */
 .summary-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 22px; }
@@ -861,8 +779,6 @@ onUnmounted(() => {
 .hm-dot.ok { background: var(--chart-success); } .hm-dot.warn { background: var(--chart-warning); } .hm-dot.crit { background: var(--chart-error); } .hm-dot.none { background: var(--chart-inactive); }
 
 .heatmap-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); box-shadow: var(--shadow-sm); padding: 14px 16px 10px; margin-bottom: 26px; }
-.heat-chart { width: 100%; height: 58px; min-height: 0; }
-.heat-chart:empty { display: none; }
 .heat-empty { text-align: center; color: var(--text-3); padding: 24px; font-size: 13px; }
 
 /* ===== 服务器卡片 ===== */

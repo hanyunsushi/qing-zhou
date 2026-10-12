@@ -1,6 +1,6 @@
 ---
 title: QingZhou Fork Wiki
-updated: 2026-09-29
+updated: 2026-10-12
 ---
 
 [Project Authority](../agent.md)
@@ -12,7 +12,7 @@ updated: 2026-09-29
 - [Official Usage](modules/official-usage.md) - direct OCI and Cloudflare provider adapters.
 - [Subscription Auto Renewal](modules/subscription-auto-renew.md) - queued-plan renewal and charging rules.
 - [Subscription Routing](modules/subscription-routing.md) - opt-in Clash CN return-node group and provider rules.
-- [Cloudscape Visual System](modules/cloudscape-visual-system.md) - Cloudscape token, semantic color and chart adaptation boundary.
+- [kreeper第一设计系统](modules/kreeper-first-design-system.md) - QingZhou integration boundary; complete spec, sources and reusable assets live in the unified skill.
 
 # APIs
 - [Admin Site Settings](apis/admin-settings.md) - public branding configuration and validation boundary.

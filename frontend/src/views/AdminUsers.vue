@@ -48,7 +48,7 @@
                 <span class="uc-name" :title="u.username">{{ u.username }}</span>
                 <span v-if="u.online" class="dot-live" title="在线" />
                 <n-tag v-if="u.status === 'banned'" type="error" size="tiny" :bordered="false">封禁</n-tag>
-                <!-- 区分-身份牌：使用 AWS 语义警告色底与白色文字，避免浅底橙字对比不足。 -->
+                <!-- 区分-身份牌：管理员使用 Apple 警告色实心底与白色文字，独立于头像身份色。 -->
                 <n-tag v-if="u.role === 'admin'" class="identity-badge" type="warning" size="tiny" :bordered="false">管理员</n-tag>
               </div>
               <div class="uc-sub" :title="u.email || ''">
