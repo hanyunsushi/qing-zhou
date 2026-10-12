@@ -57,11 +57,14 @@ executed in a renderer test with controlled frame/media/observer inputs; do not
 claim that unit evidence is an OS-level browser setting test. The 21st refresh
 reference is 404; record independent implementation instead of fabricated source.
 
-Current local gates: frontend 142/142, typecheck and Vite build; skill
-18/18 contracts, typecheck/build and 71 source files/50 patterns/220 hashes.
-Tests include the actual Canvas lifecycle and cleanup, not only source matching.
-Build warnings retain the existing 567.24kB ECharts async chunk and the full
-showcase chunk. No production deployment; browser evidence is in sync state.
+Current local gates: frontend 142/142, typecheck, Vite build, `go test ./...`
+and `git diff --check`; skill 18/18 contracts, typecheck/build and 71 source
+files/50 patterns/220 hashes. Tests include the actual Canvas lifecycle and
+cleanup, not only source matching. Build warnings retain the existing 567.24kB
+ECharts async chunk and the full showcase chunk. The exact source was released
+as `v0.2.96-kreeper-20261012-heatmap` and deployed; production acceptance is
+recorded in [project authority](../../agent.md), while local and production
+evidence remain separate.
 
 The activity and availability showcase renderers pass real browser checks at
 390x844 and 360x800: both canvases render at positive size with readable X/Y
@@ -71,6 +74,10 @@ remain available. The refresh sample is busy during its request and increments
 its completed count. Existing ECharts ChartSpecimens emitted four initial-size
 warnings on the first narrow-screen load, then rendered; no application error
 was observed. Keep that warning boundary separate from the new Canvas charts.
+The authenticated production monitor page was refreshed after deployment and
+visibly showed the 3D availability matrix, time/server axes and green/orange/red
+plus gray legend. This is a desktop production check; it does not replace the
+local 390x844/360x800 responsive evidence.
 
 ## Warning and error feedback gate
 
@@ -88,7 +95,9 @@ a virtual user API fixture: expiry warning and banned-account error at desktop,
 rgb(255,239,238), icons retain Apple orange/red, both have 0px internal borders,
 and pages have no horizontal overflow. Frontend 133/133 tests, typecheck and
 isolated build passed; skill typecheck, 10/10 contracts and build also passed.
-This is local evidence, with no production deployment.
+This responsive fixture evidence remains local. The Alert theme change shipped
+with `v0.2.96-kreeper-20261012-heatmap`; the production acceptance in the
+deployment record is separate from these viewport-specific checks.
 
 ## Sidebar collapse gate
 
@@ -112,8 +121,10 @@ with the brand/footer center. Validate with genuine overflow in a 1024x400
 viewport, not only an unscrolled screenshot. The showcase quota-state switch
 uses the existing 16/12/4 route-switch contract and one moving surface for all
 three states; keyboard activation and 390/360px wrapping were verified.
-This is local fixture evidence, with no
-production deployment. Existing chunk warnings remain.
+This is local fixture evidence for the detailed menu/keyboard states; the
+sidebar implementation shipped with `v0.2.96-kreeper-20261012-heatmap`.
+Production was not re-authenticated specifically for collapse interactions.
+Existing chunk warnings remain.
 
 ## Desktop topbar divider gate
 

@@ -1,7 +1,38 @@
 ---
 title: QingZhou Deployment and Artifact Retention
-updated: 2026-10-10
+updated: 2026-10-12
 ---
+
+## 2026-10-12 Homepage availability matrix release
+
+Commit `4a99e11` was pushed to the fork `main` branch and released as
+`v0.2.96-kreeper-20261012-heatmap`. Actions workflow `38225056376` completed
+successfully. The Linux ARM64 panel asset is an ELF with SHA-256
+`870fd8e0091753388a2e78e111f8a970917399a6da69ab7281846c9f948ebb46`; release
+signing is not configured, so assets are unsigned. The release builds the
+embedded Vite frontend from the exact tag commit; no static `QZ_WEB_DIR` was
+used.
+
+The homepage now renders the per-server 8x6 availability matrix in the shared
+flat/isometric Canvas scene, preserving the three native green/orange/red
+severity colors and a separate gray missing/offline sentinel. The standard
+refresh button and the desktop sidebar-collapse rules are included. The
+production rollout changed only `/opt/qingzhou/qingzhou`: it was atomically
+replaced and only `qingzhou.service` was restarted. Rollback material is
+`/opt/qingzhou/backups/fork-v0.2.96-kreeper-20261012-heatmap-20261012-1651/`;
+the SQLite Backup API snapshot `qingzhou.db.backupapi` returned
+`PRAGMA integrity_check=ok`. The raw database copy and old panel binary are
+also retained there.
+
+After deployment, local and public `/api/health` returned the release version;
+`qingzhou.service`, `qingzhou-sing-box.service` and `cloudflared.service` were
+active; listeners `8081`, `8882`, `18082` and `19000` were present; and the
+panel error journal was empty. The environment, panel unit, sing-box config and
+Cloudflare Tunnel config hashes were unchanged, as were the sing-box/Tunnel
+PIDs. The authenticated production monitor page visibly rendered the 3D matrix,
+time/server axes and the green/orange/red/gray legend. Mobile production was
+not re-certified in this rollout; the 390x844/360x800 evidence remains local
+browser evidence.
 
 ## Dual-ring dashboard rollout
 

@@ -10,6 +10,12 @@
 - 生产发布必须使用带 Release 版本号的 Linux ARM64 ELF 资产，恢复嵌入前端方式；不得部署 macOS Mach-O、无版本 `dev` 二进制或用静态目录绕过动画问题。运行版本、哈希、备份和验收事实由 [agent.md](agent.md) 维护。
 - `.local/`、`.playwright-cli/`、`output/`、`.DS_Store` 与补丁残留不跟踪，已误入历史的临时文件通过普通修正提交退出跟踪，不重写共享历史，也不删除其本地副本。
 
+## 2026-10-12 首页三状态可用性矩阵（已发布部署）
+
+- 提交 `4a99e11` 已推送 Fork `main`，Release 为 `v0.2.96-kreeper-20261012-heatmap`，Actions `38225056376` 成功。Linux ARM64 面板资产 SHA-256 为 `870fd8e0091753388a2e78e111f8a970917399a6da69ab7281846c9f948ebb46`，资产未签名。
+- 仅原子替换 `/opt/qingzhou/qingzhou` 并重启 `qingzhou.service`；回滚材料为 `/opt/qingzhou/backups/fork-v0.2.96-kreeper-20261012-heatmap-20261012-1651/`，其中 `qingzhou.db.backupapi` 为 SQLite Backup API 快照且 `PRAGMA integrity_check=ok`。未改数据库、env、systemd、sing-box、Tunnel 或 probe。
+- 本机/公网健康、面板 ARM64 哈希、三项服务、四个监听端口和空错误日志通过；保护配置哈希与 sing-box/Tunnel PID 未变化，无 `QZ_WEB_DIR`。认证生产监控页已核对 3D 矩阵、时间/服务器坐标轴和绿/橙/红/灰图例；侧栏收起及移动端细节本轮未在生产重新交互验收。
+
 ## 2026-09-29 帮助导航信息牌 Apple 蓝（本地未发布）
 
 - 帮助中心当前文档选择标注为“区分-信息牌”，采用 `var(--info)` / `var(--info-soft)`，保持透明边框和无阴影，选择和路由行为不变。前端 `104/104`、类型检查、构建和 `git diff --check` 已通过。本轮尚未创建 Release 或部署，生产仍为 `v0.2.86-kreeper-20260929-apple-soft`。
