@@ -1,6 +1,6 @@
 ---
 title: kreeper第一设计系统 — QingZhou 集成
-updated: 2026-10-12
+updated: 2026-10-13
 ---
 
 # kreeper第一设计系统 — QingZhou 集成
@@ -33,6 +33,11 @@ Vue 3 + Naive UI + Ionicons + ECharts。实际视觉入口仍是 `frontend/src/s
 - token18px圆角是通用值而不是全部控件最终值；侧栏8、路由16/12/4、topbar12/16/8、图标12、BrandMark8等专项例外保留。
 - 输入框2px蓝色内焦点边界，无扩散晕；选择框中性，copy-field只读/中性/无过渡。完整认证规范包含登录/注册/找回、OAuth与配置开关、反馈槽固定28px、860px单栏断点以及loading/disabled/focus状态。
 - 警告/错误提示使用无边框浅色语义面，保留原背景、状态图标、文字和布局。`frontend/src/App.vue` 的 Alert 主题与 skill `assets/utils/theme.ts` 同步设置 `borderWarning` / `borderError` 为 `none`，使用已有“提示信息 / 警告信息”分类；完整规范在 skill overlays。Naive 2.44.1 的边框由 `.n-alert__border` 内层绘制，须核对它的计算边宽，不以根节点 border0 或不存在的类型class代替验收。
+- 鼠标focus不清除按钮原外ring：全局box-shadow重置已移除，普通/强调/默认弧边的Naive focus/pressed内边框为0；高亮/警告点击后保持聚焦提亮属于正常状态。状态验收覆盖点击释放、失焦、再次点击与键盘聚焦，防止仅验证hover。
+- 默认弧边与普通按钮共用紧凑尺寸、字体、透明背景、中性描边及hover/focus/pressed；唯一差异为18px与8px圆角，撤销默认弧边独立蓝色hover描边。沿用“标准默认弧边按钮”分类；源码、复用CSS与示范同步，已随v0.2.98按钮版本发布。
+- 明确删除按钮使用节点卡同款delete-button，并在删除入口与全局样式责任边界标注“删除按钮”；删除实体/记录及删除表单条目共用，撤销、吊销、禁用和重置不按颜色自动迁移。完整尺寸/状态/触摸命中规范由skill buttons维护，原删除处理器及确认流程保留。
+- AdminNodes顶层/分组/空态“添加节点”和各页面“清除筛选”归入默认弧边；示范移到同款功能复用区，取消浅蓝次级/轻量独立样式与分类。用量报表清空筛选也归默认弧边；明确销毁记录的套餐移除/流量包清空、上游配置清除、Short ID和动态卖点删除均归delete-button（24个模板入口）。强调按钮与高亮弧边注释按真实class区分；其他历史secondary/primary-quiet仅保留调用方兼容；Naive2.44.1不输出tertiary/quaternary/text类，默认弧边使用实际.n-button__border子节点限定，避免误改裸编辑动作和数字步进控件。
+- 高亮弧边hover/focus（含鼠标点击后）的背景和边框复用提亮accent，分类注释同步“变亮”，与警告同为提亮方向；完整合同在skill buttons/interactions。loading是现有按钮的请求状态；高亮弧边示范取消模拟加载，按下/释放后的聚焦反馈与警告一致。标准刷新使用Lucide refresh-cw完整SVG及viewBox中心旋转。按钮修正已同步青舟、skill代码/快照/pattern与规范，已随v0.2.98按钮版本发布。
 - 悬浮、聚焦、按下、禁用分别约束；展示/可跳转卡维持所属深度底色和位置，只增加指定中性阴影。按钮变体、普通下拉/顶栏菜单各自遵循专项几何；文本选择为 rgba(0,122,255,.2) 且前景继承。
 - 响应式是基本理念，所有组件同时覆盖宽/窄屏、触摸、键盘和reduced motion；页面不横向溢出，表格/代码/页签横滚局限于自身。验证尺寸和专项断点见 skill responsive，不用一套全局断点覆盖全部页面。
 - 页面Shift5与组件绘制分离；资源单圈/双圈用1100ms共享数字/弧值，在所属页面揭示后启动；刷新从当前值过渡，迟到数据独立绘制，零值无假进度圆头。
@@ -52,7 +57,7 @@ RefreshButton请求期间aria-busy/禁用，SVG悬浮与loading旋转分离；�
 
 ## 分类与更新路径
 
-源码中文标记（展示卡片/信息模块、状态牌/信息牌/身份牌、各按钮、填写框/选择器/复制栏、路由切换/二级切换、开关/提示/超链接等）描述当前语义，不是独立组件API。完整分类表及对应规范在 skill 的 references/semantics.md。新增/修改/复用UI必须在模板与CSS/渲染责任边界写同款分类注释，不能只写在md；顶栏、页面滚动条按已确认专项区域标记，不强塞信息模块。未知类型须主动提醒用户，拟定名称和几何/状态/响应式边界并等待确认；未确认不能正式登记或宣称验收完成。16个复用组件已有责任标记；桌面折叠变更在青舟模板、展开处理器与子容器CSS补齐“侧边栏 / 菜单归类级别”注释。源码快照与pattern同步实际源码，未出现需新增的样式类型。
+源码中文标记（展示卡片/信息模块、状态牌/信息牌/身份牌、各按钮、填写框/选择器/复制栏、路由切换/二级切换、开关/提示/超链接等）描述当前语义，不是独立组件API。完整分类表及对应规范在 skill 的 references/semantics.md。新增/修改/复用UI必须在模板与CSS/渲染责任边界写同款分类注释，不能只写在md；顶栏、页面滚动条按已确认专项区域标记，不强塞信息模块。未知类型须主动提醒用户，拟定名称和几何/状态/响应式边界并等待确认；未确认不能正式登记或宣称验收完成。16个复用组件已有责任标记；桌面折叠变更在青舟模板、展开处理器与子容器CSS补齐“侧边栏 / 菜单归类级别”注释。源码快照与pattern同步实际源码；“删除按钮”由用户明确指定登记，默认弧边功能合并沿用已有分类，无待确认类型。
 
 变更全局样式先核对 global.css 与 App.vue；变更专项组件读其专页和当前源码。发生漂移时同步规范、逐文件pattern、source-reference与coverage；不要只更新哈希。使用设计系统生成的项目，后续拟改实现违背已有规范时，必须主动提醒用户是否同步修改对应规范；已明确授权的规范更新无需重复询问，不能静默登记例外。
 
@@ -60,7 +65,7 @@ RefreshButton请求期间aria-busy/禁用，SVG悬浮与loading旋转分离；�
 
 完整示范入口 `assets/examples/App.vue` / `Gallery.vue`，按 25 个规范主题映射 15 个展示区域，并提供 50 个组件/页面源合同目录。控制台全组件、公共顶栏、完整认证为三个实际场景；原业务页面不接真实 API。进度单圈/双圈是既有类型，补齐状态/注释与1100ms共享绘制合同，没有重复创建类别。
 
-skill 的 `scripts/preview-showcase.mjs` 可生成独立预览；`scripts/audit.mjs` 检查源覆盖/哈希/链接/alias，`scripts/verify-assets.mjs` 在临时项目做 typecheck、18项契约与build。实际验收和当前限制见 [Validation](../guides/validation.md) 与 [同步证据](../_sync-state.md)。源码构建不替代真实浏览器或生产验收；本轮没有部署。
+skill 的 `scripts/preview-showcase.mjs` 可生成独立预览；`scripts/audit.mjs` 检查源覆盖/哈希/链接/alias，`scripts/verify-assets.mjs` 在临时项目做 typecheck、18项契约与build。实际验收和当前限制见 [Validation](../guides/validation.md) 与 [同步证据](../_sync-state.md)。源码构建不替代真实浏览器或生产验收；按钮合同随v0.2.98发布；运行验收见项目权威文档。
 
 青舟派生代码 CC BY-NC-SA 4.0，字体 OFL；规范来源不改变代码许可。字体文件、实际字重/变量轴和原字节快照属于可复用资产事实，按需见 skill assets/fonts/LICENSES.md；AWS 来源与字体类型定义仍由 typography 专页负责。
 

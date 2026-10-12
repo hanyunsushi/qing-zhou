@@ -4,6 +4,10 @@
 
 完整设计合同由 `kreeper-first-design-system` skill 维护，青舟集成边界见 [.llm-wiki/modules/kreeper-first-design-system.md](.llm-wiki/modules/kreeper-first-design-system.md)。下方带日期条目保留当时发布/局部实验事实，不作为当前数值来源；不得恢复其中已被取代的输入外晕、旧圆角或字体。旧 Anthropic/Cloudscape 独立 skill 已退役，历史记录不构成活动路由。
 
+## 按钮样式与分类统一
+
+按钮合同已随 `v0.2.98-kreeper-20261012-buttons` 发布部署。24个删除模板、默认弧边用途、提亮/点击状态和准确分类注释已同步设计系统；真实loading与原业务处理保持。生产版本、校验、数据库/配置保护和回滚证据见 [agent.md](agent.md)，验证方法见 [Validation](.llm-wiki/guides/validation.md)。
+
 ## 双圈绘制与发布边界
 
 - 控制台双圈位于 `UserDashboard.vue`，首页 CPU/内存/磁盘单圈位于 `Monitor.vue` 并由 `ResourceGauge.vue` 独立维护。两者沿用相同样式和页面揭示后的绘制合同，见 [.llm-wiki/modules/kreeper-first-design-system.md](.llm-wiki/modules/kreeper-first-design-system.md)。不得混淆验收目标或恢复旧 `gaugeAnimated` 全局重置逻辑；原有独立字体修复保留。

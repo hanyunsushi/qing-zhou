@@ -1,9 +1,11 @@
 ---
 title: Current Wiki Sync State
-updated: 2026-10-12
+updated: 2026-10-13
 ---
 
 # Current synchronization evidence
+
+- Current impact: button state/style/classification update from source `d93967b312aac0de2be70117c9cc13bdf85b5d3e`; 24 deletion templates, default arcs for all clear filters, corrected emphasis/highlight responsibility comments and complete Lucide refresh SVG. Owners: integration/validation and project authority. Skill source snapshots and exact extracted template/style patterns are synchronized; no new category or unapproved deviation. Release and CI/race completed; actual production binary/config/process/SQLite/public-assets and authenticated desktop/narrow-layout verification passed. Exact state and rollback live in project authority.
 
 - Impact map: module depth, four font roles, official AWS source policy, progress-ring and complete authentication coverage, interaction states, responsive foundation, classification/deviation reminders, complete showcase verification, synchronized desktop sidebar collapse behavior, user-reported centering/route-switch implementation defects and borderless warning/error feedback. Owners: [integration](modules/kreeper-first-design-system.md), [validation](guides/validation.md), [project authority](../agent.md); full specifications and source addresses remain in the unified skill.
 - Source basis: `898da68fb6e117fdbe2393e1fbe750c55ce04399` plus the synchronized documentation commit. `frontend/src/components/DashboardLayout.vue` and its collapse regression test change desktop navigation behavior; `frontend/src/App.vue` adds Alert borderWarning/borderError=none, mirrored in the skill reusable theme, full source snapshot and App pattern. The homepage matrix/skyline and refresh components are included in the release. Coverage audit passed for 71 Vue/TS/CSS files, 50 component/page patterns, 16 reusable components and 220 package hashes; no source drift, missing coverage, aliases or broken skill links.

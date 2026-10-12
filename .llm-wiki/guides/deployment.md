@@ -1,7 +1,33 @@
 ---
 title: QingZhou Deployment and Artifact Retention
-updated: 2026-10-12
+updated: 2026-10-13
 ---
+
+## Unified button rollout
+
+The button-contract release `v0.2.98-kreeper-20261012-buttons` is built from source `d93967b312aac0de2be70117c9cc13bdf85b5d3e`; Release and CI including Go race/vet succeeded. Rollout follows the atomic panel-only process below: verify the release checksum, take a SQLite Backup API snapshot, retain old binary/config, restart only the panel, and verify actual running hash plus local/public health and emitted frontend assets. Deployment does not repair missing business confirmations; original destructive handlers remain unchanged.
+
+Twenty relevant public JS/CSS assets match the isolated source build. Production authenticated node/package screens confirm final button geometry/color and click/focus feedback; temporary viewport-capable production tabs verify node390/360px and package360px without overflow. User native tabs may ignore viewport overrides: always record actual innerWidth, not requested dimensions. Exact running version, binary checksum, backup and retained-data/process results are owned by [project authority](../../agent.md).
+
+## Targeted node-group deletion recovery
+
+For accidental group deletion, compare a verified pre-deletion snapshot against
+current rows and restore only the missing group, memberships for current node
+IDs, and plan-group grants. Subscription refresh can replace source node IDs;
+restoring historical node rows or the whole database would overwrite newer state.
+Take a SQLite Backup API snapshot before the transaction, check integrity, then
+let the production controller rebuild access and invalidate cached links. A panel
+restart performs both without replacing the binary; confirm sing-box credentials,
+service state, public health and the authenticated node inventory afterward.
+
+Group deletion clears node memberships and plan-group grants. A subscription
+source can still retain the deleted group ID and later recreate orphan memberships;
+those nodes have nonempty group IDs but no existing group, so the current admin
+view omits them from both grouped and ungrouped cards. Running sing-box with zero
+authorized users can therefore coexist with healthy services and unavailable nodes.
+The current delete handlers lack confirmation/audit for this path. Runtime recovery
+does not constitute a source fix. Incident backup and verified production results
+are maintained in [project authority](../../agent.md).
 
 ## 2026-10-12 Homepage availability matrix correction
 
