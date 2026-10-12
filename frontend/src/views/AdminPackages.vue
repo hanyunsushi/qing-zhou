@@ -3,8 +3,9 @@
     <div class="page-head">
       <div><h2 class="page-title">套餐管理</h2><p class="page-sub">商品规格、时长阶梯、库存、权限与上下架状态</p></div>
       <div class="page-actions">
+        <!-- 弧边警告按钮：保留风险语义、悬浮/聚焦提亮和按下反馈，请求状态由业务控制。 -->
         <n-button type="warning" :loading="syncing" @click="forceSyncPackages">强制推送</n-button>
-        <!-- 高亮弧边按钮：页面级主操作统一复用强调按钮合同。 -->
+        <!-- 强调按钮：页面级主操作统一复用强调按钮合同。 -->
         <n-button type="primary" class="action-button action-button--emphasis" @click="openForm()">创建套餐</n-button>
       </div>
     </div>
@@ -50,12 +51,17 @@
             <span v-for="(h, i) in p.highlights" :key="i" class="kv">✓ {{ h }}</span>
           </div>
           <div class="lc-foot" style="flex-wrap:wrap;">
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" :disabled="idx === 0 || reordering" title="前移（在商城/列表更靠前）" @click="movePackage(idx, -1)">←</n-button>
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" :disabled="idx === packages.length - 1 || reordering" title="后移" @click="movePackage(idx, 1)">→</n-button>
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" @click="openForm(p)">编辑</n-button>
+            <!-- 弧边警告按钮：保留风险语义、悬浮/聚焦提亮和按下反馈，请求状态由业务控制。 -->
             <n-button v-if="p.enabled !== false" size="tiny" type="warning" @click="handleRetire(p)">下架</n-button>
             <n-button v-else size="tiny" type="success" @click="handleEnable(p.id)">上架</n-button>
-            <n-button size="tiny" type="error" @click="handleDelete(p)">删除</n-button>
+            <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
+            <n-button size="tiny" quaternary class="delete-button" type="error" @click="handleDelete(p)">删除</n-button>
           </div>
         </div>
       </div>
@@ -80,7 +86,16 @@
         <n-form-item label="描述"><n-input v-model:value="form.description" type="textarea" :autosize="{ minRows: 1, maxRows: 3 }" placeholder="套餐一句话说明" /></n-form-item>
         <n-form-item label="亮点">
           <div style="width:100%;">
-            <n-dynamic-input v-model:value="form.highlights" :max="8" placeholder="一条卖点，如：全球 50+ 节点 / 不限速 / 7×24 客服" />
+            <n-dynamic-input v-model:value="form.highlights" :max="8" placeholder="一条卖点，如：全球 50+ 节点 / 不限速 / 7×24 客服">
+              <template #action="{ index, create, remove }">
+                <div class="highlight-actions">
+                  <!-- 删除按钮：删除当前卖点复用红字透明底，不沿用组件内置圆形减号。 -->
+                  <n-button size="tiny" type="error" quaternary class="delete-button" aria-label="删除卖点" @click="remove(index)">删除</n-button>
+                  <!-- 标准默认弧边按钮：添加卖点沿用中性描边，保留最多8条限制。 -->
+                  <n-button size="tiny" class="default-arc-button" :disabled="form.highlights.length >= 8" aria-label="添加卖点" @click="create(index)">＋</n-button>
+                </div>
+              </template>
+            </n-dynamic-input>
             <div style="margin-top:4px;font-size:12px;color:var(--text-3);line-height:1.5;">
               一行一个卖点，商城里会以清单形式展示，最多 8 条。留空则不显示。
             </div>
@@ -98,10 +113,12 @@
               <n-input-number v-model:value="o.traffic_gb" :min="0.01" :show-button="false" placeholder="100" />
               <n-input-number v-model:value="o.price" :min="0" :show-button="false" placeholder="100" />
               <n-input-number v-model:value="o.edge_requests" :min="0" :show-button="false" placeholder="每日次数，0 = 不限" />
-              <n-button quaternary size="small" :disabled="form.options.length <= 1"
-                        title="删除该档" @click="removeOption(i)">✕</n-button>
+              <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
+              <n-button type="error" size="tiny" quaternary class="delete-button" :disabled="form.options.length <= 1"
+                        title="删除该档" aria-label="删除该档" @click="removeOption(i)">✕</n-button>
             </div>
             <div class="opt-actions">
+              <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
               <n-button size="tiny" dashed :disabled="form.options.length >= 8" @click="addOption()">+ 添加时长</n-button>
               <span class="opt-quick">快捷：</span>
               <n-button v-for="d in [7, 30, 90, 180, 365]" :key="d" size="tiny" quaternary
@@ -141,6 +158,7 @@
           </div>
         </n-form-item>
       </n-form>
+      <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
       <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleSave">保存</n-button>
     </n-modal>
   </div>
@@ -337,6 +355,8 @@ onMounted(load)
 </script>
 
 <style scoped>
+/* 删除按钮 / 标准默认弧边按钮：动态卖点动作保持独立间距，输入内容可收缩。 */
+.highlight-actions { display: flex; align-items: center; gap: 8px; margin-left: 8px; flex-shrink: 0; }
 /* 时长档位表：三列等宽 + 删除按钮，列头只写一次 */
 .opt-head, .opt-row {
   display: grid;

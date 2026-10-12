@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="page-head"><div><h2 class="page-title">用户组</h2><p class="page-sub">购买权限、专属套餐与成员关系管理</p></div><div class="page-actions"><!-- 高亮弧边按钮：页面级主操作统一复用强调按钮合同。 --><n-button type="primary" class="action-button action-button--emphasis" @click="openForm()">创建用户组</n-button></div></div>
+    <div class="page-head"><div><h2 class="page-title">用户组</h2><p class="page-sub">购买权限、专属套餐与成员关系管理</p></div><div class="page-actions"><!-- 强调按钮：页面级主操作统一复用强调按钮合同。 --><n-button type="primary" class="action-button action-button--emphasis" @click="openForm()">创建用户组</n-button></div></div>
     <p class="section-note" style="margin:0 0 14px;">
       用户组决定<b>谁能购买某个套餐</b>。把用户加进组，再到「套餐管理」里给套餐勾选可购买的用户组，该套餐就只对组内成员可见、可买。
       未绑定任何用户组的套餐对所有人开放。（与「节点管理」里的节点分组无关，那个决定的是买到套餐后能用哪些节点。）
@@ -26,9 +26,12 @@
             </span>
           </div>
           <div class="lc-foot" style="flex-wrap:wrap;">
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" @click="openMembers(g)">成员</n-button>
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" @click="openForm(g)">编辑</n-button>
-            <n-button size="tiny" type="error" @click="handleDelete(g)">删除</n-button>
+            <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
+            <n-button size="tiny" quaternary class="delete-button" type="error" @click="handleDelete(g)">删除</n-button>
           </div>
         </div>
       </div>
@@ -43,6 +46,7 @@
         <n-form-item label="描述"><n-input v-model:value="form.description" placeholder="备注用途（可留空）" /></n-form-item>
         <n-form-item label="排序"><n-input-number v-model:value="form.sort_order" style="width:100%;" /></n-form-item>
       </n-form>
+      <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
       <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleSave">保存</n-button>
     </n-modal>
 
@@ -67,6 +71,7 @@
       <div style="margin-top:6px;font-size:12px;color:var(--text-3);line-height:1.5;">
         默认只列出最近 200 位用户；更早的用户请输入用户名或邮箱搜索。
       </div>
+      <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
       <n-button type="primary" class="highlight-arc-button" block style="margin-top:16px;" :loading="saving" @click="handleSaveMembers">保存成员</n-button>
     </n-modal>
   </div>

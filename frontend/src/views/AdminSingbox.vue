@@ -40,7 +40,9 @@
           <!-- 填写框 -->
           <n-input v-model:value="tlsSearch" placeholder="搜索名称/SNI" size="small" clearable style="width:200px;max-width:50%;" />
           <span class="spacer" />
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="small" @click="toggleAllMachines">{{ allExpanded ? '全部折叠' : '全部展开' }}</n-button>
+          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
           <n-button size="small" type="primary" class="highlight-arc-button" @click="openTls()">添加 TLS</n-button>
         </div>
         <n-spin :show="loading">
@@ -57,6 +59,7 @@
               <template #header-extra>
                 <div class="machine-extra" @click.stop>
                   <n-tag size="tiny" :type="g.total ? 'success' : 'default'" :bordered="false">{{ g.total }} 项</n-tag>
+                  <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
                   <n-button size="tiny" type="primary" class="highlight-arc-button" @click="openTlsFor(g.machine.id)">＋ TLS</n-button>
                 </div>
               </template>
@@ -74,9 +77,12 @@
                     <span class="kv">入站数 <b>{{ tlsUseCount(r.id) }}</b></span>
                   </div>
                   <div class="lc-foot">
+                    <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                     <n-button size="tiny" @click="openTls(r)">编辑</n-button>
+                    <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                     <n-button size="tiny" @click="cloneTls(r)">克隆</n-button>
-                    <n-button size="tiny" type="error" @click="deleteTls(r.id)">删除</n-button>
+                    <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
+                    <n-button size="tiny" quaternary class="delete-button" type="error" @click="deleteTls(r.id)">删除</n-button>
                     <span class="lc-order">
                       <n-button size="tiny" quaternary :disabled="idx === 0 || reordering" title="上移" @click="moveTls(g, idx, -1)">↑</n-button>
                       <n-button size="tiny" quaternary :disabled="idx === g.items.length - 1 || reordering" title="下移" @click="moveTls(g, idx, 1)">↓</n-button>
@@ -85,7 +91,7 @@
                 </div>
               </div>
               <n-empty v-else :description="tlsSearch ? '无匹配 TLS' : '该机器暂无 TLS'" size="small" style="padding:18px 0;">
-                <template v-if="!tlsSearch" #extra><n-button size="tiny" @click="openTlsFor(g.machine.id)">添加 TLS</n-button></template>
+                <template v-if="!tlsSearch" #extra><!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 --><n-button size="tiny" @click="openTlsFor(g.machine.id)">添加 TLS</n-button></template>
               </n-empty>
             </n-collapse-item>
           </n-collapse>
@@ -99,10 +105,15 @@
           <!-- 下拉选择菜单：一键模板弹层复用顶栏菜单外框、配色与动效，触发器不改。 -->
           <n-select v-model:value="presetType" :options="presetOpts" placeholder="一键模板" size="small" style="width:180px;" @update:value="applyPreset" />
           <span class="spacer" />
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button v-if="checkedIds.size" size="small" @click="batchToggle(true)">批量启用</n-button>
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button v-if="checkedIds.size" size="small" @click="batchToggle(false)">批量停用</n-button>
-          <n-button v-if="checkedIds.size" size="small" type="error" @click="batchDelete">批量删除</n-button>
+          <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
+          <n-button size="tiny" quaternary class="delete-button" v-if="checkedIds.size" type="error" @click="batchDelete">批量删除</n-button>
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="small" @click="toggleAllMachines">{{ allExpanded ? '全部折叠' : '全部展开' }}</n-button>
+          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
           <n-button size="small" type="primary" class="highlight-arc-button" @click="openInbound()">添加入站</n-button>
         </div>
         <n-spin :show="loading">
@@ -120,7 +131,9 @@
               <template #header-extra>
                 <div class="machine-extra" @click.stop>
                   <n-tag size="tiny" :type="g.enabledCount ? 'success' : 'default'" :bordered="false">启用 {{ g.enabledCount }} / {{ g.total }}</n-tag>
+                  <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                   <n-button size="tiny" @click="previewMachine(g.machine.id)">预览</n-button>
+                  <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
                   <n-button size="tiny" type="primary" class="highlight-arc-button" @click="openInboundFor(g.machine.id)">＋ 入站</n-button>
                 </div>
               </template>
@@ -139,10 +152,14 @@
                     <span v-if="r.egress_id" class="kv">出口 <b :title="egressName(r.egress_id)">{{ egressName(r.egress_id) }}</b></span>
                   </div>
                   <div class="lc-foot">
+                    <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                     <n-button size="tiny" @click="openInbound(r)">编辑</n-button>
+                    <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                     <n-button size="tiny" @click="cloneInbound(r)">克隆</n-button>
+                    <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                     <n-button size="tiny" :loading="portChecking === r.id" @click="checkPort(r)">测端口</n-button>
-                    <n-button size="tiny" type="error" @click="deleteInbound(r.id)">删除</n-button>
+                    <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
+                    <n-button size="tiny" quaternary class="delete-button" type="error" @click="deleteInbound(r.id)">删除</n-button>
                     <span class="lc-order">
                       <n-button size="tiny" quaternary :disabled="idx === 0 || reordering" title="上移" @click="moveInbound(g, idx, -1)">↑</n-button>
                       <n-button size="tiny" quaternary :disabled="idx === g.items.length - 1 || reordering" title="下移" @click="moveInbound(g, idx, 1)">↓</n-button>
@@ -154,7 +171,7 @@
                 </div>
               </div>
               <n-empty v-else :description="inbSearch ? '无匹配入站' : '该机器暂无入站'" size="small" style="padding:18px 0;">
-                <template v-if="!inbSearch" #extra><n-button size="tiny" @click="openInboundFor(g.machine.id)">添加入站</n-button></template>
+                <template v-if="!inbSearch" #extra><!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 --><n-button size="tiny" @click="openInboundFor(g.machine.id)">添加入站</n-button></template>
               </n-empty>
             </n-collapse-item>
           </n-collapse>
@@ -165,7 +182,9 @@
       <n-tab-pane name="egress" tab="代理出口">
         <div class="page-toolbar">
           <span class="spacer" />
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="small" @click="openEgressImport()">粘贴导入</n-button>
+          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
           <n-button size="small" type="primary" class="highlight-arc-button" @click="openEgress()">添加出口</n-button>
         </div>
         <n-spin :show="loading">
@@ -209,11 +228,16 @@
                 <template v-else>❌ 不通（经 {{ r._test.via_server }}）：{{ dispText(r._test.output) }}</template>
               </div>
               <div class="lc-foot">
+                <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                 <n-button size="tiny" :loading="r._testing" @click="testEgress(r)">测试连通</n-button>
+                <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                 <n-button size="tiny" :loading="r._probing" @click="probeEgress(r)">并发探测</n-button>
+                <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                 <n-button size="tiny" :loading="r._cloning" @click="cloneEgress(r)">克隆</n-button>
+                <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                 <n-button size="tiny" @click="openEgress(r)">编辑</n-button>
-                <n-button size="tiny" type="error" @click="deleteEgress(r.id)">删除</n-button>
+                <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
+                <n-button size="tiny" quaternary class="delete-button" type="error" @click="deleteEgress(r.id)">删除</n-button>
               </div>
             </div>
           </div>
@@ -299,8 +323,11 @@
         <div class="page-toolbar">
           <n-select v-model:value="previewSid" :options="serverOpts" v-bind="longSelFor(serverOpts.length)" placeholder="本机" clearable style="width:200px;max-width:60%;" size="small" @update:value="onPreviewServerChange" />
           <span class="spacer" />
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="small" :loading="checkLoading" :disabled="!previewJson" @click="runCheck">正确性检查</n-button>
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="small" :disabled="!previewJson" @click="copyPreview">复制配置</n-button>
+          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
           <n-button size="small" type="primary" class="highlight-arc-button" :loading="previewLoading" @click="loadPreview">刷新预览</n-button>
         </div>
         <!-- 这条提醒不能省：这一页把打码开关做出来，就会有人以为「打了码=可以截图」。
@@ -343,6 +370,7 @@
           <n-form-item label="SNI 伪装域名">
             <n-input-group>
               <n-input v-model:value="te.server_name" placeholder="www.microsoft.com" style="flex:1;" />
+              <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
               <n-button :loading="sniTesting" @click="testSni">测试延迟</n-button>
             </n-input-group>
           </n-form-item>
@@ -365,6 +393,7 @@
             <n-form-item label="握手目标">
               <n-input-group>
                 <n-input v-model:value="te.handshake_server" placeholder="留空=同 SNI" style="flex:1;" />
+                <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                 <n-button :loading="hsTesting" @click="testHandshake">测握手</n-button>
               </n-input-group>
             </n-form-item>
@@ -377,6 +406,7 @@
               </div>
             </n-form-item>
             <n-form-item>
+              <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
               <n-button type="primary" class="highlight-arc-button" @click="genKeys" :loading="genLoading">一键生成 Reality 密钥对</n-button>
             </n-form-item>
             <n-form-item label="私钥"><n-input :value="te.private_key" readonly placeholder="点击上方按钮生成" @click="copy(te.private_key)" style="cursor:pointer;" /></n-form-item>
@@ -385,8 +415,10 @@
               <div style="display:flex;flex-direction:column;gap:6px;width:100%;">
                 <div v-for="(_, i) in te.short_ids" :key="i" style="display:flex;gap:6px;">
                   <n-input v-model:value="te.short_ids[i]" placeholder="自动生成" style="flex:1;" />
-                  <n-button size="tiny" quaternary @click="te.short_ids.splice(i, 1)">✕</n-button>
+                  <!-- 删除按钮：红字透明底、悬浮浅灰；保留原确认、请求与禁用条件。 -->
+                  <n-button size="tiny" type="error" quaternary class="delete-button" aria-label="删除 Short ID" @click="te.short_ids.splice(i, 1)">✕</n-button>
                 </div>
+                <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                 <n-button size="tiny" dashed @click="te.short_ids.push('')">+ 添加 Short ID</n-button>
               </div>
             </n-form-item>
@@ -401,6 +433,7 @@
             <template v-if="!te.cert_id">
             <n-form-item label=" ">
               <div style="display:flex;flex-direction:column;gap:4px;width:100%;">
+                <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                 <n-button :loading="genCertLoading" @click="genSelfSigned">一键生成自签证书（按 SNI）</n-button>
                 <span style="font-size:11px;color:var(--text-3);">自签证书适用于 TUIC / Hysteria2 等允许 insecure 或证书指纹的客户端。需可信证书建议到「证书管理」页申请后在上方引用。</span>
               </div>
@@ -420,6 +453,7 @@
                     <n-input v-if="acme.method === 'webroot'" v-model:value="acme.webroot" placeholder="网站根目录，如 /var/www/html（nginx 该域名 root）" />
                     <span v-if="acme.method === 'http-01'" style="font-size:11px;color:var(--text-3);">若本机已用 nginx 占用 80 端口，standalone 会失败——请改用 Cloudflare DNS 或 Webroot。</span>
                     <n-input v-model:value="acme.email" placeholder="账户邮箱（可选，建议填写）" />
+                    <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
                     <n-button type="primary" class="highlight-arc-button" :loading="acmeLoading" @click="requestAcme">申请证书（域名取上方 SNI，名称取上方名称）</n-button>
                     <span style="font-size:11px;color:var(--text-3);">申请成功后证书写入本机固定路径，sing-box 以 certificate_path 引用；续期由 acme.sh 的 cron 自动完成。远程服务器暂不支持在线申请。</span>
                   </div>
@@ -437,6 +471,7 @@
             <n-form-item label="允许不安全"><n-switch v-model:value="te.insecure" /></n-form-item>
           </template>
         </n-form>
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="saveTls">保存</n-button>
       </n-drawer-content>
     </n-drawer>
@@ -449,6 +484,7 @@
             <div style="width:100%;">
               <n-input-group>
                 <n-input v-model:value="egParseText" placeholder="socks5://user:pass@1.2.3.4:1080 或 1.2.3.4:1080:user:pass" @keyup.enter="parseIntoForm" />
+                <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                 <n-button :loading="egParsing" @click="parseIntoForm">解析填充</n-button>
               </n-input-group>
               <div class="form-tip">把供应商给的那串直接贴进来，自动拆到下面各字段。支持 <code>socks5://</code>／<code>http(s)://</code>／<code>user:pass@host:port</code>／<code>host:port:user:pass</code>／<code>host:port</code>。多条批量导入请用列表页的「粘贴导入」。</div>
@@ -535,6 +571,7 @@
             </n-form-item>
           </template>
         </n-form>
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="saveEgress">保存</n-button>
       </n-drawer-content>
     </n-drawer>
@@ -547,6 +584,7 @@
           placeholder="一行一条，支持：&#10;socks5://user:pass@1.2.3.4:1080&#10;http://user:pass@1.2.3.4:8080&#10;1.2.3.4:1080:user:pass&#10;user:pass@1.2.3.4:1080&#10;1.2.3.4:1080&#10;以 # 开头的行会被忽略"
         />
         <div class="form-tip" style="margin:8px 0;">解析只在本地预览，确认无误再导入。没写协议的行会按端口猜类型，猜错的表现是连上后立刻被 RST——导入后请核对。</div>
+        <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
         <n-button block :loading="egImportParsing" @click="parseEgressImport">解析</n-button>
 
         <template v-if="egImportErrors.length">
@@ -571,6 +609,7 @@
           <div v-if="egImportItems.some((x: any) => x.type_guessed)" class="form-tip" style="margin:6px 0;">
             带 <b>?</b> 的类型是按端口猜的，请对照供应商说明确认。
           </div>
+          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
           <n-button type="primary" class="highlight-arc-button" block :loading="egImporting" style="margin-top:10px;" @click="doEgressImport">
             导入这 {{ egImportItems.length }} 条
           </n-button>
@@ -615,6 +654,7 @@
           <n-form-item v-if="ie.type !== 'shadowsocks'" label="TLS / Reality"><n-select v-model:value="ie.tls_id" :options="tlsOpts" v-bind="longSelFor(tlsOpts.length)" placeholder="无" clearable /></n-form-item>
           <n-form-item v-if="ie.type === 'mixed' && !ie.tls_id" label=" ">
             <div style="width:100%;">
+              <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
               <n-button size="small" :loading="quickCertLoading" @click="quickBindCert">🔒 一键生成自签证书并绑定（→ HTTPS 代理）</n-button>
               <div class="form-tip">用该服务器地址自动签一张证书并绑定，公网使用更安全。客户端需勾选「跳过证书验证」；要浏览器/系统信任则改用 ACME 证书。</div>
             </div>
@@ -705,6 +745,7 @@
             </template>
           </template>
         </n-form>
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="saveInbound">保存</n-button>
       </n-drawer-content>
     </n-drawer>

@@ -59,6 +59,7 @@
           <div v-if="pkg.stock >= 0" class="sc-stock" :class="{ hot: pkg.stock <= 5 }">
             {{ pkg.stock === 0 ? '已售罄' : `仅剩 ${pkg.stock} 件` }}
           </div>
+          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
           <n-button type="primary" block class="sc-buy highlight-arc-button"
             :loading="buying===pkg.id"
             :disabled="!canAfford(pkg) || pkg.stock === 0"

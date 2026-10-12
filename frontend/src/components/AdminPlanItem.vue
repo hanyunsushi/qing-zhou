@@ -17,7 +17,8 @@
       <span class="pi-when">{{ whenText }}</span>
       <span class="spacer" />
       <n-button v-if="canAdjust" size="tiny" quaternary :disabled="removing" @click="$emit('adjust')">调整</n-button>
-      <n-button size="tiny" type="error" quaternary :loading="removing" @click="$emit('remove')">
+      <!-- 删除按钮：红字透明底、悬浮浅灰；保留原确认、请求与禁用条件。 -->
+      <n-button size="tiny" type="error" quaternary class="delete-button" :loading="removing" @click="$emit('remove')">
         {{ plan.kind === 'pool' ? '清空' : '移除' }}
       </n-button>
     </div>

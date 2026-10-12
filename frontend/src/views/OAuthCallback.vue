@@ -2,6 +2,7 @@
   <main style="max-width: 480px; margin: 15vh auto; padding: 24px; text-align: center">
     <h2>{{ error ? '认证未完成' : '正在完成认证…' }}</h2>
     <p v-if="error" role="alert">{{ error }}</p>
+    <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
     <n-button v-if="error" type="primary" class="highlight-arc-button" @click="router.replace('/login')">返回登录</n-button>
     <n-spin v-else />
   </main>

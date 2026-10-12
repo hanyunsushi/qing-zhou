@@ -15,9 +15,12 @@
       <n-tab-pane name="nodes" tab="节点">
         <div class="page-toolbar">
           <span class="spacer" />
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="small" @click="openGroup()">添加分组</n-button>
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="small" @click="openNodeImport">批量导入</n-button>
-          <n-button size="small" type="primary" class="highlight-arc-button" @click="openNode()">添加节点</n-button>
+          <!-- 标准默认弧边按钮：添加与清除筛选共用普通按钮合同，仅圆角为18px。 -->
+          <n-button class="default-arc-button" size="small" @click="openNode()">添加节点</n-button>
         </div>
         <n-spin :show="loading">
           <div v-if="groupedView.length">
@@ -26,10 +29,13 @@
                 <div class="group-actions">
                   <n-tag v-if="gv.group?.is_ai" size="tiny" type="success" :bordered="false">AI 路由</n-tag>
                   <n-tag size="tiny" :type="gv.isUngrouped ? 'default' : 'info'" :bordered="false">{{ gv.nodes.length }} 节点</n-tag>
-                  <n-button size="tiny" type="primary" secondary @click="openNodeInGroup(gv.group)">＋ 添加节点</n-button>
+                  <!-- 标准默认弧边按钮：添加与清除筛选共用普通按钮合同，仅圆角为18px。 -->
+                  <n-button class="default-arc-button" size="tiny" @click="openNodeInGroup(gv.group)">＋ 添加节点</n-button>
+                  <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                   <n-button size="tiny" :disabled="!reuseCatalog.length" @click="openReuse(gv.group)">复用入口</n-button>
                   <n-button v-if="gv.group" size="tiny" quaternary @click="openGroup(gv.group)">编辑</n-button>
-                  <n-button v-if="gv.group" size="tiny" type="error" quaternary @click="handleDeleteGroup(gv.group.id)">删除</n-button>
+                  <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
+                  <n-button size="tiny" quaternary class="delete-button" v-if="gv.group" type="error" @click="handleDeleteGroup(gv.group.id)">删除</n-button>
                 </div>
               </template>
               <div v-if="gv.description" class="group-desc">{{ gv.description }}</div>
@@ -77,13 +83,17 @@
                     <span class="order-hint" title="拖动卡片调整节点顺序">⋮⋮ 拖动排序</span>
                     <span class="node-actions">
                       <n-button size="tiny" quaternary @click="openNode(r)">编辑</n-button>
-                      <n-button size="tiny" type="error" quaternary @click="handleDeleteNode(r.id)">删除</n-button>
+                      <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
+                      <n-button size="tiny" quaternary class="delete-button" type="error" @click="handleDeleteNode(r.id)">删除</n-button>
                     </span>
                   </div>
                 </div>
               </div>
               <n-empty v-else description="该分组暂无节点" size="small" style="padding:12px 0;">
-                <template #extra><n-button size="tiny" @click="openNodeInGroup(gv.group)">添加节点</n-button></template>
+                <template #extra>
+                  <!-- 标准默认弧边按钮：添加与清除筛选共用普通按钮合同，仅圆角为18px。 -->
+                  <n-button class="default-arc-button" size="tiny" @click="openNodeInGroup(gv.group)">添加节点</n-button>
+                </template>
               </n-empty>
             </n-card>
           </div>
@@ -180,6 +190,7 @@
       <n-tab-pane name="sources" tab="订阅源">
         <div class="page-toolbar">
           <span class="spacer" />
+          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
           <n-button size="small" type="primary" class="highlight-arc-button" @click="openSource()">添加订阅源</n-button>
         </div>
         <n-spin :show="loading">
@@ -203,9 +214,12 @@
                    错误只进了 last_error 和服务端日志，面板上必须说出来。 -->
               <div v-if="r.last_error" class="src-err" :title="r.last_error">拉取失败：{{ r.last_error }}</div>
               <div class="lc-foot">
+                <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
                 <n-button size="tiny" type="primary" class="highlight-arc-button" @click="handleFetchSource(r.id)">拉取</n-button>
+                <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                 <n-button size="tiny" @click="openSource(r)">编辑</n-button>
-                <n-button size="tiny" type="error" @click="handleDeleteSource(r.id)">删除</n-button>
+                <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
+                <n-button size="tiny" quaternary class="delete-button" type="error" @click="handleDeleteSource(r.id)">删除</n-button>
               </div>
             </div>
           </div>
@@ -275,6 +289,7 @@
           </n-form-item>
           <n-form-item label="启用"><n-switch v-model:value="nodeForm.enabled" /></n-form-item>
         </n-form>
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleSaveNode">保存</n-button>
       </n-drawer-content>
     </n-drawer>
@@ -290,6 +305,7 @@
             <n-select v-model:value="importGroupIds" :options="groupOptions" multiple placeholder="选择分组" />
           </n-form-item>
         </n-form>
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleImport">导入</n-button>
       </n-drawer-content>
     </n-drawer>
@@ -308,6 +324,7 @@
           </n-form-item>
           <n-form-item label="排序"><n-input-number v-model:value="groupForm.sort_order" :min="0" style="width:100%;" /></n-form-item>
         </n-form>
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleSaveGroup">保存</n-button>
       </n-drawer-content>
     </n-drawer>
@@ -323,6 +340,7 @@
           </n-form-item>
           <n-form-item label="启用"><n-switch v-model:value="sourceForm.enabled" /></n-form-item>
         </n-form>
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleSaveSource">保存</n-button>
       </n-drawer-content>
     </n-drawer>

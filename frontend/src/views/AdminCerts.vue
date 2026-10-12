@@ -10,8 +10,11 @@
 
     <n-card size="small" style="margin-bottom:16px;">
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" @click="openAcme">申请证书（Cloudflare DNS）</n-button>
+        <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
         <n-button @click="openPaste">粘贴证书</n-button>
+        <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
         <n-button @click="openSelf">生成自签证书</n-button>
         <span style="flex:1;"></span>
         <span style="font-size:12px;color:var(--text-3);">共 {{ certs.length }} 张 · 真实证书由面板本机签发/续期，可被任意节点的 TLS 配置引用</span>
@@ -69,9 +72,12 @@
             最近核验未通过（仍在使用旧证书）：{{ c.verify_error }}
           </div>
           <div class="lc-foot">
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button v-if="c.source === 'acme'" size="tiny" :loading="renewingId === c.id" @click="renew(c)">立即续期</n-button>
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" @click="exportCert(c)">查看 / 导出</n-button>
-            <n-button size="tiny" type="error" @click="del(c)">删除</n-button>
+            <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
+            <n-button size="tiny" quaternary class="delete-button" type="error" @click="del(c)">删除</n-button>
           </div>
         </div>
       </div>
@@ -103,7 +109,9 @@
       <div style="font-size:12px;color:var(--text-3);">Cloudflare Token 取自系统设置；签发后会核验私钥、域名、有效期和完整信任链，全部通过才会保存和下发。自动兼容当前采用 RSA 2048 + 优先 X1 链；已有证书仍沿用原策略。<b>DNS 验证通常需要 1-2 分钟</b>，点「申请」后请耐心等待、勿关闭弹窗。</div>
       <template #footer>
         <n-space justify="end">
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button @click="showAcme = false">取消</n-button>
+          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
           <n-button type="primary" class="highlight-arc-button" :loading="submitting" @click="submitAcme">申请</n-button>
         </n-space>
       </template>
@@ -119,7 +127,9 @@
       </n-form>
       <template #footer>
         <n-space justify="end">
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button @click="showPaste = false">取消</n-button>
+          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
           <n-button type="primary" class="highlight-arc-button" :loading="submitting" @click="submitPaste">保存</n-button>
         </n-space>
       </template>
@@ -135,7 +145,9 @@
       <div style="font-size:12px;color:var(--text-3);">自签证书用于 TUIC / Hysteria2 等允许跳过校验的客户端；客户端需勾选「允许不安全」。</div>
       <template #footer>
         <n-space justify="end">
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button @click="showSelf = false">取消</n-button>
+          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
           <n-button type="primary" class="highlight-arc-button" :loading="submitting" @click="submitSelf">生成</n-button>
         </n-space>
       </template>
@@ -147,12 +159,14 @@
         <n-form-item label="证书 PEM（fullchain）">
           <div style="width:100%;">
             <n-input :value="exp.certificate" type="textarea" :rows="6" readonly style="font-family:var(--ff-mono);font-size:11px;" />
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" style="margin-top:4px;" @click="copy(exp.certificate)">复制证书</n-button>
           </div>
         </n-form-item>
         <n-form-item label="私钥 PEM">
           <div style="width:100%;">
             <n-input :value="exp.key" type="textarea" :rows="6" readonly style="font-family:var(--ff-mono);font-size:11px;" />
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" style="margin-top:4px;" @click="copy(exp.key)">复制私钥</n-button>
           </div>
         </n-form-item>

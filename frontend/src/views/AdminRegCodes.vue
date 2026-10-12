@@ -28,6 +28,7 @@
       <div v-if="generatedCodes.length" style="margin-top:12px;padding:10px;background:var(--bg-soft);border-radius:8px;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
           <span style="font-size:12px;font-weight:600;">已生成 {{ generatedCodes.length }} 个</span>
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="tiny" @click="copyAll">复制全部</n-button>
         </div>
         <div style="font-family:var(--ff-mono);font-size:12px;word-break:break-all;color:var(--text-2);">{{ generatedCodes.join('\n') }}</div>
@@ -54,9 +55,12 @@
             <span v-for="(u, i) in r.uses" :key="i">{{ u.username || u.email || '#' + u.user_id }} · {{ fmtDateTime(u.used_at) }}</span>
           </div>
           <div class="lc-foot">
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" @click="copyCode(r.code)">复制</n-button>
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" @click="toggleEnabled(r)">{{ r.enabled ? '禁用' : '启用' }}</n-button>
-            <n-button size="tiny" type="error" @click="handleDelete(r.id)">删除</n-button>
+            <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
+            <n-button size="tiny" quaternary class="delete-button" type="error" @click="handleDelete(r.id)">删除</n-button>
           </div>
         </div>
       </div>

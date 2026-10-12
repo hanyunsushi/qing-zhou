@@ -54,7 +54,8 @@
             class="user-select"
             @update:value="load"
           />
-          <n-button v-if="selected.length || selectedPkgs.length" size="small" quaternary @click="clearFilters">
+          <!-- 标准默认弧边按钮：与普通按钮共用尺寸和中性描边，唯一差异为18px圆角。 -->
+          <n-button v-if="selected.length || selectedPkgs.length" size="small" class="default-arc-button" @click="clearFilters">
             清空筛选
           </n-button>
         </div>

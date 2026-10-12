@@ -89,7 +89,9 @@
         <template #extra>
           <div class="empty-actions">
             <span>{{ txs.length ? '当前筛选组合未命中记录，可清除条件查看全部明细。' : '充值、赠送、购买与退款都会在这里保留余额快照。' }}</span>
-            <n-button v-if="txs.length" size="small" @click="resetFilters">清除筛选</n-button>
+            <!-- 标准默认弧边按钮：添加与清除筛选共用普通按钮合同，仅圆角为18px。 -->
+            <n-button class="default-arc-button" v-if="txs.length" size="small" @click="resetFilters">清除筛选</n-button>
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button v-else size="small" @click="router.push('/shop')">查看订阅套餐</n-button>
           </div>
         </template>

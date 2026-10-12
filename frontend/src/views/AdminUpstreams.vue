@@ -63,10 +63,12 @@
             </n-form-item>
           </n-form>
           <div class="provider-actions">
-            <!-- 高亮弧边按钮：供应商配置保存是当前卡片的主动作，悬浮时变深。 -->
+            <!-- 高亮弧边按钮：供应商配置保存是当前卡片的主动作，悬浮时变亮。 -->
             <n-button type="primary" class="highlight-arc-button" :loading="saving.oci" @click="saveOCI">保存 OCI 配置</n-button>
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button :disabled="!ociView.configured" :loading="refreshing.oci" @click="refreshUsage('oci')">查询余额</n-button>
-            <n-button v-if="ociView.configured" tertiary type="error" @click="removeProvider('oci')">清除</n-button>
+            <!-- 删除按钮：红字透明底、悬浮浅灰；保留原确认、请求与禁用条件。 -->
+            <n-button v-if="ociView.configured" size="tiny" quaternary class="delete-button" type="error" @click="removeProvider('oci')">清除</n-button>
           </div>
         </n-card>
         </div>
@@ -112,10 +114,12 @@
             </n-form-item>
           </n-form>
           <div class="provider-actions">
-            <!-- 高亮弧边按钮：供应商配置保存是当前卡片的主动作，悬浮时变深。 -->
+            <!-- 高亮弧边按钮：供应商配置保存是当前卡片的主动作，悬浮时变亮。 -->
             <n-button type="primary" class="highlight-arc-button" :loading="saving.cloudflare" @click="saveCloudflare">保存 Cloudflare 配置</n-button>
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button :disabled="!cfView.configured" :loading="refreshing.cloudflare" @click="refreshUsage('cloudflare')">查询余额</n-button>
-            <n-button v-if="cfView.configured" tertiary type="error" @click="removeProvider('cloudflare')">清除</n-button>
+            <!-- 删除按钮：红字透明底、悬浮浅灰；保留原确认、请求与禁用条件。 -->
+            <n-button v-if="cfView.configured" size="tiny" quaternary class="delete-button" type="error" @click="removeProvider('cloudflare')">清除</n-button>
           </div>
         </n-card>
         </div>

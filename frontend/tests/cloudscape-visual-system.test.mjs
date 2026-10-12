@@ -177,13 +177,13 @@ test('dashboard and subscription actions share the same compact button contract'
   assert.match(dashboard, /class="action-button action-button--emphasis"/)
   assert.match(subscription, /普通按钮：复用控制台“订阅管理”的尺寸、文字和中性 ring。[\s\S]*?class="action-button action-button--normal"[^>]*>订单记录/)
   assert.match(subscription, /强调按钮：复用控制台“去商城”的蓝色与提亮悬浮状态。[\s\S]*?class="action-button action-button--emphasis"[^>]*>去商城/)
-  assert.match(globalCss, /\.n-button\.action-button \{[\s\S]*?min-height:32px !important;[\s\S]*?height:32px;[\s\S]*?border-radius:8px !important;[\s\S]*?font-size:13px/)
-  assert.match(globalCss, /\.n-button\.action-button--normal \{[\s\S]*?--action-button-fg: var\(--text-3\);[\s\S]*?--action-button-fg-hover: var\(--text-2\);[\s\S]*?box-shadow:0 0 0 1px var\(--action-button-border\) !important;/)
-  assert.match(globalCss, /\.n-button\.action-button--normal \{[^}]*--n-border: 0 solid transparent !important;[^}]*--n-border-hover: 0 solid transparent !important;[^}]*--n-border-focus: 0 solid transparent !important;/)
-  assert.match(globalCss, /\.n-button\.action-button--normal:hover:not\(\.n-button--disabled\), \.n-button\.action-button--normal:focus-visible:not\(\.n-button--disabled\) \{[\s\S]*?box-shadow:0 0 0 2px var\(--action-button-border-hover\) !important;/)
+  assert.match(globalCss, /\.n-button\.action-button,[^{]*\{[\s\S]*?min-height:32px !important;[\s\S]*?height:32px;[\s\S]*?border-radius:8px !important;[\s\S]*?font-size:13px/)
+  assert.match(globalCss, /\.n-button\.action-button--normal,[^{]*\{[\s\S]*?--action-button-fg: var\(--text-3\);[\s\S]*?--action-button-fg-hover: var\(--text-2\);[\s\S]*?box-shadow:0 0 0 1px var\(--action-button-border\) !important;/)
+  assert.match(globalCss, /\.n-button\.action-button--normal,[^{]*\{[^}]*--n-border: 0 solid transparent !important;[^}]*--n-border-hover: 0 solid transparent !important;[^}]*--n-border-focus: 0 solid transparent !important;/)
+  assert.match(globalCss, /\.n-button\.action-button--normal:hover:not\(\.n-button--disabled\), \.n-button\.action-button--normal:focus-visible:not\(\.n-button--disabled\),[^{]*\{[\s\S]*?box-shadow:0 0 0 2px var\(--action-button-border-hover\) !important;/)
   assert.match(globalCss, /\.n-button\.action-button--emphasis \{[\s\S]*?--action-button-bg: var\(--accent\);[\s\S]*?--action-button-bg-hover: var\(--accent-button-hover\);/)
   assert.match(globalCss, /\.n-button\.n-button--primary-type\.action-button--emphasis[^{}]*:hover, \.n-button\.n-button--primary-type\.action-button--emphasis[^{}]*:focus-visible \{[\s\S]*?background:var\(--action-button-bg-hover\) !important;/)
-  assert.match(globalCss, /\.n-button\.action-button:active:not\(\.n-button--disabled\) \{ transform:translateY\(1px\) !important;/)
+  assert.match(globalCss, /\.n-button\.action-button:active:not\(\.n-button--disabled\),[^{]*\{ transform:translateY\(1px\) !important;/)
   assert.match(dashboard, /\/\* 普通按钮悬浮效果：复用控制台“订阅管理”的文字加深与中性 ring。 \*\//)
   assert.match(dashboard, /\.onboarding-strip button\{[\s\S]*?color:var\(--text-3\)/)
   assert.match(dashboard, /\.onboarding-strip button:hover,\.onboarding-strip button:focus-visible\{background:var\(--card\);color:var\(--text-2\);box-shadow:0 0 0 1px transparent,0 0 0 2px var\(--border-strong\) !important\}/)
@@ -219,7 +219,7 @@ test('help navigation selection uses the Apple blue information surface', () => 
   assert.doesNotMatch(source, /\.help-nav-item\.active \{[^}]*var\(--accent-soft\)|\.help-nav-item\.active \{[^}]*var\(--accent-strong\)/)
 })
 
-test('page-level primary actions use the shared highlighted arc button contract', () => {
+test('page-level primary actions use the shared emphasis button contract', () => {
   assert.match(read('src/views/UserOrders.vue'), /class="action-button action-button--emphasis"/)
   assert.match(read('src/views/UserOrders.vue'), />\s*去商城\s*<\/n-button>/)
   assert.match(read('src/views/AdminAnnouncements.vue'), /class="action-button action-button--emphasis"[^>]*>发布公告/)
@@ -242,15 +242,15 @@ test('highlight arc buttons preserve native geometry and use the design blue', (
   const sub = read('src/views/UserSub.vue')
   const globalCss = read('src/styles/global.css')
 
-  assert.match(orders, /高亮弧边按钮：固定使用实心 Apple 蓝，悬浮\/聚焦时变深。[\s\S]*?type="primary" class="highlight-arc-button"[^>]*>去商城看看/)
-  assert.match(sub, /高亮弧边按钮：固定使用实心 Apple 蓝，悬浮\/聚焦时变深。[\s\S]*?type="primary" class="highlight-arc-button"/)
+  assert.match(orders, /高亮弧边按钮：固定使用实心 Apple 蓝，悬浮\/聚焦时变亮。[\s\S]*?type="primary" class="highlight-arc-button"[^>]*>去商城看看/)
+  assert.match(sub, /高亮弧边按钮：固定使用实心 Apple 蓝，悬浮\/聚焦时变亮。[\s\S]*?type="primary" class="highlight-arc-button"/)
   assert.match(update, /type="primary"[\s\S]*?class="highlight-arc-button"[\s\S]*?立即更新/)
   assert.doesNotMatch(orders, /class="[^"]*action-button--normal[^"]*"[^>]*>去商城看看/)
   assert.match(globalCss, /--accent: #007aff/)
   assert.match(globalCss, /固定实心 Apple 蓝/)
   assert.match(globalCss, /\.n-button\.n-button--primary-type\.highlight-arc-button \{[\s\S]*?background: var\(--accent\) !important;[\s\S]*?color: #fff !important;/)
   assert.doesNotMatch(globalCss, /\.n-button\.n-button--primary-type\.highlight-arc-button\.n-button--disabled \{/)
-  assert.match(globalCss, /\.n-button\.action-button--normal \{[^}]*--n-border-hover: 0 solid transparent !important;[^}]*--n-border-focus: 0 solid transparent !important;/)
+  assert.match(globalCss, /\.n-button\.action-button--normal,[^{]*\{[^}]*--n-border-hover: 0 solid transparent !important;[^}]*--n-border-focus: 0 solid transparent !important;/)
 })
 
 test('global selection treatment removes mouse blue borders but keeps keyboard focus', () => {
@@ -258,9 +258,8 @@ test('global selection treatment removes mouse blue borders but keeps keyboard f
   assert.match(source, /--selection-bg: rgba\(0, 122, 255, \.2\)/)
   assert.match(source, /::selection \{ background: var\(--selection-bg\); color: inherit; \}/)
   assert.match(source, /::-moz-selection \{ background: var\(--selection-bg\); color: inherit; \}/)
-  assert.match(source, /\.n-button\.n-button--primary-type\.n-button--secondary \{ box-shadow: inset 0 0 0 1px var\(--border-strong\); \}/)
   assert.match(source, /\.n-button:not\(\.n-button--disabled\):focus-visible \{ box-shadow: var\(--focus-ring\); \}/)
-  assert.match(source, /\.n-button:not\(\.n-button--disabled\):focus:not\(:focus-visible\) \{ box-shadow: none !important; \}/)
+  assert.doesNotMatch(source, /\.n-button:not\(\.n-button--disabled\):focus:not\(:focus-visible\) \{ box-shadow: none !important; \}/)
   assert.doesNotMatch(source, /\.n-button:not\(\.n-button--disabled\):hover,\s*\.n-button:not\(\.n-button--disabled\):focus-visible \{ box-shadow: var\(--focus-ring\); \}/)
 })
 
@@ -300,9 +299,9 @@ test('standalone auth pages keep the Cloudscape form contract and brand typograp
   assert.match(header, /\.brand-caption \{[\s\S]*?color: var\(--text-3\);[\s\S]*?font-size: 12px;[\s\S]*?line-height: 16px;/)
 })
 
-test('highlight arc primary buttons use the darker hover contract', () => {
+test('highlight arc primary buttons use the brighter hover contract', () => {
   const globalCss = read('src/styles/global.css')
-  assert.match(globalCss, /--accent-arc-hover: #0068d7/)
+  assert.match(globalCss, /--accent-arc-hover: var\(--accent-button-hover\)/)
   assert.match(globalCss, /\.n-button\.n-button--primary-type\.highlight-arc-button \{[\s\S]*?--n-color-hover: var\(--accent-arc-hover\) !important;[\s\S]*?background: var\(--accent\) !important;/)
   assert.match(globalCss, /\.n-button\.n-button--primary-type\.highlight-arc-button:not\(\.n-button--secondary\):not\(\.n-button--ghost\):not\(\.n-button--disabled\):hover,[\s\S]*?background: var\(--accent-arc-hover\) !important;[\s\S]*?border-color: var\(--accent-arc-hover\) !important;/)
 })
@@ -310,7 +309,7 @@ test('highlight arc primary buttons use the darker hover contract', () => {
 test('online update keeps disabled buttons on the component default template', () => {
   const update = read('src/views/AdminUpdate.vue')
   const globalCss = read('src/styles/global.css')
-  assert.match(update, /仅调整正常态；禁用态保留 Naive UI 默认样式，作为禁用态模板。/)
+  assert.match(update, /悬浮\/聚焦提亮，按下短暂变深；禁用交互和真实更新loading由业务控制。/)
   assert.doesNotMatch(globalCss, /--highlight-arc-disabled-bg/)
 })
 
@@ -353,7 +352,7 @@ test('account page primary actions share the highlighted arc button contract', (
   const account = read('src/views/UserAccount.vue')
   const oauthAccount = read('src/components/OAuth2Account.vue')
   for (const label of ['绑定邮箱', '生成绑定链接', '修改密码']) {
-    assert.match(account, new RegExp(`高亮弧边按钮：账户页主动作统一使用实心 Apple 蓝及深蓝悬浮态。[\\s\\S]*?class="highlight-arc-button"[^>]*>${label}`))
+    assert.match(account, new RegExp(`高亮弧边按钮：账户页主动作统一使用实心 Apple 蓝及提亮悬浮态。[\\s\\S]*?class="highlight-arc-button"[^>]*>${label}`))
   }
   assert.match(oauthAccount, /高亮弧边按钮：账户页认证中心绑定主动作复用统一主按钮样式。[\s\S]*?class="highlight-arc-button"[^>]*>前往认证中心绑定/)
   assert.match(account, /<n-button v-if="auth\.user\?\.email && !auth\.user\?\.email_verified" :loading="resending" @click="handleResendVerify">发送验证邮件<\/n-button>/)
@@ -1057,7 +1056,7 @@ test('clickable stat cards turn auxiliary copy Apple blue on hover', () => {
 
 test('subscription QR and reset-subscription actions declare their arc button types', () => {
   const source = read('src/views/UserSub.vue')
-  assert.match(source, /高亮弧边按钮：固定使用实心 Apple 蓝，悬浮\/聚焦时变深。[\s\S]*?<n-button size="small" type="primary" class="highlight-arc-button" @click="showQr=!showQr">\{\{ showQr\?'隐藏':'显示' \}\}二维码<\/n-button>/)
+  assert.match(source, /高亮弧边按钮：固定使用实心 Apple 蓝，悬浮\/聚焦时变亮。[\s\S]*?<n-button size="small" type="primary" class="highlight-arc-button" @click="showQr=!showQr">\{\{ showQr\?'隐藏':'显示' \}\}二维码<\/n-button>/)
   assert.match(source, /弧边警告按钮：保留 Naive UI 警告色与圆角样式，提示订阅地址变更风险。[\s\S]*?<n-button size="small" type="warning" @click="handleResetSub">更换订阅地址<\/n-button>/)
   assert.match(source, /class="highlight-arc-button"/)
 })

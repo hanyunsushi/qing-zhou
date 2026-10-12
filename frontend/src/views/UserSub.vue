@@ -62,7 +62,7 @@
           </template>
           通用格式只包含节点，代理范围由客户端本地规则决定
         </n-tooltip>
-        <!-- 高亮弧边按钮：固定使用实心 Apple 蓝，悬浮/聚焦时变深。 -->
+        <!-- 高亮弧边按钮：固定使用实心 Apple 蓝，悬浮/聚焦时变亮。 -->
         <n-button size="small" type="primary" class="highlight-arc-button" @click="showQr=!showQr">{{ showQr?'隐藏':'显示' }}二维码</n-button>
       </div>
       <div class="sub-action-row safety">
@@ -183,10 +183,11 @@
           <n-tag v-else-if="acct.idle" type="warning" size="small" bordered>暂不通用</n-tag>
           <n-tag v-else type="info" size="small" bordered>所有节点通用</n-tag>
           <span style="flex:1;"></span>
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="tiny" @click="openEditProxy({ ...acct, account: true, custom: true })">编辑账号</n-button>
         </div>
-        <div class="pxrow"><span class="pxk">用户名</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="acct.username" readonly size="small" /><n-button size="small" @click="copy(acct.username)">复制</n-button></n-input-group></div></div>
-        <div class="pxrow"><span class="pxk">密码</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="acct.password" type="password" show-password-on="click" readonly size="small" /><n-button size="small" @click="copy(acct.password)">复制</n-button></n-input-group></div></div>
+        <div class="pxrow"><span class="pxk">用户名</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="acct.username" readonly size="small" /><!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 --><n-button size="small" @click="copy(acct.username)">复制</n-button></n-input-group></div></div>
+        <div class="pxrow"><span class="pxk">密码</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="acct.password" type="password" show-password-on="click" readonly size="small" /><!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 --><n-button size="small" @click="copy(acct.password)">复制</n-button></n-input-group></div></div>
         <div class="pxrow"><span class="pxk">有效期</span><span style="font-size:12px;color:var(--text-2);flex:1;">{{ acct.expires_at ? fmtDate(acct.expires_at) : '永久' }}</span></div>
         <div class="px-hint">
           <template v-if="acct.expired">已过期，下面的节点暂时改用各自套餐的账号。点「编辑账号」续期即可恢复通用。</template>
@@ -229,8 +230,8 @@
         <div v-if="!p.custom" class="px-hint">系统默认账号，建议点「详情 → 编辑账号」自设</div>
         <div v-if="expandedProxies.includes(p.tag)" class="px-detail">
           <div class="pxrow"><span class="pxk">类型</span><span style="font-size:13px;">{{ p.tls ? 'HTTPS' : 'HTTP / SOCKS5' }}</span></div>
-          <div class="pxrow"><span class="pxk">地址</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="p.host" readonly size="small" /><n-button size="small" @click="copy(p.host)">复制</n-button></n-input-group></div></div>
-          <div class="pxrow"><span class="pxk">端口</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="String(p.port)" readonly size="small" /><n-button size="small" @click="copy(String(p.port))">复制</n-button></n-input-group></div></div>
+          <div class="pxrow"><span class="pxk">地址</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="p.host" readonly size="small" /><!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 --><n-button size="small" @click="copy(p.host)">复制</n-button></n-input-group></div></div>
+          <div class="pxrow"><span class="pxk">端口</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="String(p.port)" readonly size="small" /><!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 --><n-button size="small" @click="copy(String(p.port))">复制</n-button></n-input-group></div></div>
           <!-- 两套账号在这个节点上都能登录，所以两套都列出来。通用账号只用一行指
                回上面——它每个节点都一样，逐个节点再抄一遍反而像「一节点一套」；套
                餐账号则必须逐项列全，它是这个节点独有的，不列就等于没有。 -->
@@ -243,10 +244,11 @@
               <span class="px-name">套餐账号<template v-if="p.plan.name"> · {{ p.plan.name }}</template></span>
               <n-tag v-if="p.plan.expired" type="error" size="small" bordered>已过期</n-tag>
               <span style="flex:1;"></span>
+              <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
               <n-button size="tiny" @click="openEditProxy(p.plan)">编辑账号</n-button>
             </div>
-            <div class="pxrow"><span class="pxk">用户名</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="p.plan.username" readonly size="small" /><n-button size="small" @click="copy(p.plan.username)">复制</n-button></n-input-group></div></div>
-            <div class="pxrow"><span class="pxk">密码</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="p.plan.password" type="password" show-password-on="click" readonly size="small" /><n-button size="small" @click="copy(p.plan.password)">复制</n-button></n-input-group></div></div>
+            <div class="pxrow"><span class="pxk">用户名</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="p.plan.username" readonly size="small" /><!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 --><n-button size="small" @click="copy(p.plan.username)">复制</n-button></n-input-group></div></div>
+            <div class="pxrow"><span class="pxk">密码</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="p.plan.password" type="password" show-password-on="click" readonly size="small" /><!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 --><n-button size="small" @click="copy(p.plan.password)">复制</n-button></n-input-group></div></div>
             <div class="pxrow">
               <span class="pxk">有效期</span>
               <span class="pxsub">{{ p.plan.expires_at ? fmtDate(p.plan.expires_at) : '永久' }}</span>
@@ -305,6 +307,7 @@
         <n-form-item label="密码">
           <n-input-group>
             <n-input v-model:value="editForm.password" type="password" show-password-on="click" placeholder="6-128 位" />
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button @click="genProxyPassword">生成32位</n-button>
           </n-input-group>
         </n-form-item>
@@ -319,6 +322,7 @@
           <template v-if="editForm.account">改的是所有节点通用的那一个，保存后旧密码立即失效，记得同步更新已填在别处的地方。</template>
           <template v-else>改的是这一份套餐自己的那一个，通用账号不受影响。</template>
         </div>
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" block :loading="savingProxy" @click="saveProxy">保存</n-button>
       </n-form>
     </n-modal>
@@ -330,8 +334,11 @@
           <n-input v-model:value="search" placeholder="搜索节点 / 线路" size="small" style="width:160px;" clearable />
           <!-- 下拉选择菜单：协议筛选弹层复用顶栏菜单合同，触发选择器保持原样。 -->
           <n-select v-model:value="protoFilter" :options="protoOptions" placeholder="协议" size="small" style="width:100px;" clearable />
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="small" @click="handlePing" :loading="pinging">测速</n-button>
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="small" @click="handleToggleAll(true)">全启用</n-button>
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="small" @click="handleToggleAll(false)">全禁用</n-button>
         </n-space>
       </template>

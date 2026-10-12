@@ -40,7 +40,9 @@
       </n-spin>
       <template #footer>
         <div style="display:flex;justify-content:flex-end;gap:8px;">
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="small" @click="emit('update:show', false)">取消</n-button>
+          <!-- 弧边警告按钮：保留风险语义、悬浮/聚焦提亮和按下反馈，请求状态由业务控制。 -->
           <n-button size="small" type="warning" :loading="submitting" :disabled="!q || q.already_refunded" @click="confirm">
             确认退款
           </n-button>

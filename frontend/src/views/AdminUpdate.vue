@@ -21,6 +21,7 @@
       </div>
 
       <div class="toolbar">
+        <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
         <n-button size="small" :loading="loading" @click="check">
           <template #icon><n-icon><RefreshOutline /></n-icon></template>
           检查更新
@@ -30,7 +31,7 @@
           在 GitHub 查看发布页 ↗
         </a>
         <span class="spacer" />
-        <!-- 高亮弧边按钮：仅调整正常态；禁用态保留 Naive UI 默认样式，作为禁用态模板。 -->
+        <!-- 高亮弧边按钮：悬浮/聚焦提亮，按下短暂变深；禁用交互和真实更新loading由业务控制。 -->
         <n-button
           v-if="info?.update_available"
           type="primary"
@@ -62,6 +63,7 @@
           </template>
           <template v-else>{{ rollback?.reason || '本机没有保留上一个版本。' }}</template>
         </p>
+        <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
         <n-button size="small" :disabled="!rollback?.available || updating" @click="confirmRollback">
           {{ rollback?.version ? '回滚到 ' + rollback.version : '回滚到上一个版本' }}
         </n-button>

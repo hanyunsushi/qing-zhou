@@ -160,7 +160,8 @@
             <n-checkbox v-model:checked="uf.online" @update:checked="loadUsers">仅在线</n-checkbox>
             <span class="spacer" />
             <span class="muted">共 {{ userTotal }} 人</span>
-            <n-button v-if="filterActive" size="tiny" quaternary @click="clearFilters">清除筛选</n-button>
+            <!-- 标准默认弧边按钮：添加与清除筛选共用普通按钮合同，仅圆角为18px。 -->
+            <n-button class="default-arc-button" v-if="filterActive" size="tiny" @click="clearFilters">清除筛选</n-button>
           </div>
 
           <n-spin :show="loadingUsers">
@@ -226,8 +227,10 @@
           </n-spin>
 
           <div v-if="userTotal > pageSize" class="pager">
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" :disabled="page === 0" @click="goPage(page - 1)">上一页</n-button>
             <span class="muted">{{ page + 1 }} / {{ Math.ceil(userTotal / pageSize) }}</span>
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" :disabled="(page + 1) * pageSize >= userTotal" @click="goPage(page + 1)">下一页</n-button>
           </div>
         </n-card>

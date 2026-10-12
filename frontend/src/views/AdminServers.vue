@@ -2,7 +2,7 @@
   <div>
     <div class="page-head">
       <div><h2 class="page-title">服务器管理</h2><p class="page-sub">远程机器、SSH 接管、探针与 sing-box 运行版本</p></div>
-      <div class="page-actions"><!-- 高亮弧边按钮：页面级主操作统一复用强调按钮合同。 --><n-button type="primary" class="action-button action-button--emphasis" @click="openForm()">添加服务器</n-button></div>
+      <div class="page-actions"><!-- 强调按钮：页面级主操作统一复用强调按钮合同。 --><n-button type="primary" class="action-button action-button--emphasis" @click="openForm()">添加服务器</n-button></div>
     </div>
     <div class="resource-overview">
       <div class="resource-metric"><b>{{ servers.length }}</b><span>全部远程服务器</span></div>
@@ -15,6 +15,7 @@
     <n-card title="节点 sing-box 版本" size="small" style="margin-bottom:16px;">
       <template #header-extra>
         <n-space size="small">
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="tiny" :loading="verLoading" @click="refreshVersions">重新检测</n-button>
         </n-space>
       </template>
@@ -38,6 +39,7 @@
           </div>
           <div class="nv-side">
             <span v-if="n.checked_at" class="nv-time">{{ fmtDateTime(n.checked_at) }}</span>
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" :disabled="!n.upgradable || n.upgrading" :loading="n.upgrading"
                       @click="confirmUpgrade(n)">
               {{ n.upgrading ? '安装中' : (n.version ? '重装' : '安装') }}
@@ -78,10 +80,14 @@
           </div>
           <div class="lc-foot">
             <n-button size="tiny" type="primary" secondary @click="openTrafficAnalysis(s)">流量分析</n-button>
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" @click="handleRebuild(s.id)">重建</n-button>
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" @click="openForm(s)">编辑</n-button>
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" :loading="clearing === s.id" @click="handleClearHostKey(s)">清除密钥指纹</n-button>
-            <n-button size="tiny" type="error" @click="handleDelete(s.id)">删除</n-button>
+            <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
+            <n-button size="tiny" quaternary class="delete-button" type="error" @click="handleDelete(s.id)">删除</n-button>
           </div>
         </div>
       </div>
@@ -135,7 +141,9 @@
         <n-form-item label="启用"><n-switch v-model:value="form.enabled" /></n-form-item>
       </n-form>
       <n-space>
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" :loading="saving" @click="handleSave">保存</n-button>
+        <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
         <n-button @click="handleTest" :loading="testing">测试连接</n-button>
       </n-space>
     </n-modal>

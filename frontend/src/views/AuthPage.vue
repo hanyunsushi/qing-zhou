@@ -25,11 +25,12 @@
             <n-form-item label="密码" path="password"><n-input v-model:value="form.password" :input-props="{ autocomplete: isRegister ? 'new-password' : 'current-password' }" type="password" show-password-on="click" :placeholder="isRegister ? '至少 6 位字符' : '请输入密码'" /></n-form-item>
             <n-form-item v-if="isRegister && config.config.register_mode === 'code'" label="邀请码" path="code"><n-input v-model:value="form.code" placeholder="请输入邀请码" /></n-form-item>
             <p v-if="isRegister" class="auth-legal-copy">注册即表示你已阅读并同意本站服务条款与隐私说明，并承诺仅在适用法律允许的范围内使用服务。</p>
+            <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
             <n-button type="primary" class="highlight-arc-button auth-submit" block :loading="loading" attr-type="submit">{{ isRegister ? (config.config.email_verify_required ? '继续注册' : '创建账户') : '登录' }}</n-button>
           </n-form>
           <n-form v-else ref="forgotFormRef" class="auth-fields" :model="forgotForm" :rules="forgotRules" label-placement="top" @submit.prevent="handleForgot">
             <div v-if="!config.config.email_enabled" class="auth-notice" role="status">本站未配置邮件服务，无法自助重置密码。<br />请联系管理员帮你重置。</div>
-            <template v-else><n-form-item label="注册邮箱" path="email"><n-input v-model:value="forgotForm.email" :input-props="{ autocomplete: 'email' }" placeholder="请输入注册邮箱" /></n-form-item><n-button type="primary" class="highlight-arc-button auth-submit" block :loading="loading" attr-type="submit">发送重置邮件</n-button></template>
+            <template v-else><n-form-item label="注册邮箱" path="email"><n-input v-model:value="forgotForm.email" :input-props="{ autocomplete: 'email' }" placeholder="请输入注册邮箱" /></n-form-item><!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 --><n-button type="primary" class="highlight-arc-button auth-submit" block :loading="loading" attr-type="submit">发送重置邮件</n-button></template>
           </n-form>
           <div v-if="!isRegister && !isForgot" class="auth-secondary-links"><router-link to="/forgot-password">忘记密码？</router-link></div>
           <div v-if="config.config.oauth2_enabled && !isRegister && !isForgot" class="auth-divider"><span /><em>或</em><span /></div>

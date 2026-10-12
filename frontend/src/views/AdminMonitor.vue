@@ -67,6 +67,7 @@
         <span class="alert-cnt">{{ unreadAlerts.length }}</span>
       </template>
       <template #header-extra>
+        <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
         <n-button size="tiny" @click="dismissAll">全部忽略</n-button>
       </template>
       <div v-for="a in shownAlerts" :key="a.id" class="alert-row">
@@ -81,6 +82,7 @@
             <template v-if="a.hits > 1"> · 触发 {{ a.hits }} 次</template>
           </div>
         </div>
+        <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
         <n-button size="tiny" @click="dismissAlert(a.id)">忽略</n-button>
       </div>
       <div v-if="unreadAlerts.length > ALERT_PREVIEW" class="alert-more">
@@ -128,6 +130,7 @@
               </template>
               {{ s.public_visible ? '显示在公开状态页' : '不显示在公开状态页' }}
             </n-tooltip>
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" @click="openAsset(s)">编辑</n-button>
             <!-- 本机是面板自采集，没有探针可装 -->
             <n-button
@@ -139,6 +142,7 @@
             >
               {{ s.probe_upgrading ? '安装中' : (!s.metrics ? '一键安装' : (s.probe_outdated ? '一键升级' : '重装探针')) }}
             </n-button>
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button v-if="!s.local" size="tiny" @click="copyInstall(s)">复制命令</n-button>
           </n-space>
         </template>
@@ -257,6 +261,7 @@
                 <n-input-number v-model:value="assetUsedGB" :min="0" :precision="2" style="flex:1;">
                   <template #suffix>GB</template>
                 </n-input-number>
+                <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                 <n-button :loading="calibrating" @click="handleCalibrateTraffic">校准</n-button>
               </div>
             </n-form-item>
@@ -270,6 +275,7 @@
           <n-form-item label="备注"><n-input v-model:value="assetForm.notes" type="textarea" :rows="2" /></n-form-item>
           <n-form-item v-if="!assetServer.local" label="启用探针"><n-switch v-model:value="assetForm.probe_enabled" /></n-form-item>
         </n-form>
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleSaveAsset">保存</n-button>
       </n-drawer-content>
     </n-drawer>

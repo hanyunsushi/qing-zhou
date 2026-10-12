@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="detail-head">
+      <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
       <n-button size="small" @click="back">返回</n-button>
       <h2 class="page-title">
         <span class="status-beacon" :class="server?.status || ''" />

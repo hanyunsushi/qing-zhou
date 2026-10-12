@@ -20,7 +20,7 @@
   --text-3: oklch(55.6% 0 0);
   --accent: #007aff;
   --accent-hover: #033160;
-  --accent-arc-hover: #0068d7;
+  --accent-arc-hover: var(--accent-button-hover);
   --accent-button-hover: color-mix(in srgb, var(--accent) 84%, white);
   --accent-strong: #033160;
   --accent-soft: #e9f3ff;
@@ -218,40 +218,88 @@ button, input, textarea, select { font-family: inherit; }
   transform: none;
   box-shadow: none;
 }
-.n-button.n-button--primary-type.n-button--secondary { box-shadow: inset 0 0 0 1px var(--border-strong); }
 .n-button.n-button--primary-type.primary-quiet { background: transparent !important; box-shadow: none !important; }
 .n-button:not(.n-button--disabled):active { transform: none; transition-duration: .08s !important; }
 
-/* 标准默认弧边按钮：仅在悬浮/聚焦时显示设计蓝描边。 */
-.n-button.n-button--default-type:not(.n-button--disabled):not(.n-button--secondary):not(.n-button--tertiary):not(.n-button--quaternary):not(.n-button--ghost):not(.n-button--text-type):not(.action-button) {
-  --n-border-hover: 1px solid var(--accent) !important;
-  --n-border-focus: 1px solid var(--accent) !important;
-}
-/* 高亮弧边按钮：固定实心 Apple 蓝；主动作悬浮/聚焦使用中间深蓝。 */
+/* 高亮弧边按钮：固定实心 Apple 蓝；悬浮与点击后聚焦提亮，按下反馈沿用语义按钮状态。 */
 .n-button.n-button--primary-type.highlight-arc-button {
   --n-color: var(--accent) !important;
   --n-color-hover: var(--accent-arc-hover) !important;
+  --n-color-focus: var(--accent-arc-hover) !important;
   --n-color-pressed: var(--accent-strong) !important;
   --n-border: 1px solid var(--accent) !important;
   --n-border-hover: 1px solid var(--accent-arc-hover) !important;
   --n-border-focus: 1px solid var(--accent-arc-hover) !important;
+  --n-border-pressed: 1px solid var(--accent-strong) !important;
   background: var(--accent) !important;
   color: #fff !important;
 }
 .n-button.n-button--primary-type.highlight-arc-button:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):hover,
-.n-button.n-button--primary-type.highlight-arc-button:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):focus-visible {
+.n-button.n-button--primary-type.highlight-arc-button:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):focus {
   background: var(--accent-arc-hover) !important;
   color: #fff !important;
   border-color: var(--accent-arc-hover) !important;
 }
-/* 普通按钮：紧凑 32px 几何、浅色文字与中性 ring 状态。 */
-.n-button.action-button { min-height:32px !important; height:32px; padding:0 10px !important; border-radius:8px !important; border:0 !important; font-size:13px; font-weight:500; line-height:20px; letter-spacing:0; transition:color .1s ease-in-out,background-color .2s ease-in-out,box-shadow .2s ease-in-out,opacity .2s ease-in-out,transform .2s ease-in-out !important; }
-.n-button.action-button--normal { --action-button-bg: transparent; --action-button-fg: var(--text-3); --action-button-border: var(--border); --action-button-bg-hover: transparent; --action-button-fg-hover: var(--text-2); --action-button-border-hover: var(--border-strong); --n-border: 0 solid transparent !important; --n-border-hover: 0 solid transparent !important; --n-border-focus: 0 solid transparent !important; background:var(--action-button-bg) !important; color:var(--action-button-fg) !important; box-shadow:0 0 0 1px var(--action-button-border) !important; }
-.n-button.action-button--normal:hover:not(.n-button--disabled), .n-button.action-button--normal:focus-visible:not(.n-button--disabled) { background:var(--action-button-bg-hover) !important; color:var(--action-button-fg-hover) !important; box-shadow:0 0 0 2px var(--action-button-border-hover) !important; }
+/* 高亮弧边按钮：键盘焦点单独可见，不被通用primary的无阴影规则覆盖。 */
+.n-button.n-button--primary-type.highlight-arc-button:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):focus-visible { box-shadow: var(--focus-ring); }
+/* 高亮弧边按钮：与警告弧边同样，按下短暂变深，释放后保持焦点提亮；不位移。 */
+.n-button.n-button--primary-type.highlight-arc-button:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):active,
+.n-button.n-button--primary-type.highlight-arc-button:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled).n-button--pressed {
+  background: var(--accent-strong) !important;
+  border-color: var(--accent-strong) !important;
+}
+/* 普通按钮 / 标准默认弧边按钮：共用32px几何、字体与中性ring；默认弧边只改18px圆角。 */
+.n-button.action-button,
+.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.n-button--ghost):not(.action-button)):has(> .n-button__border) { min-height:32px !important; height:32px; padding:0 10px !important; border-radius:8px !important; border:0 !important; font-size:13px; font-weight:500; line-height:20px; letter-spacing:0; transition:color .1s ease-in-out,background-color .2s ease-in-out,box-shadow .2s ease-in-out,opacity .2s ease-in-out,transform .2s ease-in-out !important; }
+.n-button.action-button--normal,
+.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.n-button--ghost):not(.action-button)):has(> .n-button__border) { --action-button-bg: transparent; --action-button-fg: var(--text-3); --action-button-border: var(--border); --action-button-bg-hover: transparent; --action-button-fg-hover: var(--text-2); --action-button-border-hover: var(--border-strong); --n-border: 0 solid transparent !important; --n-border-hover: 0 solid transparent !important; --n-border-focus: 0 solid transparent !important; --n-border-pressed: 0 solid transparent !important; background:var(--action-button-bg) !important; color:var(--action-button-fg) !important; box-shadow:0 0 0 1px var(--action-button-border) !important; }
+.n-button.action-button--normal:hover:not(.n-button--disabled), .n-button.action-button--normal:focus-visible:not(.n-button--disabled),
+.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.n-button--ghost):not(.action-button)):has(> .n-button__border):hover:not(.n-button--disabled),
+.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.n-button--ghost):not(.action-button)):has(> .n-button__border):focus-visible:not(.n-button--disabled) { background:var(--action-button-bg-hover) !important; color:var(--action-button-fg-hover) !important; box-shadow:0 0 0 2px var(--action-button-border-hover) !important; }
+/* 标准默认弧边按钮：唯一视觉差异是弧边圆角，描边颜色/粗细与普通按钮相同。 */
+.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.n-button--ghost):not(.action-button)):has(> .n-button__border) { border-radius:var(--r-control) !important; }
 /* 强调按钮：背景和 ring 悬浮时同步提亮，并覆盖全局 primary hover 状态。 */
-.n-button.action-button--emphasis { --action-button-bg: var(--accent); --action-button-fg: #fff; --action-button-border: var(--accent); --action-button-bg-hover: var(--accent-button-hover); --action-button-border-hover: var(--accent-button-hover); background:var(--action-button-bg) !important; color:var(--action-button-fg) !important; box-shadow:0 0 0 1px var(--action-button-border) !important; }
+.n-button.action-button--emphasis { --action-button-bg: var(--accent); --action-button-fg: #fff; --action-button-border: var(--accent); --action-button-bg-hover: var(--accent-button-hover); --action-button-border-hover: var(--accent-button-hover); --n-border: 0 solid transparent !important; --n-border-hover: 0 solid transparent !important; --n-border-focus: 0 solid transparent !important; --n-border-pressed: 0 solid transparent !important; background:var(--action-button-bg) !important; color:var(--action-button-fg) !important; box-shadow:0 0 0 1px var(--action-button-border) !important; }
 .n-button.n-button--primary-type.action-button--emphasis:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):hover, .n-button.n-button--primary-type.action-button--emphasis:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):focus-visible { background:var(--action-button-bg-hover) !important; color:var(--action-button-fg) !important; box-shadow:0 0 0 2px var(--action-button-border-hover) !important; }
-.n-button.action-button:active:not(.n-button--disabled) { transform:translateY(1px) !important; transition-duration:.08s !important; }
+.n-button.action-button:active:not(.n-button--disabled),
+.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.n-button--ghost):not(.action-button)):has(> .n-button__border):active:not(.n-button--disabled) { transform:translateY(1px) !important; transition-duration:.08s !important; }
+
+/* 删除按钮：取自节点卡红字透明底；22px高、18px角，无装饰边框，键盘焦点独立可见。 */
+.n-button.delete-button {
+  --n-color: transparent !important;
+  --n-color-hover: rgba(46, 51, 56, .09) !important;
+  --n-color-focus: rgba(46, 51, 56, .09) !important;
+  --n-color-pressed: rgba(46, 51, 56, .13) !important;
+  --n-color-disabled: transparent !important;
+  --n-text-color: var(--danger) !important;
+  --n-text-color-hover: var(--danger) !important;
+  --n-text-color-focus: var(--danger) !important;
+  --n-text-color-pressed: var(--danger) !important;
+  --n-text-color-disabled: var(--danger) !important;
+  --n-border: none !important;
+  --n-border-hover: none !important;
+  --n-border-focus: none !important;
+  --n-border-pressed: none !important;
+  --n-border-disabled: none !important;
+  height: 22px;
+  min-height: 22px;
+  padding: 0 6px !important;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 12px;
+  background: transparent;
+  border: 0 !important;
+  box-shadow: none;
+}
+.n-button.delete-button:not(.n-button--disabled):hover,
+.n-button.delete-button:not(.n-button--disabled):focus-visible { background: rgba(46, 51, 56, .09); }
+.n-button.delete-button:not(.n-button--disabled):focus-visible { box-shadow: var(--focus-ring); }
+.n-button.delete-button:not(.n-button--disabled):active,
+.n-button.delete-button.n-button--pressed:not(.n-button--disabled) { background: rgba(46, 51, 56, .13); }
+/* 删除按钮：触摸设备扩大命中面，保持同一红字、透明表面与状态，不造新变体。 */
+@media (pointer: coarse) {
+  .n-button.delete-button { min-width: 44px; height: 44px; min-height: 44px; }
+}
 
 /* 切换开关：保留启用/停用状态色，去掉 Naive UI rail 的焦点高亮边框。 */
 .n-switch:focus .n-switch__rail,
@@ -938,7 +986,7 @@ button, input, textarea, select { font-family: inherit; }
 .n-spin-container { transition: opacity .22s var(--ease-standard); }
 
 .n-button:not(.n-button--disabled):focus-visible { box-shadow: var(--focus-ring); }
-.n-button:not(.n-button--disabled):focus:not(:focus-visible) { box-shadow: none !important; }
+/* 普通按钮 / 标准默认弧边按钮：鼠标聚焦不额外添加焦点圈，也不清除用于描边的box-shadow；键盘提示只由focus-visible负责。 */
 .n-button:not(.n-button--disabled):active { transform: none; }
 .n-tag { --n-border-radius: var(--r-control) !important; }
 

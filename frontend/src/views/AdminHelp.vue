@@ -6,7 +6,7 @@
         <p class="page-sub">编写与发布帮助内容，管理用户端的展示顺序</p>
       </div>
       <div class="page-actions">
-        <!-- 高亮弧边按钮：页面级主操作统一复用强调按钮合同。 -->
+        <!-- 强调按钮：页面级主操作统一复用强调按钮合同。 -->
         <n-button type="primary" size="large" class="action-button action-button--emphasis" @click="openCreate">
           <template #icon><n-icon><AddOutline /></n-icon></template>
           新建文档
@@ -92,8 +92,8 @@
                 <template #icon><n-icon><CreateOutline /></n-icon></template>
                 编辑
               </n-button>
-              <n-button
-                quaternary
+              <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
+              <n-button size="tiny" quaternary class="delete-button"
                 type="error"
                 :loading="deletingId === d.id"
                 aria-label="删除文档"
@@ -109,7 +109,9 @@
         <div v-else-if="!loading" class="document-empty">
           <n-empty :description="emptyDescription">
             <template #extra>
-              <n-button v-if="searchQuery || statusFilter !== 'all'" @click="resetFilters">清除筛选</n-button>
+              <!-- 标准默认弧边按钮：添加与清除筛选共用普通按钮合同，仅圆角为18px。 -->
+              <n-button class="default-arc-button" v-if="searchQuery || statusFilter !== 'all'" @click="resetFilters">清除筛选</n-button>
+              <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
               <n-button v-else type="primary" class="highlight-arc-button" @click="openCreate">创建第一篇文档</n-button>
             </template>
           </n-empty>
@@ -187,7 +189,9 @@
       <div class="editor-footer">
         <span>保存后将同步更新用户端帮助中心</span>
         <div>
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button @click="showForm = false">取消</n-button>
+          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
           <n-button type="primary" class="highlight-arc-button" :loading="saving" @click="handleSave">
             {{ editing ? '保存更改' : form.published ? '创建并发布' : '保存草稿' }}
           </n-button>

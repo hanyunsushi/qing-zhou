@@ -32,6 +32,7 @@
       <div v-if="createdPlain" style="margin-top:12px;padding:10px;background:var(--bg-soft);border-radius:8px;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
           <span style="font-size:12px;font-weight:600;color:var(--warning);">请立即复制，关闭后无法再查看明文</span>
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="tiny" @click="copyPlain">复制</n-button>
         </div>
         <div style="font-family:var(--ff-mono);font-size:12px;word-break:break-all;">{{ createdPlain }}</div>

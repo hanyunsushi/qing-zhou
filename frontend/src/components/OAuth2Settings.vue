@@ -1,7 +1,7 @@
 <template>
   <n-card size="small" class="settings-section">
     <n-alert type="info" style="margin-bottom: 20px">在认证中心创建 OIDC 应用，使用授权码模式和 PKCE S256，允许 openid、profile、email，并登记下方完整回调地址。</n-alert>
-    <n-alert v-if="loadError" type="error" style="margin-bottom: 16px">{{ loadError }} <n-button size="small" @click="load">重试</n-button></n-alert>
+    <n-alert v-if="loadError" type="error" style="margin-bottom: 16px">{{ loadError }} <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 --><n-button size="small" @click="load">重试</n-button></n-alert>
     <n-form label-placement="top" :disabled="!loaded || busy" style="max-width: 720px">
       <n-form-item label="启用认证中心登录"><n-switch v-model:value="form.enabled" /></n-form-item>
       <!-- 填写框 -->
@@ -14,6 +14,7 @@
         <div><n-switch v-model:value="form.auto_register" /><p style="color: var(--text-3); font-size: 12px">仅在本站开放注册时生效，并遵守邮箱验证设置。已有账号需在账户设置中显式绑定，不会按邮箱自动合并。</p></div>
       </n-form-item>
       <n-space>
+        <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
         <n-button :disabled="!loaded" :loading="busy" @click="test">测试认证中心连接</n-button>
         <!-- 高亮弧边按钮：认证配置保存是当前面板的主动作。 -->
         <n-button type="primary" class="highlight-arc-button" :disabled="!loaded" :loading="busy" @click="save">保存认证配置</n-button>

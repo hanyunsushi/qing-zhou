@@ -6,7 +6,7 @@
         <h2 class="page-title" style="margin-bottom:4px;">订单记录</h2>
         <p class="page-sub">消费一目了然，订单轨迹清晰可见</p>
       </div>
-      <!-- 高亮弧边按钮：订单页右上角商城入口与控制台保持同一强调按钮合同。 -->
+      <!-- 强调按钮：订单页右上角商城入口与控制台保持同一强调按钮合同。 -->
       <n-button size="small" type="primary" class="action-button action-button--emphasis" @click="router.push('/shop')">
         <template #icon><n-icon><CartOutline /></n-icon></template>
         去商城
@@ -110,8 +110,9 @@
         <template #extra>
           <div class="empty-actions">
             <span>{{ orders.length ? '当前状态、类型或关键词组合没有命中订单。' : '购买套餐或流量包后，会在这里记录价格、状态和退款明细。' }}</span>
-            <n-button v-if="orders.length" size="small" @click="resetFilters">清除筛选</n-button>
-            <!-- 高亮弧边按钮：固定使用实心 Apple 蓝，悬浮/聚焦时变深。 -->
+            <!-- 标准默认弧边按钮：添加与清除筛选共用普通按钮合同，仅圆角为18px。 -->
+            <n-button class="default-arc-button" v-if="orders.length" size="small" @click="resetFilters">清除筛选</n-button>
+            <!-- 高亮弧边按钮：固定使用实心 Apple 蓝，悬浮/聚焦时变亮。 -->
             <n-button v-else size="small" type="primary" class="highlight-arc-button" @click="router.push('/shop')">去商城看看</n-button>
           </div>
         </template>

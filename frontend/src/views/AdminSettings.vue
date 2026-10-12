@@ -40,6 +40,7 @@
       <n-alert v-if="loadError" type="error" :show-icon="true" class="settings-load-error">
         <template #header>系统配置读取失败，未对数据库做任何修改</template>
         {{ loadError }}。为防止空表单覆盖原配置，“保存设置”已禁用。请稍候重试；如果持续失败，请检查服务日志和数据库路径。
+        <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
         <n-button size="small" :loading="loading" class="settings-retry" @click="loadSettings">重新读取</n-button>
       </n-alert>
     <OAuth2Settings v-show="activeSectionId === 'settings-oauth'" />
@@ -49,6 +50,7 @@
           <n-form-item label="站点名称">
             <div class="brand-name-control">
               <n-input v-model:value="form.site_name" />
+              <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
               <n-button @click="openBrandIconPicker">修改图标</n-button>
             </div>
           </n-form-item>
@@ -57,7 +59,9 @@
               <img :src="brandIconPreview" class="brand-icon-preview" alt="站点图标预览">
               <div class="field-stack">
                 <div class="inline-action">
+                  <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                   <n-button @click="openBrandIconPicker">上传 PNG / JPEG / WebP</n-button>
+                  <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                   <n-button :disabled="!form.brand_icon_data_uri" @click="resetBrandIcon">恢复默认</n-button>
                 </div>
                 <div class="form-hint">上传一次会同步替换顶部、侧栏、登录页、浏览器标签页和 Apple 触屏图标；最大 512 KiB。保存设置后全站生效。</div>
@@ -245,6 +249,7 @@
           <n-form-item label="发件人名称"><n-input v-model:value="form.smtp_from_name" /></n-form-item>
           <n-form-item label="测试收件人">
             <n-input v-model:value="testEmail" placeholder="发送测试邮件的目标地址" style="width:260px;" />
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button style="margin-left:8px;" :loading="testingSmtp" @click="handleTestSMTP">发送测试</n-button>
           </n-form-item>
         </n-form>
@@ -281,6 +286,7 @@
             </n-form-item>
             <n-form-item label="连接测试">
               <div class="inline-action">
+                <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                 <n-button :loading="testingTg" :disabled="!telegramConfigured && !(form.telegram_bot_token || '').trim()"
                           @click="handleTestTelegram">测试连接</n-button>
                 <span class="form-hint">会调用 getMe；若你自己已绑定，还会往你的聊天发一条测试消息。</span>
@@ -322,12 +328,14 @@
                   <template #prefix>/</template>
                 </n-input>
                 <n-input v-model:value="item.description" maxlength="256" show-count placeholder="菜单说明，如 联系客服" />
-                <n-button quaternary type="error" @click="removeTelegramCustomCommand(index)">删除</n-button>
+                <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
+                <n-button size="tiny" quaternary class="delete-button" type="error" @click="removeTelegramCustomCommand(index)">删除</n-button>
               </div>
               <n-input v-model:value="item.response" type="textarea" :autosize="{ minRows: 3, maxRows: 8 }"
                        maxlength="4096" show-count placeholder="发送该指令时机器人的回复内容" />
             </div>
           </div>
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="small" :disabled="telegramCustomCommands.length >= 20" @click="addTelegramCustomCommand">
             添加自定义指令
           </n-button>
@@ -395,6 +403,7 @@
               </div>
             </n-form-item>
             <n-form-item label="发送测试">
+              <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
               <n-button size="small" :loading="testingOps" :disabled="!opsEffective" @click="handleTestOpsAlert">发送测试告警</n-button>
               <span v-if="opsEffective" class="form-hint" style="margin-left:8px;">当前 {{ opsEffective }} 个聊天会收到告警</span>
               <span v-else style="margin-left:8px;color:var(--danger);font-size:12px;">当前没有人会收到告警</span>
@@ -410,7 +419,9 @@
           </p>
           <n-space align="center" style="margin-bottom:8px;">
             <n-select v-model:value="tgTplKey" :options="tgTplOptions" style="width:220px;" />
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" @click="loadTgTplDefault">载入内置默认</n-button>
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" @click="resetTgTpl">恢复内置默认</n-button>
           </n-space>
           <div class="tg-vars">
@@ -489,7 +500,9 @@
             <div style="width:100%;">
               <n-input v-model:value="form.sub_clash_template" type="textarea" :rows="8" placeholder="留空用内置模板" style="font-family:var(--ff-mono);font-size:12px;" />
               <n-space size="small" style="margin-top:6px;">
+                <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                 <n-button size="tiny" @click="loadDefaultTemplate('clash')">载入内置默认（可编辑）</n-button>
+                <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                 <n-button size="tiny" @click="form.sub_clash_template = ''">恢复内置默认（清空）</n-button>
               </n-space>
             </div>
@@ -498,7 +511,9 @@
             <div style="width:100%;">
               <n-input v-model:value="form.sub_singbox_template" type="textarea" :rows="8" placeholder="留空用内置模板" style="font-family:var(--ff-mono);font-size:12px;" />
               <n-space size="small" style="margin-top:6px;">
+                <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                 <n-button size="tiny" @click="loadDefaultTemplate('singbox')">载入内置默认（可编辑）</n-button>
+                <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                 <n-button size="tiny" @click="form.sub_singbox_template = ''">恢复内置默认（清空）</n-button>
               </n-space>
             </div>
@@ -543,6 +558,7 @@
             <b>手动重建节点配置</b>
             <p>保存 sing-box 相关设置后，可立即重新生成并下发配置。</p>
           </div>
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button :loading="rebuilding" @click="handleRebuild">重建 sing-box 配置</n-button>
         </div>
       </n-card>
@@ -632,8 +648,11 @@
           </div>
         </n-form>
         <div class="backup-actions">
+          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
           <n-button type="primary" class="highlight-arc-button" :loading="savingBackupConfig" @click="saveBackupConfig">保存远端配置</n-button>
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button :loading="testingBackupConfig" :disabled="!backupConfig.endpoint || !backupConfig.bucket" @click="testBackupConfig">测试连接</n-button>
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button :loading="backingUp" @click="handleBackup">下载本地快照</n-button>
         </div>
 
@@ -644,6 +663,7 @@
             <n-form-item label="保留天数"><n-input-number v-model:value="backupSchedule.retain_days" :min="0" :max="3650" :show-button="false" /></n-form-item>
             <n-form-item label="保留份数"><n-input-number v-model:value="backupSchedule.retain_count" :min="0" :max="100" :show-button="false" /></n-form-item>
           </div>
+          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button :loading="savingBackupSchedule" @click="saveBackupSchedule">保存自动备份计划</n-button>
         </div>
 
@@ -653,8 +673,14 @@
           <div v-for="record in remoteBackups" :key="record.id" class="backup-record">
             <div class="backup-record-main"><b>{{ record.file_name }}</b><span>{{ record.format === 'tar.gz' ? '灾备恢复包' : '数据库快照' }} · {{ backupStatusText(record.status) }} · {{ formatBackupTime(record.started_at) }}</span></div>
             <div class="backup-record-meta"><span v-if="record.size_bytes">{{ fmtBytes(record.size_bytes) }}</span><code v-if="record.sha256">{{ record.sha256 }}</code><span v-if="record.error" class="backup-error">{{ record.error }}</span></div>
-            <div class="backup-record-actions"><n-button v-if="record.status === 'completed'" size="small" @click="downloadRemoteBackup(record)">下载</n-button><n-button size="small" tertiary type="error" @click="deleteRemoteBackup(record)">删除</n-button></div>
+            <div class="backup-record-actions">
+              <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
+              <n-button v-if="record.status === 'completed'" size="small" @click="downloadRemoteBackup(record)">下载</n-button>
+              <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
+              <n-button size="tiny" quaternary class="delete-button" type="error" @click="deleteRemoteBackup(record)">删除</n-button>
+            </div>
           </div>
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" :loading="creatingRemoteBackup" :disabled="!backupConfigured || !!backupRecovery.error" @click="createRemoteBackup">立即备份到远端</n-button>
         </div>
       </n-card>
@@ -664,6 +690,7 @@
           <b>{{ saving ? '正在保存…' : `有 ${dirtyCount} 项未保存更改` }}</b>
           <span>保存后统一生效</span>
         </div>
+        <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
         <n-button :disabled="saving" @click="confirmDiscardChanges">放弃更改</n-button>
         <!-- 高亮弧边按钮：保存设置是当前设置面板的主动作，复用统一实心 Apple 蓝样式。 -->
         <n-button type="primary" class="highlight-arc-button" :loading="saving" :disabled="!settingsLoaded" @click="handleSave">保存设置</n-button>

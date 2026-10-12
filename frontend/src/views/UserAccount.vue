@@ -32,8 +32,9 @@
         </n-form-item>
         <n-form-item>
           <n-space>
-            <!-- 高亮弧边按钮：账户页主动作统一使用实心 Apple 蓝及深蓝悬浮态。 -->
+            <!-- 高亮弧边按钮：账户页主动作统一使用实心 Apple 蓝及提亮悬浮态。 -->
             <n-button type="primary" class="highlight-arc-button" :loading="bindingEmail" @click="handleBindEmail">绑定邮箱</n-button>
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button v-if="auth.user?.email && !auth.user?.email_verified" :loading="resending" @click="handleResendVerify">发送验证邮件</n-button>
           </n-space>
         </n-form-item>
@@ -62,12 +63,13 @@
           <span class="hint" style="margin:0 0 0 12px;">流量不足提醒</span>
           <n-switch size="small" :value="tg.notify_traffic" @update:value="v => saveNotify({ notify_traffic: v })" />
         </n-space>
+        <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
         <n-button size="small" @click="handleUnbindTg">解除绑定</n-button>
       </template>
       <template v-else>
         <p class="hint">绑定后可在 Telegram 里发送 /sub、/plan、/traffic 查询，并接收到期和流量不足通知。订阅地址请当作密码保管。</p>
         <n-space>
-          <!-- 高亮弧边按钮：账户页主动作统一使用实心 Apple 蓝及深蓝悬浮态。 -->
+          <!-- 高亮弧边按钮：账户页主动作统一使用实心 Apple 蓝及提亮悬浮态。 -->
           <n-button type="primary" class="highlight-arc-button" :loading="bindingTg" @click="handleBindTg">生成绑定链接</n-button>
           <!-- 项目超链接：账户页外部 Telegram 入口使用统一 Apple 蓝链接合同。 -->
           <n-button v-if="tgLink" tag="a" class="project-link" :href="tgLink" target="_blank" rel="noopener">打开 Telegram</n-button>
@@ -84,7 +86,7 @@
         <n-form-item label="新密码"><n-input v-model:value="pwForm.new" type="password" show-password-on="click" /></n-form-item>
         <n-form-item label="确认密码"><n-input v-model:value="pwForm.confirm" type="password" show-password-on="click" /></n-form-item>
         <n-form-item>
-          <!-- 高亮弧边按钮：账户页主动作统一使用实心 Apple 蓝及深蓝悬浮态。 -->
+          <!-- 高亮弧边按钮：账户页主动作统一使用实心 Apple 蓝及提亮悬浮态。 -->
           <n-button type="primary" class="highlight-arc-button" :loading="changingPw" @click="handleChangePw">修改密码</n-button>
         </n-form-item>
       </n-form>

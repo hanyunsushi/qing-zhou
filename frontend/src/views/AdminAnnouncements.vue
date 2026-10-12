@@ -2,7 +2,7 @@
   <div>
     <div class="page-head">
       <div><h2 class="page-title">公告管理</h2><p class="page-sub">管理公告内容、展示时段、置顶与启用状态</p></div>
-      <div class="page-actions"><!-- 高亮弧边按钮：页面级主操作统一复用强调按钮合同。 --><n-button type="primary" class="action-button action-button--emphasis" @click="openCreate">发布公告</n-button></div>
+      <div class="page-actions"><!-- 强调按钮：页面级主操作统一复用强调按钮合同。 --><n-button type="primary" class="action-button action-button--emphasis" @click="openCreate">发布公告</n-button></div>
     </div>
     <div class="resource-overview">
       <div class="resource-metric"><b>{{ announcements.length }}</b><span>全部公告</span></div>
@@ -24,8 +24,10 @@
             <span class="kv">{{ fmtDate(a.created_at) }}</span>
           </div>
           <div class="lc-foot">
+            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" @click="openEdit(a)">编辑</n-button>
-            <n-button size="tiny" type="error" @click="handleDelete(a.id)">删除</n-button>
+            <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
+            <n-button size="tiny" quaternary class="delete-button" type="error" @click="handleDelete(a.id)">删除</n-button>
           </div>
         </div>
       </div>

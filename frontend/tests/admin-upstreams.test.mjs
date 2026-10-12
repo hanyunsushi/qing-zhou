@@ -56,8 +56,8 @@ test('upstream management page keeps provider queries separate and exposes no sa
   assert.match(source, /private_key_set/)
   assert.match(source, /analytics_token_set/)
   assert.doesNotMatch(source, /v-model:value="ociForm\.private_key"[^>]+show-password/)
-  assert.match(source, /高亮弧边按钮：供应商配置保存是当前卡片的主动作，悬浮时变深。[\s\S]*?type="primary" class="highlight-arc-button"[^>]*>保存 OCI 配置/)
-  assert.match(source, /高亮弧边按钮：供应商配置保存是当前卡片的主动作，悬浮时变深。[\s\S]*?type="primary" class="highlight-arc-button"[^>]*>保存 Cloudflare 配置/)
+  assert.match(source, /高亮弧边按钮：供应商配置保存是当前卡片的主动作，悬浮时变亮。[\s\S]*?type="primary" class="highlight-arc-button"[^>]*>保存 OCI 配置/)
+  assert.match(source, /高亮弧边按钮：供应商配置保存是当前卡片的主动作，悬浮时变亮。[\s\S]*?type="primary" class="highlight-arc-button"[^>]*>保存 Cloudflare 配置/)
 })
 
 test('provider cards use transparent provider logos in titles and balance items', () => {

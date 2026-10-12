@@ -68,8 +68,10 @@
                 </td>
                 <td class="time">{{ fmtDateTime(o.created_at) }}</td>
                 <td class="act-col">
+                  <!-- 弧边警告按钮：保留风险语义、悬浮/聚焦提亮和按下反馈，请求状态由业务控制。 -->
                   <n-button v-if="o.status === 'success'" size="tiny" type="warning" @click="openRefund(o.id)">退款</n-button>
-                  <n-button size="tiny" type="error" @click="handleDelete(o)">删除</n-button>
+                  <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
+                  <n-button size="tiny" quaternary class="delete-button" type="error" @click="handleDelete(o)">删除</n-button>
                 </td>
               </tr>
             </template>
@@ -100,8 +102,10 @@
                 <span class="kv">{{ fmtDateTime(o.created_at) }}</span>
               </div>
               <div class="lc-foot">
+                <!-- 弧边警告按钮：保留风险语义、悬浮/聚焦提亮和按下反馈，请求状态由业务控制。 -->
                 <n-button v-if="o.status === 'success'" size="tiny" type="warning" @click="openRefund(o.id)">退款</n-button>
-                <n-button size="tiny" type="error" @click="handleDelete(o)">删除</n-button>
+                <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
+                <n-button size="tiny" quaternary class="delete-button" type="error" @click="handleDelete(o)">删除</n-button>
               </div>
             </div>
           </div>
@@ -109,7 +113,10 @@
       </div>
 
       <n-empty v-if="!view.length && !loading" :description="orders.length ? '没有符合条件的订单' : '暂无订单'" style="padding:40px 0;">
-        <template v-if="orders.length" #extra><n-button size="small" @click="statusTab='all'; groupBy='plan'; search=''">清除筛选</n-button></template>
+        <template v-if="orders.length" #extra>
+          <!-- 标准默认弧边按钮：添加与清除筛选共用普通按钮合同，仅圆角为18px。 -->
+          <n-button class="default-arc-button" size="small" @click="statusTab='all'; groupBy='plan'; search=''">清除筛选</n-button>
+        </template>
       </n-empty>
     </n-spin>
 
