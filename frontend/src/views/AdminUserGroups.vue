@@ -29,7 +29,7 @@
             <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" @click="openMembers(g)">成员</n-button>
             <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
-            <n-button size="tiny" @click="openForm(g)">编辑</n-button>
+            <n-button size="tiny" class="default-arc-button" @click="openForm(g)">编辑</n-button>
             <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
             <n-button size="tiny" quaternary class="delete-button" type="error" @click="handleDelete(g)">删除</n-button>
           </div>

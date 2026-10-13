@@ -12,9 +12,11 @@
     </section>
     <section class="auth-main">
       <div class="auth-main-inner">
-        <router-link to="/" class="auth-brand" :aria-label="`返回${siteName}`"><BrandMark :size="44" /><span><strong>{{ siteName }}</strong><small>服务控制台</small></span></router-link>
+        <!-- 项目超链接：认证品牌返回首页，保留品牌链接位置。 -->
+        <router-link to="/" class="auth-brand project-link" :aria-label="`返回${siteName}`"><BrandMark :size="44" /><span><strong>{{ siteName }}</strong><small>服务控制台</small></span></router-link>
         <div class="auth-form-stack">
           <header class="auth-view-header"><span class="auth-kicker">{{ isRegister ? '创建账户' : isForgot ? '账户恢复' : '欢迎回来' }}</span><h2 class="auth-title">{{ isRegister ? '注册' : isForgot ? '找回密码' : '登录' }}</h2><p class="auth-sub">{{ pageSubtitle }}</p></header>
+          <!-- 二级切换路由：登录与注册是认证模式切换，使用活动底线而非卡片按钮。 -->
           <nav class="auth-mode-nav" aria-label="认证方式"><router-link to="/login" :class="{ active: !isRegister && !isForgot }">登录</router-link><router-link to="/register" :class="{ active: isRegister }">注册</router-link></nav>
           <div v-if="isRegister && !config.config.registration_open" class="auth-notice" role="status">当前暂未开放注册，请联系管理员获取账户。</div>
           <!-- 填写框：登录与注册共用同一组表单控件和错误槽位。 -->
@@ -32,10 +34,10 @@
             <div v-if="!config.config.email_enabled" class="auth-notice" role="status">本站未配置邮件服务，无法自助重置密码。<br />请联系管理员帮你重置。</div>
             <template v-else><n-form-item label="注册邮箱" path="email"><n-input v-model:value="forgotForm.email" :input-props="{ autocomplete: 'email' }" placeholder="请输入注册邮箱" /></n-form-item><!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 --><n-button type="primary" class="highlight-arc-button auth-submit" block :loading="loading" attr-type="submit">发送重置邮件</n-button></template>
           </n-form>
-          <div v-if="!isRegister && !isForgot" class="auth-secondary-links"><router-link to="/forgot-password">忘记密码？</router-link></div>
+          <div v-if="!isRegister && !isForgot" class="auth-secondary-links"><!-- 项目超链接：认证辅助入口使用 Apple 蓝链接合同。 --><router-link class="project-link" to="/forgot-password">忘记密码？</router-link></div>
           <div v-if="config.config.oauth2_enabled && !isRegister && !isForgot" class="auth-divider"><span /><em>或</em><span /></div>
           <n-button v-if="config.config.oauth2_enabled && !isRegister && !isForgot" secondary block class="auth-oauth" :loading="oauthLoading" @click="handleOAuth">使用{{ config.config.oauth2_name }}登录</n-button>
-          <p class="auth-switch-copy"><template v-if="isRegister">已有账户？ <router-link to="/login">返回登录</router-link></template><template v-else-if="isForgot">想起密码了？ <router-link to="/login">返回登录</router-link></template><template v-else>还没有账户？ <router-link to="/register">创建账户</router-link></template></p>
+          <p class="auth-switch-copy"><template v-if="isRegister">已有账户？ <!-- 项目超链接：认证模式返回登录使用 Apple 蓝链接合同。 --><router-link class="project-link" to="/login">返回登录</router-link></template><template v-else-if="isForgot">想起密码了？ <!-- 项目超链接：认证模式返回登录使用 Apple 蓝链接合同。 --><router-link class="project-link" to="/login">返回登录</router-link></template><template v-else>还没有账户？ <!-- 项目超链接：认证模式进入注册使用 Apple 蓝链接合同。 --><router-link class="project-link" to="/register">创建账户</router-link></template></p>
         </div>
         <footer class="auth-footer">© {{ currentYear }} {{ siteName }} · 仅限个人在中国大陆以外地区依法依规使用</footer>
       </div>

@@ -57,7 +57,7 @@
           </div>
           <div class="lc-foot" style="flex-wrap:wrap;">
             <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
-            <n-button size="tiny" @click="openForm(p)">编辑</n-button>
+            <n-button size="tiny" class="default-arc-button" @click="openForm(p)">编辑</n-button>
             <!-- 弧边警告按钮：保留风险语义、悬浮/聚焦提亮和按下反馈，请求状态由业务控制。 -->
             <n-button v-if="p.enabled !== false" size="tiny" type="warning" @click="handleRetire(p)">下架</n-button>
             <n-button v-else size="tiny" type="success" @click="handleEnable(p.id)">上架</n-button>

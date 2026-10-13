@@ -16,14 +16,14 @@ withDefaults(defineProps<{ label?: string; loading?: boolean; disabled?: boolean
 defineEmits<{ refresh: [] }>()
 </script>
 <style scoped>
-/* 普通按钮：中性32px刷新入口；只给SVG增加悬浮旋转，不引入位移、缩放或彩色光晕。 */
+/* 普通按钮：中性32px刷新入口；SVG悬浮转180度并同速回转，不引入位移、缩放或彩色光晕。 */
 .kreeper-refresh { display: inline-grid; place-items: center; width: 32px; height: 32px; padding: 0; flex: 0 0 auto; border-radius: var(--r); border: 1px solid var(--border); background: var(--card); color: var(--text-2); cursor: pointer; }
 .kreeper-refresh:hover:not(:disabled) { color: var(--text); border-color: var(--border-strong); }
 .kreeper-refresh:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .kreeper-refresh:disabled { opacity: .5; cursor: not-allowed; }
-.kreeper-refresh-svg { transform-origin: center; transform-box: view-box; }
-.kreeper-refresh:hover:not(:disabled) .kreeper-refresh-svg, .kreeper-refresh:focus-visible:not(:disabled) .kreeper-refresh-svg { animation: kreeper-refresh-turn .6s cubic-bezier(.4,0,.2,1) 1; }
+.kreeper-refresh-svg { transform-origin: center; transform-box: view-box; transition: transform .6s cubic-bezier(.4,0,.2,1); }
+.kreeper-refresh:hover:not(:disabled) .kreeper-refresh-svg, .kreeper-refresh:focus-visible:not(:disabled) .kreeper-refresh-svg { transform: rotate(180deg); }
 .kreeper-refresh-svg.is-loading { animation: kreeper-refresh-turn .8s linear infinite; }
 @keyframes kreeper-refresh-turn { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .kreeper-refresh .kreeper-refresh-svg { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .kreeper-refresh .kreeper-refresh-svg { animation: none !important; transition: none !important; transform: none !important; } }
 </style>

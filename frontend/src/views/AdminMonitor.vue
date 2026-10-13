@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div ref="monitorRoot" class="admin-monitor-page">
     <h2 class="page-title">监控管理</h2>
     <p class="page-sub">服务器监控与告警</p>
 
@@ -109,8 +109,9 @@
         <template #header>
           <div class="srv-head">
             <span class="dot" :class="s.status" />
-            <span class="srv-name" @click="goDetail(s)">{{ s.name }}</span>
-            <!-- 本机没有资产信息可填、也不需要装探针，标一下省得找那两个按钮 -->
+            <!-- 项目超链接：服务器名称进入监控详情，使用 Apple 蓝文字和键盘可见焦点。 -->
+            <button type="button" class="srv-name project-link" :aria-label="`查看${s.name}监控详情`" @click="goDetail(s)">{{ s.name }}</button>
+            <!-- 区分-信息牌：面板自采集说明采集来源，不表达健康状态。 -->
             <n-tag v-if="s.local" size="small" type="info" :bordered="false">面板自采集</n-tag>
             <n-tooltip v-else-if="s.metrics && s.probe_outdated" trigger="hover">
               <template #trigger>
@@ -131,7 +132,8 @@
               {{ s.public_visible ? '显示在公开状态页' : '不显示在公开状态页' }}
             </n-tooltip>
             <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
-            <n-button size="tiny" @click="openAsset(s)">编辑</n-button>
+            <!-- 标准默认弧边按钮：资产编辑与同组操作共用18px弧边几何。 -->
+            <n-button size="tiny" class="default-arc-button" @click="openAsset(s)">编辑</n-button>
             <!-- 本机是面板自采集，没有探针可装 -->
             <n-button
               v-if="!s.local"
@@ -197,7 +199,11 @@
             </div>
           </div>
         </template>
-        <div v-else class="no-data">暂无数据</div>
+        <!-- 展示信息模块：无指标时说明探针边界，不把缺失数据伪装成健康状态。 -->
+        <div v-else class="no-data">
+          <strong>{{ s.local ? '面板本机尚未产生采样' : s.probe_enabled ? '等待探针上报数据' : '尚未启用探针' }}</strong>
+          <span>{{ s.local ? '面板启动后自动采集本机指标。' : s.probe_enabled ? '收到远程探针数据后显示指标与趋势。' : '点击“一键安装”后才会采集这台远程服务器。' }}</span>
+        </div>
 
         <div class="mini-chart-box">
           <!-- 路由切换组件：单机趋势时间范围改变图表查询维度。 -->
@@ -297,6 +303,7 @@ const message = useMessage()
 const router = useRouter()
 const dash = ref<any>({})
 const servers = ref<any[]>([])
+const monitorRoot = ref<HTMLElement | null>(null)
 const saving = ref(false)
 const loading = ref(false)
 const chartRefs = ref<Record<number, HTMLElement>>({})
@@ -417,6 +424,7 @@ function escapeHeatHtml(value: unknown): string {
 }
 async function loadHeatmap(range: string) {
   heatRange.value = range
+  syncRangeIndicators()
   heatLoading.value = true
   try {
     const data = await apiGet<any>(`/api/admin/monitor/heatmap?range=${range}`)
@@ -673,6 +681,20 @@ async function pollProbeUpgrade(serverId: number, serverName: string) {
   }
 }
 
+// 路由切换组件：热力图与每台服务器趋势共用一个跟随活动项的中性指示面。
+function syncRangeIndicators() {
+  void nextTick(() => {
+    monitorRoot.value?.querySelectorAll<HTMLElement>('.range-switch.route-switch').forEach((container) => {
+      const active = container.querySelector<HTMLElement>('button.active')
+      if (!active) return
+      const base = container.getBoundingClientRect()
+      const item = active.getBoundingClientRect()
+      container.style.setProperty('--route-indicator-x', `${item.left - base.left}px`)
+      container.style.setProperty('--route-indicator-w', `${item.width}px`)
+    })
+  })
+}
+
 // --- ECharts（懒加载 + resize）---
 // chartRefs 在卡片卸载时清空引用，便于检测失效实例
 function setChartRef(id: number, el: any) {
@@ -700,6 +722,7 @@ function safeResizeAll() {
 async function loadChart(serverId: number, range: string) {
   chartRange.value[serverId] = range
   chartLoaded.value[serverId] = true
+  syncRangeIndicators()
   try {
     const data = await apiGet<any>(`/api/admin/monitor/servers/${serverId}/metrics?range=${range}`)
     const metrics = data?.data || []
@@ -768,6 +791,7 @@ onMounted(async () => {
   window.addEventListener('resize', onWinResize)
   await load()
   await nextTick()
+  syncRangeIndicators()
   // 懒加载：只画前 6 台可见服务器，其余按需点击 range 按钮时画
   const initial = servers.value.slice(0, 6)
   for (const sv of initial) {
@@ -785,6 +809,7 @@ function onWinResize() {
   safeResizeAll()
   // 窗口尺寸变化时重算正方形格子并重渲染
   if (heatData.value) renderHeatmap()
+  syncRangeIndicators()
 }
 
 onUnmounted(() => {
@@ -822,7 +847,7 @@ onUnmounted(() => {
 .heat-chart { width: 100%; height: 58px; min-height: 0; }
 .heat-chart:empty { display: none; }
 .range-switch { display:inline-flex; align-items:center; gap:0; padding:3px; border:1px solid var(--border); border-radius:var(--r); background:var(--bg-subtle); }
-.range-switch.route-switch { position:relative; isolation:isolate; min-height:40px; padding:4px; border:0; border-radius:16px !important; box-shadow:none; }
+.range-switch.route-switch { --route-indicator-x:4px; --route-indicator-w:0px; position:relative; isolation:isolate; min-height:40px; padding:4px; border:0; border-radius:16px !important; box-shadow:none; }
 .range-switch.route-switch::before { position:absolute; z-index:0; top:4px; bottom:4px; left:0; width:var(--route-indicator-w, 0px); border-radius:12px; content:''; pointer-events:none; background:var(--card); box-shadow:none; transform:translateX(var(--route-indicator-x, 4px)); transition:transform .24s cubic-bezier(.215,.61,.355,1), width .24s cubic-bezier(.215,.61,.355,1); }
 .range-switch button { min-width:30px; padding:3px 8px; border:0; border-radius:5px; background:transparent; color:var(--text-3); font:600 11px/1.5 var(--ff); cursor:pointer; transition:background .18s var(--ease-standard), color .18s var(--ease-standard), box-shadow .18s var(--ease-standard); }
 .range-switch.route-switch button { position:relative; z-index:1; display:inline-flex; align-items:center; justify-content:center; box-sizing:border-box; min-height:32px; padding:6px 10px; line-height:20px; border-radius:12px; }
@@ -869,15 +894,21 @@ onUnmounted(() => {
 .dot.online { background: var(--success); }
 .dot.offline { background: var(--danger); }
 .srv-name {
-  font-weight: 650;
   cursor: pointer;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font: inherit;
+  font-weight: 650;
+  color: var(--accent) !important;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   word-break: keep-all;
 }
-.srv-name:hover { text-decoration: underline; }
+.srv-name:hover, .srv-name:focus-visible { color: var(--accent-hover) !important; text-decoration: underline; text-underline-offset: 3px; }
 
 .asset-line { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
 .tag-mini { padding: 2px 6px; background: var(--bg-soft); border-radius: 4px; font-size: 11px; color: var(--text-2); }
@@ -894,7 +925,9 @@ onUnmounted(() => {
 .asset-section-title { margin: 10px 0 12px; padding-top: 12px; border-top: 1px solid var(--border); color: var(--text); font-size: 13px; font-weight: 650; }
 .asset-form-hint { margin: -4px 0 14px 105px; color: var(--text-3); font-size: 11px; line-height: 1.65; }
 .calibration-input { display: flex; width: 100%; gap: 8px; }
-.no-data { text-align: center; color: var(--text-3); padding: 16px; font-size: 13px; }
+.no-data { display: grid; justify-items: center; gap: 4px; text-align: center; color: var(--text-3); padding: 16px; font-size: 13px; }
+.no-data strong { color: var(--text-2); font-size: 13px; font-weight: 600; }
+.no-data span { color: var(--text-3); font-size: 11px; line-height: 1.5; }
 .mini-chart-box { margin-top: 12px; }
 .mini-chart { height: 160px; }
 

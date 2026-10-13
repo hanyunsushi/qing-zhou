@@ -37,11 +37,13 @@ export function mdToHtml(src: string): string {
   src = src.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, (_, alt, u) =>
     safeUrl(u) ? hold('<img src="' + u + '" alt="' + alt + '">') : _
   )
+  // 项目超链接：Markdown 输出的可导航文本交给全局 Apple 蓝链接合同，协议过滤仍由本函数负责。
   src = src.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, t, u) =>
     safeUrl(u) ? hold('<a href="' + u + '" target="_blank" rel="noopener noreferrer">' + t + '</a>') : t
   )
 
   // 4) bare-URL autolink
+  // 项目超链接：Markdown 裸 URL 同样输出统一可导航链接，不在渲染器内另设颜色。
   src = src.replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g, (_, pre, u) => {
     const trail = (u.match(/[.,;:!?)]+$/) || [''])[0]
     const link = u.slice(0, u.length - trail.length)

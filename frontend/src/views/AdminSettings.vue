@@ -668,7 +668,7 @@
         </div>
 
         <div class="backup-history">
-          <div class="backup-subhead"><div><b>远端备份记录</b><p>记录保存在面板数据库；删除记录会同时删除远端对象。</p></div><n-button quaternary size="small" :loading="loadingBackups" @click="loadRemoteBackups">刷新</n-button></div>
+          <div class="backup-subhead"><div><b>远端备份记录</b><p>记录保存在面板数据库；删除记录会同时删除远端对象。</p></div><!-- 普通按钮 / 悬浮效果：标准刷新SVG悬浮转180度，移开按同速率回转。 --><RefreshButton label="刷新远端备份记录" :loading="loadingBackups" @refresh="loadRemoteBackups" /></div>
           <div v-if="!remoteBackups.length" class="backup-empty">暂无远端备份记录</div>
           <div v-for="record in remoteBackups" :key="record.id" class="backup-record">
             <div class="backup-record-main"><b>{{ record.file_name }}</b><span>{{ record.format === 'tar.gz' ? '灾备恢复包' : '数据库快照' }} · {{ backupStatusText(record.status) }} · {{ formatBackupTime(record.started_at) }}</span></div>
@@ -704,6 +704,7 @@
 <script setup lang="ts">
 import InfoNotice from '@/components/InfoNotice.vue'
 import OAuth2Settings from '@/components/OAuth2Settings.vue'
+import RefreshButton from '@/components/RefreshButton.vue'
 import { ref, reactive, computed, nextTick, onMounted, onBeforeUnmount, watch } from 'vue'
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import { NAlert, NCard, NCheckbox, NForm, NFormItem, NInput, NInputGroup, NInputNumber, NSelect, NSwitch, NButton, NSpace, NSpin, useDialog, useMessage } from 'naive-ui'

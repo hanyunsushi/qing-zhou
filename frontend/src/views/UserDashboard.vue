@@ -7,10 +7,8 @@
         <p class="page-sub">{{ greeting }}，{{ auth.user?.username }}，这里是你的服务概览</p>
       </div>
       <div class="dash-actions">
-        <n-button size="small" quaternary :loading="refreshing" @click="reload">
-          <template #icon><n-icon><RefreshOutline /></n-icon></template>
-          刷新
-        </n-button>
+        <!-- 普通按钮 / 悬浮效果：标准刷新SVG悬浮转180度，移开按同速率回转。 -->
+        <RefreshButton label="刷新控制台" :loading="refreshing" @refresh="reload" />
         <!-- 普通按钮：使用紧凑描边几何，不改文字和 SVG。 -->
         <n-button size="small" secondary class="action-button action-button--normal" @click="router.push('/sub')">
           <template #icon><n-icon><LinkOutline /></n-icon></template>
@@ -24,11 +22,12 @@
       </div>
     </div>
 
-    <!-- 状态提醒：按套餐到期与自动续订状态区分信息提示和手动续费提醒。 -->
+    <!-- 提示信息：按套餐到期与自动续订状态区分信息提示和手动续费提醒。 -->
     <transition-group name="alert" tag="div">
       <n-alert v-for="a in alerts" :key="a.key" :type="a.type" class="dash-alert">
         {{ a.text }}
-        <router-link v-if="a.to" :to="a.to">{{ a.action }}</router-link>
+        <!-- 项目超链接：到期提示的下一步入口使用 Apple 蓝链接合同。 -->
+        <router-link v-if="a.to" class="project-link" :to="a.to">{{ a.action }}</router-link>
       </n-alert>
     </transition-group>
 
@@ -70,7 +69,8 @@
     <n-card v-if="notices.length" size="small" class="sec" style="margin-bottom:16px;">
       <template #header>
         <span class="sec-title">最新公告</span>
-        <router-link class="sec-link" to="/notices">查看全部</router-link>
+        <!-- 项目超链接：公告列表入口使用 Apple 蓝链接合同。 -->
+        <router-link class="sec-link project-link" to="/notices">查看全部</router-link>
       </template>
       <n-list bordered size="small">
         <n-list-item v-for="n in notices.slice(0,3)" :key="n.id" class="notice-row" @click="openNotice(n)">
@@ -175,7 +175,7 @@
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { NCard, NAlert, NButton, NList, NListItem, NThing, NTag, NRadioGroup, NRadioButton, NModal, NSpace, NSpin, NIcon } from 'naive-ui'
-import { LinkOutline, CartOutline, ReceiptOutline, RefreshOutline } from '@vicons/ionicons5'
+import { LinkOutline, CartOutline, ReceiptOutline } from '@vicons/ionicons5'
 import { useAuthStore } from '@/stores/auth'
 import { useConfigStore } from '@/stores/config'
 import { apiGet, apiList } from '@/api'
@@ -183,6 +183,7 @@ import { fmtBytes, fmtDate, daysLeft, yuan, pct } from '@/utils/format'
 import { mdToHtml } from '@/utils/markdown'
 import { useCountUp } from '@/utils/countup'
 import StatCard from '@/components/StatCard.vue'
+import RefreshButton from '@/components/RefreshButton.vue'
 import TrafficTrendChart from '@/components/TrafficTrendChart.vue'
 import { openHelp } from '@/utils/help'
 import { CHART_STATUS_COLORS, chartColorForPercent, STATUS_COLORS } from '@/utils/status-colors'
@@ -412,6 +413,7 @@ onUnmounted(() => {
 .page-sub{color:var(--text-2);margin-bottom:0}
 /* 项目超链接：用户控制台内的导航链接统一使用 Apple 蓝。 */
 a{color:var(--accent)}
+.project-link{color:var(--accent);text-decoration:none}.project-link:hover,.project-link:focus-visible{color:var(--accent-hover);text-decoration:underline;text-underline-offset:3px}
 .dash-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:20px}
 .dash-actions{display:flex;gap:8px;flex-shrink:0}
 .sec-title{font-weight:650;font-size:16px;line-height:20px;letter-spacing:0}

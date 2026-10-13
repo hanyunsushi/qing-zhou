@@ -6,10 +6,8 @@
         <p class="page-sub">共 {{ users.length }} 位用户，{{ onlineCount }} 位在线</p>
       </div>
       <div class="au-actions">
-        <n-button size="small" quaternary :loading="loading" @click="load">
-          <template #icon><n-icon><RefreshOutline /></n-icon></template>
-          刷新
-        </n-button>
+        <!-- 普通按钮 / 悬浮效果：标准刷新SVG悬浮转180度，移开按同速率回转。 -->
+        <RefreshButton label="刷新用户列表" :loading="loading" @refresh="load" />
         <!-- 强调按钮：页面级主操作统一复用强调按钮合同。 -->
         <n-button size="small" type="primary" class="action-button action-button--emphasis" @click="openCreate">
           <template #icon><n-icon><PersonAddOutline /></n-icon></template>
@@ -110,7 +108,7 @@
             <!-- 高亮弧边按钮：套餐操作与同组编辑、充值、订单共用32px几何，悬浮/聚焦提亮。 -->
             <n-button size="tiny" type="primary" class="highlight-arc-button" @click="openPlans(u)">套餐</n-button>
             <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
-            <n-button size="tiny" @click="openEdit(u)">编辑</n-button>
+            <n-button size="tiny" class="default-arc-button" @click="openEdit(u)">编辑</n-button>
             <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" @click="openRecharge(u)">充值</n-button>
             <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
@@ -377,13 +375,14 @@ import {
   NSwitch, NTag, NSelect, NEmpty, NCheckbox, NDropdown, NRadioGroup, NRadioButton,
   useMessage, useDialog
 } from 'naive-ui'
-import { RefreshOutline, PersonAddOutline, SearchOutline } from '@vicons/ionicons5'
+import { PersonAddOutline, SearchOutline } from '@vicons/ionicons5'
 import { apiList, apiPost, apiPut, apiDelete } from '@/api'
 import { fmtBytes, fmtDate, fmtDateTime, timeAgo, daysLeft, pct, toLocalDatetimeInput } from '@/utils/format'
 import { planStatusMeta, planSortKey } from '@/utils/plan'
 import { chartColorForPercent } from '@/utils/status-colors'
 import RefundDialog from '@/components/RefundDialog.vue'
 import PlanItem from '@/components/AdminPlanItem.vue'
+import RefreshButton from '@/components/RefreshButton.vue'
 
 const message = useMessage()
 const dialog = useDialog()

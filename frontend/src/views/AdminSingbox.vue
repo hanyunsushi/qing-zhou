@@ -78,7 +78,7 @@
                   </div>
                   <div class="lc-foot">
                     <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
-                    <n-button size="tiny" @click="openTls(r)">编辑</n-button>
+                    <n-button size="tiny" class="default-arc-button" @click="openTls(r)">编辑</n-button>
                     <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                     <n-button size="tiny" @click="cloneTls(r)">克隆</n-button>
                     <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
@@ -153,7 +153,7 @@
                   </div>
                   <div class="lc-foot">
                     <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
-                    <n-button size="tiny" @click="openInbound(r)">编辑</n-button>
+                    <n-button size="tiny" class="default-arc-button" @click="openInbound(r)">编辑</n-button>
                     <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                     <n-button size="tiny" @click="cloneInbound(r)">克隆</n-button>
                     <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
@@ -235,7 +235,7 @@
                 <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                 <n-button size="tiny" :loading="r._cloning" @click="cloneEgress(r)">克隆</n-button>
                 <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
-                <n-button size="tiny" @click="openEgress(r)">编辑</n-button>
+                <n-button size="tiny" class="default-arc-button" @click="openEgress(r)">编辑</n-button>
                 <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
                 <n-button size="tiny" quaternary class="delete-button" type="error" @click="deleteEgress(r.id)">删除</n-button>
               </div>
@@ -327,8 +327,8 @@
           <n-button size="small" :loading="checkLoading" :disabled="!previewJson" @click="runCheck">正确性检查</n-button>
           <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="small" :disabled="!previewJson" @click="copyPreview">复制配置</n-button>
-          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
-          <n-button size="small" type="primary" class="highlight-arc-button" :loading="previewLoading" @click="loadPreview">刷新预览</n-button>
+          <!-- 普通按钮 / 悬浮效果：标准刷新SVG悬浮转180度，移开按同速率回转。 -->
+          <RefreshButton label="刷新配置预览" :loading="previewLoading" :disabled="!previewJson" @refresh="loadPreview" />
         </div>
         <!-- 这条提醒不能省：这一页把打码开关做出来，就会有人以为「打了码=可以截图」。
              打码只处理地址，配置里的 Reality 私钥、SS/Trojan 密码、用户 UUID 全是明文。 -->
@@ -760,6 +760,7 @@ import {
   NAlert, NPopselect, useMessage, useDialog
 } from 'naive-ui'
 import { apiList, apiGet, apiGetRaw, apiPost, apiPut, apiDelete } from '@/api'
+import RefreshButton from '@/components/RefreshButton.vue'
 
 const message = useMessage()
 const dialog = useDialog()

@@ -33,7 +33,8 @@
                   <n-button class="default-arc-button" size="tiny" @click="openNodeInGroup(gv.group)">＋ 添加节点</n-button>
                   <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                   <n-button size="tiny" :disabled="!reuseCatalog.length" @click="openReuse(gv.group)">复用入口</n-button>
-                  <n-button v-if="gv.group" size="tiny" quaternary @click="openGroup(gv.group)">编辑</n-button>
+                  <!-- 标准默认弧边按钮：分组编辑与同组操作共用18px弧边和32px几何。 -->
+                  <n-button v-if="gv.group" size="tiny" class="default-arc-button" @click="openGroup(gv.group)">编辑</n-button>
                   <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
                   <n-button size="tiny" quaternary class="delete-button" v-if="gv.group" type="error" @click="handleDeleteGroup(gv.group.id)">删除</n-button>
                 </div>
@@ -64,6 +65,7 @@
                     <span v-if="inboundReuse(r) > 1" class="kv"><n-tag size="tiny" type="success" :bordered="false">入口复用 ×{{ inboundReuse(r) }}</n-tag></span>
                   </div>
                   <div v-if="(r.group_ids || []).length > 1" class="lc-meta"><span class="kv">分组 <b>{{ groupNames(r.group_ids) }}</b></span></div>
+                  <!-- 展示信息模块：链路预览使用所属深度的中性浅底，状态由节点颜色和提示表达。 -->
                   <div class="route-preview" :class="{ warn: cardRoute(r).broken }">
                     <div class="route-track">
                       <template v-for="(step, si) in cardRoute(r).steps" :key="`${step.kind}-${si}`">
@@ -82,7 +84,8 @@
                   <div class="lc-foot">
                     <span class="order-hint" title="拖动卡片调整节点顺序">⋮⋮ 拖动排序</span>
                     <span class="node-actions">
-                      <n-button size="tiny" quaternary @click="openNode(r)">编辑</n-button>
+                      <!-- 标准默认弧边按钮：节点编辑与删除、拖动共用操作轨道几何。 -->
+                      <n-button size="tiny" class="default-arc-button" @click="openNode(r)">编辑</n-button>
                       <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
                       <n-button size="tiny" quaternary class="delete-button" type="error" @click="handleDeleteNode(r.id)">删除</n-button>
                     </span>
@@ -217,7 +220,8 @@
                 <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
                 <n-button size="tiny" type="primary" class="highlight-arc-button" @click="handleFetchSource(r.id)">拉取</n-button>
                 <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
-                <n-button size="tiny" @click="openSource(r)">编辑</n-button>
+                <!-- 标准默认弧边按钮：订阅源编辑沿用同组中性弧边操作。 -->
+                <n-button size="tiny" class="default-arc-button" @click="openSource(r)">编辑</n-button>
                 <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
                 <n-button size="tiny" quaternary class="delete-button" type="error" @click="handleDeleteSource(r.id)">删除</n-button>
               </div>
@@ -939,7 +943,7 @@ async function load() {
 .list-card { gap: 9px; border-radius: var(--r); }
 .route-preview {
   margin-top: 1px; padding: 10px 10px 8px; border-radius: var(--r);
-  background: var(--accent-subtle); border: 1px solid var(--accent-soft);
+  background: var(--bg-soft); border: 1px solid var(--border);
 }
 .route-track { display: flex; align-items: center; min-width: 0; overflow-x: auto; scrollbar-width: none; }
 .route-track::-webkit-scrollbar { display: none; }
@@ -957,7 +961,7 @@ async function load() {
 .route-edge i { width: 100%; height: 1px; background: currentColor; position: relative; }
 .route-edge i::after { content: ''; position: absolute; right: -1px; top: -3px; width: 5px; height: 5px; border-top: 1px solid currentColor; border-right: 1px solid currentColor; transform: rotate(45deg); }
 .route-warning { margin-top: 8px; padding-top: 7px; border-top: 1px solid rgba(208, 48, 80, 0.12); color: #d03050; font-size: 11px; line-height: 1.4; }
-.route-preview.warn { background: rgba(208, 48, 80, 0.035); border-color: rgba(208, 48, 80, 0.13); }
+.route-preview.warn { background: var(--danger-soft); border-color: transparent; }
 .list-card .lc-foot { justify-content: space-between; gap: 8px; margin-top: 0; padding-top: 2px; }
 /* 节点卡片：一级分组模块使用 var(--card)，节点项退回页面背景以建立层级对比。 */
 .node-sort-card { background: var(--bg); }

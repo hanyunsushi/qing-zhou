@@ -21,11 +21,8 @@
       </div>
 
       <div class="toolbar">
-        <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
-        <n-button size="small" :loading="loading" @click="check">
-          <template #icon><n-icon><RefreshOutline /></n-icon></template>
-          检查更新
-        </n-button>
+        <!-- 普通按钮 / 悬浮效果：标准刷新SVG悬浮转180度，移开按同速率回转。 -->
+        <RefreshButton label="检查更新" :loading="loading" @refresh="check" />
         <!-- 项目超链接：发布页入口使用全局 Apple 蓝链接合同。 -->
         <a v-if="info?.url" :href="info.url" target="_blank" rel="noopener" class="release-link">
           在 GitHub 查看发布页 ↗
@@ -73,9 +70,8 @@
       <div class="rel-box">
         <div class="rb-head">
           <span class="rb-title">安装指定版本</span>
-          <n-button text size="tiny" :loading="relLoading" @click="loadReleases">
-            {{ releases.length ? '刷新列表' : '加载版本列表' }}
-          </n-button>
+          <!-- 普通按钮 / 悬浮效果：版本列表刷新复用统一SVG。 -->
+          <RefreshButton :label="releases.length ? '刷新版本列表' : '加载版本列表'" :loading="relLoading" @refresh="loadReleases" />
         </div>
         <p class="rb-desc">
           用于回到更早的版本 —— 出问题的版本已经不是最新、或本机没留上一个二进制时走这里。
@@ -144,11 +140,11 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import InfoNotice from '@/components/InfoNotice.vue'
-import { NSpin, NButton, NIcon, NTag, NAlert, NProgress, NSelect, useMessage, useDialog } from 'naive-ui'
-import { RefreshOutline } from '@vicons/ionicons5'
+import { NSpin, NButton, NTag, NAlert, NProgress, NSelect, useMessage, useDialog } from 'naive-ui'
 import { apiGet, apiPost } from '@/api'
 import { mdToHtml } from '@/utils/markdown'
 import { fmtDate } from '@/utils/format'
+import RefreshButton from '@/components/RefreshButton.vue'
 
 interface ReleaseInfo {
   tag: string

@@ -15,8 +15,8 @@
     <n-card title="节点 sing-box 版本" size="small" style="margin-bottom:16px;">
       <template #header-extra>
         <n-space size="small">
-          <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
-          <n-button size="tiny" :loading="verLoading" @click="refreshVersions">重新检测</n-button>
+          <!-- 普通按钮 / 悬浮效果：标准刷新SVG悬浮转180度，移开按同速率回转。 -->
+          <RefreshButton label="重新检测 sing-box 版本" :loading="verLoading" @refresh="refreshVersions" />
         </n-space>
       </template>
       <p class="nv-note">
@@ -79,11 +79,13 @@
             <span class="kv">探针 <n-tag :type="s.probe_enabled ? 'info' : 'default'" size="tiny" :bordered="false">{{ s.probe_enabled ? '开' : '关' }}</n-tag></span>
           </div>
           <div class="lc-foot">
-            <n-button size="tiny" type="primary" secondary @click="openTrafficAnalysis(s)">流量分析</n-button>
+            <!-- 高亮弧边按钮：流量分析是卡片主操作，悬浮/聚焦提亮，按下短暂变深。 -->
+            <n-button size="tiny" type="primary" class="highlight-arc-button" @click="openTrafficAnalysis(s)">流量分析</n-button>
             <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" @click="handleRebuild(s.id)">重建</n-button>
             <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
-            <n-button size="tiny" @click="openForm(s)">编辑</n-button>
+            <!-- 标准默认弧边按钮：服务器编辑与同组操作共用18px弧边几何。 -->
+            <n-button size="tiny" class="default-arc-button" @click="openForm(s)">编辑</n-button>
             <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" :loading="clearing === s.id" @click="handleClearHostKey(s)">清除密钥指纹</n-button>
             <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
@@ -218,6 +220,7 @@ import { apiList, apiPost, apiPut, apiDelete, apiGet } from '@/api'
 import { fmtBytes, fmtDateTime, pct } from '@/utils/format'
 import { chartColorForPercent } from '@/utils/status-colors'
 import * as echarts from '@/utils/echarts'
+import RefreshButton from '@/components/RefreshButton.vue'
 const message = useMessage()
 const dialog = useDialog()
 const servers = ref<any[]>([])

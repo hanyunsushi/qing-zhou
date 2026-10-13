@@ -291,7 +291,8 @@
               </div>
             </div>
             <div class="card-footer upstream-card-footer">
-              <button class="upstream-refresh-link" type="button" :disabled="upstreamRefreshing" @click="refreshUpstreamBalances">刷新</button>
+              <!-- 普通按钮 / 悬浮效果：上游余额刷新复用标准180度悬浮回转SVG。 -->
+              <RefreshButton label="刷新上游余额" :loading="upstreamRefreshing" @refresh="refreshUpstreamBalances" />
             </div>
           </div>
           </template>
@@ -887,9 +888,6 @@ onUnmounted(() => {
 .upstream-balance-track i.ok { background: var(--chart-success); } .upstream-balance-track i.warn { background: var(--chart-warning); } .upstream-balance-track i.crit { background: var(--chart-error); }
 .upstream-balance-foot { margin-top: 7px; overflow: hidden; color: var(--text-3); font-size: 9.5px; line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; }
 .upstream-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.upstream-refresh-link { padding: 0; border: 0; background: transparent; color: var(--accent); font: inherit; font-size: 11px; cursor: pointer; }
-.upstream-refresh-link:hover:not(:disabled) { color: var(--accent-hover); }
-.upstream-refresh-link:disabled { cursor: wait; opacity: .5; }
 
 .card-footer { padding: 9px 16px; border-top: 1px solid var(--border); }
 .footer-time { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-3); }

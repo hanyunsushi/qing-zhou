@@ -88,7 +88,8 @@
             </div>
 
             <div class="document-actions">
-              <n-button secondary type="primary" @click="openEdit(d)">
+              <!-- 标准默认弧边按钮：文档编辑是中性编辑动作，使用统一弧边而非蓝色主按钮。 -->
+              <n-button class="default-arc-button" @click="openEdit(d)">
                 <template #icon><n-icon><CreateOutline /></n-icon></template>
                 编辑
               </n-button>

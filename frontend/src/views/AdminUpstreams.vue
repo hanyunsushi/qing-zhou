@@ -5,7 +5,8 @@
         <h2 class="page-title">上游管理</h2>
         <p class="page-sub">直接保存供应商账户凭据并查询官方用量；不经由节点、EdgeTunnel 或第三方中转。</p>
       </div>
-      <n-button secondary :loading="loading" @click="load">刷新配置与余额</n-button>
+      <!-- 普通按钮 / 悬浮效果：标准刷新SVG悬浮转180度，移开按同速率回转。 -->
+      <RefreshButton label="刷新配置与余额" :loading="loading" @refresh="load" />
     </div>
 
     <n-alert type="info" :bordered="false" class="upstream-notice">
@@ -144,6 +145,7 @@ import { defaultUpstreamOrder, normalizeUpstreamOrder, type UpstreamProvider } f
 import { CHART_STATUS_COLORS } from '@/utils/status-colors'
 import ociLogo from '@/assets/provider-oci.svg'
 import cloudflareLogo from '@/assets/provider-cloudflare.svg'
+import RefreshButton from '@/components/RefreshButton.vue'
 
 type Provider = UpstreamProvider
 type ProviderView = {

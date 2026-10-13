@@ -609,8 +609,8 @@ test('admin upstream balance surfaces stay neutral when usage loads successfully
 test('monitor provider cards expose the shared drag and status surface contract', () => {
   const monitor = read('src/views/Monitor.vue')
   const upstreams = read('src/views/AdminUpstreams.vue')
-  assert.match(monitor, /class="upstream-refresh-link"[^>]*>刷新/)
-  assert.match(monitor, /\.upstream-refresh-link \{[\s\S]*?color: var\(--accent\);/)
+  assert.match(monitor, /普通按钮 \/ 悬浮效果：上游余额刷新复用标准180度悬浮回转SVG。[\s\S]*?<RefreshButton label="刷新上游余额"/)
+  assert.doesNotMatch(monitor, /upstream-refresh-link/)
   assert.match(monitor, /\.upstream-balance-item \{[\s\S]*?border: 0;[\s\S]*?box-shadow: none|\.upstream-balance-item \{[\s\S]*?border: 0;/)
   assert.match(monitor, /\.tag\.price \{ background: var\(--info-soft\); color: var\(--info\);/)
   assert.match(monitor, /\.upstream-balance-card \.status-badge\.online \{ background: var\(--info-soft\); color: var\(--info\); \}/)
