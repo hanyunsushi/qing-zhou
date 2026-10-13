@@ -131,7 +131,6 @@
               </template>
               {{ s.public_visible ? '显示在公开状态页' : '不显示在公开状态页' }}
             </n-tooltip>
-            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <!-- 标准默认弧边按钮：资产编辑与同组操作共用18px弧边几何。 -->
             <n-button size="tiny" class="default-arc-button" @click="openAsset(s)">编辑</n-button>
             <!-- 本机是面板自采集，没有探针可装 -->
@@ -201,8 +200,8 @@
         </template>
         <!-- 展示信息模块：无指标时说明探针边界，不把缺失数据伪装成健康状态。 -->
         <div v-else class="no-data">
-          <strong>{{ s.local ? '面板本机尚未产生采样' : s.probe_enabled ? '等待探针上报数据' : '尚未启用探针' }}</strong>
-          <span>{{ s.local ? '面板启动后自动采集本机指标。' : s.probe_enabled ? '收到远程探针数据后显示指标与趋势。' : '点击“一键安装”后才会采集这台远程服务器。' }}</span>
+          <strong>{{ s.local ? '面板本机尚未产生采样' : isLoopbackServer(s) ? '本机指标由面板自动采集' : s.probe_enabled ? '等待探针上报数据' : '尚未启用探针' }}</strong>
+          <span>{{ s.local ? '面板启动后自动采集本机指标。' : isLoopbackServer(s) ? '此记录指向面板本机，系统指标与趋势见“面板本机”卡片。' : s.probe_enabled ? '收到远程探针数据后显示指标与趋势。' : '点击“一键安装”后才会采集这台远程服务器。' }}</span>
         </div>
 
         <div class="mini-chart-box">
@@ -303,6 +302,10 @@ const message = useMessage()
 const router = useRouter()
 const dash = ref<any>({})
 const servers = ref<any[]>([])
+// 展示信息模块：回环服务器记录与面板自采集记录分开说明，不生成重复指标。
+function isLoopbackServer(server: { host?: string }): boolean {
+  return ['localhost', '127.0.0.1', '::1', '[::1]'].includes(String(server.host || '').trim().toLowerCase())
+}
 const monitorRoot = ref<HTMLElement | null>(null)
 const saving = ref(false)
 const loading = ref(false)
@@ -893,6 +896,7 @@ onUnmounted(() => {
 .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
 .dot.online { background: var(--success); }
 .dot.offline { background: var(--danger); }
+/* 项目超链接：服务器名称遵循 Apple 蓝导航文字，保留键盘焦点和稳定布局。 */
 .srv-name {
   cursor: pointer;
   padding: 0;
@@ -925,6 +929,7 @@ onUnmounted(() => {
 .asset-section-title { margin: 10px 0 12px; padding-top: 12px; border-top: 1px solid var(--border); color: var(--text); font-size: 13px; font-weight: 650; }
 .asset-form-hint { margin: -4px 0 14px 105px; color: var(--text-3); font-size: 11px; line-height: 1.65; }
 .calibration-input { display: flex; width: 100%; gap: 8px; }
+/* 展示信息模块：真实采集状态的中性说明，区分本机自动采集与远端探针。 */
 .no-data { display: grid; justify-items: center; gap: 4px; text-align: center; color: var(--text-3); padding: 16px; font-size: 13px; }
 .no-data strong { color: var(--text-2); font-size: 13px; font-weight: 600; }
 .no-data span { color: var(--text-3); font-size: 11px; line-height: 1.5; }

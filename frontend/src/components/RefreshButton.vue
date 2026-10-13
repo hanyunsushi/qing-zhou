@@ -21,7 +21,7 @@ defineEmits<{ refresh: [] }>()
 .kreeper-refresh:hover:not(:disabled) { color: var(--text); border-color: var(--border-strong); }
 .kreeper-refresh:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .kreeper-refresh:disabled { opacity: .5; cursor: not-allowed; }
-.kreeper-refresh-svg { transform-origin: center; transform-box: view-box; transition: transform .6s cubic-bezier(.4,0,.2,1); }
+.kreeper-refresh-svg { transform-origin: center; transform-box: view-box; transition: transform .4s linear; }
 .kreeper-refresh:hover:not(:disabled) .kreeper-refresh-svg, .kreeper-refresh:focus-visible:not(:disabled) .kreeper-refresh-svg { transform: rotate(180deg); }
 .kreeper-refresh-svg.is-loading { animation: kreeper-refresh-turn .8s linear infinite; }
 @keyframes kreeper-refresh-turn { to { transform: rotate(360deg); } }

@@ -219,7 +219,6 @@
               <div class="lc-foot">
                 <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
                 <n-button size="tiny" type="primary" class="highlight-arc-button" @click="handleFetchSource(r.id)">拉取</n-button>
-                <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                 <!-- 标准默认弧边按钮：订阅源编辑沿用同组中性弧边操作。 -->
                 <n-button size="tiny" class="default-arc-button" @click="openSource(r)">编辑</n-button>
                 <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
@@ -941,6 +940,7 @@ async function load() {
 
 /* 节点卡片：链路是主体，操作退到卡片底部。 */
 .list-card { gap: 9px; border-radius: var(--r); }
+/* 展示信息模块：链路预览按已有内嵌浅底合同呈现，保持中性边界。 */
 .route-preview {
   margin-top: 1px; padding: 10px 10px 8px; border-radius: var(--r);
   background: var(--bg-soft); border: 1px solid var(--border);
