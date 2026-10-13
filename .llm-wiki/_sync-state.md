@@ -5,6 +5,12 @@ updated: 2026-10-13
 
 # Current synchronization evidence
 
+- Source correction maps the disabled `OCI Singapore` loopback asset row to the
+  native panel metric stream (`server_id=0`) for monitor cards, trends and
+  traffic analysis. Existing “clickable display card” and “panel collected”
+  categories are reused; project hyperlinks remain for true navigation text.
+  No new or unconfirmed category was introduced.
+
 - Source `4ec8bd18cfe66dd32a83ea73134797fa21fe9cbc` aligns existing button,
   link, notice, route-switch and refresh implementations across the admin
   monitor, nodes, servers, help, settings, announcements, update, authentication

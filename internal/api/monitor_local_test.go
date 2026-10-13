@@ -94,6 +94,46 @@ func TestLocalNodeAppearsInMonitorList(t *testing.T) {
 	}
 }
 
+func TestLoopbackAssetReusesPanelMetrics(t *testing.T) {
+	a, st := newNodeUpgradeAPI(t)
+	id, err := st.CreateServer(store.Server{Name: "OCI Singapore", Host: "127.0.0.1", Enabled: false})
+	if err != nil {
+		t.Fatal(err)
+	}
+	sampleLocal(t, st, 22.5)
+
+	var body struct {
+		Data []struct {
+			ID           int64  `json:"id"`
+			PanelMetrics bool   `json:"panel_metrics"`
+			ProbeEnabled bool   `json:"probe_enabled"`
+			Status       string `json:"status"`
+			Metrics      *struct {
+				CPUPercent float64 `json:"cpu_percent"`
+			} `json:"metrics"`
+		} `json:"data"`
+	}
+	getJSON(t, a.handleMonitorServers, "/api/admin/monitor/servers", &body)
+	var alias *struct {
+		ID           int64  `json:"id"`
+		PanelMetrics bool   `json:"panel_metrics"`
+		ProbeEnabled bool   `json:"probe_enabled"`
+		Status       string `json:"status"`
+		Metrics      *struct {
+			CPUPercent float64 `json:"cpu_percent"`
+		} `json:"metrics"`
+	}
+	for i := range body.Data {
+		if body.Data[i].ID == id {
+			alias = &body.Data[i]
+			break
+		}
+	}
+	if alias == nil || !alias.PanelMetrics || alias.ProbeEnabled || alias.Status != "online" || alias.Metrics == nil || alias.Metrics.CPUPercent != 22.5 {
+		t.Fatalf("loopback alias = %+v, want live panel metrics without a probe", alias)
+	}
+}
+
 func TestMonitorListMarksLegacyProbeForUpgrade(t *testing.T) {
 	a, st := newNodeUpgradeAPI(t)
 	id, err := st.CreateServer(store.Server{Name: "old-probe", Host: "192.0.2.11", ProbeEnabled: true, Enabled: true})

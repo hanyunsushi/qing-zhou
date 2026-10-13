@@ -109,10 +109,10 @@
         <template #header>
           <div class="srv-head">
             <span class="dot" :class="s.status" />
-            <!-- 项目超链接：服务器名称进入监控详情，使用 Apple 蓝文字和键盘可见焦点。 -->
-            <button type="button" class="srv-name project-link" :aria-label="`查看${s.name}监控详情`" @click="goDetail(s)">{{ s.name }}</button>
+            <!-- 可跳转展示卡：服务器标题进入监控详情，常态沿用卡片正文色，交互态保留清晰焦点。 -->
+            <button type="button" class="srv-name" :aria-label="`查看${s.name}监控详情`" @click="goDetail(s)">{{ s.name }}</button>
             <!-- 区分-信息牌：面板自采集说明采集来源，不表达健康状态。 -->
-            <n-tag v-if="s.local" size="small" type="info" :bordered="false">面板自采集</n-tag>
+            <n-tag v-if="s.local || s.panel_metrics" size="small" type="info" :bordered="false">面板自采集</n-tag>
             <n-tooltip v-else-if="s.metrics && s.probe_outdated" trigger="hover">
               <template #trigger>
                 <n-tag size="small" type="warning" :bordered="false">探针 {{ s.probe_version || '版本未知' }} · 待升级</n-tag>
@@ -135,7 +135,7 @@
             <n-button size="tiny" class="default-arc-button" @click="openAsset(s)">编辑</n-button>
             <!-- 本机是面板自采集，没有探针可装 -->
             <n-button
-              v-if="!s.local"
+              v-if="!s.local && !s.panel_metrics"
               size="tiny"
               :type="s.probe_outdated ? 'warning' : 'primary'"
               :loading="s.probe_upgrading"
@@ -144,7 +144,7 @@
               {{ s.probe_upgrading ? '安装中' : (!s.metrics ? '一键安装' : (s.probe_outdated ? '一键升级' : '重装探针')) }}
             </n-button>
             <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
-            <n-button v-if="!s.local" size="tiny" @click="copyInstall(s)">复制命令</n-button>
+            <n-button v-if="!s.local && !s.panel_metrics" size="tiny" @click="copyInstall(s)">复制命令</n-button>
           </n-space>
         </template>
 
@@ -896,7 +896,7 @@ onUnmounted(() => {
 .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
 .dot.online { background: var(--success); }
 .dot.offline { background: var(--danger); }
-/* 项目超链接：服务器名称遵循 Apple 蓝导航文字，保留键盘焦点和稳定布局。 */
+/* 可跳转展示卡：服务器标题常态保持卡片正文色，交互态只改变前景色。 */
 .srv-name {
   cursor: pointer;
   padding: 0;
@@ -905,14 +905,14 @@ onUnmounted(() => {
   text-align: left;
   font: inherit;
   font-weight: 650;
-  color: var(--accent) !important;
+  color: var(--text) !important;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   word-break: keep-all;
 }
-.srv-name:hover, .srv-name:focus-visible { color: var(--accent-hover) !important; text-decoration: underline; text-underline-offset: 3px; }
+.srv-name:hover, .srv-name:focus-visible { color: var(--accent) !important; text-decoration: none; }
 
 .asset-line { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
 .tag-mini { padding: 2px 6px; background: var(--bg-soft); border-radius: 4px; font-size: 11px; color: var(--text-2); }

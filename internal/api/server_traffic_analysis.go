@@ -95,6 +95,7 @@ func buildTrafficCapacity(now, nextReset time.Time, limitBytes int64, usage stor
 
 func (a *API) handleServerTrafficAnalysis(w http.ResponseWriter, r *http.Request) {
 	id := atoi(chi.URLParam(r, "id"))
+	metricServerID := a.monitorMetricServerID(id)
 	sv, err := a.st.GetServer(id)
 	if err != nil || sv == nil {
 		fail(w, http.StatusNotFound, "服务器不存在")
@@ -104,31 +105,31 @@ func (a *API) handleServerTrafficAnalysis(w http.ResponseWriter, r *http.Request
 	cycleStart := store.TrafficCycleStart(now, sv.TrafficResetDay, sv.TrafficResetMinute)
 	nextReset := store.TrafficCycleNext(now, sv.TrafficResetDay, sv.TrafficResetMinute)
 	usageByServer, err := a.st.TrafficUsageForBillingCycles(map[int64]store.TrafficCycleQuery{
-		id: {Start: cycleStart.Unix(), AccountingMode: sv.TrafficAccountingMode},
+		metricServerID: {Start: cycleStart.Unix(), AccountingMode: sv.TrafficAccountingMode},
 	})
 	if err != nil {
 		fail(w, http.StatusInternalServerError, "读取周期流量失败")
 		return
 	}
-	daily, err := a.st.ServerTrafficDaily(id, cycleStart.Unix(), sv.TrafficAccountingMode)
+	daily, err := a.st.ServerTrafficDaily(metricServerID, cycleStart.Unix(), sv.TrafficAccountingMode)
 	if err != nil {
 		fail(w, http.StatusInternalServerError, "读取流量趋势失败")
 		return
 	}
-	attribution, err := a.st.ServerTrafficAttribution(id, cycleStart.Unix(), 10)
+	attribution, err := a.st.ServerTrafficAttribution(metricServerID, cycleStart.Unix(), 10)
 	if err != nil {
 		fail(w, http.StatusInternalServerError, "读取流量来源失败")
 		return
 	}
 	var recent store.ServerTrafficUsage
 	if attribution.CoverageStart > 0 {
-		recent, err = a.st.RawServerTrafficSince(id, attribution.CoverageStart, sv.TrafficAccountingMode)
+		recent, err = a.st.RawServerTrafficSince(metricServerID, attribution.CoverageStart, sv.TrafficAccountingMode)
 		if err != nil {
 			fail(w, http.StatusInternalServerError, "读取近期流量失败")
 			return
 		}
 	}
-	usage := usageByServer[id]
+	usage := usageByServer[metricServerID]
 	ok(w, J{
 		"server_id": id, "server_name": sv.Name,
 		"accounting_mode": sv.TrafficAccountingMode,

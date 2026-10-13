@@ -3,6 +3,16 @@ title: QingZhou Deployment and Artifact Retention
 updated: 2026-10-13
 ---
 
+## 2026-10-13 OCI loopback monitor correction
+
+The monitor source now maps an enabled or disabled server asset whose host is
+`localhost`, `127.0.0.1` or `::1` to the native panel metric stream
+`server_id=0`. The OCI asset name and edit metadata remain separate, while its
+monitor card, trend endpoint and traffic analysis reuse the panel's real data.
+The card does not offer a second probe installation path. Server titles use the
+existing clickable-display-card contract and no longer render as blue underlined
+project links.
+
 ## 2026-10-13 Monitor, links and refresh interaction rollout
 
 Source commit `4ec8bd18cfe66dd32a83ea73134797fa21fe9cbc` aligns the monitored

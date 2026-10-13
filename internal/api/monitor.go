@@ -262,7 +262,14 @@ func (a *API) handleMonitorServers(w http.ResponseWriter, r *http.Request) {
 	}
 	cycles := make(map[int64]store.TrafficCycleQuery, len(servers))
 	for _, sv := range servers {
-		cycles[sv.ID] = store.TrafficCycleQuery{
+		cycleID := sv.ID
+		if isPanelLoopbackAlias(sv) {
+			cycleID = store.LocalNodeID
+		}
+		if _, exists := cycles[cycleID]; exists {
+			continue
+		}
+		cycles[cycleID] = store.TrafficCycleQuery{
 			Start:          store.TrafficCycleStart(now, sv.TrafficResetDay, sv.TrafficResetMinute).Unix(),
 			AccountingMode: sv.TrafficAccountingMode,
 		}
@@ -280,6 +287,7 @@ func (a *API) handleMonitorServers(w http.ResponseWriter, r *http.Request) {
 		Local                 bool                     `json:"local"`
 		Enabled               bool                     `json:"enabled"`
 		ProbeEnabled          bool                     `json:"probe_enabled"`
+		PanelMetrics          bool                     `json:"panel_metrics"`
 		ProbeToken            string                   `json:"probe_token"`
 		ProbeVersion          string                   `json:"probe_version"`
 		ProbeTarget           string                   `json:"probe_target_version"`
@@ -318,22 +326,31 @@ func (a *API) handleMonitorServers(w http.ResponseWriter, r *http.Request) {
 	var out []serverResp
 	for _, sv := range servers {
 		maskServerSecrets(sv)
+		panelMetrics := isPanelLoopbackAlias(sv)
+		metricServerID := sv.ID
+		if panelMetrics {
+			metricServerID = store.LocalNodeID
+		}
 		status := "offline"
-		if sv.LastSeen >= onlineWindow {
+		lastSeen := sv.LastSeen
+		if panelMetrics && latest[store.LocalNodeID] != nil {
+			lastSeen = latest[store.LocalNodeID].Ts
+		}
+		if lastSeen >= onlineWindow {
 			status = "online"
 		}
 		var m *store.ServerMetrics
-		if sv.ProbeEnabled {
-			m = latest[sv.ID]
+		if sv.ProbeEnabled || panelMetrics {
+			m = latest[metricServerID]
 		}
 		probeVersion := ""
 		if m != nil {
 			probeVersion = m.ProbeVersion
 		}
-		if sv.ID == store.LocalNodeID {
+		if sv.ID == store.LocalNodeID || panelMetrics {
 			probeVersion = version.Current()
 		}
-		probeOutdated := sv.ID != store.LocalNodeID && sv.ProbeEnabled && m != nil &&
+		probeOutdated := sv.ID != store.LocalNodeID && !panelMetrics && sv.ProbeEnabled && m != nil &&
 			(probeVersion == "" || (!version.IsDev() && version.Compare(probeVersion, version.Current()) < 0))
 		probeJob := probeJobs[sv.ID]
 		var dl *int
@@ -351,6 +368,7 @@ func (a *API) handleMonitorServers(w http.ResponseWriter, r *http.Request) {
 			Local:                 sv.ID == store.LocalNodeID,
 			Enabled:               sv.Enabled,
 			ProbeEnabled:          sv.ProbeEnabled,
+			PanelMetrics:          panelMetrics,
 			ProbeToken:            sv.ProbeToken,
 			ProbeVersion:          probeVersion,
 			ProbeTarget:           version.Current(),
@@ -376,13 +394,13 @@ func (a *API) handleMonitorServers(w http.ResponseWriter, r *http.Request) {
 			TrafficResetMinute:    sv.TrafficResetMinute,
 			TrafficAlertPercent:   sv.TrafficAlertPercent,
 			TrafficAccountingMode: sv.TrafficAccountingMode,
-			TrafficCycleStart:     cycles[sv.ID].Start,
+			TrafficCycleStart:     cycles[metricServerID].Start,
 			TrafficNextReset:      store.TrafficCycleNext(now, sv.TrafficResetDay, sv.TrafficResetMinute).Unix(),
 			DaysLeft:              dl,
 			Status:                status,
-			LastSeen:              sv.LastSeen,
+			LastSeen:              lastSeen,
 			Metrics:               m,
-			MonthTraffic:          monthUsage[sv.ID],
+			MonthTraffic:          monthUsage[metricServerID],
 			Notes:                 sv.Notes,
 		})
 	}
@@ -394,6 +412,7 @@ func (a *API) handleMonitorServers(w http.ResponseWriter, r *http.Request) {
 
 func (a *API) handleServerMetrics(w http.ResponseWriter, r *http.Request) {
 	id := atoi(chi.URLParam(r, "id"))
+	metricServerID := a.monitorMetricServerID(id)
 	rangeStr := r.URL.Query().Get("range")
 	if rangeStr == "" {
 		rangeStr = "24h"
@@ -416,7 +435,7 @@ func (a *API) handleServerMetrics(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sinceTs := time.Now().Add(-since).Unix()
-	data, err := a.st.ListMetrics(id, sinceTs)
+	data, err := a.st.ListMetrics(metricServerID, sinceTs)
 	if err != nil {
 		fail(w, 500, "查询指标失败")
 		return
@@ -433,7 +452,7 @@ func (a *API) handleServerMetrics(w http.ResponseWriter, r *http.Request) {
 		"server_id":     id,
 		"range":         rangeStr,
 		"data":          data,
-		"traffic_usage": usageByServer[id],
+		"traffic_usage": usageByServer[metricServerID],
 	})
 }
 

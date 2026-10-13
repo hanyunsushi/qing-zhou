@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"log"
+	"strings"
 	"time"
 
 	"qingzhou/internal/intervalcfg"
@@ -151,4 +152,26 @@ func (a *API) serversWithLocal(latest map[int64]*store.ServerMetrics) ([]*store.
 		servers = append([]*store.Server{local}, servers...)
 	}
 	return servers, nil
+}
+
+// isPanelLoopbackAlias identifies a legacy server asset row that points back
+// to the panel host. Native panel metrics live under LocalNodeID, so this row
+// reuses that stream while retaining its OCI name and management metadata.
+func isPanelLoopbackAlias(sv *store.Server) bool {
+	if sv == nil || sv.ID == store.LocalNodeID {
+		return false
+	}
+	host := strings.Trim(strings.ToLower(strings.TrimSpace(sv.Host)), "[]")
+	return host == "localhost" || host == "127.0.0.1" || host == "::1"
+}
+
+func (a *API) monitorMetricServerID(id int64) int64 {
+	if id == store.LocalNodeID {
+		return id
+	}
+	sv, err := a.st.GetServer(id)
+	if err == nil && isPanelLoopbackAlias(sv) {
+		return store.LocalNodeID
+	}
+	return id
 }
