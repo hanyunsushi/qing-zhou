@@ -406,6 +406,15 @@ test('project hyperlinks use the shared Apple blue contract', () => {
   assert.doesNotMatch(certs, /router-link[^>]*style="color:var\(--primary\)/)
 })
 
+test('monitor titles are project hyperlinks rather than clickable cards', () => {
+  const monitor = read('src/views/AdminMonitor.vue')
+  assert.match(monitor, /项目超链接：标题进入监控详情[\s\S]*?<router-link class="srv-name project-link"/)
+  assert.match(monitor, /项目超链接：服务器标题复用全局 Apple 蓝/)
+  assert.match(monitor, /\.srv-name \{[^}]*text-decoration: none;/)
+  assert.match(monitor, /\.srv-name:focus-visible \{ outline: 2px solid var\(--accent\);/)
+  assert.doesNotMatch(monitor, /可跳转展示卡|\.srv-name[^}]*color: var\(--text\)/)
+})
+
 test('data table headers match module surfaces and rows use the shared neutral hover', () => {
   const globalCss = read('src/styles/global.css')
   assert.match(globalCss, /\.n-data-table \.n-data-table-th \{ background: var\(--card\) !important; font-weight: 600; \}/)

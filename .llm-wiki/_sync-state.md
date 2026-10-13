@@ -7,8 +7,11 @@ updated: 2026-10-13
 
 - Source correction maps the disabled `OCI Singapore` loopback asset row to the
   native panel metric stream (`server_id=0`) for monitor cards, trends and
-  traffic analysis. Existing “clickable display card” and “panel collected”
-  categories are reused; project hyperlinks remain for true navigation text.
+  traffic analysis. Follow-up keeps asset-specific billing periods and modes,
+  maps calibration to the physical metric source, and corrects title-only
+  navigation to “项目超链接” rather than whole-card navigation. 149 frontend
+  tests, typecheck/Vite and Go tests pass. The v0.2.101 runtime and authenticated
+  OCI metrics are verified; the follow-up release is tracked independently.
   No new or unconfirmed category was introduced.
 
 - Source `4ec8bd18cfe66dd32a83ea73134797fa21fe9cbc` aligns existing button,

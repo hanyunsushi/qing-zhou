@@ -261,23 +261,34 @@ func (a *API) handleMonitorServers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	cycles := make(map[int64]store.TrafficCycleQuery, len(servers))
+	nativeCycles := make(map[int64]store.TrafficCycleQuery, len(servers))
 	for _, sv := range servers {
-		cycleID := sv.ID
-		if isPanelLoopbackAlias(sv) {
-			cycleID = store.LocalNodeID
-		}
-		if _, exists := cycles[cycleID]; exists {
-			continue
-		}
-		cycles[cycleID] = store.TrafficCycleQuery{
+		cycles[sv.ID] = store.TrafficCycleQuery{
 			Start:          store.TrafficCycleStart(now, sv.TrafficResetDay, sv.TrafficResetMinute).Unix(),
 			AccountingMode: sv.TrafficAccountingMode,
 		}
+		if !isPanelLoopbackAlias(sv) {
+			nativeCycles[sv.ID] = cycles[sv.ID]
+		}
 	}
-	monthUsage, err := a.st.TrafficUsageForBillingCycles(cycles)
+	monthUsage, err := a.st.TrafficUsageForBillingCycles(nativeCycles)
 	if err != nil {
 		fail(w, 500, "查询本周期流量失败")
 		return
+	}
+	// Aliases share the samples, not necessarily the billing cycle or mode.
+	for _, sv := range servers {
+		if !isPanelLoopbackAlias(sv) {
+			continue
+		}
+		usage, err := a.st.TrafficUsageForBillingCycles(map[int64]store.TrafficCycleQuery{
+			store.LocalNodeID: cycles[sv.ID],
+		})
+		if err != nil {
+			fail(w, 500, "查询本周期流量失败")
+			return
+		}
+		monthUsage[sv.ID] = usage[store.LocalNodeID]
 	}
 
 	type serverResp struct {
@@ -394,13 +405,13 @@ func (a *API) handleMonitorServers(w http.ResponseWriter, r *http.Request) {
 			TrafficResetMinute:    sv.TrafficResetMinute,
 			TrafficAlertPercent:   sv.TrafficAlertPercent,
 			TrafficAccountingMode: sv.TrafficAccountingMode,
-			TrafficCycleStart:     cycles[metricServerID].Start,
+			TrafficCycleStart:     cycles[sv.ID].Start,
 			TrafficNextReset:      store.TrafficCycleNext(now, sv.TrafficResetDay, sv.TrafficResetMinute).Unix(),
 			DaysLeft:              dl,
 			Status:                status,
 			LastSeen:              lastSeen,
 			Metrics:               m,
-			MonthTraffic:          monthUsage[metricServerID],
+			MonthTraffic:          monthUsage[sv.ID],
 			Notes:                 sv.Notes,
 		})
 	}
@@ -1026,18 +1037,19 @@ func (a *API) handleCalibrateServerTraffic(w http.ResponseWriter, r *http.Reques
 
 	now := time.Now()
 	cycleStart := store.TrafficCycleStart(now, resetDay, resetMinute).Unix()
-	if err := a.st.SetTrafficCalibrationForMode(id, cycleStart, accountingMode, *body.UsedBytes, now.Unix()); err != nil {
+	metricServerID := a.monitorMetricServerID(id)
+	if err := a.st.SetTrafficCalibrationForMode(metricServerID, cycleStart, accountingMode, *body.UsedBytes, now.Unix()); err != nil {
 		fail(w, 500, "校准流量失败")
 		return
 	}
-	usage, err := a.st.TrafficUsageForBillingCycles(map[int64]store.TrafficCycleQuery{id: {
+	usage, err := a.st.TrafficUsageForBillingCycles(map[int64]store.TrafficCycleQuery{metricServerID: {
 		Start: cycleStart, AccountingMode: accountingMode,
 	}})
 	if err != nil {
 		fail(w, 500, "读取校准结果失败")
 		return
 	}
-	ok(w, J{"usage": usage[id], "cycle_start": cycleStart})
+	ok(w, J{"usage": usage[metricServerID], "cycle_start": cycleStart})
 }
 
 // ---- Public monitoring (no auth required) ----

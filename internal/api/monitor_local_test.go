@@ -134,6 +134,112 @@ func TestLoopbackAssetReusesPanelMetrics(t *testing.T) {
 	}
 }
 
+func TestPanelLoopbackAliasHosts(t *testing.T) {
+	for _, host := range []string{"localhost", "127.0.0.1", "::1", "[::1]", " LOCALHOST "} {
+		if !isPanelLoopbackAlias(&store.Server{ID: 1, Host: host, ProbeEnabled: true}) {
+			t.Fatalf("host %q should reuse native metrics even with a legacy probe", host)
+		}
+	}
+	for _, host := range []string{"192.0.2.1", "localhost.example.com", "", "127.0.0.1.example.com"} {
+		if isPanelLoopbackAlias(&store.Server{ID: 1, Host: host}) {
+			t.Fatalf("host %q must keep its own metric stream", host)
+		}
+	}
+}
+
+func TestLoopbackMetricsTrendPreservesAssetID(t *testing.T) {
+	a, st := newNodeUpgradeAPI(t)
+	id, err := st.CreateServer(store.Server{Name: "OCI", Host: "::1"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	sampleLocal(t, st, 22.5)
+	router := chi.NewRouter()
+	router.Get("/metrics/{id}", a.handleServerMetrics)
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, httptest.NewRequest("GET", "/metrics/"+strconv.FormatInt(id, 10)+"?range=1h", nil))
+	var body struct {
+		Data struct {
+			ServerID int64                  `json:"server_id"`
+			Metrics  []*store.ServerMetrics `json:"data"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(w.Body.Bytes(), &body); err != nil {
+		t.Fatal(err)
+	}
+	if w.Code != http.StatusOK || body.Data.ServerID != id || len(body.Data.Metrics) != 1 || body.Data.Metrics[0].CPUPercent != 22.5 {
+		t.Fatalf("alias trend = %s", w.Body.String())
+	}
+}
+
+func TestLoopbackBillingKeepsAssetCycleAndCalibration(t *testing.T) {
+	a, st := newNodeUpgradeAPI(t)
+	if err := st.SetLocalAsset(store.LocalNodeAsset{TrafficResetDay: 1, TrafficAccountingMode: store.TrafficAccountingSum}); err != nil {
+		t.Fatal(err)
+	}
+	id, err := st.CreateServer(store.Server{Name: "OCI", Host: "127.0.0.1", TrafficResetDay: 16, TrafficResetMinute: 123, TrafficAccountingMode: store.TrafficAccountingRx})
+	if err != nil {
+		t.Fatal(err)
+	}
+	sv, err := st.GetServer(id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	sv.TrafficAccountingMode = store.TrafficAccountingRx
+	if err := st.UpdateServer(*sv); err != nil {
+		t.Fatal(err)
+	}
+	sampleLocal(t, st, 10)
+	if w := calibrateTrafficRequest(a, strconv.FormatInt(id, 10), `{"used_bytes":12345}`); w.Code != http.StatusOK {
+		t.Fatalf("calibrate alias: %s", w.Body.String())
+	}
+	now := time.Now()
+	start := store.TrafficCycleStart(now, 16, 123).Unix()
+	end := store.TrafficCycleNext(now, 16, 123).Unix()
+	var list struct {
+		Data []struct {
+			ID    int64                    `json:"id"`
+			Start int64                    `json:"traffic_cycle_start"`
+			End   int64                    `json:"traffic_next_reset"`
+			Usage store.ServerTrafficUsage `json:"month_traffic"`
+		} `json:"data"`
+	}
+	getJSON(t, a.handleMonitorServers, "/api/admin/monitor/servers", &list)
+	found := false
+	for _, row := range list.Data {
+		if row.ID == id {
+			found = true
+			if row.Start != start || row.End != end || row.Usage.Total != 12345 || !row.Usage.Calibrated {
+				t.Fatalf("alias billing = %+v", row)
+			}
+		} else if row.ID == store.LocalNodeID && row.Usage.Calibrated {
+			t.Fatalf("different native cycle must remain uncalibrated: %+v", row)
+		}
+	}
+	if !found {
+		t.Fatal("alias missing")
+	}
+	router := chi.NewRouter()
+	router.Get("/analysis/{id}", a.handleServerTrafficAnalysis)
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, httptest.NewRequest("GET", "/analysis/"+strconv.FormatInt(id, 10), nil))
+	var analysis struct {
+		Data struct {
+			ServerID int64                    `json:"server_id"`
+			Start    int64                    `json:"cycle_start"`
+			End      int64                    `json:"next_reset"`
+			Mode     string                   `json:"accounting_mode"`
+			Usage    store.ServerTrafficUsage `json:"usage"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(w.Body.Bytes(), &analysis); err != nil {
+		t.Fatal(err)
+	}
+	if w.Code != http.StatusOK || analysis.Data.ServerID != id || analysis.Data.Start != start || analysis.Data.End != end || analysis.Data.Mode != store.TrafficAccountingRx || analysis.Data.Usage.Total != 12345 {
+		t.Fatalf("alias analysis = %s", w.Body.String())
+	}
+}
+
 func TestMonitorListMarksLegacyProbeForUpgrade(t *testing.T) {
 	a, st := newNodeUpgradeAPI(t)
 	id, err := st.CreateServer(store.Server{Name: "old-probe", Host: "192.0.2.11", ProbeEnabled: true, Enabled: true})

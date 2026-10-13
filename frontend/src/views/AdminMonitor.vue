@@ -109,8 +109,8 @@
         <template #header>
           <div class="srv-head">
             <span class="dot" :class="s.status" />
-            <!-- 可跳转展示卡：服务器标题进入监控详情，常态沿用卡片正文色，交互态保留清晰焦点。 -->
-            <button type="button" class="srv-name" :aria-label="`查看${s.name}监控详情`" @click="goDetail(s)">{{ s.name }}</button>
+            <!-- 项目超链接：标题进入监控详情，使用统一蓝色导航文字与键盘焦点，无常态下划线。 -->
+            <router-link class="srv-name project-link" :to="{ name: 'admin-monitor-detail', params: { id: s.id } }" :aria-label="`查看${s.name}监控详情`">{{ s.name }}</router-link>
             <!-- 区分-信息牌：面板自采集说明采集来源，不表达健康状态。 -->
             <n-tag v-if="s.local || s.panel_metrics" size="small" type="info" :bordered="false">面板自采集</n-tag>
             <n-tooltip v-else-if="s.metrics && s.probe_outdated" trigger="hover">
@@ -289,7 +289,6 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onUnmounted, nextTick, shallowRef } from 'vue'
-import { useRouter } from 'vue-router'
 import {
   NCard, NButton, NSpace, NTag, NProgress, NDrawer, NDrawerContent, NForm, NFormItem, NInput, NInputNumber, NSwitch, NSelect, NEmpty, NTooltip, NAlert, useMessage
 } from 'naive-ui'
@@ -299,7 +298,6 @@ import * as echarts from '@/utils/echarts'
 import { CHART_STATUS_COLORS, chartColorForPercent } from '@/utils/status-colors'
 
 const message = useMessage()
-const router = useRouter()
 const dash = ref<any>({})
 const servers = ref<any[]>([])
 // 展示信息模块：回环服务器记录与面板自采集记录分开说明，不生成重复指标。
@@ -398,7 +396,6 @@ function pctColor(v: number) { return chartColorForPercent(v) }
 
 // 热力图分类：绿/黄/红
 // 旧版 cell 热力图已替换为 ECharts 时间热力图（Y=机器, X=时间桶），见 loadHeatmap。
-function goDetail(s: any) { router.push({ name: 'admin-monitor-detail', params: { id: s.id } }) }
 
 // --- 可用性热力图（ECharts heatmap：Y=服务器, X=时间）---
 const heatEl = ref<HTMLElement | null>(null)
@@ -896,7 +893,7 @@ onUnmounted(() => {
 .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
 .dot.online { background: var(--success); }
 .dot.offline { background: var(--danger); }
-/* 可跳转展示卡：服务器标题常态保持卡片正文色，交互态只改变前景色。 */
+/* 项目超链接：服务器标题复用全局 Apple 蓝，悬浮变交互蓝，仅键盘显示焦点环。 */
 .srv-name {
   cursor: pointer;
   padding: 0;
@@ -905,14 +902,14 @@ onUnmounted(() => {
   text-align: left;
   font: inherit;
   font-weight: 650;
-  color: var(--text) !important;
+  text-decoration: none;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   word-break: keep-all;
 }
-.srv-name:hover, .srv-name:focus-visible { color: var(--accent) !important; text-decoration: none; }
+.srv-name:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 .asset-line { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
 .tag-mini { padding: 2px 6px; background: var(--bg-soft); border-radius: 4px; font-size: 11px; color: var(--text-2); }

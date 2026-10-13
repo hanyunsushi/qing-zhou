@@ -9,9 +9,19 @@ The monitor source now maps an enabled or disabled server asset whose host is
 `localhost`, `127.0.0.1` or `::1` to the native panel metric stream
 `server_id=0`. The OCI asset name and edit metadata remain separate, while its
 monitor card, trend endpoint and traffic analysis reuse the panel's real data.
-The card does not offer a second probe installation path. Server titles use the
-existing clickable-display-card contract and no longer render as blue underlined
-project links.
+The card does not offer a second probe installation path. Billing settings remain
+asset-specific while samples and calibration use the native metric stream.
+Server titles use real router links under the existing project-hyperlink contract:
+Apple blue, no default underline, shared hover color and visible keyboard focus.
+Only the title is clickable; the card is not categorized as a whole-card link.
+
+Release `v0.2.101-kreeper-20261013-local-monitor` was deployed at
+2026-10-13 16:37:45 CST. Release, installed and running binary SHA-256 matched
+`924ff1eed8ea21a967eec5c365837ce5f5e27df3fba67a567115126312012f38`.
+Backup API integrity, configuration preservation and unchanged sing-box/Tunnel
+PIDs passed; authenticated browser verification confirmed both cards show native
+metrics. The follow-up source corrects title classification and independent
+billing-cycle handling before its own release.
 
 ## 2026-10-13 Monitor, links and refresh interaction rollout
 
