@@ -16,6 +16,8 @@
         <div class="sidebar-filter">
           <input v-model="sidebarQuery" type="search" placeholder="筛选导航" aria-label="筛选导航" autocomplete="off" @keydown.esc="sidebarQuery = ''" />
           <kbd v-if="!sidebarQuery" aria-hidden="true">/</kbd>
+          <!-- 提示信息 / 下拉选择菜单：无匹配时保留搜索反馈面，不伪造可导航选项。 -->
+          <div v-if="sidebarQuery.trim() && !menuOptions.length" class="sidebar-search-empty" role="status">无结果</div>
         </div>
         <!-- 侧边栏 / 菜单归类级别：桌面展开状态受控；收起后仅保留最外层可操作入口的 SVG。 -->
         <n-menu :value="activeKey" :options="menuOptions" :expanded-keys="sidebarExpandedKeys" :indent="18" :node-props="menuNodeProps" @update:expanded-keys="updateSidebarExpandedKeys" @update:value="handleMenuSelect" />
@@ -58,6 +60,8 @@
             <div class="sidebar-filter">
               <input v-model="sidebarQuery" type="search" placeholder="筛选导航" aria-label="筛选导航" autocomplete="off" @keydown.esc="sidebarQuery = ''" />
               <kbd v-if="!sidebarQuery" aria-hidden="true">/</kbd>
+              <!-- 提示信息 / 下拉选择菜单：手机筛选使用同一无结果反馈。 -->
+              <div v-if="sidebarQuery.trim() && !menuOptions.length" class="sidebar-search-empty" role="status">无结果</div>
             </div>
             <n-menu :value="activeKey" :options="menuOptions" :default-expanded-keys="defaultExpandedKeys" :indent="18" :node-props="menuNodeProps" @update:value="goAndClose" />
           </nav>
@@ -102,11 +106,15 @@
           <n-auto-complete
             v-model:value="searchQuery"
             :options="searchOptions"
+            :show-empty="!!searchQuery.trim()"
             placeholder="搜索功能"
             clear-after-select
             @select="handleSearchSelect"
             @keydown.enter="openFirstSearchResult"
-          />
+          >
+            <!-- 提示信息：无匹配时下拉面仍显示明确结果状态。 -->
+            <template #empty><span role="status">无结果</span></template>
+          </n-auto-complete>
           <kbd>Ctrl K</kbd>
         </div>
         <div class="header-right">
@@ -191,12 +199,15 @@ function renderIcon(icon: any) {
 }
 
 function groupLabel(text: string) {
-  return () => h('span', { class: 'menu-group-label' }, text)
+  return () => h('span', { class: 'menu-group-label', title: text }, [
+    h('i', { class: 'menu-group-dot', 'aria-hidden': 'true' }),
+    h('span', { class: 'menu-group-text' }, text),
+  ])
 }
 
 type SidebarMenuOption = (MenuOption | MenuGroupOption) & { sidebarLabel?: string }
 
-// 侧边栏菜单归类级别：一级归类只作为静态分组标题，不显示 SVG、箭头或层级竖线。
+// 侧边栏 / 菜单归类级别：一级为静态标题；收起时以中性圆点标记分组，不提供导航动作。
 function menuSection(key: string, label: string, children: MenuOption[]): SidebarMenuOption {
   return { type: 'group', key, label: groupLabel(label), children, sidebarLabel: label }
 }
@@ -481,6 +492,8 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
   background: oklch(98.5% 0 0); color: var(--sidebar-muted);
   font: 600 11px/1 var(--ff-mono); pointer-events: none;
 }
+/* 提示信息 / 下拉选择菜单：搜索反馈沿用浮层几何，与导航空白分离。 */
+.sidebar-search-empty { position: absolute; z-index: 5; top: calc(100% + 8px); left: 0; right: 0; padding: 16px; border: 1px solid var(--border); border-radius: 16px !important; background: var(--bg); color: var(--text-3); box-shadow: var(--shadow-flyout); text-align: center; font: 400 13px/20px var(--ff-body); }
 .sidebar-menu {
   /* stable scrollbar-gutter 已占用右侧轨道，因此只保留左侧 16px 内容内轨。 */
   box-sizing: border-box; flex: 1 1 auto; min-height: 0; width: 100%; min-width: 0; max-width: 100%; overflow-x: hidden; overflow-y: auto; scrollbar-gutter: stable; contain: inline-size; padding: 0 0 var(--sidebar-content-gap) 16px;
@@ -629,7 +642,12 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
   overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important;
 }
 .app-sider.is-collapsed :deep(.n-menu-item-content__arrow) { display: none !important; }
-.app-sider.is-collapsed :deep(.n-menu-item-group-title) { height: 8px; min-height: 8px; margin: 6px 0 2px !important; padding: 0 !important; overflow: hidden; opacity: 0; }
+/* 侧边栏 / 菜单归类级别：折叠分组标题以4px圆点居中占位，SVG和分组中心线一致。 */
+:deep(.menu-group-dot) { display: none; }
+.app-sider.is-collapsed :deep(.n-menu-item-group-title) { display: flex; align-items: center; justify-content: center; height: 16px; min-height: 16px; margin: 6px 0 2px !important; padding: 0 !important; overflow: hidden; opacity: 1; }
+.app-sider.is-collapsed :deep(.menu-group-label) { display: flex; align-items: center; justify-content: center; }
+.app-sider.is-collapsed :deep(.menu-group-text) { display: none; }
+.app-sider.is-collapsed :deep(.menu-group-dot) { display: block; width: 4px; height: 4px; border-radius: 50% !important; background: var(--sidebar-muted); }
 .app-sider.is-collapsed :deep(.n-menu-item-content .n-menu-item-content__icon) { margin: 0 !important; }
 /* 侧边栏 / 菜单归类级别：收起时立即移除子树，关闭动画中的二、三级 SVG 也不能进入图标轨道。 */
 .app-sider.is-collapsed :deep(.n-submenu-children) { display: none !important; }
@@ -684,6 +702,11 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
   height: 100% !important;
   min-height: 100% !important;
 }
+/* 侧边栏：Teleport的抽屉及滚动包装层保持直角；菜单行继续使用8px圆角。 */
+:global(.mobile-sidebar-drawer-root .n-drawer-body),
+:global(.mobile-sidebar-drawer-root .n-drawer-body-content-wrapper),
+:global(.mobile-sidebar-drawer-root .sidebar-surface),
+:global(.mobile-sidebar-drawer .n-drawer-body-content-wrapper) { border-radius: 0 !important; }
 @media (max-width: 1080px) {
   .layout-header { grid-template-columns: minmax(120px, .8fr) minmax(220px, 380px) minmax(120px, .8fr); gap: 14px; }
 }

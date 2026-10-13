@@ -392,7 +392,8 @@ test('project hyperlinks use the shared Apple blue contract', () => {
   const certs = read('src/views/AdminCerts.vue')
   assert.match(globalCss, /项目超链接：所有可导航文本链接统一使用 Apple 蓝[，,]悬浮沿用全局交互蓝。[\s\S]*?a \{ color: var\(--accent\);/)
   assert.match(globalCss, /项目超链接：Markdown 正文链接同样固定为 Apple 蓝。[\s\S]*?\.md a \{ color: var\(--accent\);/)
-  assert.match(globalCss, /项目超链接：组件化 router-link \/ tag="a" 也复用同一 Apple 蓝。[\s\S]*?\.project-link \{ color: var\(--accent\) !important; \}/)
+  assert.match(globalCss, /\.project-link \{ color: var\(--accent\) !important;[^}]*text-decoration: none;/)
+  assert.match(globalCss, /\.project-link:hover, \.project-link:focus-visible \{[^}]*text-decoration: underline;/)
   assert.match(update, /项目超链接：发布页入口使用全局 Apple 蓝链接合同。[\s\S]*?<a[^>]*class="release-link"/)
   assert.match(update, /项目超链接：更新发布页链接常态 Apple 蓝[，,]悬浮使用交互态蓝。[\s\S]*?\.release-link \{[^}]*color: var\(--accent\);/)
   assert.match(settings, /项目超链接：设置说明中的外部服务链接统一使用 Apple 蓝。/)
@@ -408,9 +409,8 @@ test('project hyperlinks use the shared Apple blue contract', () => {
 
 test('monitor titles are project hyperlinks rather than clickable cards', () => {
   const monitor = read('src/views/AdminMonitor.vue')
-  assert.match(monitor, /项目超链接：标题进入监控详情[\s\S]*?<router-link class="srv-name project-link"/)
-  assert.match(monitor, /项目超链接：服务器标题复用全局 Apple 蓝/)
-  assert.match(monitor, /\.srv-name \{[^}]*text-decoration: none;/)
+  assert.match(monitor, /项目超链接：真实标题导航[\s\S]*?<router-link class="srv-name project-link"/)
+  assert.match(monitor, /项目超链接：标题常态Apple蓝，悬浮下划线/)
   assert.match(monitor, /\.srv-name:focus-visible \{ outline: 2px solid var\(--accent\);/)
   assert.doesNotMatch(monitor, /可跳转展示卡|\.srv-name[^}]*color: var\(--text\)/)
 })
@@ -531,7 +531,7 @@ test('public header brand aligns to the sidebar left content rail', () => {
 test('monitor summary SVGs are neutral and heatmap range uses the route-switch contract', () => {
   const monitor = read('src/views/Monitor.vue')
   assert.match(monitor, /\.summary-icon \{[^}]*background: var\(--bg-subtle\); color: var\(--text-2\);/)
-  assert.match(monitor, /图标底框：42px 方形容器使用 12px 圆角[\s\S]*?\.summary-icon \{[^}]*border-radius: 12px !important;/)
+  assert.match(monitor, /图标底框：42px中性浅底、12px圆角、无边框[\s\S]*?\.summary-icon \{[^}]*border: 0;/)
   assert.doesNotMatch(monitor, /\.summary-icon\.i-(?:server|cpu|mem|disk|up|down)\s*\{[^}]*var\(--(?:accent|success)/)
   assert.match(monitor, /<!-- 路由切换组件：热力图时间范围使用跟随指示面，不包含状态图例。 -->/)
   assert.match(monitor, /class="heat-range route-switch"/)
@@ -561,14 +561,14 @@ test('admin monitor summary SVGs use the same neutral icon treatment', () => {
 
 test('monitor monthly price keeps currency and amount numeric but the unit in body font', () => {
   const monitor = read('src/views/Monitor.vue')
-  assert.match(monitor, /class="tag price"><span class="numeric">¥\{\{ Number\(s\.price\)\.toFixed\(2\) \}\}<\/span><span class="price-unit">\/月<\/span>/)
+  assert.match(monitor, /class="tag price"[^>]*><span class="numeric">¥\{\{ Number\(s\.price\)\.toFixed\(2\) \}\}<\/span><span class="price-unit">\/月<\/span>/)
   assert.match(monitor, /\.tag\.price \{[^}]*font-family: var\(--ff-body\)/)
   assert.doesNotMatch(monitor, /\.tag\.price \{[^}]*font-family: var\(--ff-mono\)/)
 })
 
 test('monitor monthly price is annotated as an ordinary soft information badge', () => {
   const monitor = read('src/views/Monitor.vue')
-  assert.match(monitor, /<!-- 区分-信息牌：普通信息牌使用浅蓝底和蓝色文字，金额使用数字字体，计费单位保持正文角色。 -->\s*<span v-if="s\.price != null" class="tag price">/)
+  assert.match(monitor, /区分-信息牌：价格来自手填资产月费，默认零值不展示[\s\S]*?<span v-if="Number\(s\.price\) > 0" class="tag price"/)
   assert.match(monitor, /\.tag\.price \{[^}]*background: var\(--info-soft\); color: var\(--info\);/)
   assert.doesNotMatch(monitor, /\.tag\.price \{[^}]*(?:background: var\(--accent\)|color: #fff|box-shadow:)/)
 })
@@ -597,7 +597,7 @@ test('semantic status colors use Apple soft badges and chart state semantics', (
   assert.doesNotMatch(skyline, /SEVERITY_SCALE|severityRamp|colorProgress|colorRamp/)
   assert.match(skyline, /HEATMAP_STATES[\s\S]*?color: CHART_STATUS_COLORS\.success[\s\S]*?color: CHART_STATUS_COLORS\.warning[\s\S]*?color: CHART_STATUS_COLORS\.error[\s\S]*?color: CHART_STATUS_COLORS\.inactive/)
   assert.doesNotMatch(monitor, /shadowBlur: 10|card-top-line/)
-  assert.match(adminMonitor, /区分-状态牌[\s\S]*?color: CHART_STATUS_COLORS\.success[\s\S]*?color: CHART_STATUS_COLORS\.warning[\s\S]*?color: CHART_STATUS_COLORS\.error/)
+  assert.match(adminMonitor, /<AvailabilityHeatmap v-if="heatData" :data="heatData"/)
   assert.match(adminMonitor, /function pctColor\(v: number\) \{ return chartColorForPercent\(v\) \}/)
   assert.doesNotMatch(adminMonitor, /shadowBlur: 10/)
 })
@@ -843,7 +843,7 @@ test('ECharts uses one tree-shakable registry with only rendered chart features'
 test('shared resource metrics use the display-card hover treatment', () => {
   const source = read('src/styles/global.css')
   assert.match(source, /\/\* 展示卡片 \*\/[\s\S]*?\.resource-metric \{[\s\S]*?border:0;[\s\S]*?box-shadow:none;[\s\S]*?transition:box-shadow \.25s ease;/)
-  assert.match(source, /\.resource-metric:hover, \.resource-metric:focus-visible \{[\s\S]*?border-color:transparent; background:var\(--card\); box-shadow:0 8px 28px rgba\(0, 0, 0, 0\.08\);/)
+  assert.match(source, /\.resource-metric:not\(\.active\):hover, \.resource-metric:not\(\.active\):focus-visible \{[\s\S]*?border-color:transparent; background:var\(--card\); box-shadow:0 8px 28px rgba\(0, 0, 0, 0\.08\);/)
 })
 
 test('monitor summary cards use the display-card hover treatment', () => {

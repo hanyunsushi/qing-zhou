@@ -14,6 +14,7 @@
       </div>
     </header>
 
+    <!-- 展示卡片 / 悬浮效果：选择状态是中性底色，悬浮仅加阴影，不改变选中底色。 -->
     <section class="resource-overview help-overview" aria-label="文档状态概览">
       <button
         v-for="metric in metrics"
@@ -51,12 +52,15 @@
             <template #prefix><n-icon><SearchOutline /></n-icon></template>
           </n-input>
           <!-- 路由切换组件：帮助文档发布状态改变当前列表维度。 -->
-          <div class="status-switch route-switch" aria-label="按发布状态筛选">
+          <div ref="statusSwitch" class="status-switch route-switch" role="group" aria-label="按发布状态筛选"
+               @mouseover="moveStatusFromEvent" @focusin="moveStatusFromEvent"
+               @mouseleave="resetStatusIndicator" @focusout="resetStatusIndicator">
             <button
               v-for="option in statusOptions"
               :key="option.value"
               type="button"
               :class="{ active: statusFilter === option.value }"
+              :aria-pressed="statusFilter === option.value"
               @click="statusFilter = option.value"
             >
               {{ option.label }}
@@ -203,7 +207,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, reactive, onMounted, nextTick } from 'vue'
+import { computed, ref, reactive, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import {
   NSpin, NButton, NModal, NForm, NFormItem, NInput, NInputNumber,
   NSwitch, NTag, NEmpty, NIcon, useMessage, useDialog,
@@ -386,7 +390,26 @@ async function load() {
   finally { loading.value = false }
 }
 
-onMounted(load)
+// 路由切换组件：指示面跟随悬浮/键盘，离开恢复选中；数据和窗口变化后重新测量。
+const statusSwitch = ref<HTMLElement | null>(null)
+function moveStatusIndicator(button: HTMLElement | null) {
+  const root = statusSwitch.value
+  if (!root || !button) return
+  const rect = root.getBoundingClientRect(), target = button.getBoundingClientRect()
+  root.style.setProperty('--route-indicator-x', `${target.left - rect.left}px`)
+  root.style.setProperty('--route-indicator-w', `${target.width}px`)
+}
+function syncStatusIndicator() { nextTick(() => moveStatusIndicator(statusSwitch.value?.querySelector('button.active') || null)) }
+function moveStatusFromEvent(event: Event) {
+  if (event.target instanceof HTMLElement) moveStatusIndicator(event.target.closest('button'))
+}
+function resetStatusIndicator(event: MouseEvent | FocusEvent) {
+  if (event.relatedTarget instanceof Node && statusSwitch.value?.contains(event.relatedTarget)) return
+  syncStatusIndicator()
+}
+watch(statusFilter, syncStatusIndicator, { flush: 'post' })
+onMounted(() => { void load(); syncStatusIndicator(); window.addEventListener('resize', syncStatusIndicator) })
+onUnmounted(() => window.removeEventListener('resize', syncStatusIndicator))
 </script>
 
 <style scoped>
@@ -400,7 +423,7 @@ onMounted(load)
 .metric-card:hover, .metric-card:focus-visible { background: var(--card); box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08); transform: none; opacity: 1; }
 .metric-card::after { content: ''; position: absolute; inset: auto 0 0; height: 3px; background: transparent; transition: background-color .2s ease; }
 .metric-card.active { border: 0 !important; background: var(--card-hover); }
-.metric-card.active:hover, .metric-card.active:focus-visible { background: var(--card-hover); box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08); }
+.metric-card.active:hover, .metric-card.active:focus-visible { background: var(--card-hover); box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08) !important; }
 .metric-card.active::after { background: transparent; }
 /* 卡片 SVG：复用首页摘要图标的中性前景与灰色底框，不按统计状态着色。 */
 .metric-icon { display: grid !important; place-items: center; flex: 0 0 40px; width: 40px; height: 40px; margin: 0 !important; border-radius: 11px; color: var(--text-2) !important; background: var(--bg-subtle); font-size: 20px !important; }
@@ -420,10 +443,14 @@ onMounted(load)
 .status-switch.route-switch { position:relative; isolation:isolate; min-height: 40px; padding: 4px; border: 0; border-radius: 16px !important; background: var(--bg-subtle); box-shadow: none; }
 .status-switch.route-switch::before { position:absolute; z-index:0; top:4px; bottom:4px; left:0; width:var(--route-indicator-w, 0px); border-radius:12px; content:''; pointer-events:none; background:var(--card); box-shadow:none; transform:translateX(var(--route-indicator-x, 4px)); transition:transform .24s cubic-bezier(.215,.61,.355,1), width .24s cubic-bezier(.215,.61,.355,1); }
 .status-switch button { height: 28px; padding: 0 11px; border: 0; border-radius: 6px; background: transparent; color: var(--text-2); font-family: inherit; font-size: 12px; font-weight: 500; line-height: 1; white-space: nowrap; cursor: pointer; }
-.status-switch.route-switch button { position:relative; z-index:1; display:inline-flex; align-items:center; justify-content:center; box-sizing:border-box; height: 32px; padding: 6px 11px; line-height:20px; border-radius: 12px; }
-.status-switch.route-switch button:focus-visible { outline:0; box-shadow:inset 0 0 0 2px rgba(29,39,51,.16); }
+.status-switch.route-switch button { position:relative; z-index:1; display:inline-flex; align-items:center; justify-content:center; box-sizing:border-box; height: 32px; padding: 6px 14px; font: 500 13px/20px var(--ff-body); border-radius: 12px; }
+.status-switch.route-switch button:focus-visible { outline:0; box-shadow:inset 0 0 0 2px rgba(29,39,51,.16) !important; }
 .status-switch button:hover { color: var(--text); }
-.status-switch button.active { background: transparent; color: var(--text); box-shadow: none; font-weight: 650; }
+.status-switch button.active { background: transparent; color: var(--text); box-shadow: none; font-weight: 500; }
+
+/* 路由切换组件：触摸命中44px，减少动态效果时停用指示面过渡。 */
+@media (pointer: coarse) { .status-switch.route-switch { min-height: 52px; } .status-switch.route-switch button { min-height: 44px; min-width: 44px; } }
+@media (prefers-reduced-motion: reduce) { .status-switch.route-switch::before { transition: none; } }
 
 .document-list { min-height: 120px; }
 .document-row { display: grid; grid-template-columns: 58px minmax(0, 1fr) auto; align-items: center; gap: 16px; padding: 17px 18px; border-bottom: 1px solid var(--border); transition: background-color .18s ease; }

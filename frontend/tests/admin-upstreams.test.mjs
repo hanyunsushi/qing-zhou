@@ -233,7 +233,7 @@ test('mobile menu trigger keeps the shared sidebar toggle contract', () => {
 })
 
 test('sidebar categories use static level-one groups with a dedicated admin section', () => {
-  assert.match(layout, /侧边栏菜单归类级别：一级归类只作为静态分组标题/)
+  assert.match(layout, /菜单归类级别：一级为静态标题；收起时以中性圆点标记分组/)
   assert.match(layout, /return \{ type: 'group', key, label: groupLabel\(label\), children, sidebarLabel: label \}/)
   assert.match(layout, /const infoLeafItems: MenuOption\[\] = \[[\s\S]*?key: '\/account'/)
   assert.match(layout, /const infoItems = computed<MenuOption\[\]>\(\(\) => infoLeafItems\)/)

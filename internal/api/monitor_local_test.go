@@ -556,3 +556,42 @@ func TestHeatmapRespectsPublicVisibility(t *testing.T) {
 		t.Fatalf("public heatmap rows = %d, want 1 once opted in", n)
 	}
 }
+
+func TestMonitorOverviewDeduplicatesEnabledLoopbackAsset(t *testing.T) {
+	a, st := newNodeUpgradeAPI(t)
+	sampleLocal(t, st, 12.5)
+	id, err := st.CreateServer(store.Server{Name: "OCI Singapore", Host: "127.0.0.1", ProbeEnabled: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := st.InsertMetrics(id, store.ServerMetrics{CPUPercent: 50, MemUsed: 4 << 30, MemTotal: 8 << 30}); err != nil {
+		t.Fatal(err)
+	}
+	var dashboard struct {
+		Data struct {
+			Total   int `json:"total_servers"`
+			Summary struct {
+				CPU float64 `json:"total_cpu"`
+				Mem int64   `json:"total_mem_used"`
+			} `json:"summary"`
+		} `json:"data"`
+	}
+	getJSON(t, a.handleMonitorDashboard, "/api/admin/monitor/dashboard", &dashboard)
+	if dashboard.Data.Total != 1 || dashboard.Data.Summary.CPU != 12.5 || dashboard.Data.Summary.Mem != 1<<30 {
+		t.Fatalf("duplicated native metrics: %+v", dashboard.Data)
+	}
+	var heatmap struct {
+		Data struct {
+			Servers []struct {
+				ID int64 `json:"id"`
+			} `json:"servers"`
+		} `json:"data"`
+	}
+	getJSON(t, a.handleMonitorHeatmap, "/api/admin/monitor/heatmap", &heatmap)
+	if len(heatmap.Data.Servers) != 1 || heatmap.Data.Servers[0].ID != store.LocalNodeID {
+		t.Fatalf("duplicated heatmap rows: %+v", heatmap.Data.Servers)
+	}
+	if asset, err := st.GetServer(id); err != nil || asset == nil || !asset.ProbeEnabled {
+		t.Fatalf("asset configuration changed: %+v, %v", asset, err)
+	}
+}

@@ -180,8 +180,10 @@ h4, h5, h6 { font-size: var(--font-size-heading-s); line-height: var(--line-heig
 a { color: var(--accent); text-decoration: none; }
 a:hover { color: var(--accent-hover); }
 /* 项目超链接：组件化 router-link / tag="a" 也复用同一 Apple 蓝。 */
-.project-link { color: var(--accent) !important; }
-.project-link:hover { color: var(--accent-hover) !important; }
+/* 项目超链接：常态蓝色，悬浮/键盘聚焦显示下划线；真实导航保留href。 */
+.project-link { color: var(--accent) !important; text-decoration: none; text-underline-offset: 3px; }
+.project-link:hover, .project-link:focus-visible { color: var(--accent-hover) !important; text-decoration: underline; }
+.project-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 button, input, textarea, select { font-family: inherit; }
 /* 文本选择：固定 Apple 系统蓝的半透明高亮，避免不同操作系统的原生色差。 */
 ::selection { background: var(--selection-bg); color: inherit; }
@@ -1063,7 +1065,7 @@ button, input, textarea, select { font-family: inherit; }
   background:var(--card); box-shadow:none; transition:box-shadow .25s ease; transform:none; opacity:1;
 }
 /* 悬浮效果：悬停只增加阴影，纸面、边框和位置保持不变。 */
-.resource-metric:hover, .resource-metric:focus-visible {
+.resource-metric:not(.active):hover, .resource-metric:not(.active):focus-visible {
   border-color:transparent; background:var(--card); box-shadow:0 8px 28px rgba(0, 0, 0, 0.08); transform:none; opacity:1;
 }
 button.resource-metric { color:inherit; text-align:left; font:inherit; cursor:pointer; }
@@ -1283,20 +1285,20 @@ button.resource-metric { color:inherit; text-align:left; font:inherit; cursor:po
 :where(
   .n-card, [class*="-card"], [class*="-panel"],
   .resource-metric, .stat-card, .list-card, .metric-card,
-  .kpi, .kpi-card, .summary-card, .user-card, .ver-card, .tx-card
+  .kpi, .kpi-card, .summary-card, .user-card, .ver-card, .tx-card, .order-item
 ):not(.topbar-hover-menu-panel) {
   border: 0 !important;
   box-shadow: none !important;
 }
 /* 展示卡片统一悬浮合同：平面保持原纸面，只增加中性阴影；局部旧规则不能改成灰色或蓝色底。 */
 :where(
-  .resource-metric, .stat-card, .list-card, .metric-card:not(.active),
+  .resource-metric:not(.active), .stat-card, .list-card, .metric-card:not(.active),
   .kpi, .kpi-card, .summary-card, .user-card, .ver-card, .tx-card,
   .sub-stat, .shop-card, .order-item, .sb-overview button,
   .traffic-summary-card, .sum-card, .group-summary-card, .package-summary-card
 ):not(.topbar-hover-menu-panel):hover,
 :where(
-  .resource-metric, .stat-card, .list-card, .metric-card:not(.active),
+  .resource-metric:not(.active), .stat-card, .list-card, .metric-card:not(.active),
   .kpi, .kpi-card, .summary-card, .user-card, .ver-card, .tx-card,
   .sub-stat, .shop-card, .order-item, .sb-overview button,
   .traffic-summary-card, .sum-card, .group-summary-card, .package-summary-card
@@ -1304,12 +1306,12 @@ button.resource-metric { color:inherit; text-align:left; font:inherit; cursor:po
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08) !important;
 }
 :where(
-  .resource-metric, .stat-card, .list-card, .metric-card:not(.active),
+  .resource-metric:not(.active), .stat-card, .list-card, .metric-card:not(.active),
   .kpi, .kpi-card, .summary-card, .user-card, .ver-card, .tx-card,
   .sub-stat, .shop-card, .order-item, .sb-overview button
 ):not(.topbar-hover-menu-panel):hover,
 :where(
-  .resource-metric, .stat-card, .list-card, .metric-card:not(.active),
+  .resource-metric:not(.active), .stat-card, .list-card, .metric-card:not(.active),
   .kpi, .kpi-card, .summary-card, .user-card, .ver-card, .tx-card,
   .sub-stat, .shop-card, .order-item, .sb-overview button
 ):not(.topbar-hover-menu-panel):focus-visible {

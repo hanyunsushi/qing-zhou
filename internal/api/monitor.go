@@ -188,15 +188,16 @@ fi
 
 func (a *API) handleMonitorDashboard(w http.ResponseWriter, r *http.Request) {
 	freshSince := time.Now().Add(-intervalcfg.OnlineWindow(a.st)).Unix()
-	total, online, expiring, err := a.st.CountProbeServersSince(freshSince)
+	latest, _ := a.st.GetLatestMetricsForAll()
+	servers, err := a.serversWithLocal(latest)
 	if err != nil {
 		fail(w, 500, "查询失败")
 		return
 	}
 	unread, _ := a.st.UnreadAlertCount()
 
-	// Aggregate latest metrics across all probe servers.
-	views, _ := a.st.ListProbeServersWithMetrics()
+	// Loopback asset metadata does not represent a second physical machine.
+	var total, online, expiring int
 	var totalCPU float64
 	var totalMemUsed, totalMemTotal, totalDiskUsed, totalDiskTotal int64
 	var count int
@@ -211,24 +212,20 @@ func (a *API) handleMonitorDashboard(w http.ResponseWriter, r *http.Request) {
 		totalDiskTotal += m.DiskTotal
 		count++
 	}
-	for _, v := range views {
-		add(v.Metrics)
-	}
-	// The counts come from a SQL count over the servers table, which the panel's
-	// own machine is deliberately absent from. Left out, the header would say
-	// "0 台在线" on a panel that is plainly monitoring itself right below.
-	latest, _ := a.st.GetLatestMetricsForAll()
-	if local := a.localMonitorServer(latest); local != nil {
+	now := time.Now()
+	for _, sv := range servers {
+		if !sv.ProbeEnabled || (latest[store.LocalNodeID] != nil && isPanelLoopbackAlias(sv)) {
+			continue
+		}
 		total++
-		now := time.Now()
-		if local.LastSeen >= freshSince {
+		if sv.LastSeen >= freshSince {
 			online++
 		}
 		// Same 3-day window CountProbeServers uses.
-		if local.ExpiryDate > now.Unix() && local.ExpiryDate <= now.AddDate(0, 0, 3).Unix() {
+		if sv.ExpiryDate > now.Unix() && sv.ExpiryDate <= now.AddDate(0, 0, 3).Unix() {
 			expiring++
 		}
-		add(latest[store.LocalNodeID])
+		add(latest[sv.ID])
 	}
 
 	ok(w, J{
@@ -685,6 +682,11 @@ func (a *API) buildHeatmap(w http.ResponseWriter, r *http.Request, publicOnly bo
 	idx := map[int64]int{} // server_id -> row index
 	for _, sv := range servers {
 		if !sv.ProbeEnabled || (publicOnly && !sv.PublicVisible) {
+			continue
+		}
+		// Admin overview displays the native stream once, retaining alias assets
+		// in the management endpoint. Public visibility gates remain independent.
+		if !publicOnly && latest[store.LocalNodeID] != nil && isPanelLoopbackAlias(sv) {
 			continue
 		}
 		idx[sv.ID] = len(rows)

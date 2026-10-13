@@ -24,7 +24,7 @@
 
     <!-- 提示信息：按套餐到期与自动续订状态区分信息提示和手动续费提醒。 -->
     <transition-group name="alert" tag="div">
-      <n-alert v-for="a in alerts" :key="a.key" :type="a.type" class="dash-alert">
+      <n-alert v-for="a in alerts" :key="a.key" :type="a.type" :bordered="false" class="dash-alert">
         {{ a.text }}
         <!-- 项目超链接：到期提示的下一步入口使用 Apple 蓝链接合同。 -->
         <router-link v-if="a.to" class="project-link" :to="a.to">{{ a.action }}</router-link>
@@ -413,7 +413,6 @@ onUnmounted(() => {
 .page-sub{color:var(--text-2);margin-bottom:0}
 /* 项目超链接：用户控制台内的导航链接统一使用 Apple 蓝。 */
 a{color:var(--accent)}
-.project-link{color:var(--accent);text-decoration:none}.project-link:hover,.project-link:focus-visible{color:var(--accent-hover);text-decoration:underline;text-underline-offset:3px}
 .dash-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:20px}
 .dash-actions{display:flex;gap:8px;flex-shrink:0}
 .sec-title{font-weight:650;font-size:16px;line-height:20px;letter-spacing:0}

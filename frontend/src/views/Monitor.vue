@@ -159,8 +159,8 @@
               <span v-if="s.location" class="tag loc">{{ s.location }}</span>
               <span v-if="s.provider" class="tag">{{ s.provider }}</span>
               <span v-if="s.spec" class="tag spec">{{ s.spec }}</span>
-              <!-- 区分-信息牌：普通信息牌使用浅蓝底和蓝色文字，金额使用数字字体，计费单位保持正文角色。 -->
-              <span v-if="s.price != null" class="tag price"><span class="numeric">¥{{ Number(s.price).toFixed(2) }}</span><span class="price-unit">/月</span></span>
+              <!-- 区分-信息牌：价格来自手填资产月费，默认零值不展示；金额和计费单位分用数字与正文字体。 -->
+              <span v-if="Number(s.price) > 0" class="tag price" title="资产设置中的月费"><span class="numeric">¥{{ Number(s.price).toFixed(2) }}</span><span class="price-unit">/月</span></span>
               <span v-if="s.days_left != null" class="tag expiry" :class="expiryCls(s.days_left)" title="距离到期剩余天数">
                 <i class="exp-dot" />剩 {{ s.days_left }} 天
               </span>
@@ -746,8 +746,8 @@ onUnmounted(() => {
   transform: none;
   opacity: 1;
 }
-/* 图标底框：42px 方形容器使用 12px 圆角，避免继承 18px 表面圆角后显得过圆。 */
-.summary-icon { width: 42px; height: 42px; border-radius: 12px !important; display: grid; place-items: center; flex-shrink: 0; border: 1px solid var(--border); background: var(--bg-subtle); color: var(--text-2); box-shadow: none; }
+/* 卡片SVG / 图标底框：42px中性浅底、12px圆角、无边框，状态在数值和标签表达。 */
+.summary-icon { width: 42px; height: 42px; border-radius: 12px !important; display: grid; place-items: center; flex-shrink: 0; border: 0; background: var(--bg-subtle); color: var(--text-2); box-shadow: none; }
 .summary-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
 .summary-val { font-size: 23px; font-weight: 770; letter-spacing: 0; color: var(--text); font-family: var(--ff-mono); font-variant-numeric: tabular-nums; line-height: 1.05; }
 .summary-val.small { font-size: 18px; }

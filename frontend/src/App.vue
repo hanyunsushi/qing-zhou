@@ -53,8 +53,11 @@ const themeOverrides: GlobalThemeOverrides = {
     textColorBase: '#16191f',
     fontFamily: 'var(--ff-body)',
   },
-  // 提示信息 / 警告信息：警告、错误沿用浅色语义面，不附加边框线。
+  // 提示信息 / 警告信息：各类反馈沿用浅色语义面和图标，不附加边框线。
   Alert: {
+    borderDefault: 'none',
+    borderInfo: 'none',
+    borderSuccess: 'none',
     borderWarning: 'none',
     borderError: 'none',
   },

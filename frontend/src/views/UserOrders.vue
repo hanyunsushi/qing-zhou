@@ -82,6 +82,7 @@
             <span class="group-name">{{ g.key }}</span>
             <span class="group-meta">{{ g.count }} 单 · {{ g.revenue }} 积分</span>
           </div>
+          <!-- 展示卡片：订单条目使用所属深度的中性表面，无装饰边框。 -->
           <div v-for="(o, i) in g.items" :key="o.id" class="order-item" :style="{ '--i': Math.min(i, 12) }">
             <div class="oi-ic" :class="typeCls(o.type)">
               <span>{{ typeIcon(o.type) }}</span>
@@ -395,9 +396,10 @@ onUnmounted(() => {
 .group-name { font-weight: 700; font-size: 13.5px; color: var(--text); letter-spacing: 0; }
 .group-meta { font-size: 11.5px; color: var(--text-3); font-variant-numeric: tabular-nums; }
 
+/* 展示卡片：订单条目无边框，悬浮只增加中性阴影。 */
 .order-item {
   display: flex; align-items: center; gap: 12px;
-  background: var(--card); border: 1px solid var(--border); border-radius: var(--r-sm);
+  background: var(--card); border: 0; border-radius: var(--r-sm);
   padding: 12px 14px; margin-bottom: 8px;
   transition: box-shadow .18s ease, border-color .18s ease, background-color .18s ease;
 }

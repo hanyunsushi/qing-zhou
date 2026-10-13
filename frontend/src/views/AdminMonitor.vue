@@ -43,21 +43,24 @@
       </div>
     </div>
 
-    <!-- 热力图 -->
+    <!-- 展示信息模块 / 区分-状态牌：与首页共用16列3行矩阵、立体视图与三状态编码。 -->
     <n-card class="heatmap-card" size="small" style="margin-bottom:16px;">
       <template #header><span class="card-h">可用性热力图</span></template>
       <template #header-extra>
         <div class="heatmap-header-controls">
           <!-- 路由切换组件：热力图时间范围改变监控查询维度。 -->
-          <span class="range-switch route-switch">
-            <button v-for="r in heatRanges" :key="r.value" type="button" :class="{ active: heatRange===r.value }" @click="loadHeatmap(r.value)">{{ r.label }}</button>
+          <span class="range-switch route-switch" role="group" aria-label="可用性时间范围"
+                @mouseover="moveRangeIndicatorFromEvent" @focusin="moveRangeIndicatorFromEvent"
+                @mouseleave="resetRangeIndicator" @focusout="resetRangeIndicator">
+            <button v-for="r in heatRanges" :key="r.value" type="button" :class="{ active: heatRange===r.value }" :aria-pressed="heatRange===r.value" @click="loadHeatmap(r.value)">{{ r.label }}</button>
           </span>
           <!-- 区分-状态牌：热力图图例与可用性格子共用 Apple 状态色。 -->
           <span class="hm-legend"><i class="hm-dot ok" />正常 <i class="hm-dot warn" />高负载 <i class="hm-dot crit" />严重 <i class="hm-dot none" />无数据</span>
         </div>
       </template>
-      <div ref="heatEl" class="heat-chart" />
-      <n-empty v-if="!heatLoading && !heatData?.servers?.length" size="small" description="暂无探针服务器" style="padding:16px 0;" />
+      <AvailabilityHeatmap v-if="heatData" :data="heatData" />
+      <!-- 提示信息：失败保留上一份数据，并明确错误状态。 -->
+      <p v-if="heatError || !heatData" class="heat-feedback" role="status">{{ heatError || '正在获取可用性数据…' }}</p>
     </n-card>
 
     <!-- 告警条 -->
@@ -100,7 +103,13 @@
       <n-select v-model:value="fLoc" :options="locOpts" size="small" placeholder="位置" clearable style="width:140px;" filterable />
       <n-select v-model:value="fProv" :options="provOpts" size="small" placeholder="提供商" clearable style="width:140px;" filterable />
       <span class="spacer" />
-      <span class="cnt">{{ filtered.length }}/{{ servers.length }}</span>
+      <span class="cnt">{{ filtered.length }}/{{ monitorServers.length }}</span>
+    </div>
+
+    <!-- 展示信息模块 / 标准默认弧边按钮：回环资产保留编辑入口，同一采样源仅展示一份指标。 -->
+    <div v-if="panelAliases.length" class="monitor-assets" aria-label="本机关联资产">
+      <span>关联资产</span>
+      <n-button v-for="asset in panelAliases" :key="asset.id" class="default-arc-button" :aria-label="`编辑${asset.name}资产`" @click="openAsset(asset)">{{ asset.name }} · 编辑</n-button>
     </div>
 
     <!-- 服务器卡片 -->
@@ -109,7 +118,7 @@
         <template #header>
           <div class="srv-head">
             <span class="dot" :class="s.status" />
-            <!-- 项目超链接：标题进入监控详情，使用统一蓝色导航文字与键盘焦点，无常态下划线。 -->
+            <!-- 项目超链接：真实标题导航，常态蓝色，悬浮/键盘聚焦下划线。 -->
             <router-link class="srv-name project-link" :to="{ name: 'admin-monitor-detail', params: { id: s.id } }" :aria-label="`查看${s.name}监控详情`">{{ s.name }}</router-link>
             <!-- 区分-信息牌：面板自采集说明采集来源，不表达健康状态。 -->
             <n-tag v-if="s.local || s.panel_metrics" size="small" type="info" :bordered="false">面板自采集</n-tag>
@@ -125,11 +134,12 @@
         </template>
         <template #header-extra>
           <n-space :size="4" align="center" wrap>
+            <!-- 切换开关：公开可见性用于首页，保持独立于管理员监控和探针启用。 -->
             <n-tooltip trigger="hover">
               <template #trigger>
-                <n-switch :value="s.public_visible" size="small" :loading="visSaving === s.id" @update:value="(v:boolean) => setPublicVisible(s, v)" />
+                <n-switch :value="s.public_visible" :aria-label="`${s.name}首页公开可见性`" size="small" :loading="visSaving === s.id" @update:value="(v:boolean) => setPublicVisible(s, v)" />
               </template>
-              {{ s.public_visible ? '显示在公开状态页' : '不显示在公开状态页' }}
+              {{ s.panel_metrics && !s.probe_enabled ? '此回环记录没有独立探针，首页本机指标由“面板本机”的公开开关控制' : s.public_visible ? '显示在首页（公开状态页）' : '不显示在首页（公开状态页）' }}
             </n-tooltip>
             <!-- 标准默认弧边按钮：资产编辑与同组操作共用18px弧边几何。 -->
             <n-button size="tiny" class="default-arc-button" @click="openAsset(s)">编辑</n-button>
@@ -206,8 +216,10 @@
 
         <div class="mini-chart-box">
           <!-- 路由切换组件：单机趋势时间范围改变图表查询维度。 -->
-          <div class="range-switch mini-range route-switch">
-            <button v-for="r in ranges" :key="r.value" type="button" :class="{ active: chartRange[s.id]===r.value }" @click="loadChart(s.id, r.value)">{{ r.label }}</button>
+          <div class="range-switch mini-range route-switch" role="group" :aria-label="`${s.name}趋势时间范围`"
+               @mouseover="moveRangeIndicatorFromEvent" @focusin="moveRangeIndicatorFromEvent"
+               @mouseleave="resetRangeIndicator" @focusout="resetRangeIndicator">
+            <button v-for="r in ranges" :key="r.value" type="button" :class="{ active: chartRange[s.id]===r.value }" :aria-pressed="chartRange[s.id]===r.value" @click="loadChart(s.id, r.value)">{{ r.label }}</button>
           </div>
           <div :ref="(el:any) => setChartRef(s.id, el)" class="mini-chart" />
         </div>
@@ -288,7 +300,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onUnmounted, nextTick, shallowRef } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted, nextTick, shallowRef, watch } from 'vue'
 import {
   NCard, NButton, NSpace, NTag, NProgress, NDrawer, NDrawerContent, NForm, NFormItem, NInput, NInputNumber, NSwitch, NSelect, NEmpty, NTooltip, NAlert, useMessage
 } from 'naive-ui'
@@ -296,10 +308,15 @@ import { apiGet, apiList, apiPost, apiPut } from '@/api'
 import { fmtBytes, fmtDateTime, fmtUptime, pct, toLocalDatetimeInput } from '@/utils/format'
 import * as echarts from '@/utils/echarts'
 import { CHART_STATUS_COLORS, chartColorForPercent } from '@/utils/status-colors'
+import AvailabilityHeatmap from '@/components/AvailabilityHeatmap.vue'
+import type { AvailabilityData } from '@/utils/heatmap-skyline'
 
 const message = useMessage()
 const dash = ref<any>({})
 const servers = ref<any[]>([])
+// 展示信息模块：物理主机只展示一份采样，旧回环记录仍能独立编辑资产元数据。
+const panelAliases = computed(() => servers.value.filter(s => s.panel_metrics))
+const monitorServers = computed(() => servers.value.filter(s => !s.panel_metrics))
 // 展示信息模块：回环服务器记录与面板自采集记录分开说明，不生成重复指标。
 function isLoopbackServer(server: { host?: string }): boolean {
   return ['localhost', '127.0.0.1', '::1', '[::1]'].includes(String(server.host || '').trim().toLowerCase())
@@ -364,12 +381,13 @@ function uniqueOpts(arr: string[]) {
 }
 const filtered = computed(() => {
   const kw = q.value.trim().toLowerCase()
-  return servers.value.filter(s => {
-    if (kw && ![s.name, s.location, s.provider].some(v => (v || '').toLowerCase().includes(kw))) return false
+  return monitorServers.value.filter(s => {
+    const identities = s.local ? [s, ...panelAliases.value] : [s]
+    if (kw && !identities.some(item => [item.name, item.location, item.provider].some(v => (v || '').toLowerCase().includes(kw)))) return false
     if (fStatus.value === 'probe_outdated' && !s.probe_outdated) return false
     if (fStatus.value && fStatus.value !== 'probe_outdated' && s.status !== fStatus.value) return false
-    if (fLoc.value && s.location !== fLoc.value) return false
-    if (fProv.value && s.provider !== fProv.value) return false
+    if (fLoc.value && !identities.some(item => item.location === fLoc.value)) return false
+    if (fProv.value && !identities.some(item => item.provider === fProv.value)) return false
     return true
   })
 })
@@ -394,123 +412,29 @@ function trafficIncomplete(s: any) {
 }
 function pctColor(v: number) { return chartColorForPercent(v) }
 
-// 热力图分类：绿/黄/红
-// 旧版 cell 热力图已替换为 ECharts 时间热力图（Y=机器, X=时间桶），见 loadHeatmap。
-
-// --- 可用性热力图（ECharts heatmap：Y=服务器, X=时间）---
-const heatEl = ref<HTMLElement | null>(null)
-const heatChart = shallowRef<echarts.ECharts | null>(null)
-const heatData = ref<any>(null)
+// 展示信息模块 / 区分-状态牌：后台总览按机器与时间显示三种负载状态和无数据。
+const heatData = shallowRef<AvailabilityData | null>(null)
 const heatRange = ref('24h')
 const heatLoading = ref(false)
+const heatError = ref('')
+let heatRequest = 0
 const heatRanges = [
   { label: '1h', value: '1h' }, { label: '6h', value: '6h' },
   { label: '24h', value: '24h' }, { label: '7d', value: '7d' },
 ]
-function fmtHeatTime(ts: number, range: string): string {
-  const d = new Date(ts * 1000)
-  const pad = (n: number) => String(n).padStart(2, '0')
-  if (range === '7d' || range === '24h') return `${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`
-  return `${pad(d.getHours())}:${pad(d.getMinutes())}`
-}
-function fmtHeatAxisTime(ts: number, range: string): string {
-  const d = new Date(ts * 1000)
-  const pad = (n: number) => String(n).padStart(2, '0')
-  if (range === '7d') return `${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
-  return `${pad(d.getHours())}:${pad(d.getMinutes())}`
-}
-function escapeHeatHtml(value: unknown): string {
-  return String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] || c))
-}
 async function loadHeatmap(range: string) {
+  const request = ++heatRequest
   heatRange.value = range
   syncRangeIndicators()
   heatLoading.value = true
   try {
-    const data = await apiGet<any>(`/api/admin/monitor/heatmap?range=${range}`)
+    const data = await apiGet<AvailabilityData>(`/api/admin/monitor/heatmap?range=${range}`)
+    if (request !== heatRequest || !monitorMounted) return
     heatData.value = data
-    await nextTick()
-    renderHeatmap()
-  } catch {} finally { heatLoading.value = false }
-}
-function renderHeatmap() {
-  const data = heatData.value
-  if (!heatEl.value || !data) return
-  const servers: any[] = data.servers || []
-  if (!servers.length) {
-    // 无探针服务器：清空已有图表
-    heatChart.value?.clear()
-    return
-  }
-  if (!heatChart.value) heatChart.value = echarts.init(heatEl.value)
-  const chart = heatChart.value
-  const buckets: number[] = data.buckets || []
-  const matrix: number[][] = data.matrix || []
-  const range = data.range || '24h'
-  // 组装 ECharts heatmap data: [xIndex, yIndex, value]
-  const pts: [number, number, number][] = []
-  const hasDistinctNoData = Number(data.state_count || 0) >= 4
-  for (let y = 0; y < servers.length; y++) {
-    const row = matrix[y] || []
-    for (let x = 0; x < buckets.length; x++) {
-      const raw = row[x] ?? 3
-      pts.push([x, y, !hasDistinctNoData && raw === 2 ? 3 : raw])
-    }
-  }
-  const xLabels = buckets.map((t: number) => fmtHeatAxisTime(t, range))
-  const yLabels = servers.map((s: any) => s.name)
-  const cw = heatEl.value.clientWidth || 600
-  const maxNameLen = Math.max(...yLabels.map((n: string) => String(n).length), 4)
-  const yLabelW = Math.min(maxNameLen * 7 + 18, cw < 640 ? 92 : 150)
-  const padR = 4, padT = 5, padB = 30
-  const rowHeight = cw < 640 ? 18 : 22
-  const gridHeight = Math.max(1, servers.length) * rowHeight
-  const chartH = gridHeight + padT + padB
-  const labelCount = cw < 520 ? 4 : cw < 900 ? 6 : 8
-  const labelInterval = Math.max(0, Math.ceil(buckets.length / labelCount) - 1)
-  // 区分-状态牌：ECharts 可用性格子与图例共用 Apple 状态色。
-  const states = [
-    { label: '运行正常', color: CHART_STATUS_COLORS.success },
-    { label: '高负载', color: CHART_STATUS_COLORS.warning },
-    { label: '严重负载', color: CHART_STATUS_COLORS.error },
-    { label: '离线 / 无数据', color: CHART_STATUS_COLORS.inactive },
-  ]
-  heatEl.value.style.height = chartH + 'px'
-  chart.setOption({
-    animationDuration: 560,
-    animationDurationUpdate: 380,
-    animationEasing: 'cubicOut',
-    animationEasingUpdate: 'cubicOut',
-    tooltip: {
-      backgroundColor: 'rgba(255,255,255,.98)', borderColor: '#dfe4ea', borderWidth: 1,
-      padding: [10, 12], textStyle: { color: '#26323f', fontSize: 12 },
-      extraCssText: 'border-radius:10px;box-shadow:0 10px 30px rgba(42,55,70,.14);',
-      formatter: (p: any) => {
-        const [x, y, v] = p.value
-        const state = states[v] || states[3]
-        const time = buckets[x] ? fmtHeatTime(buckets[x], range) : ''
-        return `<div style="font-weight:650;margin-bottom:4px">${escapeHeatHtml(yLabels[y])}</div><div style="color:#7b8794;margin-bottom:7px">${escapeHeatHtml(time)}</div><div style="display:flex;align-items:center;gap:7px"><i style="width:8px;height:8px;border-radius:3px;background:${state.color};display:inline-block"></i>${state.label}</div>`
-      },
-    },
-    grid: { left: yLabelW, right: padR, top: padT, height: gridHeight },
-    xAxis: {
-      type: 'category', data: xLabels, splitArea: { show: true },
-      axisLabel: { interval: labelInterval, color: '#7b8794', fontSize: 10, margin: 10, hideOverlap: true },
-      axisTick: { show: false }, axisLine: { show: false },
-    },
-    yAxis: {
-      type: 'category', data: yLabels, splitArea: { show: true },
-      axisLabel: { color: '#606d7b', fontSize: 11, width: yLabelW - 12, overflow: 'truncate', margin: 10 },
-      axisTick: { show: false }, axisLine: { show: false },
-    },
-    visualMap: { type: 'piecewise', show: false, pieces: states.map((state, value) => ({ value, color: state.color })) },
-    series: [{
-      type: 'heatmap', data: pts, progressive: 0,
-      itemStyle: { borderColor: 'rgba(255,255,255,.96)', borderWidth: 3, borderRadius: 5 },
-      emphasis: { scale: true, itemStyle: { borderColor: '#fff', borderWidth: 2 } },
-    }],
-  }, true)
-  chart.resize()
+    heatError.value = ''
+  } catch (error: any) {
+    if (request === heatRequest && monitorMounted) heatError.value = error.message || '可用性数据加载失败，请重试'
+  } finally { if (request === heatRequest) heatLoading.value = false }
 }
 
 // --- Asset editing ---
@@ -681,19 +605,43 @@ async function pollProbeUpgrade(serverId: number, serverName: string) {
   }
 }
 
-// 路由切换组件：热力图与每台服务器趋势共用一个跟随活动项的中性指示面。
+// 路由切换组件：每组独立跟随悬浮/键盘目标，离开回到真实选中项。
+function moveRangeIndicator(container: HTMLElement, button: HTMLElement | null) {
+  if (!button) return
+  const base = container.getBoundingClientRect()
+  const item = button.getBoundingClientRect()
+  container.style.setProperty('--route-indicator-x', `${item.left - base.left}px`)
+  container.style.setProperty('--route-indicator-w', `${item.width}px`)
+}
+function moveRangeIndicatorFromEvent(event: MouseEvent | FocusEvent) {
+  const container = event.currentTarget
+  const target = event.target
+  if (!(container instanceof HTMLElement) || !(target instanceof HTMLElement)) return
+  const button = target.closest<HTMLElement>('button')
+  if (button && container.contains(button)) moveRangeIndicator(container, button)
+}
+function resetRangeIndicator(event: MouseEvent | FocusEvent) {
+  const container = event.currentTarget
+  if (!(container instanceof HTMLElement)) return
+  if (event.relatedTarget instanceof Node && container.contains(event.relatedTarget)) return
+  moveRangeIndicator(container, container.querySelector<HTMLElement>('button.active'))
+}
 function syncRangeIndicators() {
   void nextTick(() => {
     monitorRoot.value?.querySelectorAll<HTMLElement>('.range-switch.route-switch').forEach((container) => {
-      const active = container.querySelector<HTMLElement>('button.active')
-      if (!active) return
-      const base = container.getBoundingClientRect()
-      const item = active.getBoundingClientRect()
-      container.style.setProperty('--route-indicator-x', `${item.left - base.left}px`)
-      container.style.setProperty('--route-indicator-w', `${item.width}px`)
+      moveRangeIndicator(container, container.querySelector<HTMLElement>('button.active'))
     })
   })
 }
+// 路由切换组件：筛选重建卡片后按当前范围重新测量，不沿用旧位置。
+watch(filtered, (current, previous) => {
+  syncRangeIndicators()
+  for (const server of current) {
+    if (chartLoaded.value[server.id] && !previous.some(s => s.id === server.id)) {
+      void loadChart(server.id, chartRange.value[server.id] || '24h')
+    }
+  }
+}, { flush: 'post' })
 
 // --- ECharts（懒加载 + resize）---
 // chartRefs 在卡片卸载时清空引用，便于检测失效实例
@@ -719,19 +667,22 @@ function safeResizeAll() {
   }
 }
 
+const chartRequests: Record<number, number> = {}
 async function loadChart(serverId: number, range: string) {
+  const request = chartRequests[serverId] = (chartRequests[serverId] || 0) + 1
   chartRange.value[serverId] = range
   chartLoaded.value[serverId] = true
   syncRangeIndicators()
   try {
     const data = await apiGet<any>(`/api/admin/monitor/servers/${serverId}/metrics?range=${range}`)
+    if (request !== chartRequests[serverId] || !monitorMounted) return
     const metrics = data?.data || []
     await nextTick()
     const el = chartRefs.value[serverId]
-    if (!el) return
-    // 若旧实例绑定到已脱离 DOM 的容器，先 dispose 重建
+    if (!el || !(el as HTMLElement).isConnected) return
+    // 展示信息模块：筛选恢复卡片后，图表实例必须绑定当前容器。
     let chart = chartInstances.value[serverId]
-    if (chart && !(el as HTMLElement).isConnected) {
+    if (chart && chart.getDom() !== el) {
       try { chart.dispose() } catch {}
       chart = undefined
       delete chartInstances.value[serverId]
@@ -793,22 +744,20 @@ onMounted(async () => {
   await nextTick()
   syncRangeIndicators()
   // 懒加载：只画前 6 台可见服务器，其余按需点击 range 按钮时画
-  const initial = servers.value.slice(0, 6)
+  const initial = monitorServers.value.slice(0, 6)
   for (const sv of initial) {
     loadChart(sv.id, chartRange.value[sv.id] || '24h')
   }
   // 热力图
   loadHeatmap('24h')
-  refreshTimer = setInterval(load, 30000)
+  refreshTimer = setInterval(() => { void load(); void loadHeatmap(heatRange.value) }, 30000)
   // 定期 resize 图表以适配抽屉开合
-  resizeTimer = setInterval(() => { safeResizeAll(); heatChart.value?.resize() }, 5000)
+  resizeTimer = setInterval(safeResizeAll, 5000)
 })
 
 function onWinResize() {
   checkMobile()
   safeResizeAll()
-  // 窗口尺寸变化时重算正方形格子并重渲染
-  if (heatData.value) renderHeatmap()
   syncRangeIndicators()
 }
 
@@ -818,7 +767,6 @@ onUnmounted(() => {
   if (resizeTimer) clearInterval(resizeTimer)
   window.removeEventListener('resize', onWinResize)
   Object.values(chartInstances.value).forEach(c => c?.dispose())
-  heatChart.value?.dispose()
 })
 </script>
 
@@ -844,17 +792,19 @@ onUnmounted(() => {
 /* 区分-状态牌：管理监控图例使用统一 Apple 状态色。 */
 .hm-dot { width: 8px; height: 8px; border-radius: 3px; display: inline-block; margin-left: 6px; box-shadow: inset 0 0 0 1px rgba(31,43,55,.05); }
 .hm-dot.ok { background: var(--chart-success); } .hm-dot.warn { background: var(--chart-warning); } .hm-dot.crit { background: var(--chart-error); } .hm-dot.none { background: var(--chart-inactive); }
-.heat-chart { width: 100%; height: 58px; min-height: 0; }
-.heat-chart:empty { display: none; }
-.range-switch { display:inline-flex; align-items:center; gap:0; padding:3px; border:1px solid var(--border); border-radius:var(--r); background:var(--bg-subtle); }
+/* 展示信息模块 / 提示信息：共享热力图负责自身尺寸，关联资产入口不重复绘制资源值。 */
+.heat-feedback { padding: 16px 0; color: var(--text-3); font: 400 13px/20px var(--ff-body); text-align: center; }
+.monitor-assets { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 14px; color: var(--text-3); font-size: 13px; }
+/* 路由切换组件：40px外轨、32px选项、16/12px圆角及4px内距；单一跟随面绘制高亮。 */
+.range-switch { display:inline-flex; align-items:center; gap:0; background:var(--bg-subtle); }
 .range-switch.route-switch { --route-indicator-x:4px; --route-indicator-w:0px; position:relative; isolation:isolate; min-height:40px; padding:4px; border:0; border-radius:16px !important; box-shadow:none; }
 .range-switch.route-switch::before { position:absolute; z-index:0; top:4px; bottom:4px; left:0; width:var(--route-indicator-w, 0px); border-radius:12px; content:''; pointer-events:none; background:var(--card); box-shadow:none; transform:translateX(var(--route-indicator-x, 4px)); transition:transform .24s cubic-bezier(.215,.61,.355,1), width .24s cubic-bezier(.215,.61,.355,1); }
-.range-switch button { min-width:30px; padding:3px 8px; border:0; border-radius:5px; background:transparent; color:var(--text-3); font:600 11px/1.5 var(--ff); cursor:pointer; transition:background .18s var(--ease-standard), color .18s var(--ease-standard), box-shadow .18s var(--ease-standard); }
-.range-switch.route-switch button { position:relative; z-index:1; display:inline-flex; align-items:center; justify-content:center; box-sizing:border-box; min-height:32px; padding:6px 10px; line-height:20px; border-radius:12px; }
+.range-switch button { min-width:32px; border:0; background:transparent; color:var(--text-2); font:500 13px/20px var(--ff); cursor:pointer; transition:color .18s var(--ease-standard); }
+.range-switch.route-switch button { position:relative; z-index:1; display:inline-flex; align-items:center; justify-content:center; box-sizing:border-box; min-height:32px; padding:6px 14px; line-height:20px; border-radius:12px; }
 .range-switch button:hover { color:var(--text); }
 .range-switch button.active { background:transparent; color:var(--text); box-shadow:none; }
-.range-switch button:focus-visible { outline:0; box-shadow:inset 0 0 0 2px rgba(29,39,51,.16); }
-.mini-range { width:max-content; margin-bottom:6px; }
+.range-switch.route-switch button:focus-visible { outline:0; box-shadow:inset 0 0 0 2px rgba(29,39,51,.16) !important; }
+.mini-range { width:max-content; max-width:100%; margin-bottom:6px; }
 
 /* 告警 */
 .alert-cnt { display: inline-block; margin-left: 6px; padding: 0 6px; border-radius: 9px; background: var(--danger-soft); color: var(--danger); font-size: 11px; font-weight: 650; }
@@ -893,7 +843,7 @@ onUnmounted(() => {
 .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
 .dot.online { background: var(--success); }
 .dot.offline { background: var(--danger); }
-/* 项目超链接：服务器标题复用全局 Apple 蓝，悬浮变交互蓝，仅键盘显示焦点环。 */
+/* 项目超链接：标题常态Apple蓝，悬浮下划线由共享链接合同维护。 */
 .srv-name {
   cursor: pointer;
   padding: 0;
@@ -902,7 +852,6 @@ onUnmounted(() => {
   text-align: left;
   font: inherit;
   font-weight: 650;
-  text-decoration: none;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -932,6 +881,12 @@ onUnmounted(() => {
 .no-data span { color: var(--text-3); font-size: 11px; line-height: 1.5; }
 .mini-chart-box { margin-top: 12px; }
 .mini-chart { height: 160px; }
+
+/* 路由切换组件：触摸选项扩大命中区，内轨与跟随面保持同心几何。 */
+@media (pointer: coarse) {
+  .range-switch.route-switch { min-height:52px; }
+  .range-switch.route-switch button { min-height:44px; min-width:44px; }
+}
 
 @media (max-width: 768px) {
   .heatmap-card :deep(.n-card-header) {
