@@ -55,7 +55,7 @@ const themeOverrides: GlobalThemeOverrides = {
   },
   // 提示信息 / 警告信息：各类反馈沿用浅色语义面和图标，不附加边框线。
   Alert: {
-    borderDefault: 'none',
+    border: 'none',
     borderInfo: 'none',
     borderSuccess: 'none',
     borderWarning: 'none',

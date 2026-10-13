@@ -5,7 +5,7 @@ import test from 'node:test'
 const read = path => readFileSync(new URL('../src/' + path, import.meta.url), 'utf8')
 test('all alert types and order surfaces keep their borderless contract', () => {
   const theme = read('App.vue')
-  for (const type of ['Default', 'Info', 'Success', 'Warning', 'Error']) assert.ok(theme.includes(`border${type}: 'none'`))
+  for (const type of ['', 'Info', 'Success', 'Warning', 'Error']) assert.ok(theme.includes(`border${type}: 'none'`))
   assert.match(read('views/UserDashboard.vue'), /<n-alert[^>]*:bordered="false"/)
   assert.match(read('views/UserOrders.vue'), /\.order-item \{[^}]*border: 0;/)
 })
