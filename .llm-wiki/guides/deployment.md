@@ -20,8 +20,13 @@ Release `v0.2.101-kreeper-20261013-local-monitor` was deployed at
 `924ff1eed8ea21a967eec5c365837ce5f5e27df3fba67a567115126312012f38`.
 Backup API integrity, configuration preservation and unchanged sing-box/Tunnel
 PIDs passed; authenticated browser verification confirmed both cards show native
-metrics. The follow-up source corrects title classification and independent
-billing-cycle handling before its own release.
+metrics. Follow-up source `da341b70e8c90e06ae78e8236aff88ca4d1d8359` was
+released as `v0.2.102-kreeper-20261013-monitor-contract` by successful run
+`38374922084` and deployed panel-only on 2026-10-13. Actual running hash,
+health, backup integrity and preservation checks passed. Production browser
+confirmed project-link titles, both native metric cards and the OCI detail;
+desktop/390/360px checks and exact rollback evidence are linked through
+[validation](validation.md) and [project authority](../../agent.md).
 
 ## 2026-10-13 Monitor, links and refresh interaction rollout
 

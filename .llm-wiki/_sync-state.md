@@ -10,8 +10,11 @@ updated: 2026-10-13
   traffic analysis. Follow-up keeps asset-specific billing periods and modes,
   maps calibration to the physical metric source, and corrects title-only
   navigation to “项目超链接” rather than whole-card navigation. 149 frontend
-  tests, typecheck/Vite and Go tests pass. The v0.2.101 runtime and authenticated
-  OCI metrics are verified; the follow-up release is tracked independently.
+  tests, typecheck/Vite and Go tests pass, along with the re-executed 18 skill
+  contracts/build and coverage audit. Source `da341b70` is released and deployed
+  as v0.2.102 (run38374922084); runtime hashes/backup/preservation passed.
+  Authenticated production verifies both metric cards, OCI detail, real blue
+  router links and keyboard focus. Desktop/390/360px have no page overflow.
   No new or unconfirmed category was introduced.
 
 - Source `4ec8bd18cfe66dd32a83ea73134797fa21fe9cbc` aligns existing button,

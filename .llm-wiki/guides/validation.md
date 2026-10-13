@@ -9,7 +9,9 @@ updated: 2026-10-13
 
 服务器标题按“项目超链接”验证：真实 router-link/href、常态 accent、无下划线，hover accent-hover，键盘 focus-visible 可见。容器是“展示卡片”，标题跳转不误写为整卡可跳转。
 
-新增回归覆盖回环主机识别、趋势数据复用并保留资产 ID、不同重置周期/计费方向、校准与流量分析一致性。当前源码通过149项前端测试、vue-tsc/Vite与Go全量测试；生产浏览器与发布证据完成后独立记录，不沿用上一轮结果。
+新增回归覆盖回环主机识别、趋势数据复用并保留资产 ID、不同重置周期/计费方向、校准与流量分析一致性。源码`da341b70e8c90e06ae78e8236aff88ca4d1d8359`通过149项前端测试、vue-tsc/Vite与Go全量测试；skill本轮实际重跑18项契约、独立类型检查/构建及71源文件/50 pattern/220哈希审计，全部通过。
+
+生产`v0.2.102-kreeper-20261013-monitor-contract`认证监控页确认两卡真实CPU/内存/磁盘及趋势，OCI详情显示真实资源与历史流量；标题实际为A/href，常态rgb(0,122,255)、text-decoration:none，键盘focus-visible为2px蓝色outline。1280px桌面、390×844与360×800无页面横向溢出，浏览器error日志为空；未声称实际执行鼠标hover或coarse触摸测量。公网AdminMonitor JS/CSS与本地构建哈希一致。截图为`output/monitor-oci-v0.2.102.jpg`，临时viewport已恢复。仅只读浏览，未执行生产校准、编辑、保存、删除或排序。
 
 ## 监控页、链接与刷新交互发布前 gate
 
