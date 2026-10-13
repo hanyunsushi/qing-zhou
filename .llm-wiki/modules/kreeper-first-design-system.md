@@ -15,7 +15,7 @@ updated: 2026-10-14
 
 热力图与单机时间范围按已有“路由切换组件”规范修复：独立悬浮/键盘跟随、离开回真实选中，筛选重建后重新测量，选项状态可访问；最终焦点描边覆盖通用清除规则。13px/20px/500和40px/32px桌面几何、44px触摸选项同步skill navigation与完整AdminMonitor快照/pattern；查询序号阻止迟到响应覆盖当前范围。未出现需新增的样式类型，AWS字体/图表外部规则没有改变。
 
-“公开状态页”是路由`monitor`（`/admin#/`首页），不要求登录。后台开关更新资产public_visible；公开数据仍要求该记录启用采集/探针。旧回环资产仅在管理接口复用本机流，本轮不改变公开API或公开权限：当前OCI无独立probe，因此首页只展示面板本机。本轮给开关添加“切换开关”注释、可访问名称与明确首页/回环提示。验证与未发布边界见[Validation](../guides/validation.md)。
+“公开状态页”是路由`monitor`（`/admin#/`首页），不要求登录。后台开关更新资产public_visible；公开数据仍要求该记录启用采集/探针。旧回环资产仅在管理接口复用本机流，本轮不改变公开API或公开权限：当前OCI无独立probe，因此首页只展示面板本机。本轮给开关添加“切换开关”注释、可访问名称与明确首页/回环提示。当前验证边界见[Validation](../guides/validation.md)，发布运行证据见[Deployment](../guides/deployment.md)。
 
 ## 2026-10-13 OCI 回环采集与服务器标题
 
@@ -70,7 +70,7 @@ Vue 3 + Naive UI + Ionicons + ECharts。实际视觉入口仍是 `frontend/src/s
 - AWS 字号、行高、字重、字距、文字层级和数字规范直接读取 [Typography](https://cloudscape.design/foundation/visual-foundation/typography/) 及其关联来源；图表色读取 [Data visualization colors](https://cloudscape.design/foundation/visual-foundation/data-vis-colors/)。不在 skill 复制完整 AWS token 快照/排版 CSS 作为平行权威。青舟局部 28/36、heading500、650/750 等在专项规范明示本地覆盖，不冒称 AWS 默认。
 - token18px圆角是通用值而不是全部控件最终值；侧栏8、路由16/12/4、topbar12/16/8、图标12、BrandMark8等专项例外保留。
 - 输入框2px蓝色内焦点边界，无扩散晕；选择框中性，copy-field只读/中性/无过渡。完整认证规范包含登录/注册/找回、OAuth与配置开关、反馈槽固定28px、860px单栏断点以及loading/disabled/focus状态。
-- 警告/错误提示使用无边框浅色语义面，保留原背景、状态图标、文字和布局。`frontend/src/App.vue` 的 Alert 主题与 skill `assets/utils/theme.ts` 同步设置 `borderWarning` / `borderError` 为 `none`，使用已有“提示信息 / 警告信息”分类；完整规范在 skill overlays。Naive 2.44.1 的边框由 `.n-alert__border` 内层绘制，须核对它的计算边宽，不以根节点 border0 或不存在的类型class代替验收。
+- 全部提示类型使用无边框浅色语义面，保留原背景、状态图标、文字和布局。`frontend/src/App.vue` 的 Alert 主题与 skill `assets/utils/theme.ts` 同步设置 `border` / `borderInfo` / `borderSuccess` / `borderWarning` / `borderError` 为 `none`，使用已有“提示信息 / 警告信息”分类；普通类型正确token是`border`而非`borderDefault`。完整规范在 skill overlays。Naive 2.44.1 的边框由 `.n-alert__border` 内层绘制，须核对它的计算边宽，不以根节点 border0 或不存在的类型class代替验收；显式bordered=false的实例可直接不输出内层。
 - 鼠标focus不清除按钮原外ring：全局box-shadow重置已移除，普通/强调/默认弧边的Naive focus/pressed内边框为0；高亮/警告点击后保持聚焦提亮属于正常状态。状态验收覆盖点击释放、失焦、再次点击与键盘聚焦，防止仅验证hover。
 - 默认弧边与普通按钮共用紧凑尺寸、字体、透明背景、中性描边及hover/focus/pressed；唯一差异为18px与8px圆角，撤销默认弧边独立蓝色hover描边。沿用“标准默认弧边按钮”分类；源码、复用CSS与示范同步，已随v0.2.98按钮版本发布。
 - 当前按钮几何以源码提交 `1c665580765e18ceb1c5ac4eef22da5287387d3a` 为准：桌面32px高、13px/20px、字重500、左右10px，触摸设备44px；同组删除、撤销、编辑、充值、订单、上架/下架和拖动把手统一高度与垂直中心线。套餐卡使用拖动排序，提交完整ID顺序并在失败时回滚；这属于已有“展示卡片 / 普通按钮”组合，不新增分类。

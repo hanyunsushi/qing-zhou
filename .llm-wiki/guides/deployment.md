@@ -1,7 +1,25 @@
 ---
 title: QingZhou Deployment and Artifact Retention
-updated: 2026-10-13
+updated: 2026-10-14
 ---
+
+## Current UI and monitor rollout
+
+Source `1459bc5740a4c078390555c29c85f5097f4996b3` is released and deployed
+as `v0.2.104-kreeper-20261014-ui-contract`. The guarded rollout verifies the
+release checksum, snapshots SQLite with the Backup API, atomically replaces only
+the native panel executable and restarts only `qingzhou.service`. Installed and
+running hashes, local/public health, configuration preservation, unchanged
+sing-box/Tunnel PIDs and service health passed. Exact release, checksum and
+rollback evidence belong to [project authority](../../agent.md).
+
+The admin overview, heatmap and native metric/trend card count the physical
+panel machine once. Loopback OCI asset settings remain accessible as linked
+asset edit actions; no asset, probe, database or public-visibility policy is
+removed or changed. Admin and public heatmaps reuse the same 16x3 matrix/3D
+component while keeping their independent API permission boundaries.
+Read-only production and showcase verification is recorded in
+[validation](validation.md).
 
 ## 2026-10-13 OCI loopback monitor correction
 

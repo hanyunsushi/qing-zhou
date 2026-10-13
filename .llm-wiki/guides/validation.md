@@ -7,7 +7,11 @@ updated: 2026-10-14
 
 本轮监控后台与首页复用AvailabilityHeatmap的16列×3行矩阵/立体视图、坐标、状态色、提示和键盘交互；查询保留管理/公开权限边界。后台本机指标和趋势只显示一次，OCI回环资产保留关联资产编辑入口；摘要与管理端热图去重，不停止采集、不删除资产。全部NAlert类型、订单条目和首页摘要SVG无额外边框；帮助状态切换完整测量/跟随/回位，选中卡维持中性选中底色。超链接常态Apple蓝，hover/focus-visible显示下划线offset3px。折叠分组为4px中性圆点；顶栏/侧栏无匹配显示“无结果”；移动侧栏Teleport包装均0圆角，菜单行仍8px。首页价格牌来自手填资产月费，默认零值不显示。分类注释、专项规范、复用代码、示范与快照同步，无新分类或待确认规范偏离。
 
-源码158项前端测试、vue-tsc/Vite、Go全量通过；skill18项契约/类型检查/构建、71源/50pattern/220哈希审计通过。保留既有ECharts及完整示范大chunk警告。只读本地fixture在1280/390×844/360×800无横向溢出，后台一张指标卡、关联OCI编辑、有效矩阵/立体Canvas、折叠圆点居中、搜索无结果、帮助切换指示面均确认；手机抽屉各包装层计算圆角0px。粗指针与reduced-motion仍区分源码合同和设备实测。AWS外部规则未改变，未重新获取官方来源。发布事实待本轮生产验收后追加。
+源码158项前端测试、vue-tsc/Vite、Go全量通过；skill18项契约/类型检查/构建、71源/50pattern/220哈希审计通过。保留既有ECharts及完整示范大chunk警告。只读本地fixture在1280/390×844/360×800无横向溢出，后台一张指标卡、关联OCI编辑、有效矩阵/立体Canvas、折叠圆点居中、搜索无结果、帮助切换指示面均确认；手机抽屉各包装层计算圆角0px。AWS外部规则未改变，未重新获取官方来源。
+
+生产v0.2.104认证只读核对：后台指标卡数量1，关联OCI资产编辑入口保留，热图Canvas实际绘制48格立体矩阵；桌面1280px无横向溢出，标题为真实A/href、常态蓝色无下划线，键盘focus-visible下划线且offset3px。控制台到期提示border0且未输出内部边框，3个订单条目border0，首页6个summary-icon边框0/无阴影，默认零月费牌不存在。顶栏/侧栏非匹配搜索均出现“无结果”；折叠后4个4×4px圆点x33.5（中心35.5），嵌套菜单不可见。帮助页初始指示面x4/w54，选项aria-pressed正确，选中卡点击后仍rgb(240,240,240)。390×844抽屉四层包装均0圆角/300px；360×800帮助页和监控页无横向溢出，监控Canvas288×220。浏览器error为空，未执行编辑/删除/排序/公开开关等业务写操作。截图`output/monitor-v0.2.104-360.jpg`；部署过程见[Deployment](deployment.md)，精确运行证据见[项目权威](../../agent.md)。
+
+完整示范的五种NAlert内部边宽均0px；真实390×844和360×800无页面横向溢出，复用手机抽屉各层0圆角/300px。截图`output/showcase-v0.2.104-360.jpg`。浏览器视口覆盖会因标签页不同而不生效，验收记录实际innerWidth而不是只记录请求值；测试后恢复默认视口。鼠标独立hover、粗指针与reduced-motion依然只有源码/回归证据，不冒充本轮设备实测。
 
 ## OCI 回环指标与服务器标题核对
 
@@ -84,9 +88,10 @@ remain separate. Current evidence is in [sync state](../_sync-state.md) and the
 
 ## Matrix / skyline and refresh gate
 
-Read the skill refresh/skyline specifications. The local source replaces only
-the homepage ECharts heatmap with a shared Canvas matrix/isometric scene;
-admin monitoring remains separate. The current API `state_count: 4` consists of
+Read the skill refresh/skyline specifications. The public homepage and admin
+monitoring overview share the Canvas matrix/isometric scene through
+AvailabilityHeatmap; their APIs keep separate permission boundaries and individual
+resource trends continue using ECharts. The current API `state_count: 4` consists of
 three native severity states (normal/high/critical) plus the offline/no-data
 sentinel; it is not four health colors. Verify each of the 48 bucket timestamps
 occurs once per server, chronological 16x3 layout (48 buckets, time-major order; do not label the Y axis “bucket index”), only green/orange/red plus a
@@ -103,7 +108,7 @@ executed in a renderer test with controlled frame/media/observer inputs; do not
 claim that unit evidence is an OS-level browser setting test. The 21st refresh
 reference is 404; record independent implementation instead of fabricated source.
 
-Current local gates: frontend 142/142, typecheck, Vite build, `go test ./...`
+Current local gates: frontend 158/158, typecheck, Vite build, `go test ./...`
 and `git diff --check`; skill 18/18 contracts, typecheck/build and 71 source
 files/50 patterns/220 hashes. Tests include the actual Canvas lifecycle and
 cleanup, not only source matching. Build warnings retain the existing 567.24kB
@@ -117,16 +122,17 @@ remain available. The refresh sample is busy during its request and increments
 its completed count. Existing ECharts ChartSpecimens emitted four initial-size
 warnings on the first narrow-screen load, then rendered; no application error
 was observed. Keep that warning boundary separate from the new Canvas charts.
-The authenticated production monitor page was refreshed after deployment and
+The initial authenticated production monitor page was refreshed after deployment and
 visibly showed the 3D availability matrix, time/server axes and green/orange/red
 plus gray legend. This is a desktop production check; it does not replace the
-local 390x844/360x800 responsive evidence.
+local 390x844/360x800 responsive evidence. Current admin/homepage shared-component
+and production mobile acceptance is recorded in the 2026-10-14 section above.
 
 ## Warning and error feedback gate
 
-`frontend/src/App.vue` and the skill reusable theme set
-`Alert.borderWarning` and `Alert.borderError` to `none`. Existing warning/error
-backgrounds, icons, text and layout keep their semantic roles. Use the existing
+`frontend/src/App.vue` and the skill reusable theme set `Alert.border`,
+`borderInfo`, `borderSuccess`, `borderWarning` and `borderError` to `none`.
+All five alert types keep their semantic backgrounds, icons, text and layout. Use the existing
 Chinese `提示信息 / 警告信息` comments at the theme and showcase responsibility
 boundaries. In Naive 2.44.1, inspect the actual `.n-alert__border` layer: its
 computed border width must be 0px and the alert must have no base shadow. A root
@@ -136,7 +142,7 @@ Local browser acceptance covers the showcase and built QingZhou dashboard with
 a virtual user API fixture: expiry warning and banned-account error at desktop,
 390x844 and 360x800. Warning/error backgrounds are rgb(255,247,235) /
 rgb(255,239,238), icons retain Apple orange/red, both have 0px internal borders,
-and pages have no horizontal overflow. Frontend 133/133 tests, typecheck and
+and pages have no horizontal overflow. This earlier rollout passed frontend 133/133 tests, typecheck and
 isolated build passed; skill typecheck, 10/10 contracts and build also passed.
 This responsive fixture evidence remains local. The Alert theme change shipped
 with `v0.2.96-kreeper-20261012-heatmap`; the production acceptance in the
