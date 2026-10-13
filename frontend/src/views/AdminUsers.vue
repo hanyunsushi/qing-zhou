@@ -107,7 +107,7 @@
           </div>
 
           <div class="uc-foot">
-            <!-- 高亮弧边按钮：固定实心 Apple 蓝，保留用户卡片原有 tiny 尺寸。 -->
+            <!-- 高亮弧边按钮：套餐操作与同组编辑、充值、订单共用32px几何，悬浮/聚焦提亮。 -->
             <n-button size="tiny" type="primary" class="highlight-arc-button" @click="openPlans(u)">套餐</n-button>
             <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" @click="openEdit(u)">编辑</n-button>

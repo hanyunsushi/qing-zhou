@@ -19,6 +19,16 @@ test('desktop brand and topbar share a stable height and divider', () => {
   }
 })
 
+test('desktop brand and topbar share glass material and state selectors', () => {
+  const brand = layout.match(/\.app-sider \.sidebar-brand \{([^}]+)\}/)?.[1]
+  assert.ok(brand)
+  assert.match(brand, /background: var\(--topbar-background\);/)
+  assert.match(brand, /backdrop-filter: var\(--topbar-backdrop-filter\);/)
+  assert.match(layout, /\.layout-header\.is-scrolled,[\s\S]*?\.app-sider \.sidebar-brand\.is-scrolled/)
+  assert.match(layout, /\.layout-header\.is-menu-open,[\s\S]*?\.app-sider \.sidebar-brand\.is-menu-open/)
+  assert.match(layout, /<div class="sidebar-brand" :class="\{ 'is-scrolled': isScrolled, 'is-menu-open': openMenu !== null \}"/)
+})
+
 test('desktop divider does not add a border to the mobile drawer brand', () => {
   const sharedBrand = layout.match(/\n\.sidebar-brand \{([^}]+)\}/)?.[1]
   assert.ok(sharedBrand)

@@ -56,6 +56,11 @@
   --topbar-backdrop-filter: saturate(180%) blur(20px);
   --topbar-divider: rgba(0, 0, 0, .12);
   --app-header-height: 64px;
+  /* 普通按钮 / 弧边按钮：各语义变体共用同组尺寸与文字基线。 */
+  --button-height: 32px;
+  --button-font-size: 13px;
+  --button-line-height: 20px;
+  --button-padding-inline: 10px;
   --focus-ring: 0 0 0 2px #ffffff, 0 0 0 4px var(--accent);
   /* 输入框焦点只使用清晰的内边框，不再叠加扩散光晕。 */
   --focus-ring-soft: none;
@@ -203,7 +208,14 @@ button, input, textarea, select { font-family: inherit; }
 }
 
 .n-button {
-  font-weight: 600;
+  /* 普通按钮 / 高亮弧边按钮 / 弧边警告按钮 / 删除按钮：同组使用相同几何，颜色与圆角按各自分类。 */
+  box-sizing: border-box;
+  height: var(--button-height) !important;
+  min-height: var(--button-height) !important;
+  padding: 0 var(--button-padding-inline) !important;
+  font-size: var(--button-font-size) !important;
+  line-height: var(--button-line-height) !important;
+  font-weight: 500 !important;
   letter-spacing: 0;
   border-radius: var(--r-control) !important;
   transition: color .22s var(--ease-standard), background-color .22s var(--ease-standard), border-color .22s var(--ease-standard), box-shadow .28s var(--ease-standard), transform .28s var(--ease-emphasized) !important;
@@ -248,9 +260,9 @@ button, input, textarea, select { font-family: inherit; }
   background: var(--accent-strong) !important;
   border-color: var(--accent-strong) !important;
 }
-/* 普通按钮 / 标准默认弧边按钮：共用32px几何、字体与中性ring；默认弧边只改18px圆角。 */
+/* 普通按钮 / 标准默认弧边按钮：共用按钮token、字体与中性ring；默认弧边只改18px圆角。 */
 .n-button.action-button,
-.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.n-button--ghost):not(.action-button)):has(> .n-button__border) { min-height:32px !important; height:32px; padding:0 10px !important; border-radius:8px !important; border:0 !important; font-size:13px; font-weight:500; line-height:20px; letter-spacing:0; transition:color .1s ease-in-out,background-color .2s ease-in-out,box-shadow .2s ease-in-out,opacity .2s ease-in-out,transform .2s ease-in-out !important; }
+.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.n-button--ghost):not(.action-button)):has(> .n-button__border) { min-height:var(--button-height) !important; height:var(--button-height) !important; padding:0 var(--button-padding-inline) !important; border-radius:8px !important; border:0 !important; font-size:var(--button-font-size); font-weight:500; line-height:var(--button-line-height); letter-spacing:0; transition:color .1s ease-in-out,background-color .2s ease-in-out,box-shadow .2s ease-in-out,opacity .2s ease-in-out,transform .2s ease-in-out !important; }
 .n-button.action-button--normal,
 .n-button.n-button--default-type:where(:not(.n-button--secondary):not(.n-button--ghost):not(.action-button)):has(> .n-button__border) { --action-button-bg: transparent; --action-button-fg: var(--text-3); --action-button-border: var(--border); --action-button-bg-hover: transparent; --action-button-fg-hover: var(--text-2); --action-button-border-hover: var(--border-strong); --n-border: 0 solid transparent !important; --n-border-hover: 0 solid transparent !important; --n-border-focus: 0 solid transparent !important; --n-border-pressed: 0 solid transparent !important; background:var(--action-button-bg) !important; color:var(--action-button-fg) !important; box-shadow:0 0 0 1px var(--action-button-border) !important; }
 .n-button.action-button--normal:hover:not(.n-button--disabled), .n-button.action-button--normal:focus-visible:not(.n-button--disabled),
@@ -264,7 +276,7 @@ button, input, textarea, select { font-family: inherit; }
 .n-button.action-button:active:not(.n-button--disabled),
 .n-button.n-button--default-type:where(:not(.n-button--secondary):not(.n-button--ghost):not(.action-button)):has(> .n-button__border):active:not(.n-button--disabled) { transform:translateY(1px) !important; transition-duration:.08s !important; }
 
-/* 删除按钮：取自节点卡红字透明底；22px高、18px角，无装饰边框，键盘焦点独立可见。 */
+/* 删除按钮：32px高、13/20文字与10px内距，与同组弧边操作共用几何；红字透明底、18px角。 */
 .n-button.delete-button {
   --n-color: transparent !important;
   --n-color-hover: rgba(46, 51, 56, .09) !important;
@@ -281,12 +293,12 @@ button, input, textarea, select { font-family: inherit; }
   --n-border-focus: none !important;
   --n-border-pressed: none !important;
   --n-border-disabled: none !important;
-  height: 22px;
-  min-height: 22px;
-  padding: 0 6px !important;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 12px;
+  height: var(--button-height);
+  min-height: var(--button-height);
+  padding: 0 var(--button-padding-inline) !important;
+  font-size: var(--button-font-size);
+  font-weight: 500;
+  line-height: var(--button-line-height);
   background: transparent;
   border: 0 !important;
   box-shadow: none;
@@ -296,9 +308,9 @@ button, input, textarea, select { font-family: inherit; }
 .n-button.delete-button:not(.n-button--disabled):focus-visible { box-shadow: var(--focus-ring); }
 .n-button.delete-button:not(.n-button--disabled):active,
 .n-button.delete-button.n-button--pressed:not(.n-button--disabled) { background: rgba(46, 51, 56, .13); }
-/* 删除按钮：触摸设备扩大命中面，保持同一红字、透明表面与状态，不造新变体。 */
+/* 普通按钮 / 弧边按钮：触摸设备同组统一44px命中高度。 */
 @media (pointer: coarse) {
-  .n-button.delete-button { min-width: 44px; height: 44px; min-height: 44px; }
+  .n-button { --button-height: 44px; min-width: 44px; }
 }
 
 /* 切换开关：保留启用/停用状态色，去掉 Naive UI rail 的焦点高亮边框。 */

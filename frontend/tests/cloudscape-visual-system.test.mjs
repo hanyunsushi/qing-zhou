@@ -177,7 +177,8 @@ test('dashboard and subscription actions share the same compact button contract'
   assert.match(dashboard, /class="action-button action-button--emphasis"/)
   assert.match(subscription, /普通按钮：复用控制台“订阅管理”的尺寸、文字和中性 ring。[\s\S]*?class="action-button action-button--normal"[^>]*>订单记录/)
   assert.match(subscription, /强调按钮：复用控制台“去商城”的蓝色与提亮悬浮状态。[\s\S]*?class="action-button action-button--emphasis"[^>]*>去商城/)
-  assert.match(globalCss, /\.n-button\.action-button,[^{]*\{[\s\S]*?min-height:32px !important;[\s\S]*?height:32px;[\s\S]*?border-radius:8px !important;[\s\S]*?font-size:13px/)
+  assert.match(globalCss, /--button-height: 32px;[\s\S]*?--button-font-size: 13px;[\s\S]*?--button-line-height: 20px;[\s\S]*?--button-padding-inline: 10px;/)
+  assert.match(globalCss, /\.n-button\.action-button,[^{]*\{[\s\S]*?height:var\(--button-height\) !important;[\s\S]*?padding:0 var\(--button-padding-inline\) !important;[\s\S]*?border-radius:8px !important;/)
   assert.match(globalCss, /\.n-button\.action-button--normal,[^{]*\{[\s\S]*?--action-button-fg: var\(--text-3\);[\s\S]*?--action-button-fg-hover: var\(--text-2\);[\s\S]*?box-shadow:0 0 0 1px var\(--action-button-border\) !important;/)
   assert.match(globalCss, /\.n-button\.action-button--normal,[^{]*\{[^}]*--n-border: 0 solid transparent !important;[^}]*--n-border-hover: 0 solid transparent !important;[^}]*--n-border-focus: 0 solid transparent !important;/)
   assert.match(globalCss, /\.n-button\.action-button--normal:hover:not\(\.n-button--disabled\), \.n-button\.action-button--normal:focus-visible:not\(\.n-button--disabled\),[^{]*\{[\s\S]*?box-shadow:0 0 0 2px var\(--action-button-border-hover\) !important;/)
@@ -466,7 +467,7 @@ test('public and dashboard topbar navigation share the compact control geometry'
   assert.match(globalCss, /\.n-button\.n-button--quaternary-type\.topbar-language-reference-trigger:hover,[\s\S]*?background-color: var\(--card-hover\) !important;/)
   assert.match(read('src/components/AppHeader.vue'), /class="app-header" :class="\{ 'is-scrolled': isScrolled, 'is-menu-open': openMenu !== null \}"/)
   assert.match(read('src/components/AppHeader.vue'), /background: var\(--topbar-background\);[\s\S]*?border-bottom: 1px solid var\(--topbar-divider\);[\s\S]*?\.app-header\.is-scrolled \{[\s\S]*?backdrop-filter: var\(--topbar-backdrop-filter\);/)
-  assert.match(read('src/components/DashboardLayout.vue'), /<header class="layout-header" :class="\{ 'is-scrolled': isScrolled, 'is-menu-open': openMenu !== null \}"[\s\S]*?\.layout-header \{[\s\S]*?background: var\(--topbar-background\);[\s\S]*?border-bottom: 1px solid var\(--topbar-divider\);[\s\S]*?\.layout-header\.is-scrolled \{[\s\S]*?backdrop-filter: var\(--topbar-backdrop-filter\);/)
+  assert.match(read('src/components/DashboardLayout.vue'), /<header class="layout-header" :class="\{ 'is-scrolled': isScrolled, 'is-menu-open': openMenu !== null \}"[\s\S]*?\.layout-header \{[\s\S]*?background: var\(--topbar-background\);[\s\S]*?border-bottom: 1px solid var\(--topbar-divider\);[\s\S]*?\.layout-header\.is-scrolled[^{}]*\{[\s\S]*?backdrop-filter: var\(--topbar-backdrop-filter\);/)
   assert.match(globalCss, /--topbar-background: rgba\(250, 250, 252, \.8\);[\s\S]*?--topbar-scrim-background: rgba\(250, 250, 252, \.8\);[\s\S]*?--topbar-scrim-background-fallback: rgba\(250, 250, 252, \.92\);[\s\S]*?--topbar-backdrop-filter: saturate\(180%\) blur\(20px\);[\s\S]*?--topbar-divider: rgba\(0, 0, 0, \.12\);/)
   assert.match(globalCss, /\.n-button\.topbar-language-reference-trigger \.n-button__content \{[\s\S]*?align-items: center !important;[\s\S]*?justify-content: center !important;/)
   assert.match(globalCss, /\.n-button\.topbar-account-trigger \{[\s\S]*?padding: 0 10px !important;/)
@@ -661,7 +662,7 @@ test('admin users use neutral selected cards, semantic identity badges, and arc 
   assert.doesNotMatch(source, /\.ss-item\.on \{[^}]*var\(--accent\)/)
   assert.match(source, /可跳转展示卡片：进入该用户的套餐分配\/明细面板。[\s\S]*?class="uc-block uc-plans"/)
   assert.match(source, /可跳转套餐块：悬浮复用中性卡片悬浮面，不使用蓝色业务状态底。[\s\S]*?\.uc-plans:hover \{ background: var\(--card-hover\); border-color: transparent; \}/)
-  assert.match(source, /高亮弧边按钮：固定实心 Apple 蓝，保留用户卡片原有 tiny 尺寸[\s\S]*?class="highlight-arc-button"[^>]*>套餐/)
+  assert.match(source, /高亮弧边按钮：套餐操作与同组编辑、充值、订单共用32px几何，悬浮\/聚焦提亮。[\s\S]*?class="highlight-arc-button"[^>]*>套餐/)
 })
 
 test('sing-box machine groups use the page surface and neutral identity badges', () => {

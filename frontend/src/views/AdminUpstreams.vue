@@ -361,7 +361,8 @@ onUnmounted(() => {
 .balance-empty { margin: 9px 0; min-height: 26px; font-size: 14px; color: var(--text-2); line-height: 1.55; }
 .provider-form :deep(.n-form-item) { margin-bottom: 12px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.provider-actions { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 2px; }
+/* 高亮弧边按钮 / 标准默认弧边按钮 / 删除按钮：同组尺寸统一并垂直居中。 */
+.provider-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding-top: 2px; }
 .permission-card { margin-top: 14px; }
 .permission-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .permission-grid div { padding: 2px 2px; }

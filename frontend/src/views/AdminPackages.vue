@@ -17,7 +17,12 @@
     </div>
     <n-spin :show="loading">
       <div v-if="packages.length" class="card-grid">
-        <div v-for="(p, idx) in packages" :key="p.id" class="list-card">
+        <!-- 展示卡片 / 普通按钮：套餐沿用卡片拖动排序，排序把手兼容触摸和键盘方向键。 -->
+        <div v-for="p in packages" :key="p.id" class="list-card package-sort-card" :data-package-id="p.id"
+             :class="{ dragging: draggingPackageId === p.id, 'drag-over': dragOverPackageId === p.id }"
+             :draggable="!reordering" @dragstart="handlePackageDragStart(p.id, $event)"
+             @dragover.prevent="handlePackageDragOver(p.id, $event)" @drop.prevent="handlePackageDrop(p.id, $event)"
+             @dragend="clearPackageDrag">
           <div class="lc-head">
             <span class="lc-title">{{ p.name || '—' }}</span>
             <n-tag v-if="p.user_group_ids?.length" type="warning" size="tiny" :bordered="false" :title="userGroupNames(p.user_group_ids)">
@@ -52,16 +57,18 @@
           </div>
           <div class="lc-foot" style="flex-wrap:wrap;">
             <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
-            <n-button size="tiny" :disabled="idx === 0 || reordering" title="前移（在商城/列表更靠前）" @click="movePackage(idx, -1)">←</n-button>
-            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
-            <n-button size="tiny" :disabled="idx === packages.length - 1 || reordering" title="后移" @click="movePackage(idx, 1)">→</n-button>
-            <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" @click="openForm(p)">编辑</n-button>
             <!-- 弧边警告按钮：保留风险语义、悬浮/聚焦提亮和按下反馈，请求状态由业务控制。 -->
             <n-button v-if="p.enabled !== false" size="tiny" type="warning" @click="handleRetire(p)">下架</n-button>
             <n-button v-else size="tiny" type="success" @click="handleEnable(p.id)">上架</n-button>
             <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
             <n-button size="tiny" quaternary class="delete-button" type="error" @click="handleDelete(p)">删除</n-button>
+            <span class="spacer" />
+            <!-- 普通按钮：拖动把手32px命中；方向键前后移动，触摸从把手直接拖动。 -->
+            <button type="button" class="package-drag-handle" :disabled="reordering" :aria-label="`调整${p.name}顺序`"
+                    title="拖动排序，方向键调整顺序" @keydown="handlePackageSortKey(p.id, $event)"
+                    @pointerdown="startPackageTouchDrag(p.id, $event)" @pointermove="movePackageTouchDrag"
+                    @pointerup="finishPackageTouchDrag" @pointercancel="clearPackageDrag">⋮⋮</button>
           </div>
         </div>
       </div>
@@ -181,6 +188,8 @@ const userGroups = ref<any[]>([])
 const loading = ref(false)
 const saving = ref(false)
 const reordering = ref(false)
+const draggingPackageId = ref<number | null>(null)
+const dragOverPackageId = ref<number | null>(null)
 const syncing = ref(false)
 const showForm = ref(false)
 const editing = ref<any>(null)
@@ -292,21 +301,76 @@ function forceSyncPackages() {
   })
 }
 
-// 调整套餐在商城/列表中的展示顺序：把第 idx 个套餐前移(-1)/后移(+1)一位，
-// 乐观更新本地数组后把完整 id 顺序提交给后端（写入 sort_order）。
-async function movePackage(idx: number, dir: -1 | 1) {
-  const target = idx + dir
-  if (target < 0 || target >= packages.value.length || reordering.value) return
-  const arr = [...packages.value]
-  const [moved] = arr.splice(idx, 1)
-  arr.splice(target, 0, moved)
-  packages.value = arr
+// 展示卡片 / 普通按钮：拖动、触摸和键盘共用完整ID顺序；保存失败恢复原排序。
+async function reorderPackage(sourceId: number, targetId: number, after: boolean) {
+  if (sourceId === targetId || reordering.value) return
+  const previous = [...packages.value]
+  const next = [...previous]
+  const from = next.findIndex(p => p.id === sourceId)
+  if (from < 0 || !next.some(p => p.id === targetId)) return
+  const [moved] = next.splice(from, 1)
+  next.splice(next.findIndex(p => p.id === targetId) + Number(after), 0, moved)
+  if (next.every((p, i) => p.id === previous[i].id)) return
+  packages.value = next
   reordering.value = true
   try {
-    await apiPost('/api/admin/packages/reorder', { ids: arr.map(p => p.id) })
+    await apiPost('/api/admin/packages/reorder', { ids: next.map(p => p.id) })
   } catch (e: any) {
-    message.error(e.message || '排序失败'); await load()
+    packages.value = previous
+    message.error(e.message || '排序失败')
   } finally { reordering.value = false }
+}
+function clearPackageDrag() {
+  draggingPackageId.value = null
+  dragOverPackageId.value = null
+}
+function handlePackageDragStart(id: number, event: DragEvent) {
+  if (reordering.value) { event.preventDefault(); return }
+  draggingPackageId.value = id
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'move'
+    event.dataTransfer.setData('text/plain', String(id))
+  }
+}
+function handlePackageDragOver(id: number, event: DragEvent) {
+  if (draggingPackageId.value === null || draggingPackageId.value === id || reordering.value) return
+  dragOverPackageId.value = id
+  if (event.dataTransfer) event.dataTransfer.dropEffect = 'move'
+}
+function handlePackageDrop(id: number, event: DragEvent) {
+  const sourceId = draggingPackageId.value
+  const box = (event.currentTarget as HTMLElement).getBoundingClientRect()
+  clearPackageDrag()
+  if (sourceId !== null) void reorderPackage(sourceId, id, event.clientY > box.top + box.height / 2)
+}
+function handlePackageSortKey(id: number, event: KeyboardEvent) {
+  const direction = ({ ArrowUp: -1, ArrowLeft: -1, ArrowDown: 1, ArrowRight: 1 } as Record<string, number>)[event.key]
+  if (!direction) return
+  event.preventDefault()
+  const target = packages.value[packages.value.findIndex(p => p.id === id) + direction]
+  if (target) void reorderPackage(id, target.id, direction > 0)
+}
+function startPackageTouchDrag(id: number, event: PointerEvent) {
+  if (event.pointerType === 'mouse' || reordering.value) return
+  draggingPackageId.value = id
+  ;(event.currentTarget as HTMLElement).setPointerCapture(event.pointerId)
+}
+function packageAtPointer(event: PointerEvent) {
+  return document.elementFromPoint(event.clientX, event.clientY)?.closest<HTMLElement>('.package-sort-card')
+}
+function movePackageTouchDrag(event: PointerEvent) {
+  if (event.pointerType === 'mouse' || draggingPackageId.value === null) return
+  const target = packageAtPointer(event)
+  dragOverPackageId.value = target ? Number(target.dataset.packageId) : null
+}
+function finishPackageTouchDrag(event: PointerEvent) {
+  if (event.pointerType === 'mouse') return
+  const sourceId = draggingPackageId.value
+  const target = packageAtPointer(event)
+  clearPackageDrag()
+  if (sourceId === null || !target) return
+  const box = target.getBoundingClientRect()
+  void reorderPackage(sourceId, Number(target.dataset.packageId), event.clientY > box.top + box.height / 2)
 }
 
 // 下架 refunds every holder and clears their plan — irreversible and moves points,
@@ -355,12 +419,22 @@ onMounted(load)
 </script>
 
 <style scoped>
+/* 展示卡片 / 普通按钮：沿用节点卡拖动反馈和同组32px把手，窄屏保留换行。 */
+.package-sort-card { cursor: grab; }
+.package-sort-card.dragging { opacity: .45; }
+.package-sort-card.drag-over { background: var(--accent-soft) !important; }
+.package-sort-card .spacer { flex: 1; }
+.package-drag-handle { display: inline-grid; place-items: center; height: var(--button-height); min-width: 32px; padding: 0 8px; border: 0; border-radius: 18px; background: transparent; color: var(--text-3); font: inherit; cursor: grab; touch-action: none; }
+.package-drag-handle:hover { background: var(--card-hover); color: var(--text); }
+.package-drag-handle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.package-drag-handle:disabled { opacity: .5; cursor: wait; }
+@media (pointer: coarse) { .package-drag-handle { height: 44px; min-width: 44px; } }
 /* 删除按钮 / 标准默认弧边按钮：动态卖点动作保持独立间距，输入内容可收缩。 */
 .highlight-actions { display: flex; align-items: center; gap: 8px; margin-left: 8px; flex-shrink: 0; }
 /* 时长档位表：三列等宽 + 删除按钮，列头只写一次 */
 .opt-head, .opt-row {
   display: grid;
-  grid-template-columns: 0.8fr 1fr 0.8fr 1.25fr 28px;
+  grid-template-columns: 0.8fr 1fr 0.8fr 1.25fr 36px;
   gap: 6px;
   align-items: center;
 }

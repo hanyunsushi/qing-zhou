@@ -220,7 +220,8 @@ const sessionCols = [
   { title: '登录时间', key: 'created_at', width: 150, render: (r: any) => fmtDateTime(r.created_at) },
   {
     title: '操作', key: 'act', width: 70,
-    render: (r: any) => isCurrentDevice(r) ? null : h(NButton, { size: 'tiny', type: 'error', onClick: () => revokeSession(r.id) }, { default: () => '撤销' }),
+    // 删除按钮：撤销其他设备会话采用同组32px红字透明底，业务仍执行会话撤销。
+    render: (r: any) => isCurrentDevice(r) ? null : h(NButton, { size: 'small', type: 'error', quaternary: true, class: 'delete-button', onClick: () => revokeSession(r.id) }, { default: () => '撤销' }),
   },
 ]
 

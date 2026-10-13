@@ -2,7 +2,8 @@
   <div class="app-shell" :class="{ mobile: isMobile }">
     <!-- 桌面侧边栏 -->
     <aside v-if="!isMobile" class="app-sider sidebar-surface" :class="{ 'is-collapsed': sidebarCollapsed }">
-      <div class="sidebar-brand" @click="router.push('/')">
+      <!-- 顶栏 / 品牌标识：桌面品牌区与右侧顶栏共享玻璃材质和滚动/菜单状态。 -->
+      <div class="sidebar-brand" :class="{ 'is-scrolled': isScrolled, 'is-menu-open': openMenu !== null }" @click="router.push('/')">
         <!-- Logo -->
         <div class="sidebar-logo"><BrandMark :size="40" /></div>
         <div class="brand-copy">
@@ -435,11 +436,15 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
   min-height: 64px; padding: 10px 16px;
   cursor: pointer;
 }
-/* 桌面品牌区：与右侧顶栏共享高度和底部分界线。 */
+/* 顶栏 / 品牌标识：与右侧顶栏共享64px高度、背景透明度、模糊和底部分界线。 */
 .app-sider .sidebar-brand {
   box-sizing: border-box; flex: 0 0 var(--app-header-height);
   height: var(--app-header-height); min-height: var(--app-header-height);
   border-bottom: 1px solid var(--topbar-divider);
+  background: var(--topbar-background);
+  backdrop-filter: var(--topbar-backdrop-filter);
+  -webkit-backdrop-filter: var(--topbar-backdrop-filter);
+  transition: background-color .24s cubic-bezier(.4, 0, .6, 1), border-color .24s cubic-bezier(.4, 0, .6, 1);
 }
 .sidebar-logo {
   width: 40px; height: 40px; display: grid; place-items: center;
@@ -508,18 +513,20 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
   position: sticky; top: 0; z-index: 130;
   transition: background-color .24s cubic-bezier(.4, 0, .6, 1), border-color .24s cubic-bezier(.4, 0, .6, 1);
 }
-.layout-header.is-scrolled {
+.layout-header.is-scrolled,
+.app-sider .sidebar-brand.is-scrolled {
   background: var(--topbar-scrim-background-fallback);
   backdrop-filter: var(--topbar-backdrop-filter);
   -webkit-backdrop-filter: var(--topbar-backdrop-filter);
 }
-.layout-header.is-menu-open {
+.layout-header.is-menu-open,
+.app-sider .sidebar-brand.is-menu-open {
   background: var(--topbar-background);
   backdrop-filter: var(--topbar-backdrop-filter);
   -webkit-backdrop-filter: var(--topbar-backdrop-filter);
 }
 @supports (backdrop-filter: initial) {
-  .layout-header { background: var(--topbar-scrim-background); }
+  .layout-header, .app-sider .sidebar-brand { background: var(--topbar-scrim-background); }
 }
 .header-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .header-title { font-weight: 650; font-size: 16px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
