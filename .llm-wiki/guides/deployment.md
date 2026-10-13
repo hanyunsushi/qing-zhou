@@ -5,7 +5,7 @@ updated: 2026-10-13
 
 ## 2026-10-13 Monitor, links and refresh interaction rollout
 
-Source commit `728f32e06f883ce613e601def05fbcf32bdd170a` aligns the monitored
+Source commit `4ec8bd18cfe66dd32a83ea73134797fa21fe9cbc` aligns the monitored
 admin views with the existing Kreeper design-system categories: edit actions use
 the default arc button, traffic analysis uses the highlight arc button, and
 destructive clear/delete actions use the delete or default-arc contract according
@@ -14,10 +14,21 @@ entry points were also synchronized with their existing semantic comments.
 
 The source passed the 148 frontend tests, vue-tsc, Vite, full Go tests, the 18
 skill checks/build and the 71-source/50-pattern/220-hash audit. The existing
-ECharts large-chunk warning remains non-blocking. Release tag, asset digest,
-backup path and production service evidence are recorded here after the release
-is published; no database, sing-box configuration or destructive production
-operation is part of this source change.
+ECharts large-chunk warning remains non-blocking. GitHub Release
+[`v0.2.100-kreeper-20261013-monitor-refresh`](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.100-kreeper-20261013-monitor-refresh)
+was built by release run `38356666544`; the Linux ARM64 panel asset SHA-256 is
+`9084ff13c493ff4aa0585b86a6f91ea8b89dfe8c85b2c55be4ce1bee38c32cbe`.
+
+At 2026-10-13 14:30:01 CST, the guarded panel-only rollout atomically replaced
+`/opt/qingzhou/qingzhou` and restarted only `qingzhou.service`. The rollback
+directory is
+`/opt/qingzhou/backups/fork-v0.2.100-kreeper-20261013-monitor-refresh-20261013-143001/`;
+the SQLite Backup API snapshot passed `PRAGMA integrity_check=ok`. Local health
+returned `v0.2.100-kreeper-20261013-monitor-refresh`, the active and running
+binary hashes matched the release asset, all three services were active with
+`NRestarts=0`, and sing-box/Tunnel PIDs plus protected configuration hashes were
+unchanged. Production node/monitor pages were then checked read-only; no delete,
+clear, save, sort or other destructive business write was executed.
 
 ## 2026-10-13 Unified button layout and package drag-sort rollout
 
