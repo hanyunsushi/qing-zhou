@@ -5,6 +5,16 @@ updated: 2026-10-13
 
 # Current synchronization evidence
 
+- Source `728f32e06f883ce613e601def05fbcf32bdd170a` aligns existing button,
+  link, notice, route-switch and refresh implementations across the admin
+  monitor, nodes, servers, help, settings, announcements, update, authentication
+  and user-console views. RefreshButton now provides the standard centered SVG,
+  180-degree hover/focus turn, same-rate return and real-request-only infinite
+  loading behavior. Existing semantic categories are reused; no new or
+  unconfirmed category was introduced. Source validation is 148 frontend tests,
+  typecheck/Vite, Go tests, 18 skill checks/build and 71-source/50-pattern/220-hash
+  audit. Production release facts remain pending the rollout record below.
+
 - Latest source `1c665580765e18ceb1c5ac4eef22da5287387d3a` adds the unified button geometry (desktop32px / touch44px, 13/20, weight500, 10px inline padding), production operation-track alignment, package-card drag sorting with complete-order rollback, and shared desktop sidebar-brand/topbar glass states. The existing semantic categories are reused; no new category or unconfirmed deviation was introduced. The local showcase at `http://127.0.0.1:5191/#controls` visibly confirms equal mixed-button baselines, delete/revoke appearance, highlighter focus behavior and centered collapsed SVGs. Source tests total 148; Go tests, Vite/typecheck, 18 skill contracts, isolated asset build and 71-source/50-pattern/220-hash audit pass. Release `v0.2.99-kreeper-20261013-button-layout` is complete and production deployment plus read-only browser verification are recorded in [project authority](../agent.md) and [deployment](guides/deployment.md).
 
 - Current impact: source `1c665580765e18ceb1c5ac4eef22da5287387d3a` adds shared button geometry, aligned mixed operation tracks, package drag sorting and desktop brand/topbar glass synchronization. The prior deletion/default-arc/highlight/refresh contracts remain synchronized. Release and production rollout are complete; the authenticated package page was read-only verified with drag handles and no runtime errors. Owners: integration/validation and project authority. Skill source snapshots and exact extracted template/style patterns are synchronized; no new category or unapproved deviation.

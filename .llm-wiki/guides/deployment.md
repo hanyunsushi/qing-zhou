@@ -3,6 +3,22 @@ title: QingZhou Deployment and Artifact Retention
 updated: 2026-10-13
 ---
 
+## 2026-10-13 Monitor, links and refresh interaction rollout
+
+Source commit `728f32e06f883ce613e601def05fbcf32bdd170a` aligns the monitored
+admin views with the existing Kreeper design-system categories: edit actions use
+the default arc button, traffic analysis uses the highlight arc button, and
+destructive clear/delete actions use the delete or default-arc contract according
+to their meaning. Monitor navigation, notice links, document actions and refresh
+entry points were also synchronized with their existing semantic comments.
+
+The source passed the 148 frontend tests, vue-tsc, Vite, full Go tests, the 18
+skill checks/build and the 71-source/50-pattern/220-hash audit. The existing
+ECharts large-chunk warning remains non-blocking. Release tag, asset digest,
+backup path and production service evidence are recorded here after the release
+is published; no database, sing-box configuration or destructive production
+operation is part of this source change.
+
 ## 2026-10-13 Unified button layout and package drag-sort rollout
 
 Source commit `1c665580765e18ceb1c5ac4eef22da5287387d3a` was pushed to the

@@ -3,6 +3,14 @@ title: Validation Guide
 updated: 2026-10-13
 ---
 
+## 监控页、链接与刷新交互发布前 gate
+
+源码提交 `728f32e06f883ce613e601def05fbcf32bdd170a` 的验证覆盖管理页编辑/删除/清除/高亮弧边按钮、监控范围切换、服务器导航链接、到期提示、文档操作和全部刷新入口的分类注释与样式责任边界。刷新入口统一复用 `RefreshButton`：悬浮/聚焦旋转180°并以与真实 loading 相同的速率回转，真实请求期间才无限旋转，减少动态效果时静止。
+
+前端测试 `148/148`、`vue-tsc`、Vite 构建、`go test ./...`、`git diff --check`、skill `18/18` 资源契约/类型检查/构建，以及 `71` 源文件、`50` pattern、`220` 哈希审计均通过。保留既有 ECharts 大 chunk warning；它不阻断发布。浏览器生产核验只读检查目标页面和刷新交互，不执行删除、清除、保存、排序或其他业务写操作。
+
+注释判定沿用项目规则：修改已有类型时由实现根据语义自动补齐正确分类注释；无法归入现有分类时必须先提出候选名称、几何/状态/响应式边界并提醒用户确认，不能静默创建类型。后续实现若违背已确认规范，也必须提醒是否同步设计系统。
+
 ## Button contract release gate
 
 Source `1c665580765e18ceb1c5ac4eef22da5287387d3a` passes 148 frontend tests, vue-tsc/Vite, full Go tests and diff check. Unified skill passes 18 contracts/typecheck/build plus the 71-source/50-pattern/220-hash audit. Default arcs share normal-button geometry/state except 18px corners; highlight arcs brighten on hover/mouse focus, keep press feedback, and no longer lose decorative rings on mouse focus. All explicit deletion templates use the unified 32px desktop / 44px touch red-text transparent surface; destructive plan removal, provider clear, session revoke and dynamic form deletion are included. Existing genuine requests, permissions, disabling and confirmation handlers are preserved.
