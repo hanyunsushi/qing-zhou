@@ -5,6 +5,14 @@ updated: 2026-10-13
 
 # kreeper第一设计系统 — QingZhou 集成
 
+## 2026-10-13 按钮操作组与顶栏材质同步
+
+源码提交 `1c665580765e18ceb1c5ac4eef22da5287387d3a` 将操作区几何收敛为桌面32px高、13px/20px、字重500、左右10px；触摸指针统一44px命中高度。普通、强调、默认弧边、高亮弧边、警告弧边、删除和撤销在同一操作组共用高度与文字基线，颜色和圆角继续按语义分类。删除按钮从原先过小的局部尺寸改为同组几何，账户“撤销会话”沿用删除外观但仍调用原会话撤销业务；上游“清除”、用户组、用户卡和套餐卡操作轨道均垂直居中。
+
+套餐管理移除前后箭头，改为展示卡片拖动排序。卡片支持鼠标拖放、触摸指针和方向键，提交完整 ID 顺序，保存失败恢复原顺序；编辑、上架/下架、删除和拖动把手在同一操作轨道内对齐。新增回归覆盖几何 token、生产操作轨道、排序插入/失败回滚与无操作边界。
+
+控制台桌面左侧品牌区与右侧 layout-header 现在共享顶栏背景透明度、saturate(180%) blur(20px)、底部分界线和滚动/菜单打开状态；品牌区保持64px高度，折叠侧栏的SVG仍按72px内容盒中心线居中。完整 skill、青舟源码快照、页面 pattern、示范 Controls 和示范 CSS 已同步；没有新增分类，也没有未确认的规范偏离。
+
 ## 权威与文档分工
 
 青舟完整设计规范、来源、代码复用和字体资产统一由 [kreeper第一设计系统](</Users/hinaw/Library/Mobile Documents/com~apple~CloudDocs/obsidian vault/knowledge vault/ai/agent-skills/custom/kreeper-first-design-system/SKILL.md>) 管理。这是完整 skill 包，而非孤立 md；入口采用渐进式披露。本页仅维护青舟项目集成边界，不复制全套组件规范。
@@ -35,6 +43,7 @@ Vue 3 + Naive UI + Ionicons + ECharts。实际视觉入口仍是 `frontend/src/s
 - 警告/错误提示使用无边框浅色语义面，保留原背景、状态图标、文字和布局。`frontend/src/App.vue` 的 Alert 主题与 skill `assets/utils/theme.ts` 同步设置 `borderWarning` / `borderError` 为 `none`，使用已有“提示信息 / 警告信息”分类；完整规范在 skill overlays。Naive 2.44.1 的边框由 `.n-alert__border` 内层绘制，须核对它的计算边宽，不以根节点 border0 或不存在的类型class代替验收。
 - 鼠标focus不清除按钮原外ring：全局box-shadow重置已移除，普通/强调/默认弧边的Naive focus/pressed内边框为0；高亮/警告点击后保持聚焦提亮属于正常状态。状态验收覆盖点击释放、失焦、再次点击与键盘聚焦，防止仅验证hover。
 - 默认弧边与普通按钮共用紧凑尺寸、字体、透明背景、中性描边及hover/focus/pressed；唯一差异为18px与8px圆角，撤销默认弧边独立蓝色hover描边。沿用“标准默认弧边按钮”分类；源码、复用CSS与示范同步，已随v0.2.98按钮版本发布。
+- 当前按钮几何以源码提交 `1c665580765e18ceb1c5ac4eef22da5287387d3a` 为准：桌面32px高、13px/20px、字重500、左右10px，触摸设备44px；同组删除、撤销、编辑、充值、订单、上架/下架和拖动把手统一高度与垂直中心线。套餐卡使用拖动排序，提交完整ID顺序并在失败时回滚；这属于已有“展示卡片 / 普通按钮”组合，不新增分类。
 - 明确删除按钮使用节点卡同款delete-button，并在删除入口与全局样式责任边界标注“删除按钮”；删除实体/记录及删除表单条目共用，撤销、吊销、禁用和重置不按颜色自动迁移。完整尺寸/状态/触摸命中规范由skill buttons维护，原删除处理器及确认流程保留。
 - AdminNodes顶层/分组/空态“添加节点”和各页面“清除筛选”归入默认弧边；示范移到同款功能复用区，取消浅蓝次级/轻量独立样式与分类。用量报表清空筛选也归默认弧边；明确销毁记录的套餐移除/流量包清空、上游配置清除、Short ID和动态卖点删除均归delete-button（24个模板入口）。强调按钮与高亮弧边注释按真实class区分；其他历史secondary/primary-quiet仅保留调用方兼容；Naive2.44.1不输出tertiary/quaternary/text类，默认弧边使用实际.n-button__border子节点限定，避免误改裸编辑动作和数字步进控件。
 - 高亮弧边hover/focus（含鼠标点击后）的背景和边框复用提亮accent，分类注释同步“变亮”，与警告同为提亮方向；完整合同在skill buttons/interactions。loading是现有按钮的请求状态；高亮弧边示范取消模拟加载，按下/释放后的聚焦反馈与警告一致。标准刷新使用Lucide refresh-cw完整SVG及viewBox中心旋转。按钮修正已同步青舟、skill代码/快照/pattern与规范，已随v0.2.98按钮版本发布。

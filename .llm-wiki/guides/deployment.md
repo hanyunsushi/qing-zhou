@@ -3,6 +3,45 @@ title: QingZhou Deployment and Artifact Retention
 updated: 2026-10-13
 ---
 
+## 2026-10-13 Unified button layout and package drag-sort rollout
+
+Source commit `1c665580765e18ceb1c5ac4eef22da5287387d3a` was pushed to the
+fork `main` branch. GitHub Release
+[`v0.2.99-kreeper-20261013-button-layout`](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.99-kreeper-20261013-button-layout), release run
+`38344380386` and CI run `38345030148` completed successfully. The Linux ARM64
+release asset and running panel binary both have SHA-256
+`593658f185722b1ae5a4545797127ef2d9e8b1d91949394e33fba2394baf840d`.
+
+The release standardizes the operation track at 32px desktop height, 13px/20px
+text, weight 500 and 10px inline padding; coarse touch targets use 44px hit
+height. Delete, revoke, edit, recharge, order, publish/unpublish and drag
+handles share the same track geometry. Package-card previous/next buttons were
+removed in favor of mouse, touch-pointer and keyboard drag sorting. Sorting
+sends the complete package ID order and restores the previous order when the
+save fails. No production reorder, delete or save write was executed.
+
+The desktop sidebar brand area now shares the right topbar's glass opacity,
+`saturate(180%) blur(20px)`, divider and scroll/menu-open states; it remains
+64px high, and collapsed sidebar SVGs remain centered in the 72px content rail.
+The change reuses existing semantic categories and synchronizes the QingZhou
+source, snapshots, patterns, showcase and design-system specification.
+
+At 2026-10-13 12:17:40 CST, deployment atomically replaced only
+`/opt/qingzhou/qingzhou` and restarted only `qingzhou.service`. Rollback material
+is retained at
+`/opt/qingzhou/backups/fork-v0.2.99-kreeper-20261013-button-layout-20261013-121740/`.
+Local and public `/api/health` returned the new version;
+`qingzhou.service`, `qingzhou-sing-box.service` and `cloudflared.service` were
+active with zero restarts. sing-box/Tunnel PIDs, protected configuration hashes
+and the database were unchanged, and the panel error journal was empty.
+
+After reload, the authenticated production package page rendered all four drag
+handles, operation buttons and drag instructions; its accessibility tree and
+runtime log were clean. This was a read-only browser check, so it does not claim
+that production sorting was executed. Frontend tests (148), typecheck, Vite,
+full Go tests, the 18 skill contracts/build and the 71-source/50-pattern/220-hash
+audit passed. The existing large ECharts chunk warning remains non-blocking.
+
 ## Unified button rollout
 
 The button-contract release `v0.2.98-kreeper-20261012-buttons` is built from source `d93967b312aac0de2be70117c9cc13bdf85b5d3e`; Release and CI including Go race/vet succeeded. Rollout follows the atomic panel-only process below: verify the release checksum, take a SQLite Backup API snapshot, retain old binary/config, restart only the panel, and verify actual running hash plus local/public health and emitted frontend assets. Deployment does not repair missing business confirmations; original destructive handlers remain unchanged.

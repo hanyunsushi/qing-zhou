@@ -5,9 +5,9 @@ updated: 2026-10-13
 
 ## Button contract release gate
 
-Source `d93967b312aac0de2be70117c9cc13bdf85b5d3e` passes 143 frontend tests, vue-tsc/Vite, full Go tests and diff check. Unified skill passes 18 contracts/typecheck/build plus the 71-source/50-pattern/220-hash audit. Default arcs share normal-button geometry/state except 18px corners; highlight arcs brighten on hover/mouse focus, keep press feedback, and no longer lose decorative rings on mouse focus. All 24 explicit deletion templates use the unified red-text/transparent surface; destructive plan removal, provider clear and dynamic form deletion are included. Existing genuine requests, permissions, disabling and confirmation handlers are preserved.
+Source `1c665580765e18ceb1c5ac4eef22da5287387d3a` passes 148 frontend tests, vue-tsc/Vite, full Go tests and diff check. Unified skill passes 18 contracts/typecheck/build plus the 71-source/50-pattern/220-hash audit. Default arcs share normal-button geometry/state except 18px corners; highlight arcs brighten on hover/mouse focus, keep press feedback, and no longer lose decorative rings on mouse focus. All explicit deletion templates use the unified 32px desktop / 44px touch red-text transparent surface; destructive plan removal, provider clear, session revoke and dynamic form deletion are included. Existing genuine requests, permissions, disabling and confirmation handlers are preserved.
 
-The actual built QingZhou virtual-admin fixture verifies desktop1280x720,390x844 and360x800 node/package screens and the narrow package form without horizontal page overflow. Explicit dynamic highlight-delete renders danger red,22px/18px and a separate32px neutral add action. A fixture save enters real business `saving`/Naive loading and completes; no production write was performed. Pointer remains fine in this viewport-only test, so44px coarse-pointer hit targets are code evidence, not a claimed touch-device measurement. Existing ECharts567.24kB and full-showcase large chunks remain non-blocking warnings. Production Release and CI/race gates succeeded. Actual running binary, local/public health and20 relevant public JS/CSS SHA256 match. Authenticated desktop node/package buttons and focus states passed; viewport-capable temporary tabs measured actual390×844/360×800 node and360×800 package pages without overflow. Native user tabs ignored viewport overrides and are explicitly excluded from mobile proof. Production application error logs are empty; no production save/delete was executed. Screenshots: `qingzhou-buttons-production-desktop.png` and `qingzhou-buttons-production-360.png` in the task visualization directory.
+The built QingZhou source and complete showcase verify desktop operation groups and the narrow package form without horizontal page overflow. The local 5191 showcase visibly confirms equal button heights/baselines, red delete/revoke surfaces, highlighter focus state without simulated loading, centered collapsed SVGs and shared brand/topbar glass. The package drag contract is exercised by insertion, no-op and persistence-failure rollback tests; no production reorder/delete/save action was executed. Pointer remains fine in this viewport-only test, so44px coarse-pointer hit targets are code evidence, not a claimed touch-device measurement. Existing ECharts567.24kB and full-showcase large chunks remain non-blocking warnings. Release and CI/race gates are tracked separately from local browser evidence.
 
 ## 节点分组删除恢复验收
 
@@ -15,15 +15,15 @@ The actual built QingZhou virtual-admin fixture verifies desktop1280x720,390x844
 
 ## 删除按钮与默认弧边核对
 
-统一删除以认证生产节点管理页的计算样式为来源：红字#ff3b30、透明底、22px高、padding0 6px、12px/12px weight600、18px角，无常态边框/阴影。本地示范核对同值；hover浅灰rgba(46,51,56,.09)，键盘focus-visible单独显示白/蓝焦点ring，红字与无装饰边框保留。此次“删除按钮”分类由用户明确授权，真实业务删除未在浏览器执行。
+统一删除以认证生产节点管理页的计算样式为来源：红字#ff3b30、透明底、桌面32px高、13px/20px、左右10px、weight500、18px角；触摸设备44px命中高度，无常态边框/阴影。hover浅灰rgba(46,51,56,.09)，键盘focus-visible单独显示白/蓝焦点ring，红字与无装饰边框保留。撤销会话复用外观但仍执行撤销业务；真实删除、撤销和套餐排序未在生产浏览器执行。
 
 默认弧边、添加节点、清除筛选实测均为32px高、padding0 10px、13px/20px weight500、透明底、18px角、相同中性1pxring；后二者是功能复用，不再列浅蓝次级/轻量类型。普通按钮仅圆角为8px；默认样式以真实.n-button__border子节点限定，数字输入步进按钮仍18px高、无描边/阴影，quaternary裸按钮不受默认弧边覆盖。
 
 按钮状态层叠实测复现普通按钮点击后shadow:none：旧全局鼠标focus重置清除了装饰ring。该规则已移除；普通/强调/默认弧边的Naive focus/pressed内边框均为0，外ring由各自合同绘制。八个可点击样例（普通、强调、默认弧边、高亮、警告、删除、添加、清除）逐一核对点击释放及失焦，均无模拟转圈；普通/默认弧边点击hover为2px中性强ring，失焦回1px中性ring。鼠标移开但保持focus的独立检查确认普通/默认/强调恢复常态ring，高亮/警告保留提亮、删除保留浅灰，失焦后回常态。
 
-键盘Tab/Shift+Tab逐项核对，普通/默认的2px中性ring、强调的2px蓝ring保留；高亮独立focus-visible白/蓝焦点ring补齐，避免通用primary的无shadow覆盖。高亮与警告的点击聚焦提亮是正常状态，示范不触发假loading；真实业务请求状态由调用方控制。沿用已有分类，规范、源码快照、pattern、复用CSS与运行示范同步，未部署。
+键盘Tab/Shift+Tab逐项核对，普通/默认的2px中性ring、强调的2px蓝ring保留；高亮独立focus-visible白/蓝焦点ring补齐，避免通用primary的无shadow覆盖。高亮与警告的点击聚焦提亮是正常状态，示范不触发假loading；真实业务请求状态由调用方控制。沿用已有分类，规范、源码快照、pattern、复用CSS与运行示范同步，已随 `v0.2.99-kreeper-20261013-button-layout` 发布。生产套餐页只读核对已显示拖动把手和统一操作轨道，未执行排序、删除或保存写操作。
 
-项目143项测试、类型检查和Vite构建通过；skill18项契约、隔离类型检查/构建、71源文件/50pattern/220哈希审计通过，Wiki16页无断链/孤立页/失效源码引用，git diff --check通过。当前证据为桌面1167px；不据此新增手机或触摸实测结论。生产版本以[项目权威](../../agent.md)为准。
+项目148项测试、类型检查和Vite构建通过；skill18项契约、隔离类型检查/构建、71源文件/50pattern/220哈希审计通过，Wiki16页无断链/孤立页/失效源码引用，git diff --check通过。当前证据为桌面1167px和本地示范页；不据此新增生产手机或触摸实测结论。生产版本以[项目权威](../../agent.md)为准。
 
 ## Unified design skill gate
 
