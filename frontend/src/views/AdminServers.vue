@@ -79,7 +79,7 @@
             <span class="kv">探针 <n-tag :type="s.probe_enabled ? 'info' : 'default'" size="tiny" :bordered="false">{{ s.probe_enabled ? '开' : '关' }}</n-tag></span>
           </div>
           <div class="lc-foot">
-            <!-- 高亮弧边按钮：流量分析是卡片主操作，悬浮/聚焦提亮，按下短暂变深。 -->
+            <!-- 高亮弧边按钮：流量分析是卡片主操作，悬浮/聚焦提亮，按下保持悬浮色并回弹。 -->
             <n-button size="tiny" type="primary" class="highlight-arc-button" @click="openTrafficAnalysis(s)">流量分析</n-button>
             <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" @click="handleRebuild(s.id)">重建</n-button>
@@ -143,7 +143,7 @@
         <n-form-item label="启用"><n-switch v-model:value="form.enabled" /></n-form-item>
       </n-form>
       <n-space>
-        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" :loading="saving" @click="handleSave">保存</n-button>
         <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
         <n-button @click="handleTest" :loading="testing">测试连接</n-button>

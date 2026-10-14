@@ -1,4 +1,5 @@
 <template>
+  <!-- 页面滚动条：桌面自绘轨道，手机交给平台原生滚动。 -->
   <div
     class="page-scrollbar"
     aria-hidden="true"
@@ -115,6 +116,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+/* 页面滚动条：桌面16px轨道与居中8px滑块。 */
 .page-scrollbar {
   position: fixed;
   z-index: 120;
@@ -148,4 +150,8 @@ onBeforeUnmount(() => {
 .page-scrollbar-thumb:focus-visible { background: #a8a8a8; }
 .page-scrollbar-thumb:active { cursor: grabbing; }
 :global(body.page-scrollbar-dragging) { user-select: none; cursor: grabbing; }
+/* 页面滚动条：与移动壳共用768px断点，不绘制轨道或分界线。 */
+@media (max-width: 768px) {
+  .page-scrollbar { display: none; }
+}
 </style>

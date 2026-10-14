@@ -7,6 +7,10 @@ updated: 2026-10-14
 
 ## 当前修正
 
+手机侧栏与竖屏共用菜单/品牌/footer样式：品牌固定64px、共享顶栏玻璃/底线和状态，菜单仍32px/13px正文/16px SVG/8px角及独立层级线；外包装直角。手机nav左右各16px、scrollbar-gutter:auto、隐藏平台滚动条，Drawer包装overflow:hidden，只有菜单原生纵向滚动。≤768px页面自绘轨道隐藏、body右内距0，恢复平台原生指示器；桌面轨道与折叠居中保持。源码分类、skill sidebar/topbar/scrollbars/responsive、复用代码和示范同步，无新类型，AWS规则不变。这些本地改动未部署；验证见[Validation](../guides/validation.md)。
+
+当前本地进一步修正结果区与按钮反馈：侧栏“无结果”以正常文档流替换菜单轨道，顶栏继续在原下拉结果面；Markdown正文链接显式hover/focus-visible深蓝。操作按钮隐藏水波层，普通/强调/默认弧边/高亮/警告/删除共用1px鼠标/键盘按压回弹，禁用静止，减弱动态效果位移0；高亮/警告按下与悬浮保持同色。对应模板/CSS和页面分类注释、skill规范/复用代码/快照/pattern与示范同步。无新分类或待确认偏离。本次未部署，生产仍为v0.2.104；当前验收见[Validation](../guides/validation.md)。
+
 本轮监控后台与首页复用AvailabilityHeatmap的16列×3行矩阵/立体视图、坐标、状态色、提示和键盘交互；查询保留管理/公开权限边界。后台本机指标和趋势只显示一次，OCI回环资产保留关联资产编辑入口；摘要与管理端热图去重，不停止采集、不删除资产。全部NAlert类型、订单条目和首页摘要SVG无额外边框；帮助状态切换完整测量/跟随/回位，选中卡维持中性选中底色。超链接常态Apple蓝，hover/focus-visible显示下划线offset3px。折叠分组为4px中性圆点；顶栏/侧栏无匹配显示“无结果”；移动侧栏Teleport包装均0圆角，菜单行仍8px。首页价格牌来自手填资产月费，默认零值不显示。分类注释、专项规范、复用代码、示范与快照同步，无新分类或待确认规范偏离。
 
 ## 后台监控范围切换与公开入口
@@ -104,7 +108,7 @@ RefreshButton请求期间aria-busy/禁用，SVG悬浮与loading旋转分离；�
 
 完整示范入口 `assets/examples/App.vue` / `Gallery.vue`，按 25 个规范主题映射 15 个展示区域，并提供 50 个组件/页面源合同目录。控制台全组件、公共顶栏、完整认证为三个实际场景；原业务页面不接真实 API。进度单圈/双圈是既有类型，补齐状态/注释与1100ms共享绘制合同，没有重复创建类别。
 
-skill 的 `scripts/preview-showcase.mjs` 可生成独立预览；`scripts/audit.mjs` 检查源覆盖/哈希/链接/alias，`scripts/verify-assets.mjs` 在临时项目做 typecheck、18项契约与build。实际验收和当前限制见 [Validation](../guides/validation.md) 与 [同步证据](../_sync-state.md)。源码构建不替代真实浏览器或生产验收；按钮合同随v0.2.98发布；运行验收见项目权威文档。
+skill 的 `scripts/preview-showcase.mjs` 可生成独立预览；`scripts/audit.mjs` 检查源覆盖/哈希/链接/alias，`scripts/verify-assets.mjs` 在临时项目做 typecheck、20项契约与build。实际验收和当前限制见 [Validation](../guides/validation.md) 与 [同步证据](../_sync-state.md)。源码构建不替代真实浏览器或生产验收；当前按钮点击合同存在未部署修正，运行验收见项目权威文档。
 
 青舟派生代码 CC BY-NC-SA 4.0，字体 OFL；规范来源不改变代码许可。字体文件、实际字重/变量轴和原字节快照属于可复用资产事实，按需见 skill assets/fonts/LICENSES.md；AWS 来源与字体类型定义仍由 typography 专页负责。
 

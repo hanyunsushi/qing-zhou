@@ -322,7 +322,7 @@
           <template v-if="editForm.account">改的是所有节点通用的那一个，保存后旧密码立即失效，记得同步更新已填在别处的地方。</template>
           <template v-else>改的是这一份套餐自己的那一个，通用账号不受影响。</template>
         </div>
-        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" block :loading="savingProxy" @click="saveProxy">保存</n-button>
       </n-form>
     </n-modal>

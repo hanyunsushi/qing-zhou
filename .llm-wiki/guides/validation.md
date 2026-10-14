@@ -3,7 +3,27 @@ title: Validation Guide
 updated: 2026-10-14
 ---
 
-## 2026-10-14 界面与监控验收
+## 当前手机侧栏与滚动验收（本地）
+
+162前端测试、vue-tsc/Vite和21项skill资源契约/类型检查/build通过。新增合同覆盖768px手机原生页面指示器、隐藏自绘轨道和右内距、无槽位侧栏、共享品牌玻璃及包装无第二滚动区；旧侧栏/品牌测试按用户确认的手机合同更新。后端未改，未重跑Go；既有ECharts与示范大chunk警告保留。
+
+当前青舟构建经本地只读fixture实际验收：390×844页面rail display:none、body padding-right:0、html/body scrollbar-width:auto；手机nav宽300px、左右16px、scrollbar-width:none、WebKit display:none、gutter:auto、offsetWidth=clientWidth。长菜单scrollHeight1265/clientHeight716，真实滚动scrollTop从0到549，品牌y0/height64、footer y780/height64不变；抽屉body及body-content-wrapper overflow:hidden且圆角0。360×800同样无轨道/侧栏槽位和页面横向溢出，抽屉关闭后原生body滚动到800px。桌面浏览器模拟窄屏的可见原生指示器由平台决定，不冒充真实手机硬件验证。截图`output/mobile-sidebar-20261014-390.jpg`、`output/mobile-native-page-20261014-360.jpg`。
+
+820×1180竖屏桌面仍为16px自绘轨道/body内距16；菜单32px高、padding6px12px、8px角、13/20/500，与手机相同。折叠宽72、SVG中心约35.5px、子树0；768px切换手机后rail隐藏/内距0。完整示范390×844同样无轨道及侧栏占宽、64px玻璃品牌和直角抽屉；打开二级图表菜单并实际滚动到89px，独立层级线left8px/width1px保留。截图`output/showcase-mobile-sidebar-20261014-390.jpg`。当前测试使用浏览器尺寸覆盖，不声称真实iOS/Android、触摸指针或OS减弱动态效果已实测。
+
+源码分类沿用侧边栏、顶栏/品牌标识、页面滚动条，无新类型；用户要求的响应式规范已同步，AWS外部规则未改。本轮没有提交/Release/生产部署，运行仍为v0.2.104；5191示范已更新。
+
+## 当前搜索与点击反馈验收（本地）
+
+161前端测试、vue-tsc/Vite通过；新增结构解析契约确认桌面/手机空状态为筛选框之后的菜单同级块，并与n-menu互斥；覆盖Markdown专属hover/focus、按钮水波、同色pressed、共享回弹、禁用与减弱动态效果变量。skill20契约、独立类型检查/build通过；后端未改，本轮未重跑Go。既有ECharts和完整示范大chunk warning仍为非阻断项。当前源码及规范同步，不以测试通过推断生产已发布。
+
+1167px示范实际确认侧栏非匹配时position:static、border0、shadow:none且菜单数量0，清空恢复菜单。Markdown正文链接常态rgb(0,122,255)，真实指针hover及键盘focus-visible均rgb(3,49,96)，下划线保留。隔离验收页使用真实NButton/theme/复用CSS并将按住350ms采样写入可见DOM：六种操作按钮pointerdown矩阵translateY1px、水波层display:none，pointerup回到无位移；高亮背景为accent84%+white，警告rgb(252,176,64)，pressed/hover token相同；高亮Enter按住也1px同色，禁用transform:none。不是通过浏览器注入class模拟按压。OS减弱动态效果和coarse指针未实测，源码合同与浏览器证据分开。
+
+生产仍运行v0.2.104。本轮没有Release、提交或生产修改；示范5191已刷新。
+
+390×844手机抽屉非匹配筛选空状态位于mobile-sidebar-nav直接子级、position:static、shadow:none，菜单数量0，抽屉圆角0；清空恢复导航。360×800按钮/表单示范无页面横向溢出，按钮水波层全部隐藏；截图`output/buttons-feedback-20261014-360.jpg`。实际innerWidth已记录，完成后恢复视口、关闭隔离采样/手机临时标签页。最终源/快照审计71源、50pattern、220哈希通过；Wiki17页无断链/孤立页/过期源码引用。
+
+## 2026-10-14 界面与监控验收（已部署基线）
 
 本轮监控后台与首页复用AvailabilityHeatmap的16列×3行矩阵/立体视图、坐标、状态色、提示和键盘交互；查询保留管理/公开权限边界。后台本机指标和趋势只显示一次，OCI回环资产保留关联资产编辑入口；摘要与管理端热图去重，不停止采集、不删除资产。全部NAlert类型、订单条目和首页摘要SVG无额外边框；帮助状态切换完整测量/跟随/回位，选中卡维持中性选中底色。超链接常态Apple蓝，hover/focus-visible显示下划线offset3px。折叠分组为4px中性圆点；顶栏/侧栏无匹配显示“无结果”；移动侧栏Teleport包装均0圆角，菜单行仍8px。首页价格牌来自手填资产月费，默认零值不显示。分类注释、专项规范、复用代码、示范与快照同步，无新分类或待确认规范偏离。
 

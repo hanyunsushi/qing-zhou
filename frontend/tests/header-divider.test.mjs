@@ -7,7 +7,7 @@ const css = readFileSync(new URL('../src/styles/global.css', import.meta.url), '
 
 test('desktop brand and topbar share a stable height and divider', () => {
   assert.match(css, /--app-header-height: 64px;/)
-  const brand = layout.match(/\.app-sider \.sidebar-brand \{([^}]+)\}/)?.[1]
+  const brand = layout.match(/\.app-sider \.sidebar-brand,\s*\.mobile-sidebar \.sidebar-brand \{([^}]+)\}/)?.[1]
   const header = layout.match(/\.layout-header \{([^}]+)\}/)?.[1]
   assert.ok(brand)
   assert.ok(header)
@@ -20,7 +20,7 @@ test('desktop brand and topbar share a stable height and divider', () => {
 })
 
 test('desktop brand and topbar share glass material and state selectors', () => {
-  const brand = layout.match(/\.app-sider \.sidebar-brand \{([^}]+)\}/)?.[1]
+  const brand = layout.match(/\.app-sider \.sidebar-brand,\s*\.mobile-sidebar \.sidebar-brand \{([^}]+)\}/)?.[1]
   assert.ok(brand)
   assert.match(brand, /background: var\(--topbar-background\);/)
   assert.match(brand, /backdrop-filter: var\(--topbar-backdrop-filter\);/)
@@ -29,9 +29,9 @@ test('desktop brand and topbar share glass material and state selectors', () => 
   assert.match(layout, /<div class="sidebar-brand" :class="\{ 'is-scrolled': isScrolled, 'is-menu-open': openMenu !== null \}"/)
 })
 
-test('desktop divider does not add a border to the mobile drawer brand', () => {
-  const sharedBrand = layout.match(/\n\.sidebar-brand \{([^}]+)\}/)?.[1]
-  assert.ok(sharedBrand)
-  assert.doesNotMatch(sharedBrand, /border-bottom/)
-  assert.doesNotMatch(layout, /\.mobile-sidebar \.sidebar-brand \{[^}]*border-bottom/)
+test('mobile brand uses the portrait sidebar material, divider and scroll state', () => {
+  assert.match(layout, /\.app-sider \.sidebar-brand,\s*\.mobile-sidebar \.sidebar-brand \{[^}]*border-bottom: 1px solid var\(--topbar-divider\);/)
+  assert.match(layout, /\.app-sider \.sidebar-brand\.is-scrolled,\s*\.mobile-sidebar \.sidebar-brand\.is-scrolled/)
+  assert.match(layout, /\.app-sider \.sidebar-brand\.is-menu-open,\s*\.mobile-sidebar \.sidebar-brand\.is-menu-open/)
+  assert.match(layout, /class="sidebar-brand" :class="\{ 'is-scrolled': isScrolled, 'is-menu-open': openMenu !== null \}" @click="goAndClose/)
 })

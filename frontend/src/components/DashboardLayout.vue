@@ -16,11 +16,11 @@
         <div class="sidebar-filter">
           <input v-model="sidebarQuery" type="search" placeholder="筛选导航" aria-label="筛选导航" autocomplete="off" @keydown.esc="sidebarQuery = ''" />
           <kbd v-if="!sidebarQuery" aria-hidden="true">/</kbd>
-          <!-- 提示信息 / 下拉选择菜单：无匹配时保留搜索反馈面，不伪造可导航选项。 -->
-          <div v-if="sidebarQuery.trim() && !menuOptions.length" class="sidebar-search-empty" role="status">无结果</div>
         </div>
         <!-- 侧边栏 / 菜单归类级别：桌面展开状态受控；收起后仅保留最外层可操作入口的 SVG。 -->
-        <n-menu :value="activeKey" :options="menuOptions" :expanded-keys="sidebarExpandedKeys" :indent="18" :node-props="menuNodeProps" @update:expanded-keys="updateSidebarExpandedKeys" @update:value="handleMenuSelect" />
+        <!-- 提示信息：筛选空状态占据菜单结果区，与有结果的位置一致。 -->
+        <div v-if="sidebarQuery.trim() && !menuOptions.length" class="sidebar-search-empty" role="status">无结果</div>
+        <n-menu v-else :value="activeKey" :options="menuOptions" :expanded-keys="sidebarExpandedKeys" :indent="18" :node-props="menuNodeProps" @update:expanded-keys="updateSidebarExpandedKeys" @update:value="handleMenuSelect" />
       </nav>
       <!-- 侧边栏折叠按钮：桌面切换完整导航与图标轨道，移动端继续使用抽屉；桌面与移动 Drawer 共用同一 footer 样式。 -->
       <div class="sidebar-footer">
@@ -42,12 +42,13 @@
       </div>
     </aside>
 
-    <!-- 移动端抽屉 -->
+    <!-- 侧边栏：手机抽屉沿用竖屏菜单、品牌和底部几何；仅菜单原生滚动且隐藏滚动条。 -->
     <n-drawer v-model:show="drawerShow" placement="left" :width="300" :block-scroll="true"
               class="mobile-sidebar-drawer-root" content-class="mobile-sidebar-drawer">
       <n-drawer-content :native-scrollbar="true" body-content-style="padding:0;">
         <div class="sidebar-surface mobile-sidebar">
-          <div class="sidebar-brand" @click="goAndClose('/')">
+          <!-- 顶栏 / 品牌标识：手机与竖屏共用64px玻璃表面和底线。 -->
+          <div class="sidebar-brand" :class="{ 'is-scrolled': isScrolled, 'is-menu-open': openMenu !== null }" @click="goAndClose('/')">
             <!-- Logo -->
             <div class="sidebar-logo"><BrandMark :size="40" /></div>
             <div class="brand-copy">
@@ -60,10 +61,10 @@
             <div class="sidebar-filter">
               <input v-model="sidebarQuery" type="search" placeholder="筛选导航" aria-label="筛选导航" autocomplete="off" @keydown.esc="sidebarQuery = ''" />
               <kbd v-if="!sidebarQuery" aria-hidden="true">/</kbd>
-              <!-- 提示信息 / 下拉选择菜单：手机筛选使用同一无结果反馈。 -->
-              <div v-if="sidebarQuery.trim() && !menuOptions.length" class="sidebar-search-empty" role="status">无结果</div>
             </div>
-            <n-menu :value="activeKey" :options="menuOptions" :default-expanded-keys="defaultExpandedKeys" :indent="18" :node-props="menuNodeProps" @update:value="goAndClose" />
+            <!-- 提示信息：手机筛选空状态同样替换菜单结果区。 -->
+            <div v-if="sidebarQuery.trim() && !menuOptions.length" class="sidebar-search-empty" role="status">无结果</div>
+            <n-menu v-else :value="activeKey" :options="menuOptions" :default-expanded-keys="defaultExpandedKeys" :indent="18" :node-props="menuNodeProps" @update:value="goAndClose" />
           </nav>
           <!-- 侧边栏折叠按钮：移动端沿用同一 footer 几何，收起即关闭 Drawer。 -->
           <div class="sidebar-footer">
@@ -447,8 +448,9 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
   min-height: 64px; padding: 10px 16px;
   cursor: pointer;
 }
-/* 顶栏 / 品牌标识：与右侧顶栏共享64px高度、背景透明度、模糊和底部分界线。 */
-.app-sider .sidebar-brand {
+/* 顶栏 / 品牌标识：桌面、竖屏与手机共享64px高度、玻璃材质和底线。 */
+.app-sider .sidebar-brand,
+.mobile-sidebar .sidebar-brand {
   box-sizing: border-box; flex: 0 0 var(--app-header-height);
   height: var(--app-header-height); min-height: var(--app-header-height);
   border-bottom: 1px solid var(--topbar-divider);
@@ -492,15 +494,16 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
   background: oklch(98.5% 0 0); color: var(--sidebar-muted);
   font: 600 11px/1 var(--ff-mono); pointer-events: none;
 }
-/* 提示信息 / 下拉选择菜单：搜索反馈沿用浮层几何，与导航空白分离。 */
-.sidebar-search-empty { position: absolute; z-index: 5; top: calc(100% + 8px); left: 0; right: 0; padding: 16px; border: 1px solid var(--border); border-radius: 16px !important; background: var(--bg); color: var(--text-3); box-shadow: var(--shadow-flyout); text-align: center; font: 400 13px/20px var(--ff-body); }
+/* 提示信息：空状态位于正常菜单轨道，不绘制浮层。 */
+.sidebar-search-empty { padding: 12px; color: var(--sidebar-muted); text-align: center; font: 400 13px/20px var(--ff-body); }
 .sidebar-menu {
   /* stable scrollbar-gutter 已占用右侧轨道，因此只保留左侧 16px 内容内轨。 */
   box-sizing: border-box; flex: 1 1 auto; min-height: 0; width: 100%; min-width: 0; max-width: 100%; overflow-x: hidden; overflow-y: auto; scrollbar-gutter: stable; contain: inline-size; padding: 0 0 var(--sidebar-content-gap) 16px;
   scrollbar-width: auto; scrollbar-color: auto;
 }
-/* 侧边栏：菜单承接剩余空间，内容不足时只扩大菜单空白，不改变折叠按钮高度。 */
-.mobile-sidebar .sidebar-menu { flex: 1 1 auto; }
+/* 侧边栏：手机仅菜单原生滚动，隐藏滚动条与槽位；左右16px内轨对称。 */
+.mobile-sidebar .sidebar-menu { flex: 1 1 auto; padding-inline: 16px; scrollbar-gutter: auto; scrollbar-width: none; }
+.mobile-sidebar .sidebar-menu::-webkit-scrollbar { display: none; }
 /* 侧边栏：折叠轨道对称预留原生滚动槽，40px菜单面与品牌/底部按钮共用中心线。 */
 .app-sider.is-collapsed .sidebar-menu { padding: 8px 0 var(--sidebar-content-gap); scrollbar-gutter: stable both-edges; }
 .app-sider.is-collapsed :deep(.n-menu) { width: 40px !important; max-width: 100% !important; margin-inline: auto; }
@@ -527,19 +530,21 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
   transition: background-color .24s cubic-bezier(.4, 0, .6, 1), border-color .24s cubic-bezier(.4, 0, .6, 1);
 }
 .layout-header.is-scrolled,
-.app-sider .sidebar-brand.is-scrolled {
+.app-sider .sidebar-brand.is-scrolled,
+.mobile-sidebar .sidebar-brand.is-scrolled {
   background: var(--topbar-scrim-background-fallback);
   backdrop-filter: var(--topbar-backdrop-filter);
   -webkit-backdrop-filter: var(--topbar-backdrop-filter);
 }
 .layout-header.is-menu-open,
-.app-sider .sidebar-brand.is-menu-open {
+.app-sider .sidebar-brand.is-menu-open,
+.mobile-sidebar .sidebar-brand.is-menu-open {
   background: var(--topbar-background);
   backdrop-filter: var(--topbar-backdrop-filter);
   -webkit-backdrop-filter: var(--topbar-backdrop-filter);
 }
 @supports (backdrop-filter: initial) {
-  .layout-header, .app-sider .sidebar-brand { background: var(--topbar-scrim-background); }
+  .layout-header, .app-sider .sidebar-brand, .mobile-sidebar .sidebar-brand { background: var(--topbar-scrim-background); }
 }
 .header-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .header-title { font-weight: 650; font-size: 16px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -693,6 +698,8 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
   background: var(--bg);
   border-radius: 0 !important;
 }
+/* 侧边栏：抽屉包装不建立第二个滚动区，滚动由sidebar-menu承接。 */
+:global(.mobile-sidebar-drawer-root .n-drawer-body) { overflow: hidden !important; }
 :global(.mobile-sidebar-drawer .n-drawer-body-content-wrapper) {
   height: 100% !important;
   overflow: hidden !important;

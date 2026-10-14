@@ -193,7 +193,7 @@
       <n-tab-pane name="sources" tab="订阅源">
         <div class="page-toolbar">
           <span class="spacer" />
-          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
+          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
           <n-button size="small" type="primary" class="highlight-arc-button" @click="openSource()">添加订阅源</n-button>
         </div>
         <n-spin :show="loading">
@@ -217,7 +217,7 @@
                    错误只进了 last_error 和服务端日志，面板上必须说出来。 -->
               <div v-if="r.last_error" class="src-err" :title="r.last_error">拉取失败：{{ r.last_error }}</div>
               <div class="lc-foot">
-                <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
+                <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
                 <n-button size="tiny" type="primary" class="highlight-arc-button" @click="handleFetchSource(r.id)">拉取</n-button>
                 <!-- 标准默认弧边按钮：订阅源编辑沿用同组中性弧边操作。 -->
                 <n-button size="tiny" class="default-arc-button" @click="openSource(r)">编辑</n-button>
@@ -292,7 +292,7 @@
           </n-form-item>
           <n-form-item label="启用"><n-switch v-model:value="nodeForm.enabled" /></n-form-item>
         </n-form>
-        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleSaveNode">保存</n-button>
       </n-drawer-content>
     </n-drawer>
@@ -308,7 +308,7 @@
             <n-select v-model:value="importGroupIds" :options="groupOptions" multiple placeholder="选择分组" />
           </n-form-item>
         </n-form>
-        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleImport">导入</n-button>
       </n-drawer-content>
     </n-drawer>
@@ -327,7 +327,7 @@
           </n-form-item>
           <n-form-item label="排序"><n-input-number v-model:value="groupForm.sort_order" :min="0" style="width:100%;" /></n-form-item>
         </n-form>
-        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleSaveGroup">保存</n-button>
       </n-drawer-content>
     </n-drawer>
@@ -343,7 +343,7 @@
           </n-form-item>
           <n-form-item label="启用"><n-switch v-model:value="sourceForm.enabled" /></n-form-item>
         </n-form>
-        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleSaveSource">保存</n-button>
       </n-drawer-content>
     </n-drawer>

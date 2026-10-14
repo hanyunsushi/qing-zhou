@@ -292,7 +292,7 @@
           <n-form-item label="备注"><n-input v-model:value="assetForm.notes" type="textarea" :rows="2" /></n-form-item>
           <n-form-item v-if="!assetServer.local" label="启用探针"><n-switch v-model:value="assetForm.probe_enabled" /></n-form-item>
         </n-form>
-        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleSaveAsset">保存</n-button>
       </n-drawer-content>
     </n-drawer>

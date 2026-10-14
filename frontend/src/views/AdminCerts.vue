@@ -10,7 +10,7 @@
 
     <n-card size="small" style="margin-bottom:16px;">
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" @click="openAcme">申请证书（Cloudflare DNS）</n-button>
         <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
         <n-button @click="openPaste">粘贴证书</n-button>
@@ -111,7 +111,7 @@
         <n-space justify="end">
           <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button @click="showAcme = false">取消</n-button>
-          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
+          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
           <n-button type="primary" class="highlight-arc-button" :loading="submitting" @click="submitAcme">申请</n-button>
         </n-space>
       </template>
@@ -129,7 +129,7 @@
         <n-space justify="end">
           <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button @click="showPaste = false">取消</n-button>
-          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
+          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
           <n-button type="primary" class="highlight-arc-button" :loading="submitting" @click="submitPaste">保存</n-button>
         </n-space>
       </template>
@@ -147,7 +147,7 @@
         <n-space justify="end">
           <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button @click="showSelf = false">取消</n-button>
-          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
+          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
           <n-button type="primary" class="highlight-arc-button" :loading="submitting" @click="submitSelf">生成</n-button>
         </n-space>
       </template>

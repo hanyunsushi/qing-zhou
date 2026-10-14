@@ -210,7 +210,7 @@
             <!-- 天数只对订阅计划有意义：流量包加的是共享池，没有按份倒计时。 -->
             <n-input-number v-if="assignIsPlan" v-model:value="assignDays" :min="1" :max="assignDaysMax" :precision="0"
                             :show-button="false" placeholder="天数" style="width:96px;flex:none;" />
-            <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
+            <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
             <n-button type="primary" class="highlight-arc-button" :loading="saving" :disabled="!assignPkgId" @click="handleAssign">
               {{ assignWillQueue ? '分配并排队' : '分配' }}
             </n-button>
@@ -250,7 +250,7 @@
           </div>
         </n-form-item>
       </n-form>
-      <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
+      <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
       <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleCreate">创建</n-button>
     </n-modal>
 
@@ -301,7 +301,7 @@
           </div>
         </n-form-item>
       </n-form>
-      <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
+      <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
       <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleSave">保存</n-button>
     </n-modal>
 
@@ -312,7 +312,7 @@
         <n-form-item label="积分"><n-input-number v-model:value="rechargeAmount" style="width:100%;" /></n-form-item>
         <n-form-item label="说明"><n-input v-model:value="rechargeNote" placeholder="正数充值，负数扣除" /></n-form-item>
       </n-form>
-      <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
+      <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
       <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleRecharge">确认</n-button>
     </n-modal>
 
@@ -333,7 +333,7 @@
         正数增加、负数扣减。扣减不会低于已用流量。排队中尚未生效的份也可以改额度。
         这不是退款：积分与订单都不动。
       </p>
-      <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
+      <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
       <n-button type="primary" class="highlight-arc-button" block :loading="saving" :disabled="!adjustGB" @click="handleAdjust">确认</n-button>
     </n-modal>
 

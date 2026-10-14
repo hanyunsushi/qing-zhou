@@ -90,7 +90,7 @@ test('typography applies numeric font only through explicit utility classes', ()
   assert.doesNotMatch(globalCss, /\[class\*="(?:amount|balance|price|value|count|pct)"\]/)
 })
 
-test('custom scrollbar geometry keeps one stable centered slot across platforms', () => {
+test('desktop custom scrollbar keeps one stable centered slot across platforms', () => {
   const globalCss = read('src/styles/global.css')
   const app = read('src/App.vue')
   const scrollbar = read('src/components/PageScrollbar.vue')
@@ -115,6 +115,18 @@ test('custom scrollbar geometry keeps one stable centered slot across platforms'
   assert.match(read('src/components/AppHeader.vue'), /z-index: 130;/)
   assert.match(read('src/components/DashboardLayout.vue'), /position: sticky; top: 0; z-index: 130;/)
   assert.match(globalCss, /\.n-tooltip\.n-popover,[\s\S]*?--n-color: var\(--text\) !important;[\s\S]*?--n-text-color: #fff !important;[\s\S]*?z-index: 2000 !important;[\s\S]*?background: var\(--text\) !important;/)
+})
+
+test('mobile pages use native scrolling and sidebar menus hide scrollbars without reserving a gutter', () => {
+  const css = read('src/styles/global.css')
+  const scrollbar = read('src/components/PageScrollbar.vue')
+  const layout = read('src/components/DashboardLayout.vue')
+  assert.match(css, /@media \(max-width: 768px\) \{\s*html, body \{ scrollbar-width: auto; \}\s*body \{ padding-right: 0; \}\s*html::-webkit-scrollbar, body::-webkit-scrollbar \{ display: revert; \}/)
+  assert.match(scrollbar, /@media \(max-width: 768px\) \{\s*\.page-scrollbar \{ display: none; \}/)
+  assert.match(layout, /\.mobile-sidebar \.sidebar-menu \{[^}]*padding-inline: 16px;[^}]*scrollbar-gutter: auto;[^}]*scrollbar-width: none;/)
+  assert.match(layout, /\.mobile-sidebar \.sidebar-menu::-webkit-scrollbar \{ display: none; \}/)
+  assert.match(layout, /:global\(\.mobile-sidebar-drawer-root \.n-drawer-body\) \{ overflow: hidden !important; \}/)
+  assert.match(layout, /overflow-x: hidden; overflow-y: auto;/)
 })
 
 test('Shift5 owns page lifecycle motion while dashboard child routes keep the chrome mounted', () => {
@@ -184,7 +196,7 @@ test('dashboard and subscription actions share the same compact button contract'
   assert.match(globalCss, /\.n-button\.action-button--normal:hover:not\(\.n-button--disabled\), \.n-button\.action-button--normal:focus-visible:not\(\.n-button--disabled\),[^{]*\{[\s\S]*?box-shadow:0 0 0 2px var\(--action-button-border-hover\) !important;/)
   assert.match(globalCss, /\.n-button\.action-button--emphasis \{[\s\S]*?--action-button-bg: var\(--accent\);[\s\S]*?--action-button-bg-hover: var\(--accent-button-hover\);/)
   assert.match(globalCss, /\.n-button\.n-button--primary-type\.action-button--emphasis[^{}]*:hover, \.n-button\.n-button--primary-type\.action-button--emphasis[^{}]*:focus-visible \{[\s\S]*?background:var\(--action-button-bg-hover\) !important;/)
-  assert.match(globalCss, /\.n-button\.action-button:active:not\(\.n-button--disabled\),[^{]*\{ transform:translateY\(1px\) !important;/)
+  assert.match(globalCss, /\.n-button:is\(\.action-button,[^{]*\{ transform:translateY\(var\(--button-press-offset\)\) !important;/)
   assert.match(dashboard, /\/\* 普通按钮悬浮效果：复用控制台“订阅管理”的文字加深与中性 ring。 \*\//)
   assert.match(dashboard, /\.onboarding-strip button\{[\s\S]*?color:var\(--text-3\)/)
   assert.match(dashboard, /\.onboarding-strip button:hover,\.onboarding-strip button:focus-visible\{background:var\(--card\);color:var\(--text-2\);box-shadow:0 0 0 1px transparent,0 0 0 2px var\(--border-strong\) !important\}/)
@@ -310,7 +322,7 @@ test('highlight arc primary buttons use the brighter hover contract', () => {
 test('online update keeps disabled buttons on the component default template', () => {
   const update = read('src/views/AdminUpdate.vue')
   const globalCss = read('src/styles/global.css')
-  assert.match(update, /悬浮\/聚焦提亮，按下短暂变深；禁用交互和真实更新loading由业务控制。/)
+  assert.match(update, /悬浮\/聚焦提亮，按下保持悬浮色并回弹；禁用交互和真实更新loading由业务控制。/)
   assert.doesNotMatch(globalCss, /--highlight-arc-disabled-bg/)
 })
 
@@ -391,7 +403,7 @@ test('project hyperlinks use the shared Apple blue contract', () => {
   const account = read('src/views/UserAccount.vue')
   const certs = read('src/views/AdminCerts.vue')
   assert.match(globalCss, /项目超链接：所有可导航文本链接统一使用 Apple 蓝[，,]悬浮沿用全局交互蓝。[\s\S]*?a \{ color: var\(--accent\);/)
-  assert.match(globalCss, /项目超链接：Markdown 正文链接同样固定为 Apple 蓝。[\s\S]*?\.md a \{ color: var\(--accent\);/)
+  assert.match(globalCss, /项目超链接：Markdown正文保留常态下划线[\s\S]*?\.md a \{ color: var\(--accent\);/)
   assert.match(globalCss, /\.project-link \{ color: var\(--accent\) !important;[^}]*text-decoration: none;/)
   assert.match(globalCss, /\.project-link:hover, \.project-link:focus-visible \{[^}]*text-decoration: underline;/)
   assert.match(update, /项目超链接：发布页入口使用全局 Apple 蓝链接合同。[\s\S]*?<a[^>]*class="release-link"/)

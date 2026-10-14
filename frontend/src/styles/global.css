@@ -135,12 +135,8 @@
 
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; overflow-x: hidden; }
-/* Keep one explicit page scrollbar slot even when the current route is shorter
-   than the viewport. The native platform scrollbar is hidden, so this padding
-   is the only page-level width reservation on every browser. */
+/* 页面滚动条：桌面保留唯一16px自绘轨道，页面仍使用原生滚动。 */
 body {
-  /* The visible rail is rendered by PageScrollbar so every platform gets the
-     same 16px track and centered 8px thumb. Native scrolling remains active. */
   padding-right: var(--scrollbar-track-width);
   scrollbar-width: none;
 }
@@ -149,6 +145,12 @@ body {
 html { scrollbar-width: none; }
 html::-webkit-scrollbar { display: none; }
 body::-webkit-scrollbar { display: none; }
+/* 页面滚动条：手机恢复平台原生滚动条，不预留自绘轨道空间。 */
+@media (max-width: 768px) {
+  html, body { scrollbar-width: auto; }
+  body { padding-right: 0; }
+  html::-webkit-scrollbar, body::-webkit-scrollbar { display: revert; }
+}
 /* 填写框文本光标：与所有焦点线条统一使用 Apple 系统蓝。 */
 input, textarea { caret-color: var(--accent); }
 body {
@@ -220,8 +222,11 @@ button, input, textarea, select { font-family: inherit; }
   font-weight: 500 !important;
   letter-spacing: 0;
   border-radius: var(--r-control) !important;
+  --button-press-offset: 1px;
   transition: color .22s var(--ease-standard), background-color .22s var(--ease-standard), border-color .22s var(--ease-standard), box-shadow .28s var(--ease-standard), transform .28s var(--ease-emphasized) !important;
 }
+/* 普通按钮 / 弧边按钮 / 删除按钮：按压回弹作为点击反馈，水波层保持隐藏。 */
+.n-button > .n-base-wave { display: none !important; }
 .n-button:not(.n-button--disabled):focus-visible { box-shadow: var(--focus-ring); }
 .n-button.n-button--primary-type:not(.n-button--secondary):not(.n-button--ghost) {
   background: var(--accent) !important;
@@ -235,16 +240,16 @@ button, input, textarea, select { font-family: inherit; }
 .n-button.n-button--primary-type.primary-quiet { background: transparent !important; box-shadow: none !important; }
 .n-button:not(.n-button--disabled):active { transform: none; transition-duration: .08s !important; }
 
-/* 高亮弧边按钮：固定实心 Apple 蓝；悬浮与点击后聚焦提亮，按下反馈沿用语义按钮状态。 */
+/* 高亮弧边按钮：固定实心 Apple 蓝；悬浮、聚焦和按下共用提亮色。 */
 .n-button.n-button--primary-type.highlight-arc-button {
   --n-color: var(--accent) !important;
   --n-color-hover: var(--accent-arc-hover) !important;
   --n-color-focus: var(--accent-arc-hover) !important;
-  --n-color-pressed: var(--accent-strong) !important;
+  --n-color-pressed: var(--accent-arc-hover) !important;
   --n-border: 1px solid var(--accent) !important;
   --n-border-hover: 1px solid var(--accent-arc-hover) !important;
   --n-border-focus: 1px solid var(--accent-arc-hover) !important;
-  --n-border-pressed: 1px solid var(--accent-strong) !important;
+  --n-border-pressed: 1px solid var(--accent-arc-hover) !important;
   background: var(--accent) !important;
   color: #fff !important;
 }
@@ -256,11 +261,17 @@ button, input, textarea, select { font-family: inherit; }
 }
 /* 高亮弧边按钮：键盘焦点单独可见，不被通用primary的无阴影规则覆盖。 */
 .n-button.n-button--primary-type.highlight-arc-button:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):focus-visible { box-shadow: var(--focus-ring); }
-/* 高亮弧边按钮：与警告弧边同样，按下短暂变深，释放后保持焦点提亮；不位移。 */
+/* 高亮弧边按钮：按下保持悬浮提亮色，位移反馈由共享按钮规则负责。 */
 .n-button.n-button--primary-type.highlight-arc-button:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):active,
 .n-button.n-button--primary-type.highlight-arc-button:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled).n-button--pressed {
-  background: var(--accent-strong) !important;
-  border-color: var(--accent-strong) !important;
+  background: var(--accent-arc-hover) !important;
+  border-color: var(--accent-arc-hover) !important;
+}
+/* 弧边警告按钮：按下与悬浮/聚焦共用原有风险提亮色及边框。 */
+.n-button.n-button--warning-type:not(.n-button--secondary):not(.n-button--ghost) {
+  --n-color-pressed: var(--n-color-hover) !important;
+  --n-border-pressed: var(--n-border-hover) !important;
+  --n-text-color-pressed: var(--n-text-color-hover) !important;
 }
 /* 普通按钮 / 标准默认弧边按钮：共用按钮token、字体与中性ring；默认弧边只改18px圆角。 */
 .n-button.action-button,
@@ -275,8 +286,9 @@ button, input, textarea, select { font-family: inherit; }
 /* 强调按钮：背景和 ring 悬浮时同步提亮，并覆盖全局 primary hover 状态。 */
 .n-button.action-button--emphasis { --action-button-bg: var(--accent); --action-button-fg: #fff; --action-button-border: var(--accent); --action-button-bg-hover: var(--accent-button-hover); --action-button-border-hover: var(--accent-button-hover); --n-border: 0 solid transparent !important; --n-border-hover: 0 solid transparent !important; --n-border-focus: 0 solid transparent !important; --n-border-pressed: 0 solid transparent !important; background:var(--action-button-bg) !important; color:var(--action-button-fg) !important; box-shadow:0 0 0 1px var(--action-button-border) !important; }
 .n-button.n-button--primary-type.action-button--emphasis:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):hover, .n-button.n-button--primary-type.action-button--emphasis:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):focus-visible { background:var(--action-button-bg-hover) !important; color:var(--action-button-fg) !important; box-shadow:0 0 0 2px var(--action-button-border-hover) !important; }
-.n-button.action-button:active:not(.n-button--disabled),
-.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.n-button--ghost):not(.action-button)):has(> .n-button__border):active:not(.n-button--disabled) { transform:translateY(1px) !important; transition-duration:.08s !important; }
+/* 普通按钮 / 强调按钮 / 弧边按钮 / 删除按钮：鼠标及键盘按下下移1px，释放回弹，禁用保持静止。 */
+.n-button:is(.action-button, .highlight-arc-button, .delete-button, .n-button--warning-type):is(:active, .n-button--pressed):not(.n-button--disabled),
+.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.n-button--ghost):not(.action-button)):has(> .n-button__border):is(:active, .n-button--pressed):not(.n-button--disabled) { transform:translateY(var(--button-press-offset)) !important; transition-duration:.08s !important; }
 
 /* 删除按钮：32px高、13/20文字与10px内距，与同组弧边操作共用几何；红字透明底、18px角。 */
 .n-button.delete-button {
@@ -1017,8 +1029,10 @@ button, input, textarea, select { font-family: inherit; }
 .md p { margin: 10px 0; }
 .md ul, .md ol { margin: 10px 0; padding-left: 22px; }
 .md li { margin: 4px 0; }
-/* 项目超链接：Markdown 正文链接同样固定为 Apple 蓝。 */
-.md a { color: var(--accent); text-decoration: underline; }
+/* 项目超链接：Markdown正文保留常态下划线，悬浮/键盘聚焦使用同款深蓝。 */
+.md a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.md a:hover, .md a:focus-visible { color: var(--accent-hover); }
+.md a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .md code.md-code { background: var(--bg-subtle); border: 0; border-radius: 4px; padding: 2px 5px; color: var(--text-2); font-size: 12px; font-family: var(--ff-mono); line-height: 1.35; }
 .md pre.md-pre { background: #1e1e1e; color: #eee; border-radius: var(--r); padding: 12px 14px; overflow-x: auto; margin: 12px 0; }
 .md pre.md-pre code { font-family: var(--ff-mono); font-size: 12.5px; color: #eee; background: none; border: none; padding: 0; }
@@ -1340,5 +1354,6 @@ button.resource-metric { color:inherit; text-align:left; font:inherit; cursor:po
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .n-button { --button-press-offset: 0px; }
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }

@@ -148,7 +148,7 @@ test('sidebar uses the Cloudflare documentation sidebar treatment', () => {
   assert.match(layout, /筛选框不显示浏览器原生的搜索清除叉号[\s\S]*?\.sidebar-filter input\[type="search"\]\:\:-webkit-search-cancel-button,[\s\S]*?display: none;/)
   assert.match(layout, /\.sidebar-filter \{[\s\S]*?margin: 20px 0;/)
   assert.match(layout, /\.sidebar-menu \{[\s\S]*?flex: 1 1 auto;[\s\S]*?overflow-y: auto; scrollbar-gutter: stable; contain: inline-size; padding: 0 0 var\(--sidebar-content-gap\) 16px;/)
-  assert.match(layout, /\.mobile-sidebar \.sidebar-menu \{ flex: 1 1 auto; \}/)
+  assert.match(layout, /\.mobile-sidebar \.sidebar-menu \{ flex: 1 1 auto;[^}]*scrollbar-gutter: auto;[^}]*scrollbar-width: none; \}/)
   assert.match(layout, /\.app-sider\.is-collapsed \.sidebar-menu \{ padding: 8px 0 var\(--sidebar-content-gap\); scrollbar-gutter: stable both-edges; \}/)
   assert.match(layout, /\.sidebar-footer \{ flex: 0 0 64px; box-sizing: border-box; height: 64px; min-height: 64px; max-height: 64px; padding: calc\(var\(--sidebar-content-gap\) - 1px\) 16px 12px; border-top: 1px solid var\(--sidebar-border\); \}/)
   assert.match(layout, /\.app-sider\.is-collapsed \.sidebar-footer \{ padding: calc\(var\(--sidebar-content-gap\) - 1px\) 8px 12px; \}/)

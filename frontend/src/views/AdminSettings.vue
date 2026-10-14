@@ -648,7 +648,7 @@
           </div>
         </n-form>
         <div class="backup-actions">
-          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
+          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
           <n-button type="primary" class="highlight-arc-button" :loading="savingBackupConfig" @click="saveBackupConfig">保存远端配置</n-button>
           <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button :loading="testingBackupConfig" :disabled="!backupConfig.endpoint || !backupConfig.bucket" @click="testBackupConfig">测试连接</n-button>
@@ -680,7 +680,7 @@
               <n-button size="tiny" quaternary class="delete-button" type="error" @click="deleteRemoteBackup(record)">删除</n-button>
             </div>
           </div>
-        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下短暂变深；loading仅绑定真实请求。 -->
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" :loading="creatingRemoteBackup" :disabled="!backupConfigured || !!backupRecovery.error" @click="createRemoteBackup">立即备份到远端</n-button>
         </div>
       </n-card>

@@ -5,6 +5,28 @@ updated: 2026-10-14
 
 # Current synchronization evidence
 
+Mobile sidebar/page scrolling now follows the user-confirmed responsive contract:
+shared portrait menu geometry and 64px glass brand/footer, hidden native menu
+scrollbars with no gutter, and native page indicators with no custom rail or
+16px reservation at <=768px. Desktop rail/collapsed alignment is preserved.
+162 frontend tests/typecheck/build and 21 skill contracts/typecheck/build passed;
+390/360px QingZhou fixture, 820px portrait/768px breakpoint and 390px showcase
+browser checks are recorded in [validation](guides/validation.md). Semantic
+comments and canonical references/reusable assets/source snapshots are synced.
+No new category, AWS rule change, commit or production deployment in this turn.
+
+Current uncommitted source and canonical skill align sidebar empty feedback with
+the existing menu result track, add Markdown-specific hover/focus color, and
+define wave-free 1px mouse/keyboard press recoil for operation buttons. Highlight
+and warning pressed colors equal hover; disabled and reduced-motion contracts are
+preserved. Existing semantic comments, source snapshots, patterns and progressive
+references are synchronized. No new category or unapproved specification change.
+161 frontend tests/typecheck/build and 20 skill contracts/typecheck/build passed.
+Real 1167px browser confirms inline sidebar empty state, Markdown hover/focus and
+actual Naive pointer/Enter press states. Mobile and final audit evidence are in
+[validation](guides/validation.md). No current release/deployment; production
+remains the verified v0.2.104 baseline below.
+
 本轮监控后台与首页复用AvailabilityHeatmap的16列×3行矩阵/立体视图、坐标、状态色、提示和键盘交互；查询保留管理/公开权限边界。后台本机指标和趋势只显示一次，OCI回环资产保留关联资产编辑入口；摘要与管理端热图去重，不停止采集、不删除资产。全部NAlert类型、订单条目和首页摘要SVG无额外边框；帮助状态切换完整测量/跟随/回位，选中卡维持中性选中底色。超链接常态Apple蓝，hover/focus-visible显示下划线offset3px。折叠分组为4px中性圆点；顶栏/侧栏无匹配显示“无结果”；移动侧栏Teleport包装均0圆角，菜单行仍8px。首页价格牌来自手填资产月费，默认零值不显示。分类注释、专项规范、复用代码、示范与快照同步，无新分类或待确认规范偏离。
 
 - Owners: project authority for release/runtime evidence; design integration and validation for implementation/browser checks. Canonical skill contains synchronized exact source snapshots, extracted template/style patterns, reusable assets and progressive references.
