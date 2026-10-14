@@ -3,9 +3,13 @@ title: Validation Guide
 updated: 2026-10-14
 ---
 
-## 开关与手机滚动槽（发布候选）
+## v0.2.107生产发布验收
 
-本次候选只包含全局 `n-switch` 的参考比例/回弹和移动端页面滚动槽修正：轨道 `40×23px`、滑块 `17×17px`、`3px` 内距、`500ms cubic-bezier(.68, -.55, .265, 1.55)`，按下缩放 `0.96`；≤768px 隐藏自绘 `PageScrollbar`、移除桌面滚动条绘制与右侧补偿，保留原生 body 滚动和移动侧栏滚动。前端 172 项测试、`vue-tsc`、Vite build、Go 全量测试、`go vet ./...` 和 `git diff --check` 已通过；构建保留已知 ECharts 异步 chunk warning。发布前不将本地源码视为生产状态，真实运行版本仍见[Deployment](deployment.md)。
+发布范围仅为全局开关 `40×23px` 轨道、`17×17px`滑块、3px内距、500ms回弹与≤768px页面无桌面滚动槽补偿。Release/CI分别为 `38593721201`/`38593807022`，前端172项、类型检查/Vite、Go全量/vet均通过；公网 `/api/health` 返回新版本，index JS/CSS 与隔离构建逐字节匹配。用 curl GET-only 检查确认发布 CSS 含 `.68,-.55,.265,1.55`、`scrollbar-gutter:auto!important` 和 `padding-right:0!important`；未执行认证业务写操作，真实iOS/Android硬件指示器外观未冒充验证。
+
+## 开关与手机滚动槽（发布前候选记录）
+
+发布前门禁记录：该候选只包含全局 `n-switch` 的参考比例/回弹和移动端页面滚动槽修正。前端 172 项测试、`vue-tsc`、Vite build、Go 全量测试、`go vet ./...` 和 `git diff --check` 已通过；构建保留已知 ECharts 异步 chunk warning。随后已按上方 `v0.2.107` 发布验收部署，不能以本节候选记录替代运行态证据。
 
 ## v0.2.106生产发布验收
 

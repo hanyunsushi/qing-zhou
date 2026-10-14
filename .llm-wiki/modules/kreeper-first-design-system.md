@@ -5,11 +5,11 @@ updated: 2026-10-14
 
 # kreeper第一设计系统 — QingZhou 集成
 
-## 开关与手机滚动槽（发布候选）
+## 开关与手机滚动槽（已发布集成）
 
 全局 Naive UI `n-switch` 沿用“切换开关”语义：轨道 `40×23px`、滑块 `17×17px`、内距 `3px`；滑块使用 `500ms cubic-bezier(.68, -.55, .265, 1.55)` 回弹，按下缩放 `0.96`，保留状态色、禁用、键盘焦点与 reduced-motion 语义。实现位于 `frontend/src/styles/global.css`，不新增设计类型。
 
-≤768px 页面继续使用原生 body 滚动，隐藏 `PageScrollbar`，不绘制或预留桌面滚动条槽位；`scrollbar-gutter:auto` 与 `padding-right:0` 的移动端强制覆盖用于清除 Naive UI 弹层滚动锁留下的右侧补偿。移动侧栏自己的原生滚动合同不变。发布候选已通过项目回归、类型检查、Vite 构建、Go 测试与 vet；浏览器移动几何验收和生产证据见[Validation](../guides/validation.md)与[Deployment](../guides/deployment.md)。
+≤768px 页面继续使用原生 body 滚动，隐藏 `PageScrollbar`，不绘制或预留桌面滚动条槽位；`scrollbar-gutter:auto` 与 `padding-right:0` 的移动端强制覆盖用于清除 Naive UI 弹层滚动锁留下的右侧补偿。移动侧栏自己的原生滚动合同不变。该合同已随 `v0.2.107-kreeper-20261014-switch-mobile-scroll` 发布并部署；项目门禁、资源和运行证据见[Validation](../guides/validation.md)与[Deployment](../guides/deployment.md)。
 
 ## DotMatrix发布范围
 

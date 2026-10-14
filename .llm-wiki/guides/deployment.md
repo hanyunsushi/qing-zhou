@@ -3,9 +3,32 @@ title: QingZhou Deployment and Artifact Retention
 updated: 2026-10-14
 ---
 
-## 开关与手机滚动槽发布候选
+## v0.2.107 switch/mobile rollout
 
-候选范围仅为全局切换开关的 `40×23px` / `17×17px` 参考比例与回弹，以及≤768px页面隐藏桌面滚动条槽并交还原生滚动；不包含当前工作区其他商城、复制栏、Dialog、链接或设置页并行修改。发布门禁已通过前端测试、类型检查、Vite、Go 测试和 vet；待 Release/OCI 面板原子替换与运行态验收完成后，再补充版本、资产 SHA-256、回滚目录和服务/PID证据。
+Source `5dc58fcc9a1765c8ac1169d79112aa78f9c84b09` is released and deployed as
+`v0.2.107-kreeper-20261014-switch-mobile-scroll`. Release run `38593721201`
+and CI run `38593807022` both succeeded. The scope is limited to the global
+switch proportion/bounce and the mobile page scrollbar-gutter correction;
+parallel shop, copy/Dialog, hyperlink and settings-sidebar work was excluded.
+
+The Linux ARM64 panel asset, installed binary and running executable all match
+SHA-256 `48197bcd26b83868aae00e9bf7aad85f88ac5d07250f8cdf397db6b6e95b75da`.
+At 2026-10-15 00:15:55 CST the panel was atomically replaced and only
+`qingzhou.service` was restarted. Rollback material is retained at
+`/opt/qingzhou/backups/fork-v0.2.107-kreeper-20261014-switch-mobile-scroll-20261015-001554/`;
+the SQLite Backup API snapshot passed `PRAGMA integrity_check=ok`, and the
+runtime database was not overwritten.
+
+Post-rollout local/public health returned the new version. All three services
+are active with `NRestarts=0`; sing-box PID `808675` and Tunnel PID `725422`
+were unchanged, expected listeners `8081`, `8882`, `18082` and `19000` remain,
+protected configuration hashes are unchanged, and the panel error journal is
+empty. Public index JS/CSS matched the isolated build byte-for-byte, including
+the switch bounce and mobile compensation rules. Release assets are unsigned.
+
+## 开关与手机滚动槽发布前候选记录
+
+候选范围仅为全局切换开关的 `40×23px` / `17×17px` 参考比例与回弹，以及≤768px页面隐藏桌面滚动条槽并交还原生滚动；不包含当前工作区其他商城、复制栏、Dialog、链接或设置页并行修改。发布门禁已通过前端测试、类型检查、Vite、Go 测试和 vet；其后续 Release/OCI 原子替换与运行态证据见上方 `v0.2.107` 条目。
 
 ## Current DotMatrix rollout
 

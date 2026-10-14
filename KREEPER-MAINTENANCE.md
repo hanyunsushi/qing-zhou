@@ -4,6 +4,11 @@
 
 完整设计合同由 `kreeper-first-design-system` skill 维护，青舟集成边界见 [.llm-wiki/modules/kreeper-first-design-system.md](.llm-wiki/modules/kreeper-first-design-system.md)。下方带日期条目保留当时发布/局部实验事实，不作为当前数值来源；不得恢复其中已被取代的输入外晕、旧圆角或字体。旧 Anthropic/Cloudscape 独立 skill 已退役，历史记录不构成活动路由。
 
+## 2026-10-15 开关回弹与手机滚动槽（已发布部署）
+
+- `v0.2.107-kreeper-20261014-switch-mobile-scroll` 仅发布全局 `n-switch` 的40×23px轨道、17×17px滑块、3px内距、500ms回弹和≤768px页面无桌面滚动槽补偿；商城、复制栏、Dialog、链接、设置页并行改动排除。
+- ARM64运行哈希与Release资产为 `48197bcd26b83868aae00e9bf7aad85f88ac5d07250f8cdf397db6b6e95b75da`；仅原子替换面板并重启 `qingzhou.service`。回滚、SQLite Backup API完整性、配置/服务/PID和公网资源证据见 [agent.md](agent.md)、[Deployment](.llm-wiki/guides/deployment.md) 与 [Validation](.llm-wiki/guides/validation.md)。
+
 ## 默认加载与切屏
 
 默认小型DotMatrix为内容/页面20px及按钮/选择器16px，CSS数值对角相位连续渐变/缩放，标准刷新SVG与数值资源圈保持。页面准备请求、错误/重试终态及字体/媒体就绪后撤掉点阵一帧才播放Shift5；后续局部请求不重播切屏。分类、复用与兼容边界见完整skill loading及[集成Wiki](.llm-wiki/modules/kreeper-first-design-system.md)。发布仅包含加载相关代码/测试，不捎带未提交的复制/Dialog、链接和商城文件夹。实际发布/回滚事实由[agent.md](agent.md)维护。
