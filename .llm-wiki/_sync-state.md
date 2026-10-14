@@ -5,6 +5,17 @@ updated: 2026-10-14
 
 # Current synchronization evidence
 
+DotMatrix source3a91d7748816957587d682baff9697b9cc1968db is now deployed
+asv0.2.106-kreeper-20261014-dotmatrix after successful Release/CI.171 isolated
+frontend tests/typecheck/build and Go vet/race/full tests passed. Native panel-only
+replacement, SQLite rollback integrity, configuration/PID preservation and
+local/public runtime hashes/health passed; six core public assets match the tag.
+Desktop/390/360px production read-only checks confirm continuous20px dots,
+loading before Shift5 and reduced-motion waiting. Uncommitted copy/Dialog,
+hyperlinks and shop folders are excluded; their earlier local records below
+do not describe deployed features. Evidence:[deployment](guides/deployment.md),
+[validation](guides/validation.md),[authority](../agent.md).
+
 DotMatrix release scope is limited to compact20px content/page and16px inline
 waiting symbols, continuous numeric diagonal phases, and initial-page readiness
 before Shift5. Corresponding semantic comments, progressive skill references,

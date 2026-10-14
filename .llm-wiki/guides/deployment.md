@@ -3,6 +3,31 @@ title: QingZhou Deployment and Artifact Retention
 updated: 2026-10-14
 ---
 
+## Current DotMatrix rollout
+
+Loading-only source `3a91d7748816957587d682baff9697b9cc1968db` is released and
+deployed as `v0.2.106-kreeper-20261014-dotmatrix`. Release build38531536709
+and CI38531542063 succeeded, including171 frontend tests/typecheck/Vite,
+Go vet/race and shell checks; isolated source Go tests also passed.
+Independent uncommitted copy/Dialog, hyperlink and shop-folder changes were
+excluded and preserved in the working tree.
+
+The panel-only atomic replacement completed at2026-10-14 16:05:41 CST.
+GitHub digest, SHA256SUMS, installed and running binary all match
+`b0a6ed4908d2512aee4f7d3920429544bec01acc210202c2f4c9c02d4579cc18`.
+Rollback point `/opt/qingzhou/backups/fork-v0.2.106-kreeper-20261014-dotmatrix-20261014-160540/`
+includes the old executable, configuration and SQLite Backup API snapshot
+(integrity_check=ok). Runtime database/configuration were not overwritten;
+sing-box/Tunnel PIDs stayed808675/725422, all three services remain active with
+NRestarts=0 and original listeners. No QZ_WEB_DIR or error journal entries.
+Release signing is not configured; artifacts are unsigned.
+
+Local/public health reports106; six core public frontend assets match the
+isolated tag build byte-for-byte. Read-only production Chrome desktop/390/360px
+and reduced-motion loading/transition checks passed, with real public GET
+responses delayed only in the isolated browser context. See[validation](validation.md)
+and[authority](../../agent.md) for limits and exact runtime evidence.
+
 ## Current mobile scrolling and interaction rollout
 
 Source`62d26764480bf12cac4e23d6a71a351bbf852e1a`is released and deployed as

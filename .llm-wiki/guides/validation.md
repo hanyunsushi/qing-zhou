@@ -3,6 +3,12 @@ title: Validation Guide
 updated: 2026-10-14
 ---
 
+## v0.2.106生产发布验收
+
+加载相关tag源码3a91d7748816957587d682baff9697b9cc1968db的Release构建38531536709与CI38531542063均success：171前端测试、类型检查/Vite、Go vet/race及脚本检查通过；隔离源码Go全量通过。此前174工作区测试包括其他未提交改动，不能替代本tag的171测试证据。ARM64资产digest/SHA256SUMS/宿主/运行文件均一致，备份API完整性ok，具体哈希/时间/保护检查见[Deployment](deployment.md)和[项目权威](../../agent.md)。
+
+六个index/Monitor/DashboardLayout公网JS/CSS均200并逐字节匹配隔离tag构建。Playwright/已安装Chrome独立headless生产上下文1167×816、390×844、360×800只延迟真实公开GET响应1600ms，不写生产数据；20px点阵700ms分别42/44/43帧、每帧阴影均不同、中位帧间隔16.7ms，加载期间无切屏遮罩或clip运动，移除后才揭示一台真实本机卡。最终pending清除、无横向溢出/pageerror。390px减弱动态效果保留43帧/41种透明度反馈，等待后无切屏；不是关闭数据门控。截图位于`/tmp/qz-dotmatrix-production-{wait,ready}-{1167,390,360}-no-preference.png`及390-reduce版本。真实iOS/Android硬件和其他浏览器未测；没有认证后台业务写操作。本发布排除复制/Dialog、链接及商城文件夹未提交工作，它们的下方未部署记录保持有效。
+
 ## DotMatrix加载候选验收
 
 工作区174项前端测试、类型检查/Vite和24项skill契约/类型检查/独立构建通过；发布范围隔离后171项前端测试、类型检查/Vite及Go全量通过（未包含并行新增测试）。默认DotMatrix相关准备期并行/连续请求、完整响应体、错误终态、重试间隙busy、导航取消/旧token隔离与加载撤掉后才播放Shift5均有回归；45秒请求截止和原错误传播保持。发布只选取加载组件/CSS、API/router/Shift5与对应测试，不包含并行复制/Dialog、链接或商城文件夹改动。

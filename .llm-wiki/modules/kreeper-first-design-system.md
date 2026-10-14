@@ -5,6 +5,10 @@ updated: 2026-10-14
 
 # kreeper第一设计系统 — QingZhou 集成
 
+## DotMatrix发布范围
+
+加载组件、CSS连续相位、API/router/Shift5就绪门控及对应测试已随v0.2.106发布，源码3a91d7748816957587d682baff9697b9cc1968db。只发布加载相关改动，不包含复制/Dialog、文字链接或玻璃文件夹等并行未提交功能；skill与本地示范可展示这些工作区增量，不代表生产全已部署。当前运行证据见[Deployment](../guides/deployment.md)，生产逐帧及加载/切屏顺序验收见[Validation](../guides/validation.md)。
+
 ## 默认加载与页面切屏
 
 默认等待符号使用小型3×3 DotMatrix，内容/页面20px、按钮/输入/选择器16px，继承当前颜色。`DotMatrixLoader.vue`与共享`styles/loading.css`替换Naive BaseLoading圆圈，保留占位/禁用/请求语义；标准刷新SVG及真实数值进度圈保持原合同。模板/CSS责任边界标记“加载反馈”。
