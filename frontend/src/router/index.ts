@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { startShift5Leave } from '@/utils/shift5'
+import { prepareShift5Route, resetShift5Transition } from '@/utils/shift5'
+import { beginPageLoad, cancelPageLoad, currentPageLoad, finishPageLoad, waitForPageRequests } from '@/utils/page-loading'
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -51,7 +52,15 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach(async (to, from) => {
+const loadTokens = new WeakMap<object, number>()
+const authRouteNames = new Set(['login', 'register', 'forgot-password'])
+const sameAuthShell = (to: { name?: unknown }, from: { name?: unknown }) =>
+  authRouteNames.has(String(from.name)) && authRouteNames.has(String(to.name))
+
+router.beforeEach(async (to) => {
+  // 加载反馈 / 组件绘制动画：取消旧切屏，先准备权限、模块和目标页请求。
+  resetShift5Transition()
+  loadTokens.set(to, beginPageLoad())
   if (to.name === 'oauth-callback') return
   const auth = useAuthStore()
 
@@ -75,20 +84,38 @@ router.beforeEach(async (to, from) => {
     return { name: 'monitor' }
   }
 
-  // Cover the old route before Vue replaces its view; the destination runs the
-  // matching enter reveal from its page shell after the DOM is mounted.
+})
+
+router.beforeResolve((to, from) => {
+  // 组件绘制动画：这里只选择切屏区域，不在页面加载时播放离场动画。
   const settingsSectionChange = from.name === 'admin-settings'
     && to.name === 'admin-settings'
     && from.path === to.path
     && from.query.section !== to.query.section
-  const authRouteNames = new Set(['login', 'register', 'forgot-password'])
-  const sameAuthShell = authRouteNames.has(String(from.name)) && authRouteNames.has(String(to.name))
-  if (from.name && to.fullPath !== from.fullPath && to.name !== 'oauth-callback' && !sameAuthShell) {
+  if (from.name && to.fullPath !== from.fullPath && to.name !== 'oauth-callback' && !sameAuthShell(to, from)) {
     const sameDashboardShell = from.matched.length > 1
       && to.matched.length > 1
       && from.matched[0] === to.matched[0]
-    await startShift5Leave(settingsSectionChange ? 'settings' : sameDashboardShell ? 'content' : 'full')
+    prepareShift5Route(settingsSectionChange ? 'settings' : sameDashboardShell ? 'content' : 'full')
   }
+})
+
+router.afterEach((to, from, failure) => {
+  const token = loadTokens.get(to)
+  if (token === undefined || token !== currentPageLoad()) return
+  if (failure) {
+    cancelPageLoad(token)
+    resetShift5Transition()
+  } else if (to.name === 'oauth-callback' || sameAuthShell(to, from) || to.fullPath === from.fullPath) {
+    void waitForPageRequests(token).then(ready => { if (ready) finishPageLoad(token) })
+  }
+})
+
+router.onError((_error, to) => {
+  const token = loadTokens.get(to)
+  if (token === undefined || token !== currentPageLoad()) return
+  cancelPageLoad(token)
+  resetShift5Transition()
 })
 
 export default router

@@ -1,0 +1,103 @@
+/* 加载反馈：数值相位连续插值，避免currentColor阴影关键帧离散跳变。 */
+@property --loader-diagonal-0 { syntax: '<number>'; inherits: false; initial-value: .2; }
+@property --loader-diagonal-1 { syntax: '<number>'; inherits: false; initial-value: .2; }
+@property --loader-diagonal-2 { syntax: '<number>'; inherits: false; initial-value: .2; }
+@property --loader-diagonal-3 { syntax: '<number>'; inherits: false; initial-value: .2; }
+@property --loader-diagonal-4 { syntax: '<number>'; inherits: false; initial-value: .2; }
+
+/* 加载反馈：3×3圆点、14%间距和对角波；普通控件默认20px，行内16px。 */
+.dot-matrix-loader,
+.n-base-loading {
+  position: relative;
+  display: inline-block;
+  flex: none;
+  width: 1em !important;
+  height: 1em !important;
+  font-size: var(--loader-size, 20px) !important;
+  line-height: 1;
+  vertical-align: middle;
+}
+.dot-matrix-loader::before,
+.n-base-loading::before {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: .24em;
+  height: .24em;
+  border-radius: 50%;
+  content: "";
+  box-shadow:
+    0 0 0 calc((var(--loader-diagonal-0) - 1) * .045em) color-mix(in srgb, currentColor calc(var(--loader-diagonal-0) * 100%), transparent),
+    .38em 0 0 calc((var(--loader-diagonal-1) - 1) * .045em) color-mix(in srgb, currentColor calc(var(--loader-diagonal-1) * 100%), transparent),
+    .76em 0 0 calc((var(--loader-diagonal-2) - 1) * .045em) color-mix(in srgb, currentColor calc(var(--loader-diagonal-2) * 100%), transparent),
+    0 .38em 0 calc((var(--loader-diagonal-1) - 1) * .045em) color-mix(in srgb, currentColor calc(var(--loader-diagonal-1) * 100%), transparent),
+    .38em .38em 0 calc((var(--loader-diagonal-2) - 1) * .045em) color-mix(in srgb, currentColor calc(var(--loader-diagonal-2) * 100%), transparent),
+    .76em .38em 0 calc((var(--loader-diagonal-3) - 1) * .045em) color-mix(in srgb, currentColor calc(var(--loader-diagonal-3) * 100%), transparent),
+    0 .76em 0 calc((var(--loader-diagonal-2) - 1) * .045em) color-mix(in srgb, currentColor calc(var(--loader-diagonal-2) * 100%), transparent),
+    .38em .76em 0 calc((var(--loader-diagonal-3) - 1) * .045em) color-mix(in srgb, currentColor calc(var(--loader-diagonal-3) * 100%), transparent),
+    .76em .76em 0 calc((var(--loader-diagonal-4) - 1) * .045em) color-mix(in srgb, currentColor calc(var(--loader-diagonal-4) * 100%), transparent);
+  animation-name: dot-matrix-wave-0, dot-matrix-wave-1, dot-matrix-wave-2, dot-matrix-wave-3, dot-matrix-wave-4;
+  animation-duration: var(--loader-cycle, 1s);
+  animation-delay: 0s, calc(var(--loader-cycle, 1s) * .25), calc(var(--loader-cycle, 1s) * .5), calc(var(--loader-cycle, 1s) * .75), var(--loader-cycle, 1s);
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+/* 加载反馈：保留Naive的占位、禁用与可访问语义，只替换默认转圈图形。 */
+.n-base-loading > .n-base-loading__transition-wrapper { display: none !important; }
+.n-base-loading:has(> .n-base-loading__placeholder)::before { display: none; }
+.n-button .n-base-loading,
+.n-base-selection .n-base-loading,
+.n-input .n-base-loading,
+.n-input-number .n-base-loading { --loader-size: 16px; }
+/* 加载反馈：路由等待只占20px，不使用全屏加载面或进度条。 */
+.page-loading-indicator {
+  position: fixed;
+  top: 50dvh;
+  left: 50%;
+  z-index: 10000;
+  color: var(--accent);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+@keyframes dot-matrix-wave-0 {
+  0%, 100% { --loader-diagonal-0: .2; }
+  50% { --loader-diagonal-0: 1; }
+}
+@keyframes dot-matrix-wave-1 {
+  0%, 100% { --loader-diagonal-1: .2; }
+  50% { --loader-diagonal-1: 1; }
+}
+@keyframes dot-matrix-wave-2 {
+  0%, 100% { --loader-diagonal-2: .2; }
+  50% { --loader-diagonal-2: 1; }
+}
+@keyframes dot-matrix-wave-3 {
+  0%, 100% { --loader-diagonal-3: .2; }
+  50% { --loader-diagonal-3: 1; }
+}
+@keyframes dot-matrix-wave-4 {
+  0%, 100% { --loader-diagonal-4: .2; }
+  50% { --loader-diagonal-4: 1; }
+}
+/* 加载反馈：减弱动态效果保留低频透明度提示，去掉圆点缩放。 */
+@media (prefers-reduced-motion: reduce) {
+  .dot-matrix-loader::before,
+  .n-base-loading::before {
+    box-shadow:
+      0.00em 0.00em 0 0 currentColor,
+      0.38em 0.00em 0 0 currentColor,
+      0.76em 0.00em 0 0 currentColor,
+      0.00em 0.38em 0 0 currentColor,
+      0.38em 0.38em 0 0 currentColor,
+      0.76em 0.38em 0 0 currentColor,
+      0.00em 0.76em 0 0 currentColor,
+      0.38em 0.76em 0 0 currentColor,
+      0.76em 0.76em 0 0 currentColor;
+    animation: dot-matrix-calm 1.4s ease-in-out infinite !important;
+    animation-duration: 1.4s !important;
+    animation-iteration-count: infinite !important;
+  }
+}
+@keyframes dot-matrix-calm {
+  0%, 100% { opacity: .3; }
+  50% { opacity: 1; }
+}

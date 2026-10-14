@@ -4,6 +4,10 @@
 
 完整设计合同由 `kreeper-first-design-system` skill 维护，青舟集成边界见 [.llm-wiki/modules/kreeper-first-design-system.md](.llm-wiki/modules/kreeper-first-design-system.md)。下方带日期条目保留当时发布/局部实验事实，不作为当前数值来源；不得恢复其中已被取代的输入外晕、旧圆角或字体。旧 Anthropic/Cloudscape 独立 skill 已退役，历史记录不构成活动路由。
 
+## 默认加载与切屏
+
+默认小型DotMatrix为内容/页面20px及按钮/选择器16px，CSS数值对角相位连续渐变/缩放，标准刷新SVG与数值资源圈保持。页面准备请求、错误/重试终态及字体/媒体就绪后撤掉点阵一帧才播放Shift5；后续局部请求不重播切屏。分类、复用与兼容边界见完整skill loading及[集成Wiki](.llm-wiki/modules/kreeper-first-design-system.md)。发布仅包含加载相关代码/测试，不捎带未提交的复制/Dialog、链接和商城文件夹。实际发布/回滚事实由[agent.md](agent.md)维护。
+
 ## 按钮样式与分类统一
 
 按钮类别合同自v0.2.98起部署；当前v0.2.105进一步统一无水波、1px鼠标/键盘回弹，高亮/警告pressed同hover，禁用静止与减弱动态效果位移0。删除模板、默认弧边用途、准确分类注释同步设计系统，真实loading与原业务处理保持。生产版本、校验、数据库/配置保护和回滚证据见[agent.md](agent.md)，验证方法见[Validation](.llm-wiki/guides/validation.md)。

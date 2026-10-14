@@ -13,6 +13,7 @@ const networkURL = moduleURL(await readFile(new URL('../src/api/network.ts', imp
 const { withRequestDeadline } = await import(networkURL)
 const apiSource = (await readFile(new URL('../src/api/index.ts', import.meta.url), 'utf8'))
   .replace("import { useAuthStore } from '@/stores/auth'", 'const useAuthStore = () => globalThis.testAuth')
+  .replace("import { trackPageRequest } from '@/utils/page-loading'", 'const trackPageRequest = run => run()')
   .replaceAll("from './network'", `from '${networkURL}'`)
 const api = await import(moduleURL(apiSource))
 globalThis.testAuth = { token: 'test-token', logout() {} }

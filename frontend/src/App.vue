@@ -10,6 +10,8 @@
       </n-dialog-provider>
     </n-message-provider>
     <PageScrollbar />
+    <!-- 加载反馈：页面准备期间只显示小点阵，完成后才进入Shift5切屏。 -->
+    <DotMatrixLoader v-if="pageLoading" class="page-loading-indicator" label="页面加载中" />
   </n-config-provider>
 </template>
 
@@ -21,6 +23,8 @@ import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useShift5PageTransition } from '@/utils/shift5'
 import PageScrollbar from '@/components/PageScrollbar.vue'
+import DotMatrixLoader from '@/components/DotMatrixLoader.vue'
+import { pageLoading } from '@/utils/page-loading'
 
 const route = useRoute()
 const rootShell = ref<HTMLElement | null>(null)

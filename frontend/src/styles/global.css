@@ -1,3 +1,5 @@
+@import './loading.css';
+
 /* QingZhou typography assets: display, Chinese display, body Latin and Chinese body. */
 @font-face { font-family: 'Fraunces'; src: url('/fonts/brand/Fraunces-Variable.ttf') format('truetype'); font-style: normal; font-weight: 400 900; font-display: swap; }
 @font-face { font-family: 'Source Han Serif SC'; src: url('/fonts/source-han/SourceHanSerifCN-VF.woff2') format('woff2'); font-style: normal; font-weight: 200 900; font-display: swap; }
@@ -128,8 +130,7 @@
   display: contents;
 }
 @media (prefers-reduced-motion: reduce) {
-  .qz-shift5-route-transition-pending .qz-shift5-page-shell > *,
-  .qz-shift5-route-transition-pending .route-page-shell > * { visibility: visible !important; }
+  /* 加载反馈 / 组件绘制动画：减少运动只跳过切屏，不提前揭示未准备好的内容。 */
   .qz-shift5-route-transition { display: none !important; }
 }
 

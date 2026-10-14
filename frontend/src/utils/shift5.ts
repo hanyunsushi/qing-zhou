@@ -1,4 +1,5 @@
 import { nextTick, onMounted, watch, type Ref } from 'vue'
+import { currentPageLoad, finishPageLoad, nextPagePaint, waitForPageRequests } from './page-loading'
 
 const OVERLAY_CLASS = 'qz-shift5-route-transition'
 const PENDING_CLASS = 'qz-shift5-route-transition-pending'
@@ -11,6 +12,24 @@ let transitionToken = 0
 let leavePromise: Promise<void> | null = null
 let activeScope: 'full' | 'content' | 'settings' = 'full'
 let pendingRoot: HTMLElement | null = null
+
+// 组件绘制动画：新导航撤销旧动画；加载阶段没有切屏遮罩或离场运动。
+export function resetShift5Transition() {
+  transitionToken++
+  animations.forEach(animation => { try { animation.cancel() } catch (_) { /* already settled */ } })
+  animations = []
+  overlay?.remove()
+  overlay = null
+  pendingRoot?.classList.remove('qz-shift5-enter-pending')
+  pendingRoot = null
+  document.documentElement.classList.remove(PENDING_CLASS)
+  leavePromise = null
+  activeScope = 'full'
+}
+
+export function prepareShift5Route(scope: 'full' | 'content' | 'settings') {
+  activeScope = scope
+}
 
 function positionContentOverlay(node: HTMLDivElement, host: HTMLElement | null) {
   if (!['content', 'settings'].includes(activeScope) || !host) {
@@ -146,16 +165,26 @@ export function startShift5Leave(scope: 'full' | 'content' | 'settings' = 'full'
 
 export async function runShift5Enter(root: HTMLElement | null) {
   const token = ++transitionToken
+  const loadToken = currentPageLoad()
+  const busy = () => !!root?.querySelector('.n-spin-content--spinning, .n-button--loading, [aria-busy="true"]')
   prepareEnter(root)
-  const host = ['content', 'settings'].includes(activeScope) ? root : null
-  const current = ensureOverlay('revealing', host)
-  if (!root || REDUCED_MOTION) {
-    finish(token)
-    return
-  }
   try {
-    await waitForReady(root)
+    // 加载反馈 / 组件绘制动画：请求和媒体先落定；小点阵消失后才播放切屏。
+    if (!await waitForPageRequests(loadToken, busy)) return
+    if (root) await waitForReady(root)
+    if (!await waitForPageRequests(loadToken, busy) || token !== transitionToken) return
+    if (!finishPageLoad(loadToken)) return
+    await nextTick()
+    await nextPagePaint()
     if (token !== transitionToken) return
+    if (!root || REDUCED_MOTION) {
+      finish(token)
+      return
+    }
+    await startShift5Leave(activeScope)
+    if (token !== transitionToken) return
+    const host = ['content', 'settings'].includes(activeScope) ? root : null
+    const current = ensureOverlay('revealing', host)
     const blocks = collectBlocks(root)
     document.documentElement.classList.remove(PENDING_CLASS)
     root.classList.remove('qz-shift5-enter-pending')
@@ -205,6 +234,7 @@ export async function runShift5Enter(root: HTMLElement | null) {
     })
     window.setTimeout(() => finish(token), revealDuration)
   } catch (_) {
+    finishPageLoad(loadToken)
     finish(token)
   }
 }

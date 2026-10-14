@@ -5,6 +5,14 @@ updated: 2026-10-14
 
 # kreeper第一设计系统 — QingZhou 集成
 
+## 默认加载与页面切屏
+
+默认等待符号使用小型3×3 DotMatrix，内容/页面20px、按钮/输入/选择器16px，继承当前颜色。`DotMatrixLoader.vue`与共享`styles/loading.css`替换Naive BaseLoading圆圈，保留占位/禁用/请求语义；标准刷新SVG及真实数值进度圈保持原合同。模板/CSS责任边界标记“加载反馈”。
+
+五条对角线通过CSS `@property <number>`连续相位计算透明度与半径，保持来源(x+y)/4延迟和两个半周期ease-in-out；不用曾发生四档跳变的整组阴影关键帧。兼容边界、复用代码与来源见[加载规范](</Users/hinaw/Library/Mobile Documents/com~apple~CloudDocs/obsidian vault/knowledge vault/ai/agent-skills/custom/kreeper-first-design-system/references/loading.md>)。React/Motion/Tailwind不作为依赖，减弱动态效果只保留低频透明度。
+
+`utils/page-loading.ts`按导航token追踪`api/index.ts`完整fetch/JSON及原45秒截止时间。成功/失败、Vue更新、页面busy和字体/媒体就绪后撤掉加载符号一帧，再播放Shift5；快速导航隔离旧请求/动画，局部刷新不重播路由加载，减少运动仍等待数据。用户直接授权规范更新，无待确认类型或AWS来源变更。工作区与skill已同步，发布运行事实见[Deployment](../guides/deployment.md)，逐帧/像素与路由顺序证据见[Validation](../guides/validation.md)。
+
 ## 当前修正
 
 手机侧栏与竖屏共用菜单/品牌/footer样式：品牌固定64px、共享顶栏玻璃/底线和状态，菜单仍32px/13px正文/16px SVG/8px角及独立层级线；外包装直角。手机nav左右各16px、scrollbar-gutter:auto、隐藏平台滚动条，Drawer包装overflow:hidden，只有菜单原生纵向滚动。≤768px页面自绘轨道隐藏、body右内距0，恢复平台原生指示器；桌面轨道与折叠居中保持。源码分类、skill sidebar/topbar/scrollbars/responsive、复用代码和示范同步，无新类型，AWS规则不变。源码62d2676已随v0.2.105发布部署；验证及连续resize风险见[Validation](../guides/validation.md)。

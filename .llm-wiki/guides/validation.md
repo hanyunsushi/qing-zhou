@@ -3,6 +3,12 @@ title: Validation Guide
 updated: 2026-10-14
 ---
 
+## DotMatrix加载候选验收
+
+工作区174项前端测试、类型检查/Vite和24项skill契约/类型检查/独立构建通过；发布范围隔离后171项前端测试、类型检查/Vite及Go全量通过（未包含并行新增测试）。默认DotMatrix相关准备期并行/连续请求、完整响应体、错误终态、重试间隙busy、导航取消/旧token隔离与加载撤掉后才播放Shift5均有回归；45秒请求截止和原错误传播保持。发布只选取加载组件/CSS、API/router/Shift5与对应测试，不包含并行复制/Dialog、链接或商城文件夹改动。
+
+原5191旧阴影关键帧在16.7ms帧间隔下两秒仅4种画面，已改成五条注册数值相位连续计算。真实Playwright/Chrome独立上下文1167×816、390×844、360×800约2.1秒分别128/127/127帧、114/115/116种中间值，五相位200ms均有.465507值；16px按钮22帧均不同。相隔137ms点阵截图实际像素均变化，20px内容/16px按钮占位、隐藏圆圈包装、无横向溢出及pageerror通过。准备期与切屏遮罩无重叠；减弱动态效果保持1.4秒透明度提示并跳过切屏运动。未把Chrome本机约60Hz解释为所有设备固定60fps，未实测真实手机硬件或其他浏览器；当前生产状态见[Deployment](deployment.md)。
+
 ## v0.2.105生产发布验收
 
 精确tag源码62d2676的Release构建与CI均成功，含Go vet/race、162前端测试、类型检查/Vite及shell解析；本地Go全量和skill21契约/类型检查/build重跑通过，71源/50pattern/220哈希及Wiki17页通过。生产Release、宿主、运行哈希/health与SQLite Backup API完整性、配置/进程保护见[Deployment](deployment.md)及[项目权威](../../agent.md)；8个index/DashboardLayout/AdminNodes/AdminMonitor公网JS/CSS均HTTP200且逐字节匹配本地构建，error journal为空。

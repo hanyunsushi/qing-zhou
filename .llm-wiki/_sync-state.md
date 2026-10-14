@@ -5,6 +5,15 @@ updated: 2026-10-14
 
 # Current synchronization evidence
 
+DotMatrix release scope is limited to compact20px content/page and16px inline
+waiting symbols, continuous numeric diagonal phases, and initial-page readiness
+before Shift5. Corresponding semantic comments, progressive skill references,
+reusable CSS/code and both5191/5197 showcases are synchronized. Independent
+copy/Dialog, hyperlink and shop-folder work remains uncommitted and is excluded
+from this release. Tests and actual frame/pixel/ordering evidence are recorded
+in[validation](guides/validation.md); production facts are owned by
+[authority](../agent.md) and[deployment](guides/deployment.md).
+
 Mobile sidebar/page scrolling now follows the user-confirmed responsive contract:
 shared portrait menu geometry and 64px glass brand/footer, hidden native menu
 scrollbars with no gutter, and native page indicators with no custom rail or

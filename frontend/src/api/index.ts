@@ -2,6 +2,7 @@
 
 import { useAuthStore } from '@/stores/auth'
 import { withRequestDeadline, type ApiRequestOptions } from './network'
+import { trackPageRequest } from '@/utils/page-loading'
 export type { ApiRequestOptions } from './network'
 
 export interface ApiError extends Error {
@@ -9,7 +10,7 @@ export interface ApiError extends Error {
 }
 
 async function request<T = any>(path: string, opts: RequestInit & ApiRequestOptions = {}, raw = false): Promise<T> {
-  return withRequestDeadline(opts, async signal => {
+  return trackPageRequest(() => withRequestDeadline(opts, async signal => {
     const { timeoutMs: _timeoutMs, ...init } = opts
     const auth = useAuthStore()
     const headers: Record<string, string> = {
@@ -52,7 +53,7 @@ async function request<T = any>(path: string, opts: RequestInit & ApiRequestOpti
     // the body — those have no .data, so unwrapping would yield null. `raw` returns
     // the whole parsed body for those callers.
     return raw ? (body as T) : (body?.data ?? null)
-  })
+  }))
 }
 
 /** GET，返回列表时保证是数组 */
