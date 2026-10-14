@@ -3,7 +3,15 @@ title: Validation Guide
 updated: 2026-10-14
 ---
 
-## 当前手机侧栏与滚动验收（本地）
+## v0.2.105生产发布验收
+
+精确tag源码62d2676的Release构建与CI均成功，含Go vet/race、162前端测试、类型检查/Vite及shell解析；本地Go全量和skill21契约/类型检查/build重跑通过，71源/50pattern/220哈希及Wiki17页通过。生产Release、宿主、运行哈希/health与SQLite Backup API完整性、配置/进程保护见[Deployment](deployment.md)及[项目权威](../../agent.md)；8个index/DashboardLayout/AdminNodes/AdminMonitor公网JS/CSS均HTTP200且逐字节匹配本地构建，error journal为空。
+
+认证生产390×844侧栏：页面rail display:none/body右内距0/scrollbar-width:auto，nav300px、左右16px/gutter:auto/scrollbar-width:none/WebKit display:none/offsetWidth=clientWidth；长菜单真实滚动0→549，品牌y0/height64/footer y780/height64不变，五层抽屉包装圆角0。非匹配搜索空状态为nav直接子级/position:static且菜单0，清空恢复导航。360×800仍无轨道及侧栏槽位，body可原生滚动到800；监控根html宽360/scrollWidth360，页面内部边界存在1px超出但无根横向滚动，Naive按钮水波层均display:none。820×1180保留16px桌面轨道/内距，264侧栏折叠为72、SVG中心35.5px、嵌套子树0。截图`output/production-v0.2.105-mobile-sidebar-390.jpg`和`output/production-v0.2.105-monitor-360.jpg`；实际innerWidth逐次记录，完成后恢复1167×816。
+
+限制：连续将已加载积分图表从桌面缩至390/360px时曾出现图表/card超出内容盒（body scrollWidth420），此图表resize路径本轮未改；在360px重新进入积分页后图表289px、body scrollWidth=clientWidth345、html360且无越界元素。不能用初始手机加载正常宣称连续尺寸切换全面通过。本轮没有生产编辑/删除/排序写操作，按压/hover逐帧仍沿用下面发布前真实Naive采样；真实iOS/Android触摸硬件与OS减弱动态效果未实测。
+
+## 手机侧栏与滚动发布前验收
 
 162前端测试、vue-tsc/Vite和21项skill资源契约/类型检查/build通过。新增合同覆盖768px手机原生页面指示器、隐藏自绘轨道和右内距、无槽位侧栏、共享品牌玻璃及包装无第二滚动区；旧侧栏/品牌测试按用户确认的手机合同更新。后端未改，未重跑Go；既有ECharts与示范大chunk警告保留。
 
@@ -11,15 +19,15 @@ updated: 2026-10-14
 
 820×1180竖屏桌面仍为16px自绘轨道/body内距16；菜单32px高、padding6px12px、8px角、13/20/500，与手机相同。折叠宽72、SVG中心约35.5px、子树0；768px切换手机后rail隐藏/内距0。完整示范390×844同样无轨道及侧栏占宽、64px玻璃品牌和直角抽屉；打开二级图表菜单并实际滚动到89px，独立层级线left8px/width1px保留。截图`output/showcase-mobile-sidebar-20261014-390.jpg`。当前测试使用浏览器尺寸覆盖，不声称真实iOS/Android、触摸指针或OS减弱动态效果已实测。
 
-源码分类沿用侧边栏、顶栏/品牌标识、页面滚动条，无新类型；用户要求的响应式规范已同步，AWS外部规则未改。本轮没有提交/Release/生产部署，运行仍为v0.2.104；5191示范已更新。
+源码分类沿用侧边栏、顶栏/品牌标识、页面滚动条，无新类型；用户要求的响应式规范已同步，AWS外部规则未改。上述是发布前本地验收，现已随v0.2.105部署；5191示范保留。
 
-## 当前搜索与点击反馈验收（本地）
+## 搜索与点击反馈发布前验收
 
 161前端测试、vue-tsc/Vite通过；新增结构解析契约确认桌面/手机空状态为筛选框之后的菜单同级块，并与n-menu互斥；覆盖Markdown专属hover/focus、按钮水波、同色pressed、共享回弹、禁用与减弱动态效果变量。skill20契约、独立类型检查/build通过；后端未改，本轮未重跑Go。既有ECharts和完整示范大chunk warning仍为非阻断项。当前源码及规范同步，不以测试通过推断生产已发布。
 
 1167px示范实际确认侧栏非匹配时position:static、border0、shadow:none且菜单数量0，清空恢复菜单。Markdown正文链接常态rgb(0,122,255)，真实指针hover及键盘focus-visible均rgb(3,49,96)，下划线保留。隔离验收页使用真实NButton/theme/复用CSS并将按住350ms采样写入可见DOM：六种操作按钮pointerdown矩阵translateY1px、水波层display:none，pointerup回到无位移；高亮背景为accent84%+white，警告rgb(252,176,64)，pressed/hover token相同；高亮Enter按住也1px同色，禁用transform:none。不是通过浏览器注入class模拟按压。OS减弱动态效果和coarse指针未实测，源码合同与浏览器证据分开。
 
-生产仍运行v0.2.104。本轮没有Release、提交或生产修改；示范5191已刷新。
+当时生产仍为v0.2.104，上述修正现已随v0.2.105发布部署；示范5191保留，生产证据见本页首节。
 
 390×844手机抽屉非匹配筛选空状态位于mobile-sidebar-nav直接子级、position:static、shadow:none，菜单数量0，抽屉圆角0；清空恢复导航。360×800按钮/表单示范无页面横向溢出，按钮水波层全部隐藏；截图`output/buttons-feedback-20261014-360.jpg`。实际innerWidth已记录，完成后恢复视口、关闭隔离采样/手机临时标签页。最终源/快照审计71源、50pattern、220哈希通过；Wiki17页无断链/孤立页/过期源码引用。
 

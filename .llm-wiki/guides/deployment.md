@@ -3,7 +3,26 @@ title: QingZhou Deployment and Artifact Retention
 updated: 2026-10-14
 ---
 
-## Current UI and monitor rollout
+## Current mobile scrolling and interaction rollout
+
+Source`62d26764480bf12cac4e23d6a71a351bbf852e1a`is released and deployed as
+`v0.2.105-kreeper-20261014-mobile-scroll`. Exact tag Release build and CI passed,
+including Go vet/race, frontend tests/typecheck/build and shell checks. Rollout
+keeps the established native panel-only atomic replacement and SQLite Backup
+API rollback point. Installed/running hashes, local/public health, protected
+configuration and unchanged sing-box/Tunnel PIDs passed; no database or service
+configuration was overwritten. Exact checksum, time and backup belong to
+[project authority](../../agent.md).
+
+Mobile page scrolling restores platform indicators without the desktop rail
+or16px reserved space; mobile menus hide scrollbar/gutter but scroll natively,
+with portrait-aligned glass branding and fixed64px brand/footer. Sidebar empty
+feedback, Markdown hover and wave-free same-color button recoil are included.
+Production390/360px and820px portrait checks plus8 matched public assets are
+recorded in[validation](validation.md), including a continuous-resize chart risk
+that was not changed in this release.
+
+## Previous UI and monitor rollout
 
 Source `1459bc5740a4c078390555c29c85f5097f4996b3` is released and deployed
 as `v0.2.104-kreeper-20261014-ui-contract`. The guarded rollout verifies the
