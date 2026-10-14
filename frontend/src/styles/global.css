@@ -146,11 +146,16 @@ body {
 html { scrollbar-width: none; }
 html::-webkit-scrollbar { display: none; }
 body::-webkit-scrollbar { display: none; }
-/* 页面滚动条：手机恢复平台原生滚动条，不预留自绘轨道空间。 */
+/* 页面滚动条：手机交给平台原生滚动，不绘制或预留任何滚动条槽位。 */
 @media (max-width: 768px) {
-  html, body { scrollbar-width: auto; }
+  html, body { scrollbar-width: none; }
   body { padding-right: 0; }
-  html::-webkit-scrollbar, body::-webkit-scrollbar { display: revert; }
+  html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
+}
+/* 页面滚动条：移动端覆盖 Naive UI 弹层锁滚动时可能写入的右侧补偿，避免轨道消失后仍保留留白。 */
+@media (max-width: 768px) {
+  html, body { scrollbar-gutter: auto !important; }
+  body { padding-right: 0 !important; }
 }
 /* 填写框文本光标：与所有焦点线条统一使用 Apple 系统蓝。 */
 input, textarea { caret-color: var(--accent); }
@@ -328,10 +333,43 @@ button, input, textarea, select { font-family: inherit; }
   .n-button { --button-height: 44px; min-width: 44px; }
 }
 
-/* 切换开关：保留启用/停用状态色，去掉 Naive UI rail 的焦点高亮边框。 */
+/* 切换开关：保留Naive启用/停用状态色；轨道与滑块按参考比例缩放，滑块使用回弹曲线。 */
 .n-switch:focus .n-switch__rail,
 .n-switch:focus-visible .n-switch__rail {
   box-shadow: none !important;
+}
+/* 切换开关：轨道与滑块按参考比例缩放，滑块使用回弹曲线。 */
+.n-switch {
+  --n-button-width: 17px !important;
+  --n-button-width-pressed: 17px !important;
+  --n-button-height: 17px !important;
+  --n-button-border-radius: 999px !important;
+  --n-height: 23px !important;
+  --n-offset: 3px !important;
+  --n-rail-height: 23px !important;
+  --n-rail-width: 40px !important;
+  --n-width: 40px !important;
+}
+.n-switch .n-switch__rail {
+  transition: background-color .5s cubic-bezier(.4, 0, .2, 1),
+    box-shadow .5s cubic-bezier(.4, 0, .2, 1) !important;
+}
+.n-switch .n-switch__button {
+  transition: left .5s cubic-bezier(.68, -.55, .265, 1.55),
+    background-color .5s cubic-bezier(.4, 0, .2, 1),
+    box-shadow .5s cubic-bezier(.4, 0, .2, 1) !important;
+}
+.n-switch:active:not(.n-switch--disabled) .n-switch__button {
+  transform: scale(.96);
+}
+@media (prefers-reduced-motion: reduce) {
+  .n-switch .n-switch__rail,
+  .n-switch .n-switch__button {
+    transition: none !important;
+  }
+  .n-switch:active:not(.n-switch--disabled) .n-switch__button {
+    transform: none;
+  }
 }
 
 /* 填写框 */

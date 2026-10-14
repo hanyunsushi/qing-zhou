@@ -121,12 +121,21 @@ test('mobile pages use native scrolling and sidebar menus hide scrollbars withou
   const css = read('src/styles/global.css')
   const scrollbar = read('src/components/PageScrollbar.vue')
   const layout = read('src/components/DashboardLayout.vue')
-  assert.match(css, /@media \(max-width: 768px\) \{\s*html, body \{ scrollbar-width: auto; \}\s*body \{ padding-right: 0; \}\s*html::-webkit-scrollbar, body::-webkit-scrollbar \{ display: revert; \}/)
+  assert.match(css, /@media \(max-width: 768px\) \{\s*html, body \{ scrollbar-width: none; \}\s*body \{ padding-right: 0; \}\s*html::-webkit-scrollbar, body::-webkit-scrollbar \{ display: none; \}/)
+  assert.match(css, /@media \(max-width: 768px\) \{\s*html, body \{ scrollbar-gutter: auto !important; \}\s*body \{ padding-right: 0 !important; \}/)
   assert.match(scrollbar, /@media \(max-width: 768px\) \{\s*\.page-scrollbar \{ display: none; \}/)
   assert.match(layout, /\.mobile-sidebar \.sidebar-menu \{[^}]*padding-inline: 16px;[^}]*scrollbar-gutter: auto;[^}]*scrollbar-width: none;/)
   assert.match(layout, /\.mobile-sidebar \.sidebar-menu::-webkit-scrollbar \{ display: none; \}/)
   assert.match(layout, /:global\(\.mobile-sidebar-drawer-root \.n-drawer-body\) \{ overflow: hidden !important; \}/)
   assert.match(layout, /overflow-x: hidden; overflow-y: auto;/)
+})
+
+test('switches keep the approved reference proportion and bouncy motion globally', () => {
+  const css = read('src/styles/global.css')
+  assert.match(css, /\/\* 切换开关：保留Naive启用\/停用状态色；轨道与滑块按参考比例缩放，滑块使用回弹曲线。 \*\/[\s\S]*?\.n-switch \{[\s\S]*?--n-button-width: 17px !important;[\s\S]*?--n-height: 23px !important;[\s\S]*?--n-offset: 3px !important;[\s\S]*?--n-rail-width: 40px !important;/)
+  assert.match(css, /\.n-switch \.n-switch__button \{[\s\S]*?transition: left \.5s cubic-bezier\(\.68, -\.55, \.265, 1\.55\)/)
+  assert.match(css, /\.n-switch:active:not\(\.n-switch--disabled\) \.n-switch__button \{\s*transform: scale\(\.96\);\s*\}/)
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{[\s\S]*?\.n-switch \.n-switch__rail,[\s\S]*?transition: none !important;/)
 })
 
 test('Shift5 owns page lifecycle motion while dashboard child routes keep the chrome mounted', () => {
@@ -330,7 +339,7 @@ test('switch controls keep state colors without a focus highlight border', () =>
   const settings = read('src/views/AdminSettings.vue')
   const globalCss = read('src/styles/global.css')
   assert.match(settings, /切换开关：邮箱验证仅使用开关自身状态色，不绘制额外高亮边框。[\s\S]*?<n-switch v-model:value="emailVerify" \/>/)
-  assert.match(globalCss, /\/\* 切换开关：保留启用\/停用状态色，去掉 Naive UI rail 的焦点高亮边框。 \*\/[\s\S]*?\.n-switch:focus \.n-switch__rail,[\s\S]*?\.n-switch:focus-visible \.n-switch__rail \{\s*box-shadow: none !important;/)
+  assert.match(globalCss, /\/\* 切换开关：保留Naive启用\/停用状态色；轨道与滑块按参考比例缩放，滑块使用回弹曲线。 \*\/[\s\S]*?\.n-switch:focus \.n-switch__rail,[\s\S]*?\.n-switch:focus-visible \.n-switch__rail \{\s*box-shadow: none !important;/)
 })
 
 test('select menus keep a neutral active border instead of the input focus highlight', () => {
@@ -1012,7 +1021,7 @@ test('sing-box IP visibility uses the shared switch control contract', () => {
   assert.match(singbox, /<!-- 切换开关：显示 IP 只切换地址打码状态，不使用按钮高亮或 warning 颜色。 -->[\s\S]*?<div class="ip-visibility-toggle">[\s\S]*?<span>显示 IP<\/span>[\s\S]*?<n-switch size="small" :value="showIp" aria-label="显示 IP" @update:value="setShowIp" \/>/)
   assert.match(singbox, /function setShowIp\(value: boolean\) \{[\s\S]*?showIp\.value = value[\s\S]*?localStorage\.setItem\(IP_KEY, showIp\.value \? '1' : '0'\)/)
   assert.match(singbox, /\.ip-visibility-toggle \{ display:flex; align-items:center; gap:8px; margin-left:auto;/)
-  assert.match(globalCss, /\/\* 切换开关：保留启用\/停用状态色，去掉 Naive UI rail 的焦点高亮边框。 \*\/[\s\S]*?\.n-switch:focus-visible \.n-switch__rail \{\s*box-shadow: none !important;/)
+  assert.match(globalCss, /\/\* 切换开关：保留Naive启用\/停用状态色；轨道与滑块按参考比例缩放，滑块使用回弹曲线。 \*\/[\s\S]*?\.n-switch:focus-visible \.n-switch__rail \{\s*box-shadow: none !important;/)
 })
 
 test('update modules and markdown inline code use flat Cloudscape surfaces', () => {

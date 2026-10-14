@@ -3,6 +3,10 @@ title: QingZhou Deployment and Artifact Retention
 updated: 2026-10-14
 ---
 
+## 开关与手机滚动槽发布候选
+
+候选范围仅为全局切换开关的 `40×23px` / `17×17px` 参考比例与回弹，以及≤768px页面隐藏桌面滚动条槽并交还原生滚动；不包含当前工作区其他商城、复制栏、Dialog、链接或设置页并行修改。发布门禁已通过前端测试、类型检查、Vite、Go 测试和 vet；待 Release/OCI 面板原子替换与运行态验收完成后，再补充版本、资产 SHA-256、回滚目录和服务/PID证据。
+
 ## Current DotMatrix rollout
 
 Loading-only source `3a91d7748816957587d682baff9697b9cc1968db` is released and

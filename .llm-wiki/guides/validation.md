@@ -3,6 +3,10 @@ title: Validation Guide
 updated: 2026-10-14
 ---
 
+## 开关与手机滚动槽（发布候选）
+
+本次候选只包含全局 `n-switch` 的参考比例/回弹和移动端页面滚动槽修正：轨道 `40×23px`、滑块 `17×17px`、`3px` 内距、`500ms cubic-bezier(.68, -.55, .265, 1.55)`，按下缩放 `0.96`；≤768px 隐藏自绘 `PageScrollbar`、移除桌面滚动条绘制与右侧补偿，保留原生 body 滚动和移动侧栏滚动。前端 172 项测试、`vue-tsc`、Vite build、Go 全量测试、`go vet ./...` 和 `git diff --check` 已通过；构建保留已知 ECharts 异步 chunk warning。发布前不将本地源码视为生产状态，真实运行版本仍见[Deployment](deployment.md)。
+
 ## v0.2.106生产发布验收
 
 加载相关tag源码3a91d7748816957587d682baff9697b9cc1968db的Release构建38531536709与CI38531542063均success：171前端测试、类型检查/Vite、Go vet/race及脚本检查通过；隔离源码Go全量通过。此前174工作区测试包括其他未提交改动，不能替代本tag的171测试证据。ARM64资产digest/SHA256SUMS/宿主/运行文件均一致，备份API完整性ok，具体哈希/时间/保护检查见[Deployment](deployment.md)和[项目权威](../../agent.md)。
