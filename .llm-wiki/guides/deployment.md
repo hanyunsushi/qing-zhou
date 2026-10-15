@@ -3,6 +3,14 @@ title: QingZhou Deployment and Artifact Retention
 updated: 2026-10-15
 ---
 
+## Pending v0.2.112 secondary-sidebar geometry rollout
+
+QingZhou source `11f2b579d6ee4bb319e44779f7dc603d019fc366` and canonical
+`kreeper第一设计系统` commit `9e3eb2a` now carry the same final BranchedMenu
+secondary-sidebar geometry. The source, pattern, showcase CSS and coverage
+hashes are synchronized; this candidate is not called deployed until the new
+Release ARM64 asset and the guarded host rollout are verified.
+
 ## v0.2.108 visual system synchronization rollout
 
 Source `a3fb1fc7d6bf4226cb0bf93cd353325a153656a9` is released and deployed as

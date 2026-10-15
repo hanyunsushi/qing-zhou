@@ -1,5 +1,11 @@
 # Kreeper QingZhou 定制维护
 
+## 2026-10-15 BranchedMenu 二级侧边栏最终几何同步（发布候选）
+
+QingZhou 提交 `11f2b579d6ee4bb319e44779f7dc603d019fc366` 与 canonical skill 提交 `9e3eb2a` 已同步实际设置页、设计系统 source-reference/pattern、完整示范 CSS 与 coverage hashes。二级侧边栏保持 CSS-only、不使用 SVG；主干/活动标记 `1.5px`，分组 `calc(14px + 1px) / 1.2`，子项 `14px / 1.2`，分支 `18px × 10px`、`1.5px` 线宽、`10px` 圆角、`calc(50% - 5px)`，主干截止 `calc(36px - 10px)`。
+
+前端 `193/193`、`vue-tsc`、Vite、`git diff --check` 通过；canonical `verify-assets.mjs` `28/28`、独立 typecheck/build、`audit.mjs` `77/53/238` 通过。当前仍待新 Release 资产与生产运行态部署核验，未将候选版本宣称为已部署。
+
 ## 2026-10-15 BranchedMenu 与链接交互同步（发布候选）
 
 QingZhou、canonical `kreeper-first-design-system` 与本地 `5191/5192/5197` 示范已同步 CSS-only 二级侧边栏：首组默认展开、36px 行高、40px 缩进、独立裁剪折叠、展开时的活动分支/叶子弧线淡入与绘制，不使用 SVG；文字链接悬浮/聚焦保持 Apple 蓝，仅显示下划线。源码、分类注释、pattern、source-reference、导航/content/interactions 规范、契约和 coverage hash 均已更新；门禁为前端180、canonical28、audit77/53/238、typecheck/build/Go tests/vet 通过。
