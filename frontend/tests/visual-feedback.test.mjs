@@ -42,10 +42,10 @@ test('sidebar empty feedback replaces the menu in the result track on desktop an
 test('Markdown links are underlined only on hover or keyboard focus', () => {
   const css = read('styles/global.css')
   assert.match(css, /\na \{ color: var\(--accent\); text-decoration: none; text-underline-offset: 3px; \}/)
-  assert.match(css, /\na:hover, a:focus-visible \{ color: var\(--accent-hover\); text-decoration: underline; \}/)
+  assert.match(css, /\na:hover, a:focus-visible \{ color: var\(--accent\); text-decoration: underline; \}/)
   assert.match(css, /\na:focus-visible \{ outline: 2px solid var\(--accent\); outline-offset: 3px; \}/)
   assert.match(css, /\.md a \{ color: var\(--accent\); text-decoration: none; text-underline-offset: 3px; \}/)
-  assert.match(css, /\.md a:hover, \.md a:focus-visible \{ color: var\(--accent-hover\); text-decoration: underline; \}/)
+  assert.match(css, /\.md a:hover, \.md a:focus-visible \{ color: var\(--accent\); text-decoration: underline; \}/)
   assert.match(css, /\.md a:focus-visible \{ outline: 2px solid var\(--accent\); outline-offset: 3px; \}/)
   assert.ok(css.indexOf('.md a {') < css.indexOf('.md a:hover'))
 })

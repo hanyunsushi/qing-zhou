@@ -5,6 +5,8 @@ updated: 2026-10-15
 
 # Current synchronization evidence
 
+本轮最终同步边界还包括文字链接：裸 `a`、`.project-link` 和 Markdown 链接在悬浮/键盘聚焦时保持 Apple 蓝，只添加下划线；QingZhou、canonical skill 与示范合同一致，随 `v0.2.110` 发布部署。
+
 
 `v0.2.107-kreeper-20261014-switch-mobile-scroll` 已发布部署：只包含全局开关40×23/17×17参考比例与回弹、≤768px页面滚动槽补偿修正；Release 38593721201、CI 38593807022、ARM64运行哈希、SQLite Backup API完整性、服务/PID及公网资源证据见[Deployment](guides/deployment.md)与[Validation](guides/validation.md)。其他工作区脏改动仍排除。
 

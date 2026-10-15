@@ -5,6 +5,8 @@ updated: 2026-10-15
 
 ## BranchedMenu 二级侧边栏全量同步（发布候选）
 
+- 本轮同步还包含文字链接合同：裸 `a`、`.project-link` 与 Markdown 链接常态保持 Apple 蓝无下划线，悬浮/键盘聚焦仍保持同色并显示下划线；对应测试已更新，未新增分类。
+
 - QingZhou `npm test` 通过 `180/180`，`npm run typecheck` 与 `npm run build` 通过；Go `go test ./...`、`go vet ./...` 和 `git diff --check` 通过。保留既有 ECharts 大 chunk 非阻断 warning。
 - canonical `kreeper-first-design-system` 的 `node scripts/contracts.test.mjs` 通过 `28/28`，独立 `vue-tsc`/Vite build 通过；`audit.mjs` 通过 `77` 源、`53` pattern、`238` package hashes；`verify-assets.mjs` 通过，无源码漂移、未覆盖源码、项目 alias 或坏链接。
 - 本轮把用户 BranchedMenu 的 CSS-only 几何同步到实际设置页、完整示范和源合同：首组默认展开，分支折叠归零，活动分支/叶子弧线仅在所属分区展开并保留淡入/绘制过渡；无 SVG。示范进程 `5191/5192/5197` 已刷新。生产在新 Release 构建和部署完成前仍为 `v0.2.108-kreeper-20261015-visual-sync`。

@@ -1,8 +1,8 @@
 # Kreeper QingZhou 定制维护
 
-## 2026-10-15 BranchedMenu 二级侧边栏同步（发布候选）
+## 2026-10-15 BranchedMenu 与链接交互同步（发布候选）
 
-QingZhou、canonical `kreeper-first-design-system` 与本地 `5191/5192/5197` 示范已同步 CSS-only 二级侧边栏：首组默认展开、36px 行高、40px 缩进、独立裁剪折叠、展开时的活动分支/叶子弧线淡入与绘制，不使用 SVG。源码、分类注释、pattern、source-reference、导航规范、契约和 coverage hash 均已更新；门禁为前端180、canonical28、audit77/53/238、typecheck/build/Go tests/vet 通过。
+QingZhou、canonical `kreeper-first-design-system` 与本地 `5191/5192/5197` 示范已同步 CSS-only 二级侧边栏：首组默认展开、36px 行高、40px 缩进、独立裁剪折叠、展开时的活动分支/叶子弧线淡入与绘制，不使用 SVG；文字链接悬浮/聚焦保持 Apple 蓝，仅显示下划线。源码、分类注释、pattern、source-reference、导航/content/interactions 规范、契约和 coverage hash 均已更新；门禁为前端180、canonical28、audit77/53/238、typecheck/build/Go tests/vet 通过。
 
 生产当前仍为 `v0.2.108-kreeper-20261015-visual-sync`，本记录在新 Release 与生产运行态复核完成前不宣称已部署。
 

@@ -51,7 +51,7 @@ updated: 2026-10-15
 
 ## 文字链接与复制状态覆盖
 
-普通文字导航链接与Markdown、`.project-link`共用“项目超链接”合同：常态Apple蓝/无下划线，hover与focus-visible深蓝/下划线，键盘保留2px outline。通用`a`规则补齐下划线与键盘状态，示范顶部公共顶栏/登录页面入口显式标记`project-link`和责任注释；按钮、菜单等链接容器仍按自身专项规范。
+普通文字导航链接与Markdown、`.project-link`共用“项目超链接”合同：常态Apple蓝/无下划线，hover与focus-visible保持Apple蓝并显示下划线，键盘保留2px outline。通用`a`规则补齐下划线与键盘状态，示范顶部公共顶栏/登录页面入口显式标记`project-link`和责任注释；按钮、菜单等链接容器仍按自身专项规范。
 
 两种复制栏保留蓝色与中性表面，几何及交互共用“复制栏”合同。专项选择器包含实际Naive按钮类型和enabled状态，覆盖普通按钮hover/focus/pressed优先级；根及内部边线仅220ms颜色过渡，固定1px边线、零shadow/transform。中性示范按钮不再混用`action-button`。源码、canonical content/forms/复用CSS、Controls/Gallery、源快照/pattern和原5191运行副本同步。没有新分类、AWS规则变更或部署；证据见[Validation](../guides/validation.md#文字链接与两种复制按钮未部署)。
 
@@ -59,7 +59,7 @@ updated: 2026-10-15
 
 ## Markdown链接下划线
 
-Markdown正文沿用“项目超链接”合同：`global.css`中`.md a`常态Apple蓝且无下划线，hover/focus-visible显式设置深蓝和underline、offset3px，键盘保持2px焦点框。取消此前Markdown常态underline的局部例外，不改字体、布局或导航行为。CSS责任分类注释、canonical content/interactions规范、复用CSS、来源快照与原5191示范同步，无新增类型或AWS规则变动。此项未发布部署，真实状态与回归证据见[Validation](../guides/validation.md#markdown链接下划线未部署)。
+Markdown正文沿用“项目超链接”合同：`global.css`中`.md a`常态Apple蓝且无下划线，hover/focus-visible保持同色并显示underline、offset3px，键盘保持2px焦点框。取消此前Markdown常态underline的局部例外，不改字体、布局或导航行为。CSS责任分类注释、canonical content/interactions规范、复用CSS、来源快照与原5191示范同步，无新增类型或AWS规则变动。此项纳入本轮同步发布，真实状态与回归证据见[Validation](../guides/validation.md)。
 
 ## 玻璃文件夹商城
 
