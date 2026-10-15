@@ -3,13 +3,32 @@ title: QingZhou Deployment and Artifact Retention
 updated: 2026-10-15
 ---
 
-## Pending v0.2.112 secondary-sidebar geometry rollout
+## v0.2.112 secondary-sidebar geometry rollout
 
 QingZhou source `11f2b579d6ee4bb319e44779f7dc603d019fc366` and canonical
 `kreeper第一设计系统` commit `9e3eb2a` now carry the same final BranchedMenu
 secondary-sidebar geometry. The source, pattern, showcase CSS and coverage
-hashes are synchronized; this candidate is not called deployed until the new
-Release ARM64 asset and the guarded host rollout are verified.
+hashes are synchronized. Release
+[`v0.2.112-kreeper-20261015-secondary-sidebar-final`](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.112-kreeper-20261015-secondary-sidebar-final)
+and both release/CI workflows succeeded. The Linux ARM64 Release asset,
+`/opt/qingzhou/qingzhou`, and the running host executable match SHA-256
+`50730eb4b78ca3b8e8569970600757f8980d199fa6c5f5160c4cc54a77d93834`.
+
+At 2026-10-15 21:11:11 CST the guarded host rollout used the fixed OCI entry.
+The online SQLite Backup API snapshot is retained at
+`/opt/qingzhou/backups/fork-v0.2.112-kreeper-20261015-secondary-sidebar-final-20261015-210937/qingzhou.db.backupapi`
+and passed `PRAGMA integrity_check` with `ok`. The old executable, env, systemd
+units and sing-box configuration are retained in that rollback directory. Only
+`/opt/qingzhou/qingzhou` was atomically replaced and only `qingzhou.service` was
+restarted; the database, sing-box and Tunnel services were not replaced.
+
+Local and public `/api/health` return
+`v0.2.112-kreeper-20261015-secondary-sidebar-final`. The three services are
+active with `NRestarts=0`, sing-box PID `808675` and Tunnel PID `725422` are
+unchanged, listeners `8081`, `8882`, `18082` and `19000` remain, protected
+configuration hashes are unchanged, and the public homepage returns `200`.
+The panel journal has no new error entries; an existing non-fatal hosted-probe
+release lookup warning remains unrelated to this panel-only rollout.
 
 ## v0.2.108 visual system synchronization rollout
 

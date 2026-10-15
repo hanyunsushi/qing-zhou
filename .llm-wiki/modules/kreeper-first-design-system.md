@@ -61,7 +61,7 @@ QingZhou、canonical skill、源码示范和独立示范已完成同步；`180/1
 
 ## BranchedMenu 视觉合同复核（发布候选）
 
-按用户提供的 BranchedMenu 参数重新核对二级侧边栏：一级分区保留 36px 行高并默认只展开第一组（`defaultOpen=0`），二级项使用 40px 缩进；主干、分支弧线和活动延伸线继续使用 CSS，不使用 SVG。折叠分支由 `grid-template-rows: 0fr → 1fr` 配合独立裁剪层实现，收起后不再占用残留高度；活动项维持中号字重，不因选中额外变成粗体。`AdminSettings.vue` 实际设置页、canonical 示范页、pattern、源快照和 coverage hash 已同步。本项源码、规范、快照、示范与验证记录纳入本轮发布边界；生产仍等待新 Release 部署复核。
+按用户提供的 BranchedMenu 参数重新核对二级侧边栏：一级分区保留 36px 行高并默认只展开第一组（`defaultOpen=0`），二级项使用 40px 缩进；主干、分支弧线和活动延伸线继续使用 CSS，不使用 SVG。折叠分支由 `grid-template-rows: 0fr → 1fr` 配合独立裁剪层实现，收起后不再占用残留高度；活动项维持中号字重，不因选中额外变成粗体。`AdminSettings.vue` 实际设置页、canonical 示范页、pattern、源快照和 coverage hash 已同步。本项源码、规范、快照、示范与验证记录已纳入 `v0.2.112-kreeper-20261015-secondary-sidebar-final` 发布边界并完成生产部署核验。
 
 ## 玻璃文件夹展开状态修正（本地未部署）
 

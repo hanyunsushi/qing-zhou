@@ -5,7 +5,7 @@ updated: 2026-10-15
 
 # Current synchronization evidence
 
-本轮发布候选已将状态牌/标签合同与前序视觉改动保持同一同步边界：QingZhou、canonical `kreeper第一设计系统`、源码示范/独立示范均使用 `6px / 600 / 3px 10px / 13px` 标签几何、Apple 深色状态文字变体和 `.18/.20` 浅底透明度；默认弧边按下状态复用悬浮色，Dialog ghost 也不下沉。`180/180` 前端测试、typecheck/build、Go tests/vet、skill `28/28`、独立 build、`77/53/238` audit 和 `git diff --check` 均已通过。Canonical source-reference、patterns、Gallery、StatusBadge、status-colors、coverage hashes 与 QingZhou 目标视图一致；当前仍待 Release/生产部署复核。
+本轮发布已将状态牌/标签合同与前序视觉改动保持同一同步边界：QingZhou、canonical `kreeper第一设计系统`、源码示范/独立示范均使用 `6px / 600 / 3px 10px / 13px` 标签几何、Apple 深色状态文字变体和 `.18/.20` 浅底透明度；默认弧边按下状态复用悬浮色，Dialog ghost 也不下沉。`180/180` 前端测试、typecheck/build、Go tests/vet、skill `28/28`、独立 build、`77/53/238` audit 和 `git diff --check` 均已通过。Canonical source-reference、patterns、Gallery、StatusBadge、status-colors、coverage hashes 与 QingZhou 目标视图一致；生产运行态已随 `v0.2.112-kreeper-20261015-secondary-sidebar-final` 核验完成。
 
 本轮状态牌与标签视觉统一已同步 QingZhou 源码、canonical `kreeper-first-design-system` 规范、设计系统示范页：所有标签类型统一为 `6px` 圆角、`600` 字重、`3px 10px` 内边距、`13px` 字号，全局引入四组加深文字色 (`--success-text`/`--warn-text`/`--danger-text`/`--inactive-text`)，应用到状态牌、KPI 数字、订单金额、流量告警、监控状态等所有使用状态色显示文字的位置。改动范围：`frontend/src/styles/global.css` CSS 变量与状态牌样式，`AdminMonitor.vue`、`UserOrders.vue`、`UserPoints.vue`、`Monitor.vue` 的状态文字样式，设计系统示范页 `/private/tmp/kreeper-showcase`。门禁、验证与规范同步见 [Validation](guides/validation.md#状态牌与标签视觉统一未部署) 与 [设计系统](modules/kreeper-first-design-system.md#2026-10-15-状态牌与标签视觉统一本地未部署)。本地未提交、未发布、未部署。
 
@@ -14,7 +14,7 @@ updated: 2026-10-15
 
 `v0.2.107-kreeper-20261014-switch-mobile-scroll` 已发布部署：只包含全局开关40×23/17×17参考比例与回弹、≤768px页面滚动槽补偿修正；Release 38593721201、CI 38593807022、ARM64运行哈希、SQLite Backup API完整性、服务/PID及公网资源证据见[Deployment](guides/deployment.md)与[Validation](guides/validation.md)。其他工作区脏改动仍排除。
 
-本轮 BranchedMenu 视觉合同复核已完成：`AdminSettings.vue` 与 canonical `#navigation` 示范的二级侧边栏统一为首组默认展开、36px 行高、40px 子项缩进、CSS-only 主干/分支/活动线；增加独立裁剪层后，折叠分支不再残留占位，活动分支与叶子弧线仅在展开状态显示并保留淡入/绘制过渡。源快照、pattern、navigation/reference、coverage hash 和项目验证页已同步；该版本待本轮发布验证。
+本轮 BranchedMenu 视觉合同复核已完成：`AdminSettings.vue` 与 canonical `#navigation` 示范的二级侧边栏统一为首组默认展开、36px 行高、40px 子项缩进、CSS-only 主干/分支/活动线；增加独立裁剪层后，折叠分支不再残留占位，活动分支与叶子弧线仅在展开状态显示并保留淡入/绘制过渡。源快照、pattern、navigation/reference、coverage hash 和项目验证页已同步；已随 `v0.2.112-kreeper-20261015-secondary-sidebar-final` 发布并部署。
 
 本轮修正示范玻璃文件夹的展开状态级联：原 `.gf-root:has(.gf-interaction:hover)` specificity 高于 `.gf-root[data-open]`，鼠标停留在已点击前盖时会覆盖完整展开位移，导致纸页没有正常弹出；现仅对 `:not([data-open])` 应用 hover/focus-within 参数，展开状态保持完整 hinge/lift/spread/fan/stack。5191 `#folders` 已实际点击核对 `aria-expanded`、`data-open` 与 computed 展开参数；源码、canonical skill 组件/快照/pattern/契约、项目权威与本页已同步。沿用“玻璃文件夹卡片”，未新增分类；本地未提交、未发布、未部署。证据见 [Validation](guides/validation.md#玻璃文件夹展开状态修正本地未部署)。
 

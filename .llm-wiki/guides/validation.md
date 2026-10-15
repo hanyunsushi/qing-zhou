@@ -3,7 +3,7 @@ title: Validation Guide
 updated: 2026-10-15
 ---
 
-## 二级侧边栏视觉修复（本地未部署）
+## 二级侧边栏视觉修复（已发布部署）
 
 根据参考组件 BranchedMenu 的精确几何修复 `AdminSettings.vue` 二级侧边栏，确保所有视觉尺寸与参考规范完全对齐：
 
@@ -23,7 +23,7 @@ updated: 2026-10-15
 - 保持配色不变，使用 CSS（非 SVG）实现
 - 与参考组件在行高、字体、线宽、圆角、位置等所有视觉尺寸完全对齐
 
-本项已同步：`AdminSettings.vue` 源码、静态测试文件；源码提交为 `11f2b579d6ee4bb319e44779f7dc603d019fc366`，canonical skill 提交为 `9e3eb2a`。Release 与生产部署待新资产完成后核验；真实浏览器效果需重启本地开发服务器验证。
+本项已同步：`AdminSettings.vue` 源码、静态测试文件；源码提交为 `11f2b579d6ee4bb319e44779f7dc603d019fc366`，canonical skill 提交为 `9e3eb2a`。Release `v0.2.112-kreeper-20261015-secondary-sidebar-final` 的 ARM64 资产、生产宿主二进制与运行文件哈希一致；本机/公网 health、三项服务、监听端口、保护配置哈希和 SQLite Backup API `integrity_check=ok` 均已核验。生产仅替换面板二进制并重启 `qingzhou.service`，未改数据库、sing-box/Tunnel 或其配置。真实认证业务页的交互仍需在有权限的浏览器会话中检查，不以未认证跳转冒充视觉验收。
 
 
 ## 状态牌与标签视觉统一（发布候选）

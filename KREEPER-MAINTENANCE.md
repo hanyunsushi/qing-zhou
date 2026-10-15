@@ -1,10 +1,22 @@
 # Kreeper QingZhou 定制维护
 
-## 2026-10-15 BranchedMenu 二级侧边栏最终几何同步（发布候选）
+## 2026-10-15 BranchedMenu 二级侧边栏最终几何同步（已发布部署）
+
+Release `v0.2.112-kreeper-20261015-secondary-sidebar-final` 已发布，QingZhou
+提交 `11f2b579d6ee4bb319e44779f7dc603d019fc366` 与 canonical skill `9e3eb2a`
+保持一致。Linux ARM64 Release 资产、生产宿主二进制与运行文件 SHA-256 均为
+`50730eb4b78ca3b8e8569970600757f8980d199fa6c5f5160c4cc54a77d93834`。
+
+2026-10-15 21:11:11 CST 通过固定 OCI 入口完成宿主部署。SQLite Backup API
+快照位于 `/opt/qingzhou/backups/fork-v0.2.112-kreeper-20261015-secondary-sidebar-final-20261015-210937/qingzhou.db.backupapi`，
+完整性检查为 `ok`；旧二进制、env、systemd 与 sing-box 配置均保留在该回滚目录。
+只原子替换 `/opt/qingzhou/qingzhou` 并重启 `qingzhou.service`，数据库、
+`qingzhou-sing-box.service`、`cloudflared.service` 与其配置未改动。公网/本机
+health、三项服务、四个监听端口和保护配置哈希已复核通过。
 
 QingZhou 提交 `11f2b579d6ee4bb319e44779f7dc603d019fc366` 与 canonical skill 提交 `9e3eb2a` 已同步实际设置页、设计系统 source-reference/pattern、完整示范 CSS 与 coverage hashes。二级侧边栏保持 CSS-only、不使用 SVG；主干/活动标记 `1.5px`，分组 `calc(14px + 1px) / 1.2`，子项 `14px / 1.2`，分支 `18px × 10px`、`1.5px` 线宽、`10px` 圆角、`calc(50% - 5px)`，主干截止 `calc(36px - 10px)`。
 
-前端 `193/193`、`vue-tsc`、Vite、`git diff --check` 通过；canonical `verify-assets.mjs` `28/28`、独立 typecheck/build、`audit.mjs` `77/53/238` 通过。当前仍待新 Release 资产与生产运行态部署核验，未将候选版本宣称为已部署。
+前端 `193/193`、`vue-tsc`、Vite、`git diff --check` 通过；canonical `verify-assets.mjs` `28/28`、独立 typecheck/build、`audit.mjs` `77/53/238` 通过。以上门禁与生产运行态核验均已完成。
 
 ## 2026-10-15 BranchedMenu 与链接交互同步（发布候选）
 
