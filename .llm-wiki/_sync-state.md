@@ -1,5 +1,3 @@
-本轮复核并修正下拉点击反馈与二级侧边栏可见性：全局按钮/下拉点击不再下移或扩散，点击下拉分割线固定32px贯穿按钮，箭头旋转保持占位；`AdminSettings.vue` 实际设置页已存在 CSS-only 二级侧边栏，`#navigation` 示范与重启后的5197示范均可见。5191 DOM实测按钮自身宽高不随打开改变；5173未认证会跳转登录，生产尚未部署本地改动。canonical skill、项目权威与验证页同步；未提交、未发布、未部署。
-
 ---
 title: Current Wiki Sync State
 updated: 2026-10-15
@@ -10,7 +8,7 @@ updated: 2026-10-15
 
 `v0.2.107-kreeper-20261014-switch-mobile-scroll` 已发布部署：只包含全局开关40×23/17×17参考比例与回弹、≤768px页面滚动槽补偿修正；Release 38593721201、CI 38593807022、ARM64运行哈希、SQLite Backup API完整性、服务/PID及公网资源证据见[Deployment](guides/deployment.md)与[Validation](guides/validation.md)。其他工作区脏改动仍排除。
 
-本轮 BranchedMenu 视觉合同复核已完成：`AdminSettings.vue` 与 canonical `#navigation` 示范的二级侧边栏统一为首组默认展开、36px 行高、40px 子项缩进、CSS-only 主干/分支/活动线；增加独立裁剪层后，折叠分支不再残留占位，活动项使用中号字重。源快照、pattern、navigation/reference、coverage hash 和项目验证页已同步。5197 最新浏览器实测折叠为0px、展开恢复84px；180项前端测试、typecheck/build、skill合同/asset verify/audit均通过。本地未提交、未发布、未部署。
+本轮 BranchedMenu 视觉合同复核已完成：`AdminSettings.vue` 与 canonical `#navigation` 示范的二级侧边栏统一为首组默认展开、36px 行高、40px 子项缩进、CSS-only 主干/分支/活动线；增加独立裁剪层后，折叠分支不再残留占位，活动分支与叶子弧线仅在展开状态显示并保留淡入/绘制过渡。源快照、pattern、navigation/reference、coverage hash 和项目验证页已同步；该版本待本轮发布验证。
 
 本轮修正示范玻璃文件夹的展开状态级联：原 `.gf-root:has(.gf-interaction:hover)` specificity 高于 `.gf-root[data-open]`，鼠标停留在已点击前盖时会覆盖完整展开位移，导致纸页没有正常弹出；现仅对 `:not([data-open])` 应用 hover/focus-within 参数，展开状态保持完整 hinge/lift/spread/fan/stack。5191 `#folders` 已实际点击核对 `aria-expanded`、`data-open` 与 computed 展开参数；源码、canonical skill 组件/快照/pattern/契约、项目权威与本页已同步。沿用“玻璃文件夹卡片”，未新增分类；本地未提交、未发布、未部署。证据见 [Validation](guides/validation.md#玻璃文件夹展开状态修正本地未部署)。
 

@@ -1,5 +1,26 @@
 # Kreeper QingZhou 定制维护
 
+## 2026-10-15 BranchedMenu 二级侧边栏同步（发布候选）
+
+QingZhou、canonical `kreeper-first-design-system` 与本地 `5191/5192/5197` 示范已同步 CSS-only 二级侧边栏：首组默认展开、36px 行高、40px 缩进、独立裁剪折叠、展开时的活动分支/叶子弧线淡入与绘制，不使用 SVG。源码、分类注释、pattern、source-reference、导航规范、契约和 coverage hash 均已更新；门禁为前端180、canonical28、audit77/53/238、typecheck/build/Go tests/vet 通过。
+
+生产当前仍为 `v0.2.108-kreeper-20261015-visual-sync`，本记录在新 Release 与生产运行态复核完成前不宣称已部署。
+
+## 2026-10-15 视觉系统全量同步（已发布部署）
+
+QingZhou `a3fb1fc7d6bf4226cb0bf93cd353325a153656a9` 与 canonical
+`kreeper-first-design-system` `3c856929294fcd9a4a22eec7390d43d407fe05b1` 已同步，
+本地示范 `5191/5192/5197` 与两套源码资产一致。发布为
+`v0.2.108-kreeper-20261015-visual-sync`，Release/CI 为
+`38690142519`/`38690146328`，前端180、skill28和audit77/53/238门禁通过。
+
+生产只替换 `/opt/qingzhou/qingzhou` 并重启 `qingzhou.service`。ARM64/宿主/运行
+SHA-256 为 `e92956cebea9657cfc83548cdc79a103fe3e06a914a6a61ba948c48e2663da74`；
+Backup API 快照完整性 `ok`，回滚目录为
+`/opt/qingzhou/backups/fork-v0.2.108-kreeper-20261015-visual-sync-20261015-141810/`。
+`qingzhou-sing-box.service`、`cloudflared.service`、数据库、env、systemd、
+sing-box/Tunnel 配置均未被替换；公网/本机 health、新 JS/CSS 资源和服务状态核验通过。
+
 ## 当前设计系统入口
 
 完整设计合同由 `kreeper-first-design-system` skill 维护，青舟集成边界见 [.llm-wiki/modules/kreeper-first-design-system.md](.llm-wiki/modules/kreeper-first-design-system.md)。下方带日期条目保留当时发布/局部实验事实，不作为当前数值来源；不得恢复其中已被取代的输入外晕、旧圆角或字体。旧 Anthropic/Cloudscape 独立 skill 已退役，历史记录不构成活动路由。

@@ -12,9 +12,9 @@ updated: 2026-10-15
 
 ≤768px 页面继续使用原生 body 滚动，隐藏 `PageScrollbar`，不绘制或预留桌面滚动条槽位；`scrollbar-gutter:auto` 与 `padding-right:0` 的移动端强制覆盖用于清除 Naive UI 弹层滚动锁留下的右侧补偿。移动侧栏自己的原生滚动合同不变。该合同已随 `v0.2.107-kreeper-20261014-switch-mobile-scroll` 发布并部署；项目门禁、资源和运行证据见[Validation](../guides/validation.md)与[Deployment](../guides/deployment.md)。
 
-## BranchedMenu 视觉合同复核（本地未部署）
+## BranchedMenu 视觉合同复核（发布候选）
 
-按用户提供的 BranchedMenu 参数重新核对二级侧边栏：一级分区保留 36px 行高并默认只展开第一组（`defaultOpen=0`），二级项使用 40px 缩进；主干、分支弧线和活动延伸线继续使用 CSS，不使用 SVG。折叠分支由 `grid-template-rows: 0fr → 1fr` 配合独立裁剪层实现，收起后不再占用残留高度；活动项维持中号字重，不因选中额外变成粗体。`AdminSettings.vue` 实际设置页、canonical 示范页、pattern、源快照和 coverage hash 已同步。本项只改本地源码与规范，未提交、未发布、未部署。
+按用户提供的 BranchedMenu 参数重新核对二级侧边栏：一级分区保留 36px 行高并默认只展开第一组（`defaultOpen=0`），二级项使用 40px 缩进；主干、分支弧线和活动延伸线继续使用 CSS，不使用 SVG。折叠分支由 `grid-template-rows: 0fr → 1fr` 配合独立裁剪层实现，收起后不再占用残留高度；活动项维持中号字重，不因选中额外变成粗体。`AdminSettings.vue` 实际设置页、canonical 示范页、pattern、源快照和 coverage hash 已同步。本项源码、规范、快照、示范与验证记录纳入本轮发布边界；生产仍等待新 Release 部署复核。
 
 ## 玻璃文件夹展开状态修正（本地未部署）
 

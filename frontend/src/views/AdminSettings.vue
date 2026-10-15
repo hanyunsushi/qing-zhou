@@ -42,6 +42,7 @@
                   <!-- 二级侧边栏：活动分支沿 CSS 主干延伸到当前叶子，等价于参考组件的 reach path。 -->
                   <span v-if="activeSettingsItemIndex(group) >= 0"
                         class="settings-nav-active-reach"
+                        :data-on="isSettingsGroupOpen(group.label) ? '' : undefined"
                         :style="{ height: `${14 + activeSettingsItemIndex(group) * 36}px` }"
                         aria-hidden="true" />
                   <button v-for="section in group.sections" :key="section.id" type="button"
@@ -1712,13 +1713,18 @@ onBeforeUnmount(() => {
 .settings-nav-group-wrap[data-open] .settings-nav-branch { grid-template-rows:1fr; }
 .settings-nav-branch-clip { min-height:0; overflow:hidden; }
 .settings-nav-children { position:relative; box-sizing:border-box; min-height:0; overflow:hidden; padding:6px 0; }
-.settings-nav-children::before { position:absolute; top:0; bottom:34px; left:14px; width:1.5px; content:''; background:var(--border); }
-.settings-nav-active-reach { position:absolute; top:0; left:14px; z-index:0; width:1.5px; border-radius:1px; background:var(--accent); pointer-events:none; transition:height .4s cubic-bezier(.23,1,.32,1); }
+.settings-nav-children::before { position:absolute; top:0; bottom:34px; left:14px; width:1.5px; content:''; background:var(--border); opacity:0; transition:opacity .2s ease; }
+.settings-nav-group-wrap[data-open] .settings-nav-children::before { opacity:1; transition:opacity .25s ease .1s; }
+.settings-nav-active-reach { position:absolute; top:0; left:14px; z-index:0; width:1.5px; border-radius:1px; background:var(--accent); opacity:0; pointer-events:none; transition:height .4s cubic-bezier(.23,1,.32,1), opacity .2s ease; }
+.settings-nav-group-wrap[data-open] .settings-nav-active-reach[data-on] { opacity:1; transition:height .4s cubic-bezier(.23,1,.32,1), opacity .25s ease .1s; }
 .settings-nav-item { position:relative; z-index:1; display:flex; align-items:center; gap:8px; width:100%; height:36px; min-height:36px; margin:0; padding:0 0 0 40px; border:0; border-radius:0; background:transparent; color:var(--text-2); text-align:left; font:400 14px/18px var(--ff-body); cursor:pointer; transition:color .2s ease; }
-.settings-nav-item::before { position:absolute; top:calc(50% - 10px); left:14px; box-sizing:border-box; width:18px; height:10px; border-bottom:1.5px solid var(--border); border-left:1.5px solid var(--border); border-bottom-left-radius:10px; content:''; transition:border-color .2s ease; }
+.settings-nav-item::before,
+.settings-nav-item::after { position:absolute; top:calc(50% - 10px); left:14px; box-sizing:border-box; width:18px; height:10px; border-bottom:1.5px solid var(--border); border-left:1.5px solid var(--border); border-bottom-left-radius:10px; content:''; opacity:0; transition:opacity .2s ease; }
+.settings-nav-group-wrap[data-open] .settings-nav-item::before { opacity:1; transition:opacity .25s ease .1s; }
+.settings-nav-item::after { border-color:var(--accent); clip-path:inset(0 100% 0 0); transition:clip-path .4s cubic-bezier(.23,1,.32,1), opacity .2s ease; }
+.settings-nav-group-wrap[data-open] .settings-nav-item.active::after { opacity:1; clip-path:inset(0); transition:clip-path .4s cubic-bezier(.23,1,.32,1), opacity .25s ease .1s; }
 .settings-nav-item:hover { color:var(--text); }
 .settings-nav-item.active { color:var(--accent); font-weight:500; }
-.settings-nav-item.active::before { border-color:var(--accent); }
 .settings-nav button:focus:not(:focus-visible) { outline:none; }
 .settings-nav button:focus-visible { outline:2px solid color-mix(in srgb, var(--accent) 65%, transparent); outline-offset:1px; }
 .settings-nav-item span { white-space:nowrap; }
@@ -1886,7 +1892,7 @@ onBeforeUnmount(() => {
   .settings-dirty-copy { flex-basis:100%; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .settings-nav-marker, .settings-nav-active-reach, .settings-nav-branch, .settings-nav-item::before, .settings-nav-group-wrap > .settings-nav-group, .settings-nav-item { transition:none; }
+  .settings-nav-marker, .settings-nav-active-reach, .settings-nav-branch, .settings-nav-item::before, .settings-nav-item::after, .settings-nav-children::before, .settings-nav-group-wrap > .settings-nav-group, .settings-nav-item { transition:none; }
 }
 @media (max-width: 560px) {
   .settings-section :deep(.n-form-item-blank) { min-width:0; width:100%; }

@@ -1,7 +1,34 @@
 ---
 title: QingZhou Deployment and Artifact Retention
-updated: 2026-10-14
+updated: 2026-10-15
 ---
+
+## v0.2.108 visual system synchronization rollout
+
+Source `a3fb1fc7d6bf4226cb0bf93cd353325a153656a9` is released and deployed as
+[`v0.2.108-kreeper-20261015-visual-sync`](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.108-kreeper-20261015-visual-sync).
+Release build `38690142519` and CI `38690146328` succeeded. The release ARM64
+panel asset, `/opt/qingzhou/qingzhou`, and the running executable all match
+SHA-256 `e92956cebea9657cfc83548cdc79a103fe3e06a914a6a61ba948c48e2663da74`.
+
+At 2026-10-15 14:18:10 CST the panel-only rollout created the SQLite online
+Backup API snapshot
+`/opt/qingzhou/backups/fork-v0.2.108-kreeper-20261015-visual-sync-20261015-141810/qingzhou.db.backupapi`;
+`PRAGMA integrity_check` returned `ok`. The old binary, env, systemd units,
+sing-box configuration and Tunnel configuration are retained in that rollback
+directory. Only `/opt/qingzhou/qingzhou` was atomically replaced and only
+`qingzhou.service` was restarted. The database was not overwritten.
+
+Local and public `/api/health` return the new version. `qingzhou.service`,
+`qingzhou-sing-box.service` and `cloudflared.service` are active with zero
+restarts; sing-box PID `808675` and Tunnel PID `725422` are unchanged; the
+expected listeners `8081`, `8882`, `18082` and `19000` remain; the panel error
+journal is empty; protected env/systemd/sing-box hashes are unchanged. Public
+homepage JS/CSS hashes match the local Vite build. The canonical design-system
+commit is `3c856929294fcd9a4a22eec7390d43d407fe05b1`; the QingZhou and complete
+showcase previews are synchronized at `5191`, `5192` and `5197`.
+
+
 
 ## v0.2.107 switch/mobile rollout
 

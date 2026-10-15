@@ -3,6 +3,20 @@ title: Validation Guide
 updated: 2026-10-15
 ---
 
+## BranchedMenu 二级侧边栏全量同步（发布候选）
+
+- QingZhou `npm test` 通过 `180/180`，`npm run typecheck` 与 `npm run build` 通过；Go `go test ./...`、`go vet ./...` 和 `git diff --check` 通过。保留既有 ECharts 大 chunk 非阻断 warning。
+- canonical `kreeper-first-design-system` 的 `node scripts/contracts.test.mjs` 通过 `28/28`，独立 `vue-tsc`/Vite build 通过；`audit.mjs` 通过 `77` 源、`53` pattern、`238` package hashes；`verify-assets.mjs` 通过，无源码漂移、未覆盖源码、项目 alias 或坏链接。
+- 本轮把用户 BranchedMenu 的 CSS-only 几何同步到实际设置页、完整示范和源合同：首组默认展开，分支折叠归零，活动分支/叶子弧线仅在所属分区展开并保留淡入/绘制过渡；无 SVG。示范进程 `5191/5192/5197` 已刷新。生产在新 Release 构建和部署完成前仍为 `v0.2.108-kreeper-20261015-visual-sync`。
+
+## v0.2.108 全量同步发布验收
+
+发布提交 `a3fb1fc7d6bf4226cb0bf93cd353325a153656a9`、Release `v0.2.108-kreeper-20261015-visual-sync`、构建 `38690142519` 和 CI `38690146328` 均对应同一源码。前端 180/180、`vue-tsc`、Vite、Go tests/vet、`git diff --check`、canonical skill 28/28、独立 typecheck/build、asset verify 及 `audit.mjs` 的 77 source/53 pattern/238 hash 全部通过。构建保留既有 ECharts 异步 chunk 大小警告，不影响发布。
+
+运行态验收：Release ARM64 资产、宿主和运行面板哈希均为 `e92956cebea9657cfc83548cdc79a103fe3e06a914a6a61ba948c48e2663da74`；在线 SQLite Backup API 快照完整性为 `ok`；本机/公网 health 返回新版本；三项服务 active、NRestarts=0、sing-box/Tunnel PID 不变、监听端口保持、panel error journal 为空；公网首页的 `index-BlaWHU_D.js` 与 `index-Du0HlI9_.css` 分别与本地构建哈希 `7561bedaa12b7ea65f0d2f73e971521b66a976147d0b44f53457f2272325d441` / `860842b349c1e124f13a2acd9ffca5cca76668462f17be4a358d1fc5f6203982` 一致。QingZhou 源码、canonical skill 和 `5191/5192/5197` 示范均已复核同步；真实 iOS/Android 指示器、触摸硬件和认证业务写操作未冒充本轮验证。
+
+
+
 
 ## v0.2.107生产发布验收
 
@@ -667,8 +681,8 @@ Vue typecheck, Vite build, `go test ./...` and diff check before release; Action
 3-row layout, “时间分组” axis, no visual explanatory copy, and retained both
 keyboard-accessible balance drag handles.
 
-## BranchedMenu 视觉合同复核（本地未部署）
+## BranchedMenu 视觉合同复核（本轮发布前）
 
 - `AdminSettings.vue` 与 canonical 示例均按用户代码核对：首组默认展开，其他组收起；一级/二级行高 36px，子项缩进 40px，活动分支使用 CSS 弧线和延伸线，无 SVG。
 - 最新 `5197/#navigation` 浏览器实测：收起“面板与节点”后其分支 `grid-template-rows` 与裁剪层高度均为 `0px`；展开后恢复 `84px`，活动项和主干位置保持稳定。
-- `npm test`：180/180；`npm run typecheck`：通过；`npm run build`：通过（仅保留既有 ECharts 大 chunk warning）。skill `audit.mjs`、`verify-assets.mjs`：通过（77 源文件、53 pattern、238 package hashes；28 项独立合同测试通过）。本地未提交、未发布、未部署。
+- `npm test`：180/180；`npm run typecheck`：通过；`npm run build`：通过（仅保留既有 ECharts 大 chunk warning）。skill `audit.mjs`、`verify-assets.mjs`：通过（77 源文件、53 pattern、238 package hashes；28 项独立合同测试通过）。本轮作为发布前验证记录，发布状态以本页新增的最终记录为准。
