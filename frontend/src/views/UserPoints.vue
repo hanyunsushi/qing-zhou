@@ -332,9 +332,9 @@ onUnmounted(() => {
 .kpi-label { font-size: 12px; color: var(--text-3); font-weight: 550; }
 .kpi-value { font-size: 24px; font-weight: 720; letter-spacing: 0; margin-top: 6px; line-height: 1.15; font-variant-numeric: tabular-nums; }
 .kpi-value.accent { color: var(--text); }
-/* 区分-状态：积分 KPI 颜色只表达收入/支出状态，不使用局部私有色。 */
-.kpi-value.up { color: var(--success); }
-.kpi-value.down { color: var(--danger); }
+/* 区分-状态：积分 KPI 颜色只表达收入/支出状态，使用加深语义文字色。 */
+.kpi-value.up { color: var(--success-text); }
+.kpi-value.down { color: var(--danger-text); }
 .kpi-sub { font-size: 11.5px; color: var(--text-3); margin-top: 2px; }
 
 /* 区块 */
@@ -381,9 +381,9 @@ onUnmounted(() => {
 
 .tx-side { text-align: right; flex-shrink: 0; }
 .tx-amt { font-weight: 720; font-size: 15px; font-variant-numeric: tabular-nums; }
-/* 区分-状态：明细金额按正负状态复用全局 Apple 状态色。 */
-.tx-amt.up { color: var(--success); }
-.tx-amt.down { color: var(--danger); }
+/* 区分-状态：明细金额按正负状态复用全局 Apple 状态色，使用加深语义文字色。 */
+.tx-amt.up { color: var(--success-text); }
+.tx-amt.down { color: var(--danger-text); }
 .tx-bal { font-size: 11.5px; color: var(--text-3); margin-top: 3px; font-variant-numeric: tabular-nums; }
 
 @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }

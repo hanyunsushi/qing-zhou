@@ -754,7 +754,7 @@ onUnmounted(() => {
 .summary-val i { font-size: 13px; font-weight: 600; color: var(--text-3); font-style: normal; margin-left: 1px; }
 .summary-label { font-size: 11.5px; color: var(--text-3); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .summary-label b { font-weight: 650; }
-.ok-text { color: var(--success); } .crit-text { color: var(--danger); }
+.ok-text { color: var(--success-text); } .crit-text { color: var(--danger-text); }
 .mini-bar { height: 4px; border-radius: 3px; background: var(--bg); overflow: hidden; margin-top: 5px; }
 /* 区分-状态牌：摘要资源条、交换分区和流量条使用同一 Apple 状态色。 */
 .mini-fill { height: 100%; border-radius: 3px; transition: width 1s var(--ease-emphasized); }
@@ -810,19 +810,19 @@ onUnmounted(() => {
   padding: 3px 9px; border-radius: var(--r); font-size: 11px; font-weight: 650;
 }
 .status-badge .badge-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
-.status-badge.online { background: var(--success-soft); color: var(--success); }
-.status-badge.offline { background: var(--danger-soft); color: var(--danger); }
+.status-badge.online { background: var(--success-soft); color: var(--success-text); }
+.status-badge.offline { background: var(--danger-soft); color: var(--danger-text); }
 
 .tag-line { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 12px; }
 .tag { padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 500; background: var(--bg-soft); color: var(--text-2); white-space: nowrap; }
 .tag.loc { background: var(--accent-soft); color: var(--accent-strong); }
 .tag.spec { font-variant-numeric: tabular-nums; }
-.tag.price { background: var(--info-soft); color: var(--info); font-family: var(--ff-body); font-variant-numeric: tabular-nums; }
+.tag.price { background: var(--info-soft); color: var(--info-text); font-family: var(--ff-body); font-variant-numeric: tabular-nums; }
 .tag.expiry { display: inline-flex; align-items: center; gap: 5px; font-variant-numeric: tabular-nums; }
 .tag.expiry .exp-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
-.tag.expiry.ok { background: var(--success-soft); color: var(--success); }
-.tag.expiry.warn { background: var(--warn-soft); color: var(--warn); }
-.tag.expiry.crit { background: var(--danger-soft); color: var(--danger); }
+.tag.expiry.ok { background: var(--success-soft); color: var(--success-text); }
+.tag.expiry.warn { background: var(--warn-soft); color: var(--warn-text); }
+.tag.expiry.crit { background: var(--danger-soft); color: var(--danger-text); }
 
 /* 区分-状态牌：固定三列资源圈，内部几何与数字由 ResourceGauge 维护。 */
 .gauges { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; padding: 2px 12px 12px; }
@@ -861,11 +861,11 @@ onUnmounted(() => {
 .public-traffic-track i { display: block; height: 100%; border-radius: inherit; transition: width 1s var(--ease-emphasized); }
 .public-traffic-track i.ok { background: var(--chart-success); } .public-traffic-track i.warn { background: var(--chart-warning); } .public-traffic-track i.crit { background: var(--chart-error); }
 .public-traffic-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 10px; font-size: 10px; color: var(--text-3); }
-.warn-text { color: var(--warn); }
+.warn-text { color: var(--warn-text); }
 
 /* 管理员专属上游余额：两个官方数据源合并在一张卡片里，可拖动子卡片调整顺序。 */
 .upstream-balance-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; padding: 0 12px 12px; }
-.upstream-balance-card .status-badge.online { background: var(--info-soft); color: var(--info); }
+.upstream-balance-card .status-badge.online { background: var(--info-soft); color: var(--info-text); }
 .upstream-balance-item {
   min-width: 0; padding: 11px 12px; border: 0; border-radius: 10px; background: var(--bg);
   box-shadow: none; cursor: grab; transition: box-shadow .25s ease, opacity .2s ease;

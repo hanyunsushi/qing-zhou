@@ -30,15 +30,20 @@
   --selection-bg: rgba(0, 122, 255, .2);
   /* Apple system semantic palette. Status surfaces use the soft companions below. */
   --danger: #ff3b30;
-  --danger-soft: rgba(255, 59, 48, .12);
+  --danger-soft: rgba(255, 59, 48, .18);
+  --danger-text: #DD3730;
   --warn: #ff9500;
-  --warn-soft: rgba(255, 149, 0, .14);
+  --warn-soft: rgba(255, 149, 0, .20);
+  --warn-text: #E37100;
   --info: #007aff;
-  --info-soft: rgba(0, 122, 255, .12);
+  --info-soft: rgba(0, 122, 255, .18);
+  --info-text: #0066CC;
   --success: #34c759;
-  --success-soft: rgba(52, 199, 89, .12);
+  --success-soft: rgba(52, 199, 89, .18);
+  --success-text: #12A652;
   --inactive: #8e8e93;
-  --inactive-soft: rgba(142, 142, 147, .14);
+  --inactive-soft: rgba(142, 142, 147, .20);
+  --inactive-text: #828282;
   /* 区分-状态牌：status-encoded charts/meters share Apple status colors. */
   --chart-success: var(--success);
   --chart-warning: var(--warn);
@@ -290,6 +295,12 @@ button, input, textarea, select { font-family: inherit; }
 .n-button.action-button--normal:hover:not(.n-button--disabled), .n-button.action-button--normal:focus-visible:not(.n-button--disabled),
 .n-button.n-button--default-type:where(:not(.n-button--secondary):not(.action-button)):where(:not(.n-button--ghost), .n-dialog__action > .n-button--ghost):has(> .n-button__border):hover:not(.n-button--disabled),
 .n-button.n-button--default-type:where(:not(.n-button--secondary):not(.action-button)):where(:not(.n-button--ghost), .n-dialog__action > .n-button--ghost):has(> .n-button__border):focus-visible:not(.n-button--disabled) { background:var(--action-button-bg-hover) !important; color:var(--action-button-fg-hover) !important; box-shadow:0 0 0 2px var(--action-button-border-hover) !important; }
+/* 标准默认弧边按钮：按下复用悬浮色，不下沉、不变深；Dialog ghost取消动作也遵循同一合同。 */
+.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.action-button)):where(:not(.n-button--ghost), .n-dialog__action > .n-button--ghost):has(> .n-button__border) {
+  --n-color-pressed: var(--action-button-bg-hover) !important;
+  --n-text-color-pressed: var(--action-button-fg-hover) !important;
+  --n-border-pressed: 0 solid transparent !important;
+}
 /* 标准默认弧边按钮：唯一视觉差异是弧边圆角，描边颜色/粗细与普通按钮相同。 */
 .n-button.n-button--default-type:where(:not(.n-button--secondary):not(.action-button)):where(:not(.n-button--ghost), .n-dialog__action > .n-button--ghost):has(> .n-button__border) { border-radius:var(--r-control) !important; }
 /* 强调按钮：背景和 ring 悬浮时同步提亮，并覆盖全局 primary hover 状态。 */
@@ -1117,7 +1128,7 @@ button.n-button--pressed:not(.n-button--disabled) { transform: none !important; 
   box-shadow: none !important;
 }
 .n-tag { border-radius: var(--r-control) !important; font-weight: 600; }
-/* 区分-状态牌：Apple semantic color as a soft surface with colored text. */
+/* 区分-状态牌：Apple 语义色浅底 + 加深文字，统一 6px 圆角、semibold 字重、紧凑内边距。 */
 .n-tag.n-tag--success-type,
 .n-tag.n-tag--warning-type,
 .n-tag.n-tag--error-type,
@@ -1134,11 +1145,17 @@ button.n-button--pressed:not(.n-button--disabled) { transform: none !important; 
   background: var(--status-soft-bg) !important;
   color: var(--status-color) !important;
   border-color: transparent !important;
+  padding: 3px 10px !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  border-radius: 6px !important;
+  line-height: 1.4 !important;
 }
-.n-tag.n-tag--success-type { --status-color: var(--success); --status-soft-bg: var(--success-soft); }
-.n-tag.n-tag--warning-type { --status-color: var(--warn); --status-soft-bg: var(--warn-soft); }
-.n-tag.n-tag--error-type { --status-color: var(--danger); --status-soft-bg: var(--danger-soft); }
-.n-tag.n-tag--info-type { --status-color: var(--info); --status-soft-bg: var(--info-soft); }
+.n-tag.n-tag--success-type { --status-color: var(--success-text); --status-soft-bg: var(--success-soft); }
+.n-tag.n-tag--warning-type { --status-color: var(--warn-text); --status-soft-bg: var(--warn-soft); }
+.n-tag.n-tag--error-type { --status-color: var(--danger-text); --status-soft-bg: var(--danger-soft); }
+.n-tag.n-tag--info-type { --status-color: var(--info-text); --status-soft-bg: var(--info-soft); }
+.n-tag.n-tag--inactive-type { --status-color: var(--inactive-text); --status-soft-bg: var(--inactive-soft); }
 .n-alert { border-radius: var(--r-overlay) !important; }
 .n-empty { color: var(--text-3); }
 .n-empty .n-empty__icon { opacity: .62; filter: saturate(.65); }
@@ -1219,9 +1236,9 @@ button.n-button--pressed:not(.n-button--disabled) { transform: none !important; 
 button.resource-metric { color:inherit; text-align:left; font:inherit; cursor:pointer; }
 .resource-metric b { display:block; color:var(--text); font-size:19px; line-height:1.2; font-variant-numeric:tabular-nums; letter-spacing:0; }
 .resource-metric span { display:block; overflow:hidden; margin-top:3px; color:var(--text-3); font-size:11.5px; white-space:nowrap; text-overflow:ellipsis; }
-.resource-metric.warn b { color:var(--warn); }
-.resource-metric.danger b { color:var(--danger); }
-.resource-metric.success b { color:var(--success); }
+.resource-metric.warn b { color:var(--warn-text); }
+.resource-metric.danger b { color:var(--danger-text); }
+.resource-metric.success b { color:var(--success-text); }
 
 /* 响应式卡片网格：自动填充，移动端单列 */
 .card-grid {

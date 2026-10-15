@@ -6,6 +6,28 @@ updated: 2026-10-15
 # kreeper第一设计系统 — QingZhou 集成
 
 
+## 2026-10-15 状态牌与标签视觉统一（发布候选）
+
+所有标签类型（状态牌、信息牌、身份牌、位置牌）统一几何样式：圆角 `6px`（不再使用 pill 形状 `18px`）、字重 `600 (semibold)`、内边距 `3px 10px`、字号 `13px`。视觉形式完全一致，语义仅通过颜色区分，符合 Xcode 和系统设置的系统化工程风格。
+
+全局引入四组 Apple 状态色的加深文字版本：
+- `--success-text`: `#12A652` (原 `--success` 加深)
+- `--warn-text`: `#E37100` (原 `--warn` 加深)
+- `--danger-text`: `#DD3730` (原 `--danger` 加深)
+- `--inactive-text`: `#828282` (原 `--inactive` 加深)
+
+状态牌底色维持原有浅色透明度 (0.18-0.20 alpha)，文字改用加深色，确保深色模式可读性。应用到：
+- 状态牌（正常/警告/异常/未启用）
+- KPI 数字（成功/退款、收入/支出）
+- 订单金额（退款删除线）
+- 流量告警文字
+- 监控状态文字
+
+该统一原则已应用到全局样式 `frontend/src/styles/global.css` 和所有使用状态色显示文字的视图组件（`AdminMonitor.vue`、`UserOrders.vue`、`UserPoints.vue`、`Monitor.vue`），并同步设计系统示范页。模板与 CSS 责任边界均标注"状态：标签"分类注释。
+
+QingZhou、canonical skill、源码示范和独立示范已完成同步；`180/180` 前端测试、typecheck/build、Go tests/vet、skill `28/28`、独立 build 与 `77/53/238` audit 全部通过。本轮仍待 Release/生产部署，验证见 [Validation](../guides/validation.md#状态牌与标签视觉统一发布候选)。
+
+
 ## 开关与手机滚动槽（已发布集成）
 
 全局 Naive UI `n-switch` 沿用“切换开关”语义：轨道 `40×23px`、滑块 `17×17px`、内距 `3px`；滑块使用 `500ms cubic-bezier(.68, -.55, .265, 1.55)` 回弹，按下缩放 `0.96`，保留状态色、禁用、键盘焦点与 reduced-motion 语义。实现位于 `frontend/src/styles/global.css`，不新增设计类型。

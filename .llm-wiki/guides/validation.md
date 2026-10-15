@@ -3,6 +3,16 @@ title: Validation Guide
 updated: 2026-10-15
 ---
 
+## 状态牌与标签视觉统一（发布候选）
+
+统一所有标签几何样式为 `6px` 圆角、`600` 字重、`3px 10px` 内边距、`13px` 字号，全局引入四组加深文字色 (`--success-text`/`--warn-text`/`--danger-text`/`--inactive-text`)，应用到状态牌、KPI、订单金额、流量告警等所有使用状态色显示文字的位置。
+
+- 改动范围：`frontend/src/styles/global.css` CSS 变量与状态牌样式，`AdminMonitor.vue`、`UserOrders.vue`、`UserPoints.vue`、`Monitor.vue` 的状态文字样式；设计系统示范页 `/private/tmp/kreeper-showcase` 已同步。
+- QingZhou `npm test` 通过 `180/180`，`npm run typecheck`、`npm run build`、`go test ./...`、`go vet ./...`、`git diff --check` 通过。
+- canonical `kreeper-first-design-system` 的 `verify-assets.mjs` 通过 `28/28`；独立 `vue-tsc`/Vite build 通过；`audit.mjs` 通过 `77` source、`53` pattern、`238` package hashes。首次验证发现并已修复默认弧边按下变量和 canonical Courier Prime 字体 URL 门禁，最终全绿。
+- 设计系统示范页可在 `http://localhost:5191` 查看 `#badges` 章节的统一效果；QingZhou 本地开发服务器需重启验证真实页面效果。
+- 本项已同步源码、规范、示范、source-reference、patterns、coverage hashes 与回归断言；当前仍未完成本轮 Release/生产部署，不能用本节替代运行态证据。Vite 保留既有 ECharts 大 chunk 非阻塞 warning。
+
 ## BranchedMenu 二级侧边栏全量同步（发布候选）
 
 - 本轮同步还包含文字链接合同：裸 `a`、`.project-link` 与 Markdown 链接常态保持 Apple 蓝无下划线，悬浮/键盘聚焦仍保持同色并显示下划线；对应测试已更新，未新增分类。

@@ -15,13 +15,13 @@
         <div class="sum-ic">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
         </div>
-        <div><span class="sum-val" style="color:var(--success);">{{ dash.online || 0 }}</span><span class="sum-lab">在线</span></div>
+        <div><span class="sum-val" style="color:var(--success-text);">{{ dash.online || 0 }}</span><span class="sum-lab">在线</span></div>
       </div>
       <div class="sum-card">
         <div class="sum-ic">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
         </div>
-        <div><span class="sum-val" style="color:var(--danger);">{{ dash.offline || 0 }}</span><span class="sum-lab">离线</span></div>
+        <div><span class="sum-val" style="color:var(--danger-text);">{{ dash.offline || 0 }}</span><span class="sum-lab">离线</span></div>
       </div>
       <div class="sum-card">
         <div class="sum-ic">
@@ -39,7 +39,7 @@
         <div class="sum-ic">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         </div>
-        <div><span class="sum-val" style="color:var(--warn);">{{ dash.alerts_unread || 0 }}</span><span class="sum-lab">未读告警</span></div>
+        <div><span class="sum-val" style="color:var(--warn-text);">{{ dash.alerts_unread || 0 }}</span><span class="sum-lab">未读告警</span></div>
       </div>
     </div>
 
@@ -807,7 +807,7 @@ onUnmounted(() => {
 .mini-range { width:max-content; max-width:100%; margin-bottom:6px; }
 
 /* 告警 */
-.alert-cnt { display: inline-block; margin-left: 6px; padding: 0 6px; border-radius: 9px; background: var(--danger-soft); color: var(--danger); font-size: 11px; font-weight: 650; }
+.alert-cnt { display: inline-block; margin-left: 6px; padding: 0 6px; border-radius: 9px; background: var(--danger-soft); color: var(--danger-text); font-size: 11px; font-weight: 650; }
 .alert-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border-soft, #f1efe8); }
 .alert-row:last-child { border-bottom: none; }
 .alert-main { min-width: 0; }
@@ -862,7 +862,7 @@ onUnmounted(() => {
 
 .asset-line { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
 .tag-mini { padding: 2px 6px; background: var(--bg-soft); border-radius: 4px; font-size: 11px; color: var(--text-2); }
-.tag-mini.danger { background: var(--danger-soft); color: var(--danger); }
+.tag-mini.danger { background: var(--danger-soft); color: var(--danger-text); }
 .probe-job { margin-bottom: 10px; font-size: 12px; }
 .probe-out { margin: 5px 0 0; white-space: pre-wrap; word-break: break-word; font: 11px/1.5 var(--ff-mono); }
 
@@ -871,7 +871,7 @@ onUnmounted(() => {
 .info-strip { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
 .traffic-total { margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--border); }
 .traffic-split { display: flex; flex-wrap: wrap; gap: 4px 14px; color: var(--text-3); font-size: 11px; font-variant-numeric: tabular-nums; }
-.traffic-warning { color: var(--warn); }
+.traffic-warning { color: var(--warn-text); }
 .asset-section-title { margin: 10px 0 12px; padding-top: 12px; border-top: 1px solid var(--border); color: var(--text); font-size: 13px; font-weight: 650; }
 .asset-form-hint { margin: -4px 0 14px 105px; color: var(--text-3); font-size: 11px; line-height: 1.65; }
 .calibration-input { display: flex; width: 100%; gap: 8px; }

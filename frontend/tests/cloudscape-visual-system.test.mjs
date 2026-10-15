@@ -9,7 +9,7 @@ test('Cloudscape visual tokens keep the existing Vue component system', () => {
   const globalCss = read('src/styles/global.css')
   const app = read('src/App.vue')
 
-  for (const token of ['--accent: #007aff', '--accent-button-hover: color-mix(in srgb, var(--accent) 84%, white)', '--success: #34c759', '--success-soft: rgba(52, 199, 89, .12)', '--warn: #ff9500', '--warn-soft: rgba(255, 149, 0, .14)', '--danger: #ff3b30', '--danger-soft: rgba(255, 59, 48, .12)', '--info: #007aff', '--info-soft: rgba(0, 122, 255, .12)', '--inactive: #8e8e93', '--inactive-soft: rgba(142, 142, 147, .14)', '--chart-success: var(--success)', '--chart-warning: var(--warn)', '--chart-error: var(--danger)', '--chart-inactive: var(--inactive)', '--chart-1: #688ae8', '--chart-8: #096f64']) {
+  for (const token of ['--accent: #007aff', '--accent-button-hover: color-mix(in srgb, var(--accent) 84%, white)', '--success: #34c759', '--success-soft: rgba(52, 199, 89, .18)', '--success-text: #12A652', '--warn: #ff9500', '--warn-soft: rgba(255, 149, 0, .20)', '--warn-text: #E37100', '--danger: #ff3b30', '--danger-soft: rgba(255, 59, 48, .18)', '--danger-text: #DD3730', '--info: #007aff', '--info-soft: rgba(0, 122, 255, .18)', '--info-text: #0066CC', '--inactive: #8e8e93', '--inactive-soft: rgba(142, 142, 147, .20)', '--inactive-text: #828282', '--chart-success: var(--success)', '--chart-warning: var(--warn)', '--chart-error: var(--danger)', '--chart-inactive: var(--inactive)', '--chart-1: #688ae8', '--chart-8: #096f64']) {
     assert.match(globalCss, new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')))
   }
   assert.match(app, /primaryColor: '#007aff'/)
@@ -26,7 +26,7 @@ test('Cloudscape visual tokens keep the existing Vue component system', () => {
   assert.doesNotMatch(app, /@cloudscape-design\/components/)
   assert.match(globalCss, /\.n-button\.n-button--primary-type:not\(\.n-button--secondary\):not\(\.n-button--ghost\):not\(\.n-button--disabled\):hover \{\s*background: var\(--accent-button-hover\) !important;/)
   assert.match(globalCss, /\.n-tag\.n-tag--success-type[\s\S]*?background: var\(--status-soft-bg\) !important;/)
-  assert.match(globalCss, /\.n-tag\.n-tag--warning-type \{ --status-color: var\(--warn\); --status-soft-bg: var\(--warn-soft\); \}/)
+  assert.match(globalCss, /\.n-tag\.n-tag--warning-type \{ --status-color: var\(--warn-text\); --status-soft-bg: var\(--warn-soft\); \}/)
 })
 
 test('typography roles cover frontend local overrides and standalone HTML surfaces', () => {
@@ -606,7 +606,7 @@ test('monitor monthly price keeps currency and amount numeric but the unit in bo
 test('monitor monthly price is annotated as an ordinary soft information badge', () => {
   const monitor = read('src/views/Monitor.vue')
   assert.match(monitor, /区分-信息牌：价格来自手填资产月费，默认零值不展示[\s\S]*?<span v-if="Number\(s\.price\) > 0" class="tag price"/)
-  assert.match(monitor, /\.tag\.price \{[^}]*background: var\(--info-soft\); color: var\(--info\);/)
+  assert.match(monitor, /\.tag\.price \{[^}]*background: var\(--info-soft\); color: var\(--info-text\);/)
   assert.doesNotMatch(monitor, /\.tag\.price \{[^}]*(?:background: var\(--accent\)|color: #fff|box-shadow:)/)
 })
 
@@ -622,7 +622,7 @@ test('semantic status colors use Apple soft badges and chart state semantics', (
   assert.match(statusColors, /chartColorForPercent[\s\S]*?colorForPercent\(CHART_STATUS_COLORS/)
   assert.match(statusColors, /chartColorForLevel[\s\S]*?colorForLevel\(CHART_STATUS_COLORS/)
   assert.match(globalCss, /\.n-tag\.n-tag--success-type,[\s\S]*?--n-text-color: var\(--status-color\) !important;/)
-  assert.match(monitor, /区分-状态牌[\s\S]*?status-badge\.online \{ background: var\(--success-soft\); color: var\(--success\); \}/)
+  assert.match(monitor, /区分-状态牌[\s\S]*?status-badge\.online \{ background: var\(--success-soft\); color: var\(--success-text\); \}/)
   assert.match(monitor, /<ResourceGauge/)
   assert.match(read('src/components/ResourceGauge.vue'), /chartColorForPercent\(targetPercent\.value\)/)
   assert.match(monitor, /\.mini-fill\.ok \{ background: var\(--chart-success\); \}/)
@@ -658,8 +658,8 @@ test('monitor provider cards expose the shared drag and status surface contract'
   assert.match(monitor, /普通按钮 \/ 悬浮效果：上游余额刷新复用标准180度悬浮回转SVG。[\s\S]*?<RefreshButton label="刷新上游余额"/)
   assert.doesNotMatch(monitor, /upstream-refresh-link/)
   assert.match(monitor, /\.upstream-balance-item \{[\s\S]*?border: 0;[\s\S]*?box-shadow: none|\.upstream-balance-item \{[\s\S]*?border: 0;/)
-  assert.match(monitor, /\.tag\.price \{ background: var\(--info-soft\); color: var\(--info\);/)
-  assert.match(monitor, /\.upstream-balance-card \.status-badge\.online \{ background: var\(--info-soft\); color: var\(--info\); \}/)
+  assert.match(monitor, /\.tag\.price \{ background: var\(--info-soft\); color: var\(--info-text\);/)
+  assert.match(monitor, /\.upstream-balance-card \.status-badge\.online \{ background: var\(--info-soft\); color: var\(--info-text\); \}/)
   assert.match(monitor, /\.upstream-balance-item \{[\s\S]*?background: var\(--bg\);/)
   assert.match(monitor, /展示卡片：上游子卡悬浮只增加中性阴影[\s\S]*?\.upstream-balance-item:hover \{ background: var\(--bg\); box-shadow: 0 8px 28px rgba\(0, 0, 0, \.08\); transform: none; \}/)
   assert.match(monitor, /展示卡片：悬浮子卡时父级上游卡不切换蓝色边框或额外阴影[\s\S]*?\.upstream-balance-card:hover \{ box-shadow: var\(--shadow-sm\); border-color: var\(--border\); \}/)
@@ -919,7 +919,7 @@ test('order colored numbers use the shared Apple status contract', () => {
   assert.match(source, /区分-状态：退款数量是异常\/回退状态[\s\S]*?class="kpi-value down"/)
   assert.match(source, /区分-状态：近 30 天消费数量使用 Apple 成功色[\s\S]*?class="kpi-value up"/)
   assert.match(source, /区分-状态：退款订单金额使用 Apple 错误色[\s\S]*?class="oi-amt"/)
-  assert.match(source, /区分-状态：KPI 数字颜色只表达成功\/退款状态[\s\S]*?\.kpi-value\.up \{ color: var\(--success\); \}[\s\S]*?\.kpi-value\.down \{ color: var\(--danger\); \}/)
+  assert.match(source, /区分-状态：KPI 数字颜色只表达成功\/退款状态[\s\S]*?\.kpi-value\.up \{ color: var\(--success-text\); \}[\s\S]*?\.kpi-value\.down \{ color: var\(--danger-text\); \}/)
   assert.match(source, /\.oi-amt\.down \{ color: var\(--danger\);[\s\S]*?color-mix\(in srgb, var\(--danger\) 45%, transparent\)/)
   assert.match(source, /区分-状态：退款返还积分提示使用 Apple 警告色[\s\S]*?\.oi-refund \{[\s\S]*?color: var\(--warn\);/)
   assert.doesNotMatch(source, /#4d7256|#a8564b/)
@@ -938,8 +938,8 @@ test('points colored numbers use the shared Apple status contract', () => {
   assert.match(source, /区分-状态：累计支出使用 Apple 错误色[\s\S]*?class="kpi-value down"/)
   assert.match(source, /区分-状态：近 7 天净增按正负状态切换 Apple 成功\/错误色[\s\S]*?:class="net7 >= 0 \? 'up' : 'down'"/)
   assert.match(source, /区分-状态：积分收支数字按正负状态使用 Apple 成功\/错误色[\s\S]*?class="tx-amt"/)
-  assert.match(source, /区分-状态：积分 KPI 颜色只表达收入\/支出状态[\s\S]*?\.kpi-value\.up \{ color: var\(--success\); \}[\s\S]*?\.kpi-value\.down \{ color: var\(--danger\); \}/)
-  assert.match(source, /区分-状态：明细金额按正负状态复用全局 Apple 状态色[\s\S]*?\.tx-amt\.up \{ color: var\(--success\); \}[\s\S]*?\.tx-amt\.down \{ color: var\(--danger\); \}/)
+  assert.match(source, /区分-状态：积分 KPI 颜色只表达收入\/支出状态[\s\S]*?\.kpi-value\.up \{ color: var\(--success-text\); \}[\s\S]*?\.kpi-value\.down \{ color: var\(--danger-text\); \}/)
+  assert.match(source, /区分-状态：明细金额按正负状态复用全局 Apple 状态色[\s\S]*?\.tx-amt\.up \{ color: var\(--success-text\); \}[\s\S]*?\.tx-amt\.down \{ color: var\(--danger-text\); \}/)
   assert.doesNotMatch(source, /#4d7256|#a8564b/)
 })
 
