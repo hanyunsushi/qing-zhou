@@ -46,7 +46,7 @@
         <n-form-item label="描述"><n-input v-model:value="form.description" placeholder="备注用途（可留空）" /></n-form-item>
         <n-form-item label="排序"><n-input-number v-model:value="form.sort_order" style="width:100%;" /></n-form-item>
       </n-form>
-      <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
+      <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，点击保持悬浮色且不改变位置；loading仅绑定真实请求。 -->
       <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleSave">保存</n-button>
     </n-modal>
 
@@ -71,7 +71,7 @@
       <div style="margin-top:6px;font-size:12px;color:var(--text-3);line-height:1.5;">
         默认只列出最近 200 位用户；更早的用户请输入用户名或邮箱搜索。
       </div>
-      <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
+      <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，点击保持悬浮色且不改变位置；loading仅绑定真实请求。 -->
       <n-button type="primary" class="highlight-arc-button" block style="margin-top:16px;" :loading="saving" @click="handleSaveMembers">保存成员</n-button>
     </n-modal>
   </div>

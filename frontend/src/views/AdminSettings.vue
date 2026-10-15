@@ -12,23 +12,50 @@
     </div>
 
     <div class="settings-layout">
+      <!-- 二级侧边栏：设置页独立的分支导航，不并入全局主侧栏；分支线由 CSS 绘制。 -->
       <aside class="settings-nav" aria-label="设置分区导航">
+        <span ref="settingsNavMarker" class="settings-nav-marker" aria-hidden="true" />
         <template v-if="settingsSearch.trim()">
           <div class="settings-nav-group">搜索结果</div>
           <button v-for="section in filteredSettingsSections" :key="section.id" type="button"
-                  :class="{ active: activeSectionId === section.id }" @click="selectSettingsSection(section.id, true)">
-            <span>{{ section.label }}</span><small>{{ section.note }}</small>
+                  :class="{ active: activeSectionId === section.id }"
+                  :aria-current="activeSectionId === section.id ? 'page' : undefined"
+                  @click="selectSettingsSection(section.id, true)">
+            <span>{{ section.label }}</span>
           </button>
           <div v-if="!filteredSettingsSections.length" class="settings-search-empty">没有匹配的设置</div>
         </template>
-        <template v-else v-for="group in settingsGroups" :key="group.label">
-          <div class="settings-nav-group">{{ group.label }}</div>
-          <button v-for="section in group.sections" :key="section.id" type="button"
-                  :class="{ active: activeSectionId === section.id }"
-                  :aria-current="activeSectionId === section.id ? 'page' : undefined"
-                  @click="selectSettingsSection(section.id)">
-            <span>{{ section.label }}</span><small>{{ section.note }}</small>
-          </button>
+        <template v-else>
+          <section v-for="(group, groupIndex) in settingsGroups" :key="group.label"
+                   class="settings-nav-group-wrap"
+                   :data-open="isSettingsGroupOpen(group.label) ? '' : undefined">
+            <!-- 二级侧边栏：一级分区控制子项展开，当前分区由独立活动标记跟随。 -->
+            <button :ref="el => (settingsGroupButtons[groupIndex] = el as HTMLButtonElement | null)"
+                    type="button" class="settings-nav-group"
+                    :aria-expanded="isSettingsGroupOpen(group.label)"
+                    @click="toggleSettingsGroup(group.label)">
+              <span>{{ group.label }}</span>
+            </button>
+            <div class="settings-nav-branch">
+              <div class="settings-nav-branch-clip">
+                <div class="settings-nav-children" :style="{ height: `${12 + group.sections.length * 36}px` }">
+                  <!-- 二级侧边栏：活动分支沿 CSS 主干延伸到当前叶子，等价于参考组件的 reach path。 -->
+                  <span v-if="activeSettingsItemIndex(group) >= 0"
+                        class="settings-nav-active-reach"
+                        :style="{ height: `${14 + activeSettingsItemIndex(group) * 36}px` }"
+                        aria-hidden="true" />
+                  <button v-for="section in group.sections" :key="section.id" type="button"
+                          class="settings-nav-item"
+                          :class="{ active: activeSectionId === section.id }"
+                          :aria-current="activeSectionId === section.id ? 'page' : undefined"
+                          :tabindex="isSettingsGroupOpen(group.label) ? 0 : -1"
+                          @click="selectSettingsSection(section.id)">
+                    <span>{{ section.label }}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
         </template>
       </aside>
       <main ref="settingsMain" class="settings-main">
@@ -151,10 +178,10 @@
           </n-form-item>
           <n-form-item label="sing-box 安装命令">
             <div style="width:100%;max-width:560px;">
-              <!-- 复制栏：安装命令仅用于查看和复制，不使用填写框的点击焦点高亮。 -->
+              <!-- 复制栏：命令与按钮等高相连，只读边界中性；复制按钮仅变色，固定边线无位移。 -->
               <n-input-group class="copy-field">
                 <n-input :value="installCmd" readonly style="font-family:var(--ff-mono);font-size:12px;" />
-                <!-- 普通按钮：安装命令复制动作不使用主色高亮。 -->
+                <!-- 复制栏：中性复制动作沿用专项交互，不使用普通按钮的扩圈或按压回弹。 -->
                 <n-button class="action-button action-button--normal" @click="copyInstall">复制</n-button>
               </n-input-group>
               <p style="font-size:12px;color:var(--text-3);margin-top:6px;line-height:1.7;">
@@ -648,7 +675,7 @@
           </div>
         </n-form>
         <div class="backup-actions">
-          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
+          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，点击保持悬浮色且不改变位置；loading仅绑定真实请求。 -->
           <n-button type="primary" class="highlight-arc-button" :loading="savingBackupConfig" @click="saveBackupConfig">保存远端配置</n-button>
           <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button :loading="testingBackupConfig" :disabled="!backupConfig.endpoint || !backupConfig.bucket" @click="testBackupConfig">测试连接</n-button>
@@ -680,7 +707,7 @@
               <n-button size="tiny" quaternary class="delete-button" type="error" @click="deleteRemoteBackup(record)">删除</n-button>
             </div>
           </div>
-        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，点击保持悬浮色且不改变位置；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" :loading="creatingRemoteBackup" :disabled="!backupConfigured || !!backupRecovery.error" @click="createRemoteBackup">立即备份到远端</n-button>
         </div>
       </n-card>
@@ -756,15 +783,78 @@ const settingsSearch = ref('')
 const activeSectionId = ref('settings-basic')
 const activeSection = computed(() => settingsSections.find(section => section.id === activeSectionId.value) || settingsSections[0])
 const activeSectionGroup = computed(() => settingsGroups.find(group => group.sections.some(section => section.id === activeSectionId.value))?.label || '')
+// BranchedMenu 的 defaultOpen=0：首次只展开第一组；路由直达时再打开所属组。
+const openSettingsGroups = ref(new Set(settingsGroups.slice(0, 1).map(group => group.label)))
+const settingsNavMarker = ref<HTMLSpanElement | null>(null)
+const settingsGroupButtons: (HTMLButtonElement | null)[] = []
+let settingsNavResizeObserver: ResizeObserver | null = null
+const activeSettingsGroupIndex = computed(() => settingsGroups.findIndex(group => group.label === activeSectionGroup.value))
+const settingsNavMarkerShown = computed(() =>
+  !settingsSearch.value.trim() && activeSettingsGroupIndex.value >= 0 &&
+  openSettingsGroups.value.has(activeSectionGroup.value)
+)
 const filteredSettingsSections = computed(() => {
   const query = settingsSearch.value.trim().toLocaleLowerCase()
   if (!query) return settingsSections
   return settingsSections.filter(section => `${section.label} ${section.note} ${section.description} ${section.keywords}`.toLocaleLowerCase().includes(query))
 })
 
+function isSettingsGroupOpen(label: string) {
+  return openSettingsGroups.value.has(label)
+}
+
+function activeSettingsItemIndex(group: SettingsGroup) {
+  return group.sections.findIndex(section => section.id === activeSectionId.value)
+}
+
+function toggleSettingsGroup(label: string) {
+  const next = new Set(openSettingsGroups.value)
+  if (next.has(label)) next.delete(label)
+  else next.add(label)
+  openSettingsGroups.value = next
+}
+
+function openSettingsGroupForSection(id: string) {
+  const group = settingsGroups.find(item => item.sections.some(section => section.id === id))
+  if (!group || openSettingsGroups.value.has(group.label)) return
+  openSettingsGroups.value = new Set(openSettingsGroups.value).add(group.label)
+}
+
+function placeSettingsNavMarker(glide = true) {
+  const marker = settingsNavMarker.value
+  const head = settingsGroupButtons[activeSettingsGroupIndex.value]
+  if (!marker) return
+  const on = settingsNavMarkerShown.value && head
+  if (!glide) marker.style.transition = 'none'
+  if (on) marker.style.top = `${head.offsetTop + (head.offsetHeight - 16) / 2}px`
+  marker.toggleAttribute('data-on', Boolean(on))
+  if (!glide) {
+    void marker.offsetHeight
+    marker.style.transition = ''
+  }
+}
+
+function bindSettingsNavMarker() {
+  settingsNavResizeObserver?.disconnect()
+  void nextTick(() => {
+    placeSettingsNavMarker(true)
+    let first = true
+    settingsNavResizeObserver = new ResizeObserver(() => {
+      if (first) {
+        first = false
+        return
+      }
+      placeSettingsNavMarker(false)
+    })
+    const nav = settingsNavMarker.value?.parentElement
+    if (nav) settingsNavResizeObserver.observe(nav)
+  })
+}
+
 async function selectSettingsSection(id: string, clearSearch = false) {
   if (!settingsSections.some(section => section.id === id)) return
   activeSectionId.value = id
+  openSettingsGroupForSection(id)
   if (clearSearch) settingsSearch.value = ''
   const query = { ...route.query, section: id.replace(/^settings-/, '') }
   await router.replace({ query })
@@ -783,8 +873,12 @@ function openFirstSearchResult() {
 
 watch(() => route.query.section, value => {
   const id = `settings-${Array.isArray(value) ? value[0] : value || 'basic'}`
-  if (settingsSections.some(section => section.id === id)) activeSectionId.value = id
+  if (settingsSections.some(section => section.id === id)) {
+    activeSectionId.value = id
+    openSettingsGroupForSection(id)
+  }
 }, { immediate: true })
+watch(() => [activeSettingsGroupIndex.value, settingsNavMarkerShown.value, settingsSearch.value], bindSettingsNavMarker, { flush: 'post' })
 const loading = ref(false)
 const saving = ref(false)
 const testingSmtp = ref(false)
@@ -1591,26 +1685,50 @@ async function loadSettings() {
 
 onMounted(() => {
   window.addEventListener('beforeunload', handleBeforeUnload)
+  bindSettingsNavMarker()
   loadSettings()
 })
-onBeforeUnmount(() => window.removeEventListener('beforeunload', handleBeforeUnload))
+onBeforeUnmount(() => {
+  window.removeEventListener('beforeunload', handleBeforeUnload)
+  settingsNavResizeObserver?.disconnect()
+})
 </script>
 
 <style scoped>
 .settings-hero { display:flex; align-items:flex-start; justify-content:space-between; gap:24px; margin-bottom:20px; }
 .settings-hero .page-sub { margin-bottom:0; }
 .settings-search { width:min(380px,42vw); }
-.settings-layout { display:grid; grid-template-columns:210px minmax(0, 1fr); align-items:start; gap:22px; }
-.settings-nav { position:sticky; top:84px; display:flex; flex-direction:column; gap:2px; padding:0; border:0; border-radius:0; background:transparent; box-shadow:none; }
-.settings-nav-group { padding:12px 9px 5px; color:var(--text-3); font-size:10.5px; font-weight:700; letter-spacing:.08em; }
-.settings-nav-group:first-child { padding-top:5px; }
-.settings-nav button { position:relative; display:grid; grid-template-columns:1fr auto; align-items:center; gap:8px; min-height:32px; padding:6px 12px; border:0; border-radius:8px; background:transparent; color:var(--text-2); text-align:left; font:inherit; cursor:pointer; transition:background .15s ease, color .15s ease; }
-.settings-nav button:hover { color:var(--text); background:var(--card-hover); }
-.settings-nav button.active { color:var(--text); background:var(--card-hover); }
+.settings-layout { display:grid; grid-template-columns:fit-content(240px) minmax(0, 1fr); align-items:start; gap:22px; }
+/* 二级侧边栏：独立设置导航使用 CSS 主干、分支和活动标记，不使用 SVG。 */
+.settings-nav { position:sticky; top:84px; display:flex; width:fit-content; max-width:min(240px, 100%); flex-direction:column; gap:0; padding:0 0 0 14px; border:0; border-radius:0; background:transparent; box-shadow:none; }
+.settings-nav::before { position:absolute; top:8px; bottom:0; left:0; width:2px; border-radius:1px; content:''; background:linear-gradient(to bottom, var(--border) 0%, var(--border) 55%, transparent 100%); }
+.settings-nav-marker { position:absolute; top:-1px; left:0; z-index:1; opacity:0; width:2px; height:16px; border-radius:1px; background:var(--accent); pointer-events:none; transition:top .22s cubic-bezier(.23,1,.32,1), opacity .15s ease; }
+.settings-nav-marker[data-on] { opacity:1; }
+.settings-nav-group-wrap { position:relative; display:flex; flex-direction:column; }
+.settings-nav-group-wrap > .settings-nav-group { position:relative; display:block; width:100%; min-height:36px; margin:0; padding:9px 0; border:0; border-radius:0; background:transparent; color:var(--text-3); text-align:left; font:500 15px/18px var(--ff-body); cursor:pointer; transition:color .2s ease; }
+.settings-nav-group-wrap > .settings-nav-group:hover,
+.settings-nav-group-wrap[data-open] > .settings-nav-group { color:var(--text); }
+.settings-nav-branch { display:grid; grid-template-rows:0fr; transition:grid-template-rows .3s cubic-bezier(.23,1,.32,1); }
+.settings-nav-group-wrap[data-open] .settings-nav-branch { grid-template-rows:1fr; }
+.settings-nav-branch-clip { min-height:0; overflow:hidden; }
+.settings-nav-children { position:relative; box-sizing:border-box; min-height:0; overflow:hidden; padding:6px 0; }
+.settings-nav-children::before { position:absolute; top:0; bottom:34px; left:14px; width:1.5px; content:''; background:var(--border); }
+.settings-nav-active-reach { position:absolute; top:0; left:14px; z-index:0; width:1.5px; border-radius:1px; background:var(--accent); pointer-events:none; transition:height .4s cubic-bezier(.23,1,.32,1); }
+.settings-nav-item { position:relative; z-index:1; display:flex; align-items:center; gap:8px; width:100%; height:36px; min-height:36px; margin:0; padding:0 0 0 40px; border:0; border-radius:0; background:transparent; color:var(--text-2); text-align:left; font:400 14px/18px var(--ff-body); cursor:pointer; transition:color .2s ease; }
+.settings-nav-item::before { position:absolute; top:calc(50% - 10px); left:14px; box-sizing:border-box; width:18px; height:10px; border-bottom:1.5px solid var(--border); border-left:1.5px solid var(--border); border-bottom-left-radius:10px; content:''; transition:border-color .2s ease; }
+.settings-nav-item:hover { color:var(--text); }
+.settings-nav-item.active { color:var(--accent); font-weight:500; }
+.settings-nav-item.active::before { border-color:var(--accent); }
 .settings-nav button:focus:not(:focus-visible) { outline:none; }
 .settings-nav button:focus-visible { outline:2px solid color-mix(in srgb, var(--accent) 65%, transparent); outline-offset:1px; }
-.settings-nav span { font-size:12.5px; font-weight:650; }
-.settings-nav small { color:var(--text-3); font-size:10px; white-space:nowrap; }
+.settings-nav-item span { white-space:nowrap; }
+.settings-nav-item small { display:none; }
+.settings-nav > .settings-nav-group { padding:5px 9px 5px; color:var(--text-3); font-size:10.5px; font-weight:700; letter-spacing:.08em; }
+.settings-nav > .settings-nav-group:first-child { padding-top:0; }
+.settings-nav > button { position:relative; display:block; min-height:36px; padding:9px 0; border:0; border-radius:0; background:transparent; color:var(--text-2); text-align:left; font:400 14px/18px var(--ff-body); cursor:pointer; transition:color .2s ease; }
+.settings-nav > button:hover { color:var(--text); }
+.settings-nav > button.active { color:var(--accent); font-weight:600; }
+.settings-nav > button span { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .settings-search-empty { padding:20px 10px; color:var(--text-3); font-size:12px; text-align:center; }
 .settings-main { min-width:0; max-width:920px; }
 .settings-section-head { margin:1px 0 13px; }
@@ -1749,11 +1867,9 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', handleBeforeUnl
 .tg-var span { font-size: 12.5px; color: var(--text-2); line-height: 1.45; }
 @media (max-width: 900px) {
   .settings-layout { grid-template-columns:1fr; }
-  .settings-nav { top:64px; z-index:6; flex-direction:row; overflow-x:auto; }
-  .settings-nav-group { display:none; }
-  .settings-nav button { display:flex; flex:0 0 auto; min-height:36px; white-space:nowrap; }
-  .settings-nav small { display:none; }
-  .settings-nav button:hover { transform:none; }
+  .settings-nav { top:64px; z-index:6; width:100%; max-height:min(46vh,420px); overflow-y:auto; overscroll-behavior:contain; background:var(--bg); }
+  .settings-nav-group-wrap > .settings-nav-group { min-height:36px; }
+  .settings-nav-item { min-height:36px; }
   .settings-search-empty { min-width:160px; }
   .settings-main { max-width:none; }
 }
@@ -1768,6 +1884,9 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', handleBeforeUnl
   .section-operation { align-items:stretch; flex-direction:column; }
   .settings-actions { bottom:8px; flex-wrap:wrap; }
   .settings-dirty-copy { flex-basis:100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .settings-nav-marker, .settings-nav-active-reach, .settings-nav-branch, .settings-nav-item::before, .settings-nav-group-wrap > .settings-nav-group, .settings-nav-item { transition:none; }
 }
 @media (max-width: 560px) {
   .settings-section :deep(.n-form-item-blank) { min-width:0; width:100%; }

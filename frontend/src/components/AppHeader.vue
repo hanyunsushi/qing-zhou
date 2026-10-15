@@ -17,18 +17,20 @@
         <!-- 悬浮下拉菜单：管理入口与账户入口共用同一菜单圆角合同。 -->
         <TopbarHoverMenu v-if="auth.isAdmin" :open="openMenu === 'admin'" :options="adminMenu" @open="setMenuOpen('admin', true)" @close="setMenuOpen('admin', false)" @select="handleNav">
           <template #trigger>
-            <n-button class="header-nav-trigger header-dropdown-trigger topbar-language-reference-trigger" quaternary size="small" :aria-expanded="openMenu === 'admin'" aria-haspopup="menu">
+            <n-button class="header-nav-trigger header-dropdown-trigger topbar-language-reference-trigger topbar-hover-trigger" quaternary size="small" :aria-expanded="openMenu === 'admin'" aria-haspopup="menu">
               <template #icon><n-icon><SettingsOutline /></n-icon></template>
               管理
+              <span class="topbar-trigger-chevron" :class="{ 'is-open': openMenu === 'admin' }" aria-hidden="true" />
             </n-button>
           </template>
         </TopbarHoverMenu>
         <!-- 悬浮下拉菜单：账户入口与管理入口共用同一菜单圆角合同。 -->
         <TopbarHoverMenu :open="openMenu === 'account'" :options="userMenu" @open="setMenuOpen('account', true)" @close="setMenuOpen('account', false)" @select="handleNav">
           <template #trigger>
-            <n-button class="header-nav-trigger header-dropdown-trigger topbar-language-reference-trigger topbar-account-trigger" quaternary size="small" :aria-expanded="openMenu === 'account'" aria-haspopup="menu">
+            <n-button class="header-nav-trigger header-dropdown-trigger topbar-language-reference-trigger topbar-account-trigger topbar-hover-trigger" quaternary size="small" :aria-expanded="openMenu === 'account'" aria-haspopup="menu">
               <svg class="topbar-account-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.25"/><path d="M5.9 19c.75-3.35 2.8-5.1 6.1-5.1s5.35 1.75 6.1 5.1"/></svg>
               <span class="account-name">{{ auth.user?.username }}</span>
+              <span class="topbar-trigger-chevron" :class="{ 'is-open': openMenu === 'account' }" aria-hidden="true" />
             </n-button>
           </template>
         </TopbarHoverMenu>
@@ -109,7 +111,7 @@ function handleNav(key: string) {
   max-width: 100%;
   /* 公共顶栏品牌与登录后侧栏共用 16px 左侧内容轨道。 */
   padding: 0 clamp(16px, 4vw, 48px) 0 16px;
-  background: var(--topbar-background);
+  background: var(--topbar-surface);
   border-bottom: 1px solid var(--topbar-divider);
   backdrop-filter: var(--topbar-backdrop-filter);
   -webkit-backdrop-filter: var(--topbar-backdrop-filter);
@@ -121,17 +123,17 @@ function handleNav(key: string) {
   transition: background-color .24s cubic-bezier(.4, 0, .6, 1), border-color .24s cubic-bezier(.4, 0, .6, 1);
 }
 .app-header.is-scrolled {
-  background: var(--topbar-scrim-background-fallback);
+  background: var(--topbar-surface);
   backdrop-filter: var(--topbar-backdrop-filter);
   -webkit-backdrop-filter: var(--topbar-backdrop-filter);
 }
 .app-header.is-menu-open {
-  background: var(--topbar-background);
+  background: var(--topbar-surface);
   backdrop-filter: var(--topbar-backdrop-filter);
   -webkit-backdrop-filter: var(--topbar-backdrop-filter);
 }
 @supports (backdrop-filter: initial) {
-  .app-header { background: var(--topbar-scrim-background); }
+  .app-header { background: var(--topbar-surface); }
 }
 .header-left { display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
 .logo {

@@ -38,7 +38,7 @@
         <n-select v-model:value="routingProfile" :options="routingProfileOptions" size="small" class="routing-choice-select" />
         <div class="routing-choice-note">{{ routingProfileNote }}</div>
       </div>
-      <!-- 复制栏：订阅地址仅用于查看和复制，不使用填写框的点击焦点高亮或过渡特效。 -->
+      <!-- 复制栏：地址与复制按钮等高相连；按钮悬浮/按下只变色，无扩圈或位移，键盘焦点独立可见。 -->
       <n-input-group class="subscription-link-group copy-field">
         <n-input :value="selectedSubscriptionURL" readonly placeholder="暂无订阅" />
         <n-button type="primary" @click="copy(selectedSubscriptionURL)">复制</n-button>
@@ -186,8 +186,8 @@
           <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="tiny" @click="openEditProxy({ ...acct, account: true, custom: true })">编辑账号</n-button>
         </div>
-        <div class="pxrow"><span class="pxk">用户名</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="acct.username" readonly size="small" /><!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 --><n-button size="small" @click="copy(acct.username)">复制</n-button></n-input-group></div></div>
-        <div class="pxrow"><span class="pxk">密码</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="acct.password" type="password" show-password-on="click" readonly size="small" /><!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 --><n-button size="small" @click="copy(acct.password)">复制</n-button></n-input-group></div></div>
+        <div class="pxrow"><span class="pxk">用户名</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="acct.username" readonly size="small" /><!-- 复制栏：两侧等高，复制按钮悬浮/按下仅变色，固定边线无位移。 --><n-button size="small" @click="copy(acct.username)">复制</n-button></n-input-group></div></div>
+        <div class="pxrow"><span class="pxk">密码</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="acct.password" type="password" show-password-on="click" readonly size="small" /><!-- 复制栏：两侧等高，复制按钮悬浮/按下仅变色，固定边线无位移。 --><n-button size="small" @click="copy(acct.password)">复制</n-button></n-input-group></div></div>
         <div class="pxrow"><span class="pxk">有效期</span><span style="font-size:12px;color:var(--text-2);flex:1;">{{ acct.expires_at ? fmtDate(acct.expires_at) : '永久' }}</span></div>
         <div class="px-hint">
           <template v-if="acct.expired">已过期，下面的节点暂时改用各自套餐的账号。点「编辑账号」续期即可恢复通用。</template>
@@ -230,8 +230,8 @@
         <div v-if="!p.custom" class="px-hint">系统默认账号，建议点「详情 → 编辑账号」自设</div>
         <div v-if="expandedProxies.includes(p.tag)" class="px-detail">
           <div class="pxrow"><span class="pxk">类型</span><span style="font-size:13px;">{{ p.tls ? 'HTTPS' : 'HTTP / SOCKS5' }}</span></div>
-          <div class="pxrow"><span class="pxk">地址</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="p.host" readonly size="small" /><!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 --><n-button size="small" @click="copy(p.host)">复制</n-button></n-input-group></div></div>
-          <div class="pxrow"><span class="pxk">端口</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="String(p.port)" readonly size="small" /><!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 --><n-button size="small" @click="copy(String(p.port))">复制</n-button></n-input-group></div></div>
+          <div class="pxrow"><span class="pxk">地址</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="p.host" readonly size="small" /><!-- 复制栏：两侧等高，复制按钮悬浮/按下仅变色，固定边线无位移。 --><n-button size="small" @click="copy(p.host)">复制</n-button></n-input-group></div></div>
+          <div class="pxrow"><span class="pxk">端口</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="String(p.port)" readonly size="small" /><!-- 复制栏：两侧等高，复制按钮悬浮/按下仅变色，固定边线无位移。 --><n-button size="small" @click="copy(String(p.port))">复制</n-button></n-input-group></div></div>
           <!-- 两套账号在这个节点上都能登录，所以两套都列出来。通用账号只用一行指
                回上面——它每个节点都一样，逐个节点再抄一遍反而像「一节点一套」；套
                餐账号则必须逐项列全，它是这个节点独有的，不列就等于没有。 -->
@@ -247,8 +247,8 @@
               <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
               <n-button size="tiny" @click="openEditProxy(p.plan)">编辑账号</n-button>
             </div>
-            <div class="pxrow"><span class="pxk">用户名</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="p.plan.username" readonly size="small" /><!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 --><n-button size="small" @click="copy(p.plan.username)">复制</n-button></n-input-group></div></div>
-            <div class="pxrow"><span class="pxk">密码</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="p.plan.password" type="password" show-password-on="click" readonly size="small" /><!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 --><n-button size="small" @click="copy(p.plan.password)">复制</n-button></n-input-group></div></div>
+            <div class="pxrow"><span class="pxk">用户名</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="p.plan.username" readonly size="small" /><!-- 复制栏：两侧等高，复制按钮悬浮/按下仅变色，固定边线无位移。 --><n-button size="small" @click="copy(p.plan.username)">复制</n-button></n-input-group></div></div>
+            <div class="pxrow"><span class="pxk">密码</span><div class="pxv"><n-input-group class="copy-field"><n-input :value="p.plan.password" type="password" show-password-on="click" readonly size="small" /><!-- 复制栏：两侧等高，复制按钮悬浮/按下仅变色，固定边线无位移。 --><n-button size="small" @click="copy(p.plan.password)">复制</n-button></n-input-group></div></div>
             <div class="pxrow">
               <span class="pxk">有效期</span>
               <span class="pxsub">{{ p.plan.expires_at ? fmtDate(p.plan.expires_at) : '永久' }}</span>
@@ -322,7 +322,7 @@
           <template v-if="editForm.account">改的是所有节点通用的那一个，保存后旧密码立即失效，记得同步更新已填在别处的地方。</template>
           <template v-else>改的是这一份套餐自己的那一个，通用账号不受影响。</template>
         </div>
-        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，点击保持悬浮色且不改变位置；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" block :loading="savingProxy" @click="saveProxy">保存</n-button>
       </n-form>
     </n-modal>

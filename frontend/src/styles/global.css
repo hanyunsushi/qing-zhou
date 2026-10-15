@@ -50,12 +50,14 @@
   /* Apple-style page rail: the visible thumb is centered inside a stable 16px slot. */
   --scrollbar-track-width: 16px;
   --scrollbar-thumb-width: 8px;
-  /* Apple globalnav scrim: this app header is sticky over page content, so the
-     visible glass surface is present at rest as well as while scrolling. */
-  --topbar-background: rgba(250, 250, 252, .8);
-  --topbar-scrim-background: rgba(250, 250, 252, .8);
-  --topbar-scrim-background-fallback: rgba(250, 250, 252, .92);
-  --topbar-backdrop-filter: saturate(180%) blur(20px);
+  /* 顶栏 / 玻璃文件夹卡片：顶栏复用文件夹前盖的浅色玻璃材质；控件保留独立的透明命中面。 */
+  --glass-folder-tint: linear-gradient(180deg, rgba(255, 255, 255, .16) 0%, rgba(255, 255, 255, .5) 42%, rgba(252, 252, 252, .93) 100%);
+  --glass-folder-backdrop-filter: blur(22px) saturate(1.5);
+  --topbar-background: rgba(255, 255, 255, .16);
+  --topbar-surface: var(--glass-folder-tint);
+  --topbar-scrim-background: var(--glass-folder-tint);
+  --topbar-scrim-background-fallback: rgba(252, 252, 252, .93);
+  --topbar-backdrop-filter: var(--glass-folder-backdrop-filter);
   --topbar-divider: rgba(0, 0, 0, .12);
   --app-header-height: 64px;
   /* 普通按钮 / 弧边按钮：各语义变体共用同组尺寸与文字基线。 */
@@ -184,9 +186,10 @@ h4, h5, h6 { font-size: var(--font-size-heading-s); line-height: var(--line-heig
   font-variant-numeric: tabular-nums;
   letter-spacing: 0;
 }
-/* 项目超链接：所有可导航文本链接统一使用 Apple 蓝，悬浮沿用全局交互蓝。 */
-a { color: var(--accent); text-decoration: none; }
-a:hover { color: var(--accent-hover); }
+/* 项目超链接：可导航文字常态Apple蓝，悬浮/键盘聚焦深蓝并显示下划线。 */
+a { color: var(--accent); text-decoration: none; text-underline-offset: 3px; }
+a:hover, a:focus-visible { color: var(--accent-hover); text-decoration: underline; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 /* 项目超链接：组件化 router-link / tag="a" 也复用同一 Apple 蓝。 */
 /* 项目超链接：常态蓝色，悬浮/键盘聚焦显示下划线；真实导航保留href。 */
 .project-link { color: var(--accent) !important; text-decoration: none; text-underline-offset: 3px; }
@@ -228,10 +231,10 @@ button, input, textarea, select { font-family: inherit; }
   font-weight: 500 !important;
   letter-spacing: 0;
   border-radius: var(--r-control) !important;
-  --button-press-offset: 1px;
+  --button-press-offset: 0px;
   transition: color .22s var(--ease-standard), background-color .22s var(--ease-standard), border-color .22s var(--ease-standard), box-shadow .28s var(--ease-standard), transform .28s var(--ease-emphasized) !important;
 }
-/* 普通按钮 / 弧边按钮 / 删除按钮：按压回弹作为点击反馈，水波层保持隐藏。 */
+/* 普通按钮 / 弧边按钮 / 删除按钮：点击只保留颜色与焦点反馈，水波层和位置位移均关闭。 */
 .n-button > .n-base-wave { display: none !important; }
 .n-button:not(.n-button--disabled):focus-visible { box-shadow: var(--focus-ring); }
 .n-button.n-button--primary-type:not(.n-button--secondary):not(.n-button--ghost) {
@@ -267,34 +270,34 @@ button, input, textarea, select { font-family: inherit; }
 }
 /* 高亮弧边按钮：键盘焦点单独可见，不被通用primary的无阴影规则覆盖。 */
 .n-button.n-button--primary-type.highlight-arc-button:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):focus-visible { box-shadow: var(--focus-ring); }
-/* 高亮弧边按钮：按下保持悬浮提亮色，位移反馈由共享按钮规则负责。 */
+/* 高亮弧边按钮：点击保持悬浮提亮色，不改变按钮位置。 */
 .n-button.n-button--primary-type.highlight-arc-button:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):active,
 .n-button.n-button--primary-type.highlight-arc-button:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled).n-button--pressed {
   background: var(--accent-arc-hover) !important;
   border-color: var(--accent-arc-hover) !important;
 }
-/* 弧边警告按钮：按下与悬浮/聚焦共用原有风险提亮色及边框。 */
+/* 弧边警告按钮：点击与悬浮/聚焦共用原有风险提亮色及边框，不改变按钮位置。 */
 .n-button.n-button--warning-type:not(.n-button--secondary):not(.n-button--ghost) {
   --n-color-pressed: var(--n-color-hover) !important;
   --n-border-pressed: var(--n-border-hover) !important;
   --n-text-color-pressed: var(--n-text-color-hover) !important;
 }
-/* 普通按钮 / 标准默认弧边按钮：共用按钮token、字体与中性ring；默认弧边只改18px圆角。 */
+/* 普通按钮 / 标准默认弧边按钮：共用中性ring；Dialog的ghost取消动作同样使用默认弧边。 */
 .n-button.action-button,
-.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.n-button--ghost):not(.action-button)):has(> .n-button__border) { min-height:var(--button-height) !important; height:var(--button-height) !important; padding:0 var(--button-padding-inline) !important; border-radius:8px !important; border:0 !important; font-size:var(--button-font-size); font-weight:500; line-height:var(--button-line-height); letter-spacing:0; transition:color .1s ease-in-out,background-color .2s ease-in-out,box-shadow .2s ease-in-out,opacity .2s ease-in-out,transform .2s ease-in-out !important; }
+.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.action-button)):where(:not(.n-button--ghost), .n-dialog__action > .n-button--ghost):has(> .n-button__border) { min-height:var(--button-height) !important; height:var(--button-height) !important; padding:0 var(--button-padding-inline) !important; border-radius:8px !important; border:0 !important; font-size:var(--button-font-size); font-weight:500; line-height:var(--button-line-height); letter-spacing:0; transition:color .1s ease-in-out,background-color .2s ease-in-out,box-shadow .2s ease-in-out,opacity .2s ease-in-out,transform .2s ease-in-out !important; }
 .n-button.action-button--normal,
-.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.n-button--ghost):not(.action-button)):has(> .n-button__border) { --action-button-bg: transparent; --action-button-fg: var(--text-3); --action-button-border: var(--border); --action-button-bg-hover: transparent; --action-button-fg-hover: var(--text-2); --action-button-border-hover: var(--border-strong); --n-border: 0 solid transparent !important; --n-border-hover: 0 solid transparent !important; --n-border-focus: 0 solid transparent !important; --n-border-pressed: 0 solid transparent !important; background:var(--action-button-bg) !important; color:var(--action-button-fg) !important; box-shadow:0 0 0 1px var(--action-button-border) !important; }
+.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.action-button)):where(:not(.n-button--ghost), .n-dialog__action > .n-button--ghost):has(> .n-button__border) { --action-button-bg: transparent; --action-button-fg: var(--text-3); --action-button-border: var(--border); --action-button-bg-hover: transparent; --action-button-fg-hover: var(--text-2); --action-button-border-hover: var(--border-strong); --n-border: 0 solid transparent !important; --n-border-hover: 0 solid transparent !important; --n-border-focus: 0 solid transparent !important; --n-border-pressed: 0 solid transparent !important; background:var(--action-button-bg) !important; color:var(--action-button-fg) !important; box-shadow:0 0 0 1px var(--action-button-border) !important; }
 .n-button.action-button--normal:hover:not(.n-button--disabled), .n-button.action-button--normal:focus-visible:not(.n-button--disabled),
-.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.n-button--ghost):not(.action-button)):has(> .n-button__border):hover:not(.n-button--disabled),
-.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.n-button--ghost):not(.action-button)):has(> .n-button__border):focus-visible:not(.n-button--disabled) { background:var(--action-button-bg-hover) !important; color:var(--action-button-fg-hover) !important; box-shadow:0 0 0 2px var(--action-button-border-hover) !important; }
+.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.action-button)):where(:not(.n-button--ghost), .n-dialog__action > .n-button--ghost):has(> .n-button__border):hover:not(.n-button--disabled),
+.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.action-button)):where(:not(.n-button--ghost), .n-dialog__action > .n-button--ghost):has(> .n-button__border):focus-visible:not(.n-button--disabled) { background:var(--action-button-bg-hover) !important; color:var(--action-button-fg-hover) !important; box-shadow:0 0 0 2px var(--action-button-border-hover) !important; }
 /* 标准默认弧边按钮：唯一视觉差异是弧边圆角，描边颜色/粗细与普通按钮相同。 */
-.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.n-button--ghost):not(.action-button)):has(> .n-button__border) { border-radius:var(--r-control) !important; }
+.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.action-button)):where(:not(.n-button--ghost), .n-dialog__action > .n-button--ghost):has(> .n-button__border) { border-radius:var(--r-control) !important; }
 /* 强调按钮：背景和 ring 悬浮时同步提亮，并覆盖全局 primary hover 状态。 */
 .n-button.action-button--emphasis { --action-button-bg: var(--accent); --action-button-fg: #fff; --action-button-border: var(--accent); --action-button-bg-hover: var(--accent-button-hover); --action-button-border-hover: var(--accent-button-hover); --n-border: 0 solid transparent !important; --n-border-hover: 0 solid transparent !important; --n-border-focus: 0 solid transparent !important; --n-border-pressed: 0 solid transparent !important; background:var(--action-button-bg) !important; color:var(--action-button-fg) !important; box-shadow:0 0 0 1px var(--action-button-border) !important; }
 .n-button.n-button--primary-type.action-button--emphasis:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):hover, .n-button.n-button--primary-type.action-button--emphasis:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):focus-visible { background:var(--action-button-bg-hover) !important; color:var(--action-button-fg) !important; box-shadow:0 0 0 2px var(--action-button-border-hover) !important; }
-/* 普通按钮 / 强调按钮 / 弧边按钮 / 删除按钮：鼠标及键盘按下下移1px，释放回弹，禁用保持静止。 */
-.n-button:is(.action-button, .highlight-arc-button, .delete-button, .n-button--warning-type):is(:active, .n-button--pressed):not(.n-button--disabled),
-.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.n-button--ghost):not(.action-button)):has(> .n-button__border):is(:active, .n-button--pressed):not(.n-button--disabled) { transform:translateY(var(--button-press-offset)) !important; transition-duration:.08s !important; }
+/* 按钮 / 下拉菜单按钮：点击不改变位置；颜色、焦点、真实 loading 反馈由各自分类保留。 */
+button:active:not(:disabled),
+button.n-button--pressed:not(.n-button--disabled) { transform: none !important; transition-duration: .08s !important; }
 
 /* 删除按钮：32px高、13/20文字与10px内距，与同组弧边操作共用几何；红字透明底、18px角。 */
 .n-button.delete-button {
@@ -334,6 +337,7 @@ button, input, textarea, select { font-family: inherit; }
 }
 
 /* 切换开关：保留Naive启用/停用状态色；轨道与滑块按参考比例缩放，滑块使用回弹曲线。 */
+/* 切换开关：保留启用/停用状态色，去掉 Naive UI rail 的焦点高亮边框。 */
 .n-switch:focus .n-switch__rail,
 .n-switch:focus-visible .n-switch__rail {
   box-shadow: none !important;
@@ -468,6 +472,66 @@ button, input, textarea, select { font-family: inherit; }
   border-color: #d1cfc5 !important;
   box-shadow: none !important;
 }
+/* 复制栏：相连输入与按钮共用32px高度（触摸44px）；外端18px、接缝直角。 */
+.n-input-group.copy-field { --copy-field-height: var(--button-height); align-items: center; isolation: isolate; }
+.n-input-group.copy-field > .n-input {
+  --n-height: var(--copy-field-height) !important;
+  height: var(--copy-field-height) !important;
+  min-width: 0;
+}
+/* 复制栏：按钮仅变色，悬浮与按下同色；边线固定1px，键盘焦点描边留在按钮内部。 */
+.n-input-group.copy-field > .n-button {
+  /* 复制栏：按钮始终盖住重叠的输入边线，接缝不随状态层切换。 */
+  z-index: 1;
+  --copy-focus-color: var(--accent);
+  --n-color: transparent !important;
+  --n-color-hover: var(--card-hover) !important;
+  --n-color-focus: var(--n-color-hover) !important;
+  --n-color-pressed: var(--n-color-hover) !important;
+  --n-text-color: var(--text-3) !important;
+  --n-text-color-hover: var(--text-2) !important;
+  --n-text-color-focus: var(--n-text-color-hover) !important;
+  --n-text-color-pressed: var(--n-text-color-hover) !important;
+  --n-border: 1px solid #d1cfc5 !important;
+  --n-border-hover: var(--n-border) !important;
+  --n-border-focus: var(--n-border-hover) !important;
+  --n-border-pressed: var(--n-border-hover) !important;
+  height: var(--copy-field-height) !important;
+  min-height: var(--copy-field-height) !important;
+  border-radius: var(--r-control) !important;
+  flex-shrink: 0;
+  background: var(--n-color) !important;
+  color: var(--n-text-color) !important;
+}
+.n-input-group.copy-field > .n-button.n-button--primary-type {
+  --copy-focus-color: #fff;
+  --n-color: var(--accent) !important;
+  --n-color-hover: var(--accent-button-hover) !important;
+  --n-text-color: #fff !important;
+  --n-text-color-hover: #fff !important;
+  --n-border: 1px solid var(--accent) !important;
+  --n-border-hover: 1px solid var(--accent-button-hover) !important;
+}
+.n-input-group.copy-field > .n-button:is(.n-button--default-type, .n-button--primary-type):not(.n-button--disabled):is(:hover, :focus, :active, .n-button--pressed) {
+  background: var(--n-color-hover) !important;
+  color: var(--n-text-color-hover) !important;
+}
+.n-input-group.copy-field > .n-button,
+.n-input-group.copy-field > .n-button:is(.n-button--default-type, .n-button--primary-type):not(.n-button--disabled):is(:hover, :focus, :focus-visible, :active, .n-button--pressed) {
+  box-shadow: none !important;
+  transform: none !important;
+  transition: color .22s var(--ease-standard), background-color .22s var(--ease-standard), border-color .22s var(--ease-standard) !important;
+}
+/* 复制栏：内部边线仅过渡颜色，优先级覆盖普通按钮的扩圈或位移状态。 */
+.n-input-group.copy-field > .n-button > :is(.n-button__border, .n-button__state-border) { box-shadow: none !important; transition: border-color .22s var(--ease-standard) !important; }
+.n-input-group.copy-field > .n-button:not(:first-child) {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+.n-input-group.copy-field > .n-button:not(.n-button--disabled):focus-visible { outline: 2px solid var(--copy-focus-color); outline-offset: -3px; }
+@media (pointer: coarse) {
+  .n-input-group.copy-field { --copy-field-height: 44px; }
+}
 .n-form-item .n-form-item-label { color: var(--text-2); font-weight: 560; }
 .n-form-item-feedback-wrapper { min-height: 4px !important; }
 
@@ -496,7 +560,7 @@ button, input, textarea, select { font-family: inherit; }
 .n-alert, .n-message, .n-notification, .n-tooltip {
   border-radius: var(--r-overlay) !important;
 }
-/* 顶栏语言切换式控件：共享顶栏控件的几何状态，颜色继续使用 QingZhou token。 */
+/* 悬浮菜单按钮 / 顶栏触发器：共享 Try Claude 组合按钮的分割线与箭头几何，颜色继续使用 QingZhou token。 */
 .n-button.topbar-language-reference-trigger {
   display: inline-flex !important;
   align-items: center !important;
@@ -507,7 +571,7 @@ button, input, textarea, select { font-family: inherit; }
   padding: 0 10px !important;
   border: 1px solid var(--border) !important;
   border-radius: 12px !important;
-  /* 顶栏控件常态背景跟随共享玻璃材质，悬浮时切换到中性面。 */
+  /* 顶栏控件常态保持玻璃透明命中面，悬浮时切换到中性面。 */
   background: var(--topbar-background) !important;
   color: var(--text-2) !important;
   font-size: 13px !important;
@@ -560,10 +624,37 @@ button, input, textarea, select { font-family: inherit; }
   justify-content: center !important;
   gap: 4px !important;
   min-height: 20px !important;
+  height: 100% !important;
   line-height: 20px !important;
 }
 .n-button.topbar-language-reference-trigger .n-button__icon { margin: 0 !important; }
 .n-button.topbar-language-reference-trigger .n-button__icon > .n-icon { display: inline-flex !important; align-items: center !important; }
+.topbar-trigger-divider {
+  display: inline-block;
+  width: 1px;
+  height: 32px;
+  min-height: 32px;
+  align-self: stretch;
+  box-sizing: border-box;
+  flex: 0 0 1px;
+  background: currentColor;
+  opacity: .28;
+}
+.topbar-trigger-chevron {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  margin: 0 1px 0 0;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-1px) rotate(45deg);
+  transform-origin: center;
+  transition: transform .2s var(--ease-standard);
+}
+.topbar-trigger-chevron.is-open { transform: translateY(-1px) rotate(225deg); }
+.topbar-hover-trigger .topbar-trigger-divider { display: none; }
+.topbar-hover-trigger .topbar-trigger-chevron { margin-left: 3px; }
 .n-button.topbar-account-trigger {
   padding: 0 10px !important;
 }
@@ -584,6 +675,10 @@ button, input, textarea, select { font-family: inherit; }
   outline: 2px solid var(--accent) !important;
   outline-offset: 2px !important;
 }
+/* 浮层和反馈：Naive UI默认箭头由show-arrow显式关闭；此选择器仅兜底示范与共享浮层，避免影响普通卡片。 */
+.n-popover:not(.n-popover-shared--show-arrow) .n-popover-arrow-wrapper,
+.n-tooltip:not(.n-popover-shared--show-arrow) .n-popover-arrow-wrapper,
+.n-popover-shared:not(.n-popover-shared--show-arrow) .n-popover-arrow-wrapper { display: none !important; }
 /* 下拉选择菜单：只重绘弹层本体，不触碰触发按钮；几何与顶栏悬浮菜单一致。 */
 .n-base-select-menu,
 .n-dropdown-menu {
@@ -1068,9 +1163,9 @@ button, input, textarea, select { font-family: inherit; }
 .md p { margin: 10px 0; }
 .md ul, .md ol { margin: 10px 0; padding-left: 22px; }
 .md li { margin: 4px 0; }
-/* 项目超链接：Markdown正文保留常态下划线，悬浮/键盘聚焦使用同款深蓝。 */
-.md a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
-.md a:hover, .md a:focus-visible { color: var(--accent-hover); }
+/* 项目超链接：Markdown正文常态无下划线，悬浮/键盘聚焦显示下划线并变深蓝。 */
+.md a { color: var(--accent); text-decoration: none; text-underline-offset: 3px; }
+.md a:hover, .md a:focus-visible { color: var(--accent-hover); text-decoration: underline; }
 .md a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .md code.md-code { background: var(--bg-subtle); border: 0; border-radius: 4px; padding: 2px 5px; color: var(--text-2); font-size: 12px; font-family: var(--ff-mono); line-height: 1.35; }
 .md pre.md-pre { background: #1e1e1e; color: #eee; border-radius: var(--r); padding: 12px 14px; overflow-x: auto; margin: 12px 0; }

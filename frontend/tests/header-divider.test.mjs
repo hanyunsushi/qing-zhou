@@ -22,7 +22,7 @@ test('desktop brand and topbar share a stable height and divider', () => {
 test('desktop brand and topbar share glass material and state selectors', () => {
   const brand = layout.match(/\.app-sider \.sidebar-brand,\s*\.mobile-sidebar \.sidebar-brand \{([^}]+)\}/)?.[1]
   assert.ok(brand)
-  assert.match(brand, /background: var\(--topbar-background\);/)
+  assert.match(brand, /background: var\(--topbar-surface\);/)
   assert.match(brand, /backdrop-filter: var\(--topbar-backdrop-filter\);/)
   assert.match(layout, /\.layout-header\.is-scrolled,[\s\S]*?\.app-sider \.sidebar-brand\.is-scrolled/)
   assert.match(layout, /\.layout-header\.is-menu-open,[\s\S]*?\.app-sider \.sidebar-brand\.is-menu-open/)

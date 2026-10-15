@@ -39,12 +39,17 @@ test('sidebar empty feedback replaces the menu in the result track on desktop an
   assert.doesNotMatch(emptyStyle, /position:\s*absolute|box-shadow|z-index|border:/)
   assert.doesNotMatch(layout, /搜索反馈沿用浮层几何/)
 })
-test('Markdown links define hover color and visible keyboard focus after their base rule', () => {
+test('Markdown links are underlined only on hover or keyboard focus', () => {
   const css = read('styles/global.css')
-  assert.match(css, /\.md a:hover, \.md a:focus-visible \{ color: var\(--accent-hover\); \}/)
+  assert.match(css, /\na \{ color: var\(--accent\); text-decoration: none; text-underline-offset: 3px; \}/)
+  assert.match(css, /\na:hover, a:focus-visible \{ color: var\(--accent-hover\); text-decoration: underline; \}/)
+  assert.match(css, /\na:focus-visible \{ outline: 2px solid var\(--accent\); outline-offset: 3px; \}/)
+  assert.match(css, /\.md a \{ color: var\(--accent\); text-decoration: none; text-underline-offset: 3px; \}/)
+  assert.match(css, /\.md a:hover, \.md a:focus-visible \{ color: var\(--accent-hover\); text-decoration: underline; \}/)
   assert.match(css, /\.md a:focus-visible \{ outline: 2px solid var\(--accent\); outline-offset: 3px; \}/)
+  assert.ok(css.indexOf('.md a {') < css.indexOf('.md a:hover'))
 })
-test('operation buttons use wave-free press recoil and keep highlight and warning hover colors', () => {
+test('operation buttons use wave-free static clicks and keep highlight and warning hover colors', () => {
   const css = read('styles/global.css')
   assert.match(css, /\.n-button > \.n-base-wave \{ display: none !important; \}/)
   const highlight = css.match(/\.n-button\.n-button--primary-type\.highlight-arc-button \{([^}]+)\}/)[1]
@@ -53,12 +58,12 @@ test('operation buttons use wave-free press recoil and keep highlight and warnin
   const warning = css.match(/\.n-button\.n-button--warning-type[^{}]+\{([^}]+)\}/)[1]
   assert.match(warning, /--n-color-pressed: var\(--n-color-hover\) !important;/)
   assert.match(warning, /--n-border-pressed: var\(--n-border-hover\) !important;/)
-  assert.match(css, /:is\(\.action-button, \.highlight-arc-button, \.delete-button, \.n-button--warning-type\):is\(:active, \.n-button--pressed\):not\(\.n-button--disabled\)/)
-  assert.match(css, /transform:translateY\(var\(--button-press-offset\)\) !important;/)
+  assert.match(css, /button:active:not\(:disabled\),\s*button\.n-button--pressed:not\(\.n-button--disabled\) \{ transform: none !important;/)
+  assert.doesNotMatch(css, /transform:translateY\(var\(--button-press-offset\)\) !important;/)
   assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\.n-button \{ --button-press-offset: 0px; \}/)
   for (const path of ['views/AdminUpdate.vue', 'views/AuthPage.vue', 'views/AdminNodes.vue']) {
     assert.doesNotMatch(read(path), /按下短暂变深/)
-    assert.match(read(path), /高亮弧边按钮：[^\n]*按下保持悬浮色并回弹/)
+    assert.match(read(path), /高亮弧边按钮：[^\n]*点击保持悬浮色且不改变位置/)
   }
 })
 test('monitor uses shared skyline and separates loopback assets from machine metrics', () => {

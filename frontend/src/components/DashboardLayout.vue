@@ -123,16 +123,17 @@
             <TopbarHoverMenu :open="openMenu === 'admin'" :options="adminQuickMenu" @open="setMenuOpen('admin', true)" @close="setMenuOpen('admin', false)" @select="handleAdminSelect">
               <template #trigger>
               <!-- 悬浮下拉菜单：管理入口与账户入口共享顶栏控件几何。 -->
-              <n-button quaternary size="small" class="dashboard-dropdown-trigger topbar-language-reference-trigger" :aria-expanded="openMenu === 'admin'" aria-haspopup="menu">管理</n-button>
+              <n-button quaternary size="small" class="dashboard-dropdown-trigger topbar-language-reference-trigger topbar-hover-trigger" :aria-expanded="openMenu === 'admin'" aria-haspopup="menu">管理<span class="topbar-trigger-chevron" :class="{ 'is-open': openMenu === 'admin' }" aria-hidden="true" /></n-button>
               </template>
             </TopbarHoverMenu>
           </template>
           <!-- 悬浮下拉菜单：控制台账户入口采用共享的触发器悬浮几何。 -->
           <TopbarHoverMenu :open="openMenu === 'account'" :options="userMenu" @open="setMenuOpen('account', true)" @close="setMenuOpen('account', false)" @select="handleUserSelect">
             <template #trigger>
-            <n-button quaternary size="small" class="account-button dashboard-dropdown-trigger topbar-language-reference-trigger topbar-account-trigger" :aria-expanded="openMenu === 'account'" aria-haspopup="menu">
+            <n-button quaternary size="small" class="account-button dashboard-dropdown-trigger topbar-language-reference-trigger topbar-account-trigger topbar-hover-trigger" :aria-expanded="openMenu === 'account'" aria-haspopup="menu">
               <svg class="topbar-account-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.25"/><path d="M5.9 19c.75-3.35 2.8-5.1 6.1-5.1s5.35 1.75 6.1 5.1"/></svg>
               <span v-if="!isMobile" class="account-name">{{ auth.user?.username }}</span>
+              <span class="topbar-trigger-chevron" :class="{ 'is-open': openMenu === 'account' }" aria-hidden="true" />
             </n-button>
             </template>
           </TopbarHoverMenu>
@@ -454,7 +455,7 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
   box-sizing: border-box; flex: 0 0 var(--app-header-height);
   height: var(--app-header-height); min-height: var(--app-header-height);
   border-bottom: 1px solid var(--topbar-divider);
-  background: var(--topbar-background);
+  background: var(--topbar-surface);
   backdrop-filter: var(--topbar-backdrop-filter);
   -webkit-backdrop-filter: var(--topbar-backdrop-filter);
   transition: background-color .24s cubic-bezier(.4, 0, .6, 1), border-color .24s cubic-bezier(.4, 0, .6, 1);
@@ -518,9 +519,9 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
      A viewport width here hides the right-side account controls whenever the
      document has a scrollbar or Naive UI temporarily locks the page. */
   width: 100%; max-width: 100%;
-  height: var(--app-header-height); display: grid; grid-template-columns: minmax(140px, 1fr) minmax(280px, 480px) minmax(140px, 1fr);
-  align-items: center; gap: 24px; padding: 0 24px;
-  background: var(--topbar-background);
+  height: var(--app-header-height); display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 400px) minmax(0, 1fr);
+  align-items: center; gap: 16px; padding: 0 24px;
+  background: var(--topbar-surface);
   /* 顶栏分界线：与页面一级布局使用同一中性边线。 */
   border-bottom: 1px solid var(--topbar-divider);
   backdrop-filter: var(--topbar-backdrop-filter);
@@ -532,24 +533,24 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
 .layout-header.is-scrolled,
 .app-sider .sidebar-brand.is-scrolled,
 .mobile-sidebar .sidebar-brand.is-scrolled {
-  background: var(--topbar-scrim-background-fallback);
+  background: var(--topbar-surface);
   backdrop-filter: var(--topbar-backdrop-filter);
   -webkit-backdrop-filter: var(--topbar-backdrop-filter);
 }
 .layout-header.is-menu-open,
 .app-sider .sidebar-brand.is-menu-open,
 .mobile-sidebar .sidebar-brand.is-menu-open {
-  background: var(--topbar-background);
+  background: var(--topbar-surface);
   backdrop-filter: var(--topbar-backdrop-filter);
   -webkit-backdrop-filter: var(--topbar-backdrop-filter);
 }
 @supports (backdrop-filter: initial) {
-  .layout-header, .app-sider .sidebar-brand, .mobile-sidebar .sidebar-brand { background: var(--topbar-scrim-background); }
+  .layout-header, .app-sider .sidebar-brand, .mobile-sidebar .sidebar-brand { background: var(--topbar-surface); }
 }
 .header-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .header-title { font-weight: 650; font-size: 16px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 /* 填写框 */
-.header-search { position: relative; width: 100%; }
+.header-search { position: relative; width: min(100%, 400px); justify-self: center; }
 .header-search-icon { position: absolute; left: 13px; top: 50%; z-index: 2; transform: translateY(-50%); color: var(--text-2); pointer-events: none; }
 .header-search :deep(.n-input) { height: 36px; border-radius: var(--r) !important; box-shadow: none; transition: color .25s var(--ease-standard), background-color .25s var(--ease-standard), border-color .25s var(--ease-standard), box-shadow .25s var(--ease-standard) !important; }
 .header-search :deep(.n-input.n-input--focus) { background: var(--card) !important; box-shadow: none !important; }
@@ -715,6 +716,6 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
 :global(.mobile-sidebar-drawer-root .sidebar-surface),
 :global(.mobile-sidebar-drawer .n-drawer-body-content-wrapper) { border-radius: 0 !important; }
 @media (max-width: 1080px) {
-  .layout-header { grid-template-columns: minmax(120px, .8fr) minmax(220px, 380px) minmax(120px, .8fr); gap: 14px; }
+  .layout-header { grid-template-columns: minmax(0, 1fr) minmax(200px, 360px) minmax(0, 1fr); gap: 12px; }
 }
 </style>

@@ -1,11 +1,27 @@
+本轮复核并修正下拉点击反馈与二级侧边栏可见性：全局按钮/下拉点击不再下移或扩散，点击下拉分割线固定32px贯穿按钮，箭头旋转保持占位；`AdminSettings.vue` 实际设置页已存在 CSS-only 二级侧边栏，`#navigation` 示范与重启后的5197示范均可见。5191 DOM实测按钮自身宽高不随打开改变；5173未认证会跳转登录，生产尚未部署本地改动。canonical skill、项目权威与验证页同步；未提交、未发布、未部署。
+
 ---
 title: Current Wiki Sync State
-updated: 2026-10-14
+updated: 2026-10-15
 ---
 
 # Current synchronization evidence
 
+
 `v0.2.107-kreeper-20261014-switch-mobile-scroll` 已发布部署：只包含全局开关40×23/17×17参考比例与回弹、≤768px页面滚动槽补偿修正；Release 38593721201、CI 38593807022、ARM64运行哈希、SQLite Backup API完整性、服务/PID及公网资源证据见[Deployment](guides/deployment.md)与[Validation](guides/validation.md)。其他工作区脏改动仍排除。
+
+本轮 BranchedMenu 视觉合同复核已完成：`AdminSettings.vue` 与 canonical `#navigation` 示范的二级侧边栏统一为首组默认展开、36px 行高、40px 子项缩进、CSS-only 主干/分支/活动线；增加独立裁剪层后，折叠分支不再残留占位，活动项使用中号字重。源快照、pattern、navigation/reference、coverage hash 和项目验证页已同步。5197 最新浏览器实测折叠为0px、展开恢复84px；180项前端测试、typecheck/build、skill合同/asset verify/audit均通过。本地未提交、未发布、未部署。
+
+本轮修正示范玻璃文件夹的展开状态级联：原 `.gf-root:has(.gf-interaction:hover)` specificity 高于 `.gf-root[data-open]`，鼠标停留在已点击前盖时会覆盖完整展开位移，导致纸页没有正常弹出；现仅对 `:not([data-open])` 应用 hover/focus-within 参数，展开状态保持完整 hinge/lift/spread/fan/stack。5191 `#folders` 已实际点击核对 `aria-expanded`、`data-open` 与 computed 展开参数；源码、canonical skill 组件/快照/pattern/契约、项目权威与本页已同步。沿用“玻璃文件夹卡片”，未新增分类；本地未提交、未发布、未部署。证据见 [Validation](guides/validation.md#玻璃文件夹展开状态修正本地未部署)。
+
+本轮顶栏组合下拉与完整互斥示范已同步 QingZhou 源码、canonical `kreeper-first-design-system` 的 topbar/overlays/showcase 规范、复用 CSS、源快照、pattern、契约及原 5191 示范：`#menus` 只保留点击下拉、弹出选择、Popover、Tooltip 四个互斥控件；点击下拉增加分割竖线与打开时旋转箭头，顶栏悬浮入口只增加箭头；Popover/Tooltip 去除下方小圆形/箭头；独立顶栏同款展示已移除。仅借鉴用户指定 Try Claude 的组合几何，不引入 Anthropic token/字体/组件或独立 skill。`180/180` 前端测试、typecheck、build，skill `28/28` 契约/独立 typecheck/build 与 `77/53/238` audit 通过；5191 `#menus` 本地浏览器已确认四控件与点击下拉展开。无新增分类、AWS规则或生产变更；未提交、未发布、未部署。证据见 [Validation](guides/validation.md#顶栏组合下拉与完整互斥示范未部署)、[设计系统](modules/kreeper-first-design-system.md#2026-10-15-顶栏组合下拉与完整互斥示范本地未部署) 与 [项目权威](../agent.md)。
+
+本轮设置页独立导航已归类为“二级侧边栏”：`AdminSettings.vue` 使用一级分区展开/折叠、二级路由项、CSS-only 主干/分支/活动标记与 ResizeObserver 定位，保留搜索、查询参数和键盘无障碍；模板和 scoped CSS 均有分类注释，未使用 SVG。canonical skill 的 navigation/sidebar/semantics、AdminSettings pattern/source-reference、coverage 与契约已同步；项目权威和模块页已记录本地未部署边界。当前工作区的前端回归、类型检查、构建、skill audit/verify-assets及浏览器验收结果仍按各专项验证记录，未将本地改动视为生产或示范部署。
+
+本轮用户确认的回弹开关已同步到青舟全局`n-switch`、canonical `kreeper-first-design-system`表单规范/可复用CSS/源快照/契约，以及示范Controls：轨道40×23px、滑块17×17px、3px内距，500ms回弹曲线，按下缩放0.96，保留Naive状态色/禁用/焦点/reduced-motion。≤768px页面继续原生body滚动并隐藏PageScrollbar，同时html/body不绘制或预留桌面浏览器滚动槽；移动端`!important`覆盖Naive UI弹层滚动锁可能写入的`padding-right`/`scrollbar-gutter`补偿，修复右侧留白占位；侧栏原生滚动合同不变。180项前端测试、typecheck、build，canonical 27项契约、typecheck、build及77源/53 pattern/238哈希审计均通过；390×844/360×800本地预览已重新测量，未部署、未提交、未执行业务写操作；完整证据见[Validation](guides/validation.md#开关与手机滚动槽本地修正未部署)。
+
+本轮本地未部署修正已同步源码、`kreeper第一设计系统` skill、项目权威与本页：玻璃文件夹透明留白/包装层/组背景不再形成命中面，实际后板、前盖和纸页按钮保留点击、悬浮与预览滚轮；公共/控制台顶栏及两处品牌区直接复用玻璃文件夹前盖的渐层与 `blur(22px) saturate(1.5)`。5191 `#folders` 刷新后真实浏览器已确认透明留白不改变开合状态、实际前盖可开合，且顶栏与`.gf-tint`渐层、`.gf-front`模糊材质一致。无新增分类、AWS规则或生产变更；未提交、未发布、未部署。证据见[Validation](guides/validation.md#玻璃文件夹命中边界与顶栏材质未部署)与[项目权威](../agent.md)。
+
 
 DotMatrix source3a91d7748816957587d682baff9697b9cc1968db is now deployed
 asv0.2.106-kreeper-20261014-dotmatrix after successful Release/CI.171 isolated
@@ -18,14 +34,92 @@ hyperlinks and shop folders are excluded; their earlier local records below
 do not describe deployed features. Evidence:[deployment](guides/deployment.md),
 [validation](guides/validation.md),[authority](../agent.md).
 
-DotMatrix release scope is limited to compact20px content/page and16px inline
-waiting symbols, continuous numeric diagonal phases, and initial-page readiness
-before Shift5. Corresponding semantic comments, progressive skill references,
-reusable CSS/code and both5191/5197 showcases are synchronized. Independent
-copy/Dialog, hyperlink and shop-folder work remains uncommitted and is excluded
-from this release. Tests and actual frame/pixel/ordering evidence are recorded
-in[validation](guides/validation.md); production facts are owned by
-[authority](../agent.md) and[deployment](guides/deployment.md).
+Bare text navigation links now share the project-link hover/focus underline
+contract, including explicit semantic markers on the showcase hero links.
+Blue and neutral joined copy controls retain their surfaces with type/enabled
+selector precedence over ordinary button hover/press, 220ms color-only root and
+inner-border transitions, no shadow/transform and static keyboard focus. Source,
+canonical references/CSS/examples/snapshots/patterns and original5191 showcase
+are synchronized. 179 frontend tests and26 skill contracts/typecheck/build pass;
+desktop actual hover/held press/clipboard and390/360px alignment evidence is in
+[validation](guides/validation.md#文字链接与两种复制按钮未部署).
+No new category, AWS rule change, production write or deployment; other work retained.
+
+Copy seam follow-up corrects the previous focus-ring root-cause claim. The input
+state-border atz-index1 painted over the1px overlap until the hover button border
+covered it. Groupisolation:isolate and constant buttonz-index1 now keep the seam
+owned by the button at rest/hover/press. Real screenshot decoded seam pixels,
+both running tabs, heldSpace and390/360px geometry pass; internal keyboard focus
+remains visible. 179 frontend tests and26 isolated skill contracts/typecheck/build
+pass. Source classification, forms, reusable CSS, exact snapshots and running5191
+are synchronized; no new category/AWS change or deployment.
+
+Markdown links now use the shared project-link state contract: no underline at
+rest, deep blue and underline on hover/focus-visible, restored on leave/blur.
+Semantic CSS comments, canonical content/interaction references, reusable CSS,
+source snapshot and running5191 showcase are synchronized. 179 frontend tests
+and26 isolated skill contracts/typecheck/build pass; real desktop hover-only,
+leave and keyboard-only evidence is in[validation](guides/validation.md#markdown链接下划线未部署).
+No new category, AWS rule change or production deployment; other local work retained.
+
+
+Current local glass-folder interaction correction remains uncommitted and undeployed:
+`UserShop.vue` now uses one `activeFolder` so plan/traffic switches are immediate;
+`GlassFolder.vue` no longer renders a second expanded list; the original full
+`.shop-card` cards render below the active folder and preview selection scrolls to
+those cards. Wheel over a folder with more than four items prevents page scrolling
+and advances a four-item preview window. 179 frontend tests, typecheck and Vite
+build pass; 5198 GET-only QA confirms 5 plan cards, 2 traffic cards and direct
+switching. Canonical skill and 5191 showcase are synchronized. No new category,
+AWS rule change, production write or deployment.
+
+User-confirmed glass folders now group real subscription/traffic products in the
+local shop; original glass/hinge/fan/art motion is retained, with a full accessible
+list beyond the four-sheet preview and original details/confirmation/purchase
+contracts. Canonical progressive specification, reusable Vue/art code, semantic
+comments, source/pattern coverage and original5191 showcase are synchronized.
+179 frontend tests/typecheck/build and26 isolated skill contracts/typecheck/build,
+77-source/53-pattern/238-hash audit passed. Desktop and390/360 browser, keyboard,
+empty/stock/affordability, cancel-only confirmation and pixel evidence are in
+[validation](guides/validation.md#玻璃文件夹商城未部署). No production write,
+deployment or dependency change; previous copy/Dialog and DotMatrix work retained.
+New category was explicitly confirmed; source license/author URL remain absent.
+
+Working-tree copy/Dialog changes are not deployed: joined readonly inputs and
+copy controls share32px/44px geometry; hover/focus/pressed colors agree, with
+fixed borders, no shadow/movement and a static keyboard outline. Default ghost
+cancel actions are scoped to the Dialog action area and use neutral arc states.
+Semantic comments, canonical progressive references/reusable CSS/examples and
+source snapshots/patterns are synced. 165 frontend tests/typecheck/build and23
+skill contracts/typecheck/build passed; actual desktop/390/360px browser evidence
+and production scrollbar3.5px/3.5px centering are in[validation](guides/validation.md).
+No new type, AWS rule change or production business write; runtime remainsv0.2.105.
+The copy/Dialog validation above remains scoped to its original build. Current
+loading-animation work is independently synchronized and validated below; the
+copy/Dialog changes were preserved, not reverted or reimplemented.
+
+Current DotMatrix work replaces the canceled special-card registration. Default
+waiting symbols are compact3x3 dots:20px content/page and16px inline controls.
+Initial API requests, JSON parsing, Vue updates and media readiness settle before
+the page indicator exits; only then does Shift5 start. Token isolation cancels old
+navigation; reduced motion waits for data without route movement. Canonical
+references/reusable components/CSS/state utils/patterns and source snapshots are
+synced. Source/API dependencies and production remain otherwise unchanged.
+173 frontend tests, typecheck/Vite and24 skill contracts/typecheck/build passed;
+desktop/390/360px slow-response, error, rapid navigation and showcase checks are in
+[validation](guides/validation.md#dotmatrix加载与切屏顺序未部署).
+No production deployment or new React/Motion/Tailwind dependency was made.
+The original running showcase on5191 is now synchronized too: its missing
+loading stylesheet caused the old28px circle despite the updated canonical
+skill/5197 preview. Actual desktop/390/360px and reduced-motion replay checks
+pass at the original URL; other copy/Dialog CSS was preserved.
+Smoothness follow-up: the old shadow keyframes produced only4 distinct states
+despite16.7ms frame intervals. Five registered numeric diagonal phases now
+interpolate continuously before calculating opacity/radius; source, skill and
+both running showcases are synced. Real desktop/390/360px intermediate-value
+and decoded-pixel checks pass, with loading/transition order unchanged. Current
+174 frontend tests/typecheck/build,24 skill contracts/typecheck/build and
+74-source/51-pattern/228-hash audit pass; production remains unchanged.
 
 Mobile sidebar/page scrolling now follows the user-confirmed responsive contract:
 shared portrait menu geometry and 64px glass brand/footer, hidden native menu

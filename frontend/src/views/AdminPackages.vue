@@ -3,7 +3,7 @@
     <div class="page-head">
       <div><h2 class="page-title">套餐管理</h2><p class="page-sub">商品规格、时长阶梯、库存、权限与上下架状态</p></div>
       <div class="page-actions">
-        <!-- 弧边警告按钮：保留风险语义、悬浮/聚焦提亮和按下反馈，请求状态由业务控制。 -->
+        <!-- 弧边警告按钮：保留风险语义、悬浮/聚焦提亮，点击保持颜色且不改变位置，请求状态由业务控制。 -->
         <n-button type="warning" :loading="syncing" @click="forceSyncPackages">强制推送</n-button>
         <!-- 强调按钮：页面级主操作统一复用强调按钮合同。 -->
         <n-button type="primary" class="action-button action-button--emphasis" @click="openForm()">创建套餐</n-button>
@@ -58,7 +58,7 @@
           <div class="lc-foot" style="flex-wrap:wrap;">
             <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" class="default-arc-button" @click="openForm(p)">编辑</n-button>
-            <!-- 弧边警告按钮：保留风险语义、悬浮/聚焦提亮和按下反馈，请求状态由业务控制。 -->
+            <!-- 弧边警告按钮：保留风险语义、悬浮/聚焦提亮，点击保持颜色且不改变位置，请求状态由业务控制。 -->
             <n-button v-if="p.enabled !== false" size="tiny" type="warning" @click="handleRetire(p)">下架</n-button>
             <n-button v-else size="tiny" type="success" @click="handleEnable(p.id)">上架</n-button>
             <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
@@ -165,7 +165,7 @@
           </div>
         </n-form-item>
       </n-form>
-      <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
+      <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，点击保持悬浮色且不改变位置；loading仅绑定真实请求。 -->
       <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="handleSave">保存</n-button>
     </n-modal>
   </div>

@@ -68,7 +68,7 @@
                 </td>
                 <td class="time">{{ fmtDateTime(o.created_at) }}</td>
                 <td class="act-col">
-                  <!-- 弧边警告按钮：保留风险语义、悬浮/聚焦提亮和按下反馈，请求状态由业务控制。 -->
+                  <!-- 弧边警告按钮：保留风险语义、悬浮/聚焦提亮，点击保持颜色且不改变位置，请求状态由业务控制。 -->
                   <n-button v-if="o.status === 'success'" size="tiny" type="warning" @click="openRefund(o.id)">退款</n-button>
                   <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
                   <n-button size="tiny" quaternary class="delete-button" type="error" @click="handleDelete(o)">删除</n-button>
@@ -102,7 +102,7 @@
                 <span class="kv">{{ fmtDateTime(o.created_at) }}</span>
               </div>
               <div class="lc-foot">
-                <!-- 弧边警告按钮：保留风险语义、悬浮/聚焦提亮和按下反馈，请求状态由业务控制。 -->
+                <!-- 弧边警告按钮：保留风险语义、悬浮/聚焦提亮，点击保持颜色且不改变位置，请求状态由业务控制。 -->
                 <n-button v-if="o.status === 'success'" size="tiny" type="warning" @click="openRefund(o.id)">退款</n-button>
                 <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
                 <n-button size="tiny" quaternary class="delete-button" type="error" @click="handleDelete(o)">删除</n-button>

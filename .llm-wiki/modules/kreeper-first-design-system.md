@@ -1,9 +1,10 @@
 ---
 title: kreeper第一设计系统 — QingZhou 集成
-updated: 2026-10-14
+updated: 2026-10-15
 ---
 
 # kreeper第一设计系统 — QingZhou 集成
+
 
 ## 开关与手机滚动槽（已发布集成）
 
@@ -11,25 +12,86 @@ updated: 2026-10-14
 
 ≤768px 页面继续使用原生 body 滚动，隐藏 `PageScrollbar`，不绘制或预留桌面滚动条槽位；`scrollbar-gutter:auto` 与 `padding-right:0` 的移动端强制覆盖用于清除 Naive UI 弹层滚动锁留下的右侧补偿。移动侧栏自己的原生滚动合同不变。该合同已随 `v0.2.107-kreeper-20261014-switch-mobile-scroll` 发布并部署；项目门禁、资源和运行证据见[Validation](../guides/validation.md)与[Deployment](../guides/deployment.md)。
 
+## BranchedMenu 视觉合同复核（本地未部署）
+
+按用户提供的 BranchedMenu 参数重新核对二级侧边栏：一级分区保留 36px 行高并默认只展开第一组（`defaultOpen=0`），二级项使用 40px 缩进；主干、分支弧线和活动延伸线继续使用 CSS，不使用 SVG。折叠分支由 `grid-template-rows: 0fr → 1fr` 配合独立裁剪层实现，收起后不再占用残留高度；活动项维持中号字重，不因选中额外变成粗体。`AdminSettings.vue` 实际设置页、canonical 示范页、pattern、源快照和 coverage hash 已同步。本项只改本地源码与规范，未提交、未发布、未部署。
+
+## 玻璃文件夹展开状态修正（本地未部署）
+
+`GlassFolder.vue` 的 hover/focus-within 状态现在只在闭合对象上生效。此前 `.gf-root:has(.gf-interaction:hover)` 的选择器 specificity 高于 `.gf-root[data-open]`，鼠标停留在已点击前盖时会覆盖展开参数，纸页只到 hover 位移而未正常弹出；改为 `.gf-root:not([data-open]):has(...)` 后，展开保持完整翻盖与纸页扇形。该修正仍归“玻璃文件夹卡片”，源码、canonical skill 组件/快照/pattern/契约与 5191 `#folders` 已同步，未提交、未发布、未部署。验证见 [Validation](../guides/validation.md#玻璃文件夹展开状态修正本地未部署)。
+
+## 2026-10-15 下拉点击反馈与二级侧边栏可见性复核（本地未部署）
+
+全局按钮与下拉触发器点击取消位置下移和水波扩散；真实 loading、颜色语义、键盘焦点不受影响。点击下拉的分割线固定为32px并贯穿按钮内容高度，箭头有固定占位，打开只旋转方向，不引起文字或按钮移位；悬浮顶栏入口仅追加箭头。该实现沿用“普通按钮 / 下拉选择菜单 / 悬浮下拉菜单”分类，无新增样式类型。
+
+二级侧边栏不是示范页才有的孤立展示：`frontend/src/views/AdminSettings.vue` 的实际系统设置页已经包含独立 CSS-only 分支导航。示范页 `#navigation` 也展示同一模式；原先看到的 `5197` 旧进程未重载示范资产，现已重启同步，`5191` 与 `5197` 均可见示范。真实 QingZhou `5173` 未登录会先跳转认证页，生产站点尚未部署本地改动，因此线上旧页面看不到本轮设置页改动。未使用 SVG，保留无障碍和键盘合同。
+
+本轮源码、canonical CSS/示范/源快照/契约与本地示范进程同步；未提交、未发布、未部署。验证见 [Validation](../guides/validation.md#下拉点击反馈与二级侧边栏可见性复核未部署)。
+
+## 2026-10-15 顶栏组合下拉与完整互斥示范（本地未部署）
+
+示范页 `#menus` 的“完整下拉交互”现在只保留四个互斥控件：点击下拉、弹出选择、Popover、Tooltip。四者共享 `overlayOpen` 单一状态，打开一个时立即关闭其他浮层；移除独立重复的“顶栏同款互斥菜单”展示，避免把同一模式展示两次。Popover/Tooltip 使用 `show-arrow=false`，共享 CSS 仅作兜底隐藏 Naive UI 下方小圆形/箭头，不改变需要箭头的其他浮层合同。
+
+点击下拉沿用用户指定的 Try Claude 顶栏组合几何：文字区右侧保留 16px 分割竖线和 7px 描边向下箭头，打开时箭头旋转 180°；公共顶栏与控制台顶栏的悬浮下拉入口只追加旋转箭头，不追加分割线，原有按钮尺寸、颜色、面板和命中桥不变。该参照只采用“文字区 + 分割线 + 箭头”的几何关系与旋转行为，不引入 Anthropic token、字体、组件库或独立设计系统。
+
+本次继续沿用既有“下拉选择菜单 / 悬浮下拉菜单 / 浮层和反馈 / 互斥菜单状态”分类，模板和 CSS 责任边界均有青舟同款分类注释，未出现需要拟定的新样式类型。源码、canonical skill 的 `topbar`/`overlays`/`showcase`/来源说明、复用组件、源快照、契约和原 5191 示范已同步；本项仅本地源码与示范，未提交、未发布、未部署。验证见 [Validation](../guides/validation.md#顶栏组合下拉与完整互斥示范未部署)。
+
+## 系统设置二级侧边栏（未部署）
+
+`AdminSettings.vue` 的设置分区导航是独立的“二级侧边栏”，不是全局主侧栏的 264px/72px rail。宽屏保持 210px 导航列和 22px 内容间距；一级分区可展开/折叠，二级项继续使用原 `section` 查询参数和页面滚动定位。路由直达会自动打开所属分区，搜索结果在同一导航轨道内临时替换分支树，清空后恢复。
+
+分支主干、子树竖线、水平分支和活动标记全部由 CSS 绘制，明确不使用 SVG；活动标记用 ResizeObserver 跟随一级按钮，展开采用 `grid-template-rows` 过渡。模板与 scoped CSS 均标注“二级侧边栏”，二级项有 `aria-current`，一级按钮有 `aria-expanded`，折叠项 `tabindex=-1`。<=900px 为页面内纵向导航滚动区，<=640px 不产生横向溢出；reduced-motion 时关闭相关过渡。
+
+规范入口同步至 canonical skill 的 `references/navigation.md`、`references/sidebar.md`、`references/semantics.md` 和 `assets/patterns/AdminSettings.md`（skill 根目录：`/Users/hinaw/Library/Mobile Documents/com~apple~CloudDocs/obsidian vault/knowledge vault/ai/agent-skills/custom/kreeper-first-design-system`）；本项仅本地源码和规范，未提交、未发布、未部署。
+
+
 ## DotMatrix发布范围
 
 加载组件、CSS连续相位、API/router/Shift5就绪门控及对应测试已随v0.2.106发布，源码3a91d7748816957587d682baff9697b9cc1968db。只发布加载相关改动，不包含复制/Dialog、文字链接或玻璃文件夹等并行未提交功能；skill与本地示范可展示这些工作区增量，不代表生产全已部署。当前运行证据见[Deployment](../guides/deployment.md)，生产逐帧及加载/切屏顺序验收见[Validation](../guides/validation.md)。
 
-## 默认加载与页面切屏
+## 文字链接与复制状态覆盖
 
-默认等待符号使用小型3×3 DotMatrix，内容/页面20px、按钮/输入/选择器16px，继承当前颜色。`DotMatrixLoader.vue`与共享`styles/loading.css`替换Naive BaseLoading圆圈，保留占位/禁用/请求语义；标准刷新SVG及真实数值进度圈保持原合同。模板/CSS责任边界标记“加载反馈”。
+普通文字导航链接与Markdown、`.project-link`共用“项目超链接”合同：常态Apple蓝/无下划线，hover与focus-visible深蓝/下划线，键盘保留2px outline。通用`a`规则补齐下划线与键盘状态，示范顶部公共顶栏/登录页面入口显式标记`project-link`和责任注释；按钮、菜单等链接容器仍按自身专项规范。
 
-五条对角线通过CSS `@property <number>`连续相位计算透明度与半径，保持来源(x+y)/4延迟和两个半周期ease-in-out；不用曾发生四档跳变的整组阴影关键帧。兼容边界、复用代码与来源见[加载规范](</Users/hinaw/Library/Mobile Documents/com~apple~CloudDocs/obsidian vault/knowledge vault/ai/agent-skills/custom/kreeper-first-design-system/references/loading.md>)。React/Motion/Tailwind不作为依赖，减弱动态效果只保留低频透明度。
+两种复制栏保留蓝色与中性表面，几何及交互共用“复制栏”合同。专项选择器包含实际Naive按钮类型和enabled状态，覆盖普通按钮hover/focus/pressed优先级；根及内部边线仅220ms颜色过渡，固定1px边线、零shadow/transform。中性示范按钮不再混用`action-button`。源码、canonical content/forms/复用CSS、Controls/Gallery、源快照/pattern和原5191运行副本同步。没有新分类、AWS规则变更或部署；证据见[Validation](../guides/validation.md#文字链接与两种复制按钮未部署)。
 
-`utils/page-loading.ts`按导航token追踪`api/index.ts`完整fetch/JSON及原45秒截止时间。成功/失败、Vue更新、页面busy和字体/媒体就绪后撤掉加载符号一帧，再播放Shift5；快速导航隔离旧请求/动画，局部刷新不重播路由加载，减少运动仍等待数据。用户直接授权规范更新，无待确认类型或AWS来源变更。工作区与skill已同步，发布运行事实见[Deployment](../guides/deployment.md)，逐帧/像素与路由顺序证据见[Validation](../guides/validation.md)。
+接缝绘制层必须固定：Naive输入state-border的z-index1会越过-1px重叠接缝，常态盖住蓝底；按钮hover状态边线再盖住输入灰线，DOM不变仍出现向左扩张。复制栏组isolation:isolate、按钮所有状态z-index1，让整个按钮始终位于输入边线之前。键盘内部2px outline/offset -3px（primary白、中性accent）保留，但不是此次悬浮接缝缺陷的根因。分类注释、forms、源码/skill契约、快照与原5191同步；验收同时检查截图接缝和矩形，沿用“复制栏”，没有新类型或部署。
 
-## 当前修正
+## Markdown链接下划线
 
-手机侧栏与竖屏共用菜单/品牌/footer样式：品牌固定64px、共享顶栏玻璃/底线和状态，菜单仍32px/13px正文/16px SVG/8px角及独立层级线；外包装直角。手机nav左右各16px、scrollbar-gutter:auto、隐藏平台滚动条，Drawer包装overflow:hidden，只有菜单原生纵向滚动。≤768px页面自绘轨道隐藏、body右内距0，恢复平台原生指示器；桌面轨道与折叠居中保持。源码分类、skill sidebar/topbar/scrollbars/responsive、复用代码和示范同步，无新类型，AWS规则不变。源码62d2676已随v0.2.105发布部署；验证及连续resize风险见[Validation](../guides/validation.md)。
+Markdown正文沿用“项目超链接”合同：`global.css`中`.md a`常态Apple蓝且无下划线，hover/focus-visible显式设置深蓝和underline、offset3px，键盘保持2px焦点框。取消此前Markdown常态underline的局部例外，不改字体、布局或导航行为。CSS责任分类注释、canonical content/interactions规范、复用CSS、来源快照与原5191示范同步，无新增类型或AWS规则变动。此项未发布部署，真实状态与回归证据见[Validation](../guides/validation.md#markdown链接下划线未部署)。
+
+## 玻璃文件夹商城
+
+`UserShop.vue`以真实商品type分成订阅计划/流量包，使用`GlassFolder.vue`、`FolderArtCanvas.vue`和`utils/folder-art.ts`。对象保留用户附件轮廓/玻璃/翻盖/扇形与完整动效，增加114px展开留白、容器缩放和键盘/外部关闭边界。每个文件夹最多显示四页预览；文件夹本体不再渲染第二套小菜单，打开后由调用方直接展示全部原版商品卡片。
+
+商城使用单一`activeFolder`互斥状态：点击另一个文件夹立即切换，不需要先收起再点一次；文件夹区域超过四件商品时，wheel阻止页面滚动并按方向切换预览窗口，预览选择只滚动定位下方对应的原版卡片。原卡片继续保留规格、时长价格、库存/积分、排队说明、二次确认和幂等购买，无新增业务API。
+
+本轮进一步收窄命中面：对象占位的114px顶部展开留白、`.gf-root`/`.gf-interaction`透明包装以及文件夹组背景空白均不形成交互区域；悬浮、点击和wheel只从实际后板、前盖轮廓或展开纸页按钮承接。代码与skill合同均保留透明包装的`pointer-events:none`及实际子面恢复命中，避免点击组件背景误开合或滚轮误切页。
+
+新分类“玻璃文件夹卡片”已获用户确认，模板/CSS责任边界与内部分开的数字/展示卡片注释同步。完整skill按需入口见[专项](</Users/hinaw/Library/Mobile Documents/com~apple~CloudDocs/obsidian vault/knowledge vault/ai/agent-skills/custom/kreeper-first-design-system/references/glass-folder.md>)：提供无API/store依赖的三文件复用单元、滚轮预览和互斥接入合同，默认完整动画，仅系统减少动态效果静态；明暗对象材质不改变模块深度或AWS/Apple业务颜色合同。来源是未附可核实URL/许可证的用户附件，保留SHA与分发授权边界。
+
+源码、canonical规范/快照/pattern和原5191示范同步；本项尚未提交发布部署，运行及预览事实由[项目权威](../../agent.md)维护，浏览器/测试边界见[Validation](../guides/validation.md#玻璃文件夹商城未部署)。
+
+## 复制栏与既有修正
+
+相连复制栏在`global.css`统一input的`--n-height`及按钮height/min-height：桌面32px、触摸44px，外端18px、接缝直角、输入min-width0及按钮不收缩。primary/中性复制按钮悬浮、聚焦及按下同色，固定1px边线、根及内层无shadow/位移，220ms仅颜色过渡；键盘使用静态outline。`UserSub.vue`订阅/代理凭据和`AdminSettings.vue`命令复制分类统一为“复制栏”，不再误称普通按钮的扩圈/回弹合同。Dialog action区的default ghost取消动作按标准默认弧边覆盖，其他ghost专项及业务行为保持。skill forms/buttons/interactions/overlays、复用CSS、Controls/Dialog示范、来源快照/pattern同步；本次源码未提交部署，当前生产仍为v0.2.105，验证见[Validation](../guides/validation.md)。
+
+PageScrollbar居中按实际内部15px轨道验收：外宽16px包含左侧1px分界线、8px滑块左右各3.5px；已在生产订阅页实测，无须改变几何。规范补充此测量口径，页面/手机滚动合同保持。
+
+手机侧栏与竖屏共用菜单/品牌/footer样式：品牌固定64px、共享顶栏玻璃/底线和状态，菜单仍32px/13px正文/16px SVG/8px角及独立层级线；外包装直角。手机nav左右各16px、scrollbar-gutter:auto、隐藏平台滚动条，Drawer包装overflow:hidden，只有菜单原生纵向滚动。≤768px页面自绘轨道、分界线和16px预留空间一同隐藏，body右内距0；页面仍由原生body滚动，不建立桌面浏览器滚动条槽；Naive UI弹层滚动锁写入的`padding-right`与`scrollbar-gutter`补偿由移动端覆盖规则清除，避免轨道消失后仍留白。桌面轨道与折叠居中保持。全局Naive开关轨道40×23px、滑块17×17px、3px内距，滑块沿500ms回弹曲线移动，按下缩放0.96，启用/停用颜色、禁用、焦点和reduced-motion语义保持。源码分类、skill forms/motion/sidebar/topbar/scrollbars/responsive、复用代码和示范同步，无新类型，AWS规则不变；本轮仅本地未部署。此前源码62d2676随v0.2.105发布部署的生产合同不因本地改动改写；验证见[Validation](../guides/validation.md)。
 
 当前结果区与按钮反馈：侧栏“无结果”以正常文档流替换菜单轨道，顶栏继续在原下拉结果面；Markdown正文链接显式hover/focus-visible深蓝。操作按钮隐藏水波层，普通/强调/默认弧边/高亮/警告/删除共用1px鼠标/键盘按压回弹，禁用静止，减弱动态效果位移0；高亮/警告按下与悬浮保持同色。对应模板/CSS和页面分类注释、skill规范/复用代码/快照/pattern与示范同步。无新分类或待确认偏离；已随v0.2.105部署，当前验收见[Validation](../guides/validation.md)。
 
 本轮监控后台与首页复用AvailabilityHeatmap的16列×3行矩阵/立体视图、坐标、状态色、提示和键盘交互；查询保留管理/公开权限边界。后台本机指标和趋势只显示一次，OCI回环资产保留关联资产编辑入口；摘要与管理端热图去重，不停止采集、不删除资产。全部NAlert类型、订单条目和首页摘要SVG无额外边框；帮助状态切换完整测量/跟随/回位，选中卡维持中性选中底色。超链接常态Apple蓝，hover/focus-visible显示下划线offset3px。折叠分组为4px中性圆点；顶栏/侧栏无匹配显示“无结果”；移动侧栏Teleport包装均0圆角，菜单行仍8px。首页价格牌来自手填资产月费，默认零值不显示。分类注释、专项规范、复用代码、示范与快照同步，无新分类或待确认规范偏离。
+
+## 默认加载与页面切屏
+
+用户指定DotMatrix作为默认等待图标，新增“加载反馈”分类；`DotMatrixLoader.vue`与`styles/loading.css`提供小型3×3圆点。Naive BaseLoading共享替换保留原请求/禁用/占位语义，覆盖按钮16px、NSpin/表格20px、选择器/输入16px；标准刷新继续沿用其专项SVG。React文本仅用于DotMatrix视觉参考，不安装React/Motion/Tailwind；参数、源码和来源见 [skill 专项规范](</Users/hinaw/Library/Mobile Documents/com~apple~CloudDocs/obsidian vault/knowledge vault/ai/agent-skills/custom/kreeper-first-design-system/references/loading.md>)。用户取消的特效卡片规范与局部按钮变体已移除。
+
+`utils/page-loading.ts`按导航token收集准备期请求，`api/index.ts`追踪完整fetch/JSON与原45秒截止时间，成功或失败均落定；Vue更新和绘制安静期包含连续请求，目标壳实际NSpin/按钮/aria-busy状态保留重试间隙的加载门控。router只准备scope，目标页隐藏挂载，`shift5.ts`在API和字体/媒体就绪后撤掉加载符号一帧，再离场/揭示。快速导航取消旧动画和门控，旧响应不能提前揭示新页；取消/错误释放等待。后续刷新不重启路由加载；减弱动态效果保留数据等待，跳过切屏。模板/CSS/状态边界已标记“加载反馈 / 组件绘制动画”，复用代码与示范同步，未发布部署。
+
+默认点阵以五条对角线的CSS `@property <number>`连续相位计算透明度与半径，保持用户来源的对角延迟及两个半周期ease-in-out；不使用曾造成四档跳变的整组阴影关键帧。无需新DOM或JS逐帧循环，原尺寸/颜色/切屏顺序保持。验收必须逐帧确认中间值与实际像素变化，不能只检查animationName和截图首尾；当前Chrome实测及浏览器兼容边界见skill loading和[Validation](../guides/validation.md#dotmatrix加载与切屏顺序未部署)。
 
 ## 后台监控范围切换与公开入口
 
@@ -63,7 +125,7 @@ updated: 2026-10-14
 
 套餐管理移除前后箭头，改为展示卡片拖动排序。卡片支持鼠标拖放、触摸指针和方向键，提交完整 ID 顺序，保存失败恢复原顺序；编辑、上架/下架、删除和拖动把手在同一操作轨道内对齐。新增回归覆盖几何 token、生产操作轨道、排序插入/失败回滚与无操作边界。
 
-控制台桌面左侧品牌区与右侧 layout-header 现在共享顶栏背景透明度、saturate(180%) blur(20px)、底部分界线和滚动/菜单打开状态；品牌区保持64px高度，折叠侧栏的SVG仍按72px内容盒中心线居中。完整 skill、青舟源码快照、页面 pattern、示范 Controls 和示范 CSS 已同步；没有新增分类，也没有未确认的规范偏离。
+控制台桌面左侧品牌区与右侧 layout-header 现在直接复用玻璃文件夹前盖的顶栏材质：`linear-gradient(180deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,.5) 42%, rgba(252,252,252,.93) 100%)`、`blur(22px) saturate(1.5)`、底部分界线和滚动/菜单打开状态；公共顶栏与手机 Drawer 品牌区同样遵守这套材质，品牌区保持64px高度，折叠侧栏的SVG仍按72px内容盒中心线居中。完整 skill、青舟源码快照、页面 pattern、示范和CSS已同步；没有新增分类，也没有未确认的规范偏离。
 
 ## 权威与文档分工
 
@@ -84,7 +146,7 @@ Vue 3 + Naive UI + Ionicons + ECharts。实际视觉入口仍是 `frontend/src/s
 
 - 背景层级按模块嵌套深度：页面第 0 层白底、直接模块一级 #fafafa、一级内部子模块二级白底；透明布局包装不另计模块。#f0f0f0 仅为交互态/轨道，专项玻璃、浮层、标签另有合同。更深层级未定义时须提醒确认；现有源码例外见 skill surfaces。
 - 侧栏展开 16.5rem（默认 264px）、折叠 72px；折叠时单列网格覆盖全局三列规则、原生滚动槽stable both-edges、40px菜单面居中，SVG与品牌/底部按钮共用内容盒中心线。移动抽屉 300px；行 32px、8px 圆角。二级/三级树的 16px 独立留白轨道与 left:8px 层级线不能进入选中底色。桌面 `DashboardLayout.vue` 使用受控 `expanded-keys`；收起清空全部子树展开 key 和隐藏筛选，立即隐藏子容器，只保留各静态分组内最外层可操作入口的 SVG。静态分组标题仍无 SVG；重新展开不恢复旧子树，点击折叠分组 SVG 先展开侧栏再打开该组。移动 Drawer 独立使用完整默认展开导航，选择页面时关闭抽屉。内部菜单继续使用原生滚动与 stable gutter。
-- 顶栏 64px、宽度属于 containing block，不用 100vw。桌面 sidebar-brand 的高度/底边线与主顶栏贯通；移动 Drawer 品牌无桌面底线。共享玻璃 rgba(250,250,252,.8) + saturate(180%) blur(20px)，scrolled/菜单打开按实际特异性处理。
+- 顶栏 64px、宽度属于 containing block，不用 100vw。公共顶栏、控制台 layout-header、桌面 sidebar-brand 与移动 Drawer sidebar-brand 共享玻璃文件夹前盖材质：渐层 `rgba(255,255,255,.16) → rgba(255,255,255,.5) → rgba(252,252,252,.93)`、`blur(22px) saturate(1.5)`、底部 `1px rgba(0,0,0,.12)` 分界线；滚动/菜单打开仍保持同一材质，不切回旧的 `.8/.92` 纯色 scrim。顶栏按钮保留独立透明命中面，菜单面板独立不透明。
 - 顶栏互斥菜单：trigger12px角、面板16px、选项8px；8px透明命中桥；400ms渐显/200ms展开，离开立即关闭。常规Naive dropdown/select面板16px，普通Popover18px，不能互相误覆盖。
 - 页面原生 body 滚动 + PageScrollbar 16px轨道/居中8px滑块；短页保留边界线/槽位，body右内距只占一次。表格、二级tabs等横向滚动必须留在局部容器。
 - 普通分类/连续系列颜色使用AWS；状态牌、状态数值、热力图、资源环/进度使用Apple语义色。身份色稳定按用户名派生；管理员身份有警告实底例外。信息牌不代表查询成功，正常余额展示卡不得变绿。
@@ -118,15 +180,15 @@ RefreshButton请求期间aria-busy/禁用，SVG悬浮与loading旋转分离；�
 
 ## 分类与更新路径
 
-源码中文标记（展示卡片/信息模块、状态牌/信息牌/身份牌、各按钮、填写框/选择器/复制栏、路由切换/二级切换、开关/提示/超链接等）描述当前语义，不是独立组件API。完整分类表及对应规范在 skill 的 references/semantics.md。新增/修改/复用UI必须在模板与CSS/渲染责任边界写同款分类注释，不能只写在md；顶栏、页面滚动条按已确认专项区域标记，不强塞信息模块。未知类型须主动提醒用户，拟定名称和几何/状态/响应式边界并等待确认；未确认不能正式登记或宣称验收完成。16个复用组件已有责任标记；桌面折叠变更在青舟模板、展开处理器与子容器CSS补齐“侧边栏 / 菜单归类级别”注释。源码快照与pattern同步实际源码；“删除按钮”由用户明确指定登记，默认弧边功能合并沿用已有分类，无待确认类型。
+源码中文标记（展示卡片/信息模块、状态牌/信息牌/身份牌、各按钮、填写框/选择器/复制栏、路由切换/二级切换、开关/提示/超链接/加载反馈等）描述当前语义，不是独立组件API。完整分类表及对应规范在 skill 的 references/semantics.md。新增/修改/复用UI必须在模板与CSS/渲染责任边界写同款分类注释，不能只写在md；顶栏、页面滚动条按已确认专项区域标记，不强塞信息模块。未知类型须主动提醒用户，拟定名称和几何/状态/响应式边界并等待确认；未确认不能正式登记或宣称验收完成。17个复用组件已有责任标记；桌面折叠变更在青舟模板、展开处理器与子容器CSS补齐“侧边栏 / 菜单归类级别”注释。源码快照与pattern同步实际源码；“删除按钮”由用户明确指定登记，默认弧边功能合并沿用已有分类；用户直接指定默认DotMatrix及更新加载/切屏先后，无待确认类型。
 
 变更全局样式先核对 global.css 与 App.vue；变更专项组件读其专页和当前源码。发生漂移时同步规范、逐文件pattern、source-reference与coverage；不要只更新哈希。使用设计系统生成的项目，后续拟改实现违背已有规范时，必须主动提醒用户是否同步修改对应规范；已明确授权的规范更新无需重复询问，不能静默登记例外。
 
 ## 完整示范与验证边界
 
-完整示范入口 `assets/examples/App.vue` / `Gallery.vue`，按 25 个规范主题映射 15 个展示区域，并提供 50 个组件/页面源合同目录。控制台全组件、公共顶栏、完整认证为三个实际场景；原业务页面不接真实 API。进度单圈/双圈是既有类型，补齐状态/注释与1100ms共享绘制合同，没有重复创建类别。
+完整示范入口 `assets/examples/App.vue` / `Gallery.vue`，按26个规范主题映射15个展示区域，并提供51个组件/页面源合同目录。控制台全组件、公共顶栏、完整认证为三个实际场景；原业务页面不接真实API。默认DotMatrix在反馈区与页面准备→切屏→资源绘制的可操作示范中复用；进度单圈/双圈是既有类型，不重复创建类别。
 
-skill的`scripts/preview-showcase.mjs`可生成独立预览；`scripts/audit.mjs`检查源覆盖/哈希/链接/alias，`scripts/verify-assets.mjs`在临时项目做typecheck、21项契约与build。实际验收和当前限制见[Validation](../guides/validation.md)与[同步证据](../_sync-state.md)。源码构建不替代真实浏览器或生产验收；当前按钮/手机合同已随v0.2.105部署，运行证据见项目权威文档。
+skill的`scripts/preview-showcase.mjs`可生成独立预览；`scripts/audit.mjs`检查源覆盖/哈希/链接/alias，`scripts/verify-assets.mjs`在临时项目做typecheck、24项契约与build。实际验收和当前限制见[Validation](../guides/validation.md)与[同步证据](../_sync-state.md)。源码构建不替代真实浏览器或生产验收；按钮/手机合同已随v0.2.105部署，DotMatrix/加载门控与复制栏增量未部署，运行证据见项目权威文档。
 
 青舟派生代码 CC BY-NC-SA 4.0，字体 OFL；规范来源不改变代码许可。字体文件、实际字重/变量轴和原字节快照属于可复用资产事实，按需见 skill assets/fonts/LICENSES.md；AWS 来源与字体类型定义仍由 typography 专页负责。
 

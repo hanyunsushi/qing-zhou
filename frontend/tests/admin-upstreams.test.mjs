@@ -88,7 +88,7 @@ test('branding, subscription label, and input focus contract match production', 
   assert.match(layout, /\.header-search :deep\(\.n-input\)[\s\S]*?transition: color \.25s var\(--ease-standard\), background-color \.25s var\(--ease-standard\), border-color \.25s var\(--ease-standard\), box-shadow \.25s var\(--ease-standard\) !important;/)
   assert.ok(controlSources.slice(0, -1).every((source) => source.includes('<!-- 填写框 -->')))
   assert.match(controlSources.at(-1), /<!-- 下拉选择菜单：原生配置代理范围使用与顶栏菜单一致的选项悬浮圆角。 -->/)
-  assert.match(controlSources.at(-1), /<!-- 复制栏：订阅地址仅用于查看和复制，不使用填写框的点击焦点高亮或过渡特效。 -->/)
+  assert.match(controlSources.at(-1), /<!-- 复制栏：地址与复制按钮等高相连；按钮悬浮\/按下只变色，无扩圈或位移，键盘焦点独立可见。 -->/)
 })
 
 test('admin overview range switch uses the shared route-switch geometry without changing colors', () => {
@@ -143,7 +143,7 @@ test('sidebar uses the Cloudflare documentation sidebar treatment', () => {
   assert.match(layout, /\.sidebar-surface \{[\s\S]*?--sidebar-bg: var\(--bg\);[\s\S]*?--sidebar-card: var\(--bg\);[\s\S]*?--sidebar-hover: #f0f0f0;[\s\S]*?--sidebar-content-gap: 20px;[\s\S]*?background: var\(--sidebar-bg\);[\s\S]*?display: flex; flex-direction: column;/)
   assert.match(layout, /\.mobile-sidebar \{[\s\S]*?width: 100%; height: 100%; min-height: 100%;/)
   assert.match(layout, /\.app-sider \{[\s\S]*?width: 16\.5rem;[\s\S]*?border-right: 1px solid var\(--sidebar-border\);/)
-  assert.match(layout, /\.layout-header \{[\s\S]*?background: var\(--topbar-background\);[\s\S]*?border-bottom: 1px solid var\(--topbar-divider\);[\s\S]*?backdrop-filter: var\(--topbar-backdrop-filter\);/)
+  assert.match(layout, /\.layout-header \{[\s\S]*?background: var\(--topbar-surface\);[\s\S]*?border-bottom: 1px solid var\(--topbar-divider\);[\s\S]*?backdrop-filter: var\(--topbar-backdrop-filter\);/)
   assert.match(layout, /\.sidebar-filter input \{[\s\S]*?border-radius: 8px;[\s\S]*?background: var\(--sidebar-card\);/)
   assert.match(layout, /筛选框不显示浏览器原生的搜索清除叉号[\s\S]*?\.sidebar-filter input\[type="search"\]\:\:-webkit-search-cancel-button,[\s\S]*?display: none;/)
   assert.match(layout, /\.sidebar-filter \{[\s\S]*?margin: 20px 0;/)

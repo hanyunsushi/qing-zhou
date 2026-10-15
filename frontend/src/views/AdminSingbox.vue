@@ -42,7 +42,7 @@
           <span class="spacer" />
           <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="small" @click="toggleAllMachines">{{ allExpanded ? '全部折叠' : '全部展开' }}</n-button>
-          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
+          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，点击保持悬浮色且不改变位置；loading仅绑定真实请求。 -->
           <n-button size="small" type="primary" class="highlight-arc-button" @click="openTls()">添加 TLS</n-button>
         </div>
         <n-spin :show="loading">
@@ -59,7 +59,7 @@
               <template #header-extra>
                 <div class="machine-extra" @click.stop>
                   <n-tag size="tiny" :type="g.total ? 'success' : 'default'" :bordered="false">{{ g.total }} 项</n-tag>
-                  <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
+                  <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，点击保持悬浮色且不改变位置；loading仅绑定真实请求。 -->
                   <n-button size="tiny" type="primary" class="highlight-arc-button" @click="openTlsFor(g.machine.id)">＋ TLS</n-button>
                 </div>
               </template>
@@ -113,7 +113,7 @@
           <n-button size="tiny" quaternary class="delete-button" v-if="checkedIds.size" type="error" @click="batchDelete">批量删除</n-button>
           <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="small" @click="toggleAllMachines">{{ allExpanded ? '全部折叠' : '全部展开' }}</n-button>
-          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
+          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，点击保持悬浮色且不改变位置；loading仅绑定真实请求。 -->
           <n-button size="small" type="primary" class="highlight-arc-button" @click="openInbound()">添加入站</n-button>
         </div>
         <n-spin :show="loading">
@@ -133,7 +133,7 @@
                   <n-tag size="tiny" :type="g.enabledCount ? 'success' : 'default'" :bordered="false">启用 {{ g.enabledCount }} / {{ g.total }}</n-tag>
                   <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
                   <n-button size="tiny" @click="previewMachine(g.machine.id)">预览</n-button>
-                  <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
+                  <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，点击保持悬浮色且不改变位置；loading仅绑定真实请求。 -->
                   <n-button size="tiny" type="primary" class="highlight-arc-button" @click="openInboundFor(g.machine.id)">＋ 入站</n-button>
                 </div>
               </template>
@@ -184,7 +184,7 @@
           <span class="spacer" />
           <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="small" @click="openEgressImport()">粘贴导入</n-button>
-          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
+          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，点击保持悬浮色且不改变位置；loading仅绑定真实请求。 -->
           <n-button size="small" type="primary" class="highlight-arc-button" @click="openEgress()">添加出口</n-button>
         </div>
         <n-spin :show="loading">
@@ -406,7 +406,7 @@
               </div>
             </n-form-item>
             <n-form-item>
-              <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
+              <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，点击保持悬浮色且不改变位置；loading仅绑定真实请求。 -->
               <n-button type="primary" class="highlight-arc-button" @click="genKeys" :loading="genLoading">一键生成 Reality 密钥对</n-button>
             </n-form-item>
             <n-form-item label="私钥"><n-input :value="te.private_key" readonly placeholder="点击上方按钮生成" @click="copy(te.private_key)" style="cursor:pointer;" /></n-form-item>
@@ -453,7 +453,7 @@
                     <n-input v-if="acme.method === 'webroot'" v-model:value="acme.webroot" placeholder="网站根目录，如 /var/www/html（nginx 该域名 root）" />
                     <span v-if="acme.method === 'http-01'" style="font-size:11px;color:var(--text-3);">若本机已用 nginx 占用 80 端口，standalone 会失败——请改用 Cloudflare DNS 或 Webroot。</span>
                     <n-input v-model:value="acme.email" placeholder="账户邮箱（可选，建议填写）" />
-                    <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
+                    <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，点击保持悬浮色且不改变位置；loading仅绑定真实请求。 -->
                     <n-button type="primary" class="highlight-arc-button" :loading="acmeLoading" @click="requestAcme">申请证书（域名取上方 SNI，名称取上方名称）</n-button>
                     <span style="font-size:11px;color:var(--text-3);">申请成功后证书写入本机固定路径，sing-box 以 certificate_path 引用；续期由 acme.sh 的 cron 自动完成。远程服务器暂不支持在线申请。</span>
                   </div>
@@ -471,7 +471,7 @@
             <n-form-item label="允许不安全"><n-switch v-model:value="te.insecure" /></n-form-item>
           </template>
         </n-form>
-        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，点击保持悬浮色且不改变位置；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="saveTls">保存</n-button>
       </n-drawer-content>
     </n-drawer>
@@ -571,7 +571,7 @@
             </n-form-item>
           </template>
         </n-form>
-        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，点击保持悬浮色且不改变位置；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="saveEgress">保存</n-button>
       </n-drawer-content>
     </n-drawer>
@@ -609,7 +609,7 @@
           <div v-if="egImportItems.some((x: any) => x.type_guessed)" class="form-tip" style="margin:6px 0;">
             带 <b>?</b> 的类型是按端口猜的，请对照供应商说明确认。
           </div>
-          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
+          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，点击保持悬浮色且不改变位置；loading仅绑定真实请求。 -->
           <n-button type="primary" class="highlight-arc-button" block :loading="egImporting" style="margin-top:10px;" @click="doEgressImport">
             导入这 {{ egImportItems.length }} 条
           </n-button>
@@ -745,7 +745,7 @@
             </template>
           </template>
         </n-form>
-        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
+        <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，点击保持悬浮色且不改变位置；loading仅绑定真实请求。 -->
         <n-button type="primary" class="highlight-arc-button" block :loading="saving" @click="saveInbound">保存</n-button>
       </n-drawer-content>
     </n-drawer>

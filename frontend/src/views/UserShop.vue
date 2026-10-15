@@ -14,8 +14,16 @@
       <span><b>{{ affordableCount }}</b> 件当前可购买</span>
     </div>
     <n-spin :show="loading">
-    <div class="shop-grid">
-      <div v-for="pkg in packages" :key="pkg.id" class="shop-card" :class="{ dim: !canAfford(pkg) }">
+    <div class="shop-gallery" data-folder-gallery>
+      <!-- 玻璃文件夹卡片：订阅计划/流量包互斥归档；打开后在下方复用原版展示卡片。 -->
+      <div class="shop-folders">
+        <GlassFolder label="订阅计划" :files="planFiles" art="aurora" :seed="3" :open="activeFolder === 'plan'" @update:open="setFolder('plan', $event)" @select="selectPackage" />
+        <GlassFolder label="流量包" :files="trafficFiles" art="ember" :seed="11" tone="dark" :appear-delay="140" :open="activeFolder === 'traffic'" @update:open="setFolder('traffic', $event)" @select="selectPackage" />
+      </div>
+      <!-- 展示卡片：文件夹打开后直接显示真实商品的完整原版卡片，不生成第二套详情卡。 -->
+      <div v-if="activeFolder" class="shop-products">
+        <div class="shop-grid">
+          <div v-for="pkg in activeFolderPackages" :id="`shop-package-${pkg.id}`" :key="pkg.id" class="shop-card" :class="{ dim: !canAfford(pkg) }">
         <div class="sc-head">
           <div class="sc-name">{{ pkg.name }}</div>
           <!-- 区分-信息牌：订阅计划类型使用 Apple 蓝信息语义，不表达成功状态。 -->
@@ -59,7 +67,7 @@
           <div v-if="pkg.stock >= 0" class="sc-stock" :class="{ hot: pkg.stock <= 5 }">
             {{ pkg.stock === 0 ? '已售罄' : `仅剩 ${pkg.stock} 件` }}
           </div>
-          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，按下保持悬浮色并回弹；loading仅绑定真实请求。 -->
+          <!-- 高亮弧边按钮：悬浮及点击后聚焦提亮，点击保持悬浮色且不改变位置；loading仅绑定真实请求。 -->
           <n-button type="primary" block class="sc-buy highlight-arc-button"
             :loading="buying===pkg.id"
             :disabled="!canAfford(pkg) || pkg.stock === 0"
@@ -67,7 +75,13 @@
             {{ pkg.stock === 0 ? '已售罄' : canAfford(pkg) ? '购买' : '积分不足' }}
           </n-button>
         </div>
+          </div>
+        </div>
       </div>
+    </div>
+    <!-- 标准默认弧边按钮：未知类型保留详情入口，不误放入已知分类文件夹。 -->
+    <div v-if="otherPackages.length" class="shop-other">
+      <n-button v-for="pkg in otherPackages" :key="pkg.id" class="default-arc-button" @click="selectPackage(pkg.id)">{{ pkg.name }}</n-button>
     </div>
     <div v-if="!loading && packages.length===0" class="shop-empty">
       <n-empty description="暂无可购买的商品">
@@ -86,8 +100,9 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, nextTick, onMounted } from 'vue'
 import { NButton, NEmpty, NSpin, useMessage, useDialog } from 'naive-ui'
+import GlassFolder, { type GlassFolderFile } from '@/components/GlassFolder.vue'
 import { useAuthStore } from '@/stores/auth'
 import { apiList, apiPost } from '@/api'
 import { fmtTotal, yuan } from '@/utils/format'
@@ -97,6 +112,30 @@ const dialog = useDialog()
 const packages = ref<any[]>([])
 const loading = ref(false)
 const buying = ref<number|null>(null)
+type FolderType = 'plan' | 'traffic'
+const activeFolder = ref<FolderType | null>(null)
+const selectedPackageId = ref<number | null>(null)
+const selectedPackage = computed(() => packages.value.find(pkg => pkg.id === selectedPackageId.value) || null)
+const otherPackages = computed(() => packages.value.filter(pkg => pkg.type !== 'plan' && pkg.type !== 'traffic'))
+const activeFolderPackages = computed(() => activeFolder.value
+  ? packages.value.filter(pkg => pkg.type === activeFolder.value)
+  : [])
+function folderFiles(type: string): GlassFolderFile[] {
+  return packages.value.filter(pkg => pkg.type === type).map(pkg => ({ id: pkg.id, name: pkg.name,
+    meta: pkg.stock === 0 ? '已售罄' : `${priceOf(pkg)} 积分`,
+    value: pkg.stock === 0 ? undefined : priceOf(pkg), unit: '积分' }))
+}
+const planFiles = computed(() => folderFiles('plan')), trafficFiles = computed(() => folderFiles('traffic'))
+function setFolder(type: FolderType, open: boolean) {
+  activeFolder.value = open ? type : activeFolder.value === type ? null : activeFolder.value
+}
+function selectPackage(id: string | number) {
+  selectedPackageId.value = Number(id)
+  nextTick(() => {
+    if (typeof document === 'undefined') return
+    document.getElementById(`shop-package-${Number(id)}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  })
+}
 const planCount = computed(() => packages.value.filter(p => p.type === 'plan').length)
 const trafficCount = computed(() => packages.value.filter(p => p.type === 'traffic').length)
 const affordableCount = computed(() => packages.value.filter(p => canAfford(p) && p.stock !== 0).length)
@@ -185,6 +224,7 @@ function handleBuy(pkg: any) {
   const content = queue
     ? `确定花费 ${opt.price_points} 积分购买${what}？\n同一续期组已有套餐正在使用，本次购买将排队，在当前份用完或到期后自动启用（有效期届时才开始计算）。`
     : `确定花费 ${opt.price_points} 积分购买${what}？\n购买成功后立即生效，有效期从购买成功时开始计算；只有同一续期组已有套餐时才会排队。`
+  // 标准默认弧边按钮 / 弧边警告按钮：取消复用共享Dialog中性弧边，确定保留购买风险语义。
   dialog.warning({ title: '确认购买', content, positiveText: '确定', negativeText: '取消',
     onPositiveClick: async () => {
       buying.value = pkg.id
@@ -229,8 +269,16 @@ onMounted(async () => {
 .empty-guide b { color:var(--text-2); font-size:12px; }
 .empty-guide small { margin-top:2px; color:var(--text-3); font-size:10.5px; line-height:1.5; }
 
+/* 玻璃文件夹卡片：宽屏两列对象，窄屏单列；商品展示区紧随展开对象。 */
+.shop-gallery { min-width: 0; }
+.shop-folders { display: grid; grid-template-columns: repeat(2, minmax(0, 340px)); justify-content: center; align-items: start; gap: 32px 56px; padding: 4px 24px 32px; }
+/* 展示卡片：直接复用商城原有完整商品卡片，不为文件夹另造一套详情表面。 */
+.shop-products { min-width: 0; }
 .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+/* 标准默认弧边按钮：其他类型详情操作组允许自然换行。 */
+.shop-other { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
 
+/* 展示卡片：原商城卡片保留纸面、规格对齐与中性悬浮反馈。 */
 .shop-card {
   display: flex;
   flex-direction: column;
@@ -330,6 +378,9 @@ onMounted(async () => {
   .balance-pill { text-align:left; align-self:flex-start; }
   .shop-empty { margin-top:26px; padding:28px 18px 18px; }
   .empty-guide { grid-template-columns:1fr; }
+}
+@media (max-width: 900px) {
+  .shop-folders { grid-template-columns: minmax(0, 340px); padding-inline: 12px; }
 }
 
 .sc-specs {

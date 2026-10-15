@@ -28,7 +28,7 @@
           在 GitHub 查看发布页 ↗
         </a>
         <span class="spacer" />
-        <!-- 高亮弧边按钮：悬浮/聚焦提亮，按下保持悬浮色并回弹；禁用交互和真实更新loading由业务控制。 -->
+        <!-- 高亮弧边按钮：悬浮/聚焦提亮，点击保持悬浮色且不改变位置；禁用交互和真实更新loading由业务控制。 -->
         <n-button
           v-if="info?.update_available"
           type="primary"

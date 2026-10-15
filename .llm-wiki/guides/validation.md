@@ -1,7 +1,8 @@
 ---
 title: Validation Guide
-updated: 2026-10-14
+updated: 2026-10-15
 ---
+
 
 ## v0.2.107生产发布验收
 
@@ -11,17 +12,108 @@ updated: 2026-10-14
 
 发布前门禁记录：该候选只包含全局 `n-switch` 的参考比例/回弹和移动端页面滚动槽修正。前端 172 项测试、`vue-tsc`、Vite build、Go 全量测试、`go vet ./...` 和 `git diff --check` 已通过；构建保留已知 ECharts 异步 chunk warning。随后已按上方 `v0.2.107` 发布验收部署，不能以本节候选记录替代运行态证据。
 
+## 玻璃文件夹展开状态修正（本地未部署）
+
+根因是 `GlassFolder.vue` 的 hover/focus-within 选择器原本为 `.gf-root:has(...)`，其 specificity 高于 `.gf-root[data-open]`；鼠标停在前盖点击后，闭合 hover 参数覆盖了完整展开参数，纸页只上移到 hover 位置，视觉上像没有正常弹出。现改为仅在 `:not([data-open])` 时应用 hover/focus-within，打开后保持 `-24deg / -96px / 40px / 5deg / 30px` 的展开合同。
+
+5191 `#folders` 刷新后真实浏览器验证：点击“订阅计划”后 `aria-expanded=true`、`data-open=true`，computed `--gf-hinge=-24deg`、`--gf-lift=-96px`、`--gf-spread=40px`、`--gf-fan=5deg`、`--gf-stack=30px`，鼠标仍停留在前盖时不再回落到 hover 值；四张预览纸页的 computed transform 分别采用展开位移。切换“流量包”仍可直接打开，点击空白/关闭与键盘合同保持。未执行生产写操作、未提交、未发布、未部署。
+
+本轮沿用“玻璃文件夹卡片”分类，无新增样式类型；青舟源码、canonical skill 组件/源快照/pattern/契约与项目 Wiki 同步。专项测试、typecheck、Vite build 结果以本轮实际命令输出为准。
+
+## 下拉点击反馈与二级侧边栏可见性复核（未部署）
+
+`node /Users/hinaw/.codex/skills/kreeper-first-design-system/scripts/verify-assets.mjs /Users/hinaw/qing-zhou-fork/frontend --keep` 通过 `28/28` 契约，并完成独立 typecheck/Vite build；构建仅保留既有大 chunk warning。新增/修正断言覆盖示范二级侧边栏分类注释、Dialog ghost 默认弧边按下变量，以及32px贯穿式下拉分割线。
+
+5191 `#menus` 真实 DOM 测得点击下拉按钮宽99px/高32px，分割线宽1px/高32px，打开后按钮宽高不变，箭头仅由45°转225°；按钮被浮层布局向下推移是页面滚动到该示范区的滚动定位，不是按钮自身位移，DOM 几何和文字保持不变。5191 `#navigation` 无障碍树显示“二级侧边栏”、一级 `aria-expanded` 与二级项；5197 旧示范进程已重启并同步同一资产。
+
+源码 `AdminSettings.vue` 已有实际设置页二级侧边栏，使用 CSS 主干/分支/活动标记而非 SVG，并保留搜索、查询参数、键盘焦点和折叠项 tabindex。真实 `5173` QingZhou 应用在未认证访问 `/admin/settings` 时先重定向到 `/login`，因此本轮没有冒充已登录业务页的浏览器验收；生产站点也未部署这些本地改动。沿用“二级侧边栏 / 下拉选择菜单 / 悬浮下拉菜单 / 按钮”分类，无新增类型、AWS规则或生产变更。
+
+## 顶栏组合下拉与完整互斥示范（未部署）
+
+前端 `npm test` 通过 `180/180`，`vue-tsc -b` 通过，Vite 构建通过；保留既有 ECharts `567.24 kB` 大 chunk 非阻断警告。canonical `kreeper-first-design-system` 的 `verify-assets.mjs` 通过 `28/28` 契约、独立 `vue-tsc`、独立 Vite 构建；`audit.mjs` 通过 `77` 源文件、`53` component/page patterns、`238` package hashes，无源码漂移、未覆盖源码、项目 alias 或坏链接。
+
+契约覆盖：示范 `#menus` 只有点击下拉、弹出选择、Popover、Tooltip 四个触发器；`overlayOpen` 保证同一时间只有一个浮层；点击下拉有分割竖线和打开时旋转的箭头；顶栏悬浮入口只有箭头且隐藏分割线；Popover/Tooltip 显式关闭箭头并有 CSS 兜底；独立重复的顶栏同款示范已移除。源码和 canonical skill 的分类注释、topbar/overlays/showcase/source-reference/pattern 已同步。分类沿用“下拉选择菜单 / 悬浮下拉菜单 / 浮层和反馈 / 互斥菜单状态”，未出现需新增类型，不改变 AWS、字体或生产运行态。
+
+5191 本地示范已重启并打开 `http://127.0.0.1:5191/#menus`；浏览器无障碍树确认四个控件存在、点击下拉可展开，且不再出现独立重复的顶栏互斥菜单。未执行生产写操作、未提交、未发布、未部署；本地构建和示范不代表生产已含本轮变更。
+
+
 ## v0.2.106生产发布验收
 
 加载相关tag源码3a91d7748816957587d682baff9697b9cc1968db的Release构建38531536709与CI38531542063均success：171前端测试、类型检查/Vite、Go vet/race及脚本检查通过；隔离源码Go全量通过。此前174工作区测试包括其他未提交改动，不能替代本tag的171测试证据。ARM64资产digest/SHA256SUMS/宿主/运行文件均一致，备份API完整性ok，具体哈希/时间/保护检查见[Deployment](deployment.md)和[项目权威](../../agent.md)。
 
 六个index/Monitor/DashboardLayout公网JS/CSS均200并逐字节匹配隔离tag构建。Playwright/已安装Chrome独立headless生产上下文1167×816、390×844、360×800只延迟真实公开GET响应1600ms，不写生产数据；20px点阵700ms分别42/44/43帧、每帧阴影均不同、中位帧间隔16.7ms，加载期间无切屏遮罩或clip运动，移除后才揭示一台真实本机卡。最终pending清除、无横向溢出/pageerror。390px减弱动态效果保留43帧/41种透明度反馈，等待后无切屏；不是关闭数据门控。截图位于`/tmp/qz-dotmatrix-production-{wait,ready}-{1167,390,360}-no-preference.png`及390-reduce版本。真实iOS/Android硬件和其他浏览器未测；没有认证后台业务写操作。本发布排除复制/Dialog、链接及商城文件夹未提交工作，它们的下方未部署记录保持有效。
 
-## DotMatrix加载候选验收
+## 设置页二级侧边栏（本地未部署）
 
-工作区174项前端测试、类型检查/Vite和24项skill契约/类型检查/独立构建通过；发布范围隔离后171项前端测试、类型检查/Vite及Go全量通过（未包含并行新增测试）。默认DotMatrix相关准备期并行/连续请求、完整响应体、错误终态、重试间隙busy、导航取消/旧token隔离与加载撤掉后才播放Shift5均有回归；45秒请求截止和原错误传播保持。发布只选取加载组件/CSS、API/router/Shift5与对应测试，不包含并行复制/Dialog、链接或商城文件夹改动。
+源码测试覆盖设置导航的分支信息架构、CSS-only 主干/分支/活动标记、`aria-expanded`/`aria-current`、折叠项键盘 `tabindex=-1`、reduced-motion 和无 SVG；canonical skill 的 AdminSettings pattern、源码快照、导航/侧边栏/语义规范和契约同步。前端全量测试、类型检查、构建及 skill 独立审计/资源验证在本轮完成前仍需运行，真实 1167/390/360 浏览器交互验收未完成；因此不能将本地改动视为生产或示范部署。
 
-原5191旧阴影关键帧在16.7ms帧间隔下两秒仅4种画面，已改成五条注册数值相位连续计算。真实Playwright/Chrome独立上下文1167×816、390×844、360×800约2.1秒分别128/127/127帧、114/115/116种中间值，五相位200ms均有.465507值；16px按钮22帧均不同。相隔137ms点阵截图实际像素均变化，20px内容/16px按钮占位、隐藏圆圈包装、无横向溢出及pageerror通过。准备期与切屏遮罩无重叠；减弱动态效果保持1.4秒透明度提示并跳过切屏运动。未把Chrome本机约60Hz解释为所有设备固定60fps，未实测真实手机硬件或其他浏览器；当前生产状态见[Deployment](deployment.md)。
+## 文字链接与两种复制按钮（未部署）
+
+悬浮接缝跟进纠正：两次此前检查确认DOM不变但没有覆盖接缝叠放，曾误把外置焦点框当作用户所述悬浮扩张根因。真实hover=true/focus-visible=false仍复现，Naive输入state-border的z-index1在-1px重叠处盖住按钮背景；悬浮按钮state-border盖回灰线。现组isolation:isolate与按钮所有状态z-index1使整块按钮始终盖住重叠输入边线，键盘内部焦点框保持。
+
+在用户原5191/#folders截图同一复制栏的常态/真实悬浮：DOM左1033/宽46px不变，修正前接缝中部截图像素x306是浅蓝/灰混合、x307是灰蓝，悬浮这两列转为按钮色；修正后常态/悬浮x305均白、x306均按钮蓝色，不再由灰线遮盖/重新显露。截图工具输出JPEG，ffmpeg解码PNG后以中部像素及DOM叠放合并验证，压缩颜色近似值不当成精确CSS颜色。文件`/tmp/copy-actual-{idle,hover}.png`（原JPEG）、`/tmp/copy-stack-{idle,hover}.jpg`及其解码PNG；完整结果`/Users/hinaw/.codex/visualizations/2026/10/10/01a123dc-2f40-7871-855f-a0c71a45c555/copy-stack-fixed.jpg`。
+
+两运行标签实际isolation:isolate/z-index1已生效；真实Space按住active=true、46px、零shadow/transform且内部白焦点。390×844/360×800两组46×32、deltaY0、无横向溢出，叠放不变；恢复视口、关闭临时标签和恢复原空剪贴板。179前端测试、26skill契约/类型检查/构建通过，原chunk警告保留。规范/分类注释/复用CSS/快照与运行示范同步，无新类型、AWS规则改动或部署。以下内部焦点证据仅证明焦点框边界，不再解释悬浮接缝缺陷。
+
+独立新标签页在键盘操作前测得常态/真实鼠标悬浮均x1146、46×32px、hover=true/focus-visible=false、outline none、shadow/transform none；真实键盘聚焦primary白色2px/offset -3px，中性accent2px/offset -3px。实际390×844/360×800两组46×32px、deltaY=0、无横向溢出，焦点框仍内部；视口已恢复、临时标签已关闭。截图`/Users/hinaw/.codex/visualizations/2026/10/10/01a123dc-2f40-7871-855f-a0c71a45c555/copy-inset-hover.png`及`copy-inset-keyboard.png`。179前端测试、26项skill契约/类型检查/Vite再次通过，原大chunk warning保持；规范/分类注释/复用CSS/快照/运行示范同步，无新分类、AWS外部规则变动或部署。
+
+原5191顶部“登录页面”真实鼠标悬浮为深蓝rgb(3,49,96)/underline，独立键盘聚焦hover=false/focus-visible=true同样下划线且2px outline。修正通用文字链接遗漏的hover/focus-visible下划线，不只依赖Markdown专项；示范入口增加项目超链接标记和分类注释。
+
+桌面实测蓝色/中性复制按钮与输入均32px、deltaY=0，hover目标分别accent84%+white与rgb(240,240,240)，根/内层shadow及transform为none、border1px，三种颜色过渡均220ms。最终中性按钮无action-button类，真实Space按住时active=true、背景rgb(240,240,240)、零shadow/transform；蓝色按住状态也保持零shadow/transform，pressed/hover目标颜色由同一CSS变量定义。两种示范复制内容分别为`https://example.com/subscription`、`example --install`，原剪贴板已恢复。
+
+实际390×844/360×800视口中两组输入/按钮均32px、deltaY=0，无根横向溢出，测试后恢复视口。此视口覆盖仍为细指针，不将它声称为真实触摸硬件44px测试；触摸44px合同由已有代码/回归覆盖。截图`/Users/hinaw/.codex/visualizations/2026/10/10/01a123dc-2f40-7871-855f-a0c71a45c555/hero-link-fixed.png`及`copy-links-final.png`。
+
+179前端测试与26项独立skill契约、类型检查/Vite通过，保留ECharts567.24kB及完整示范大chunk warning；没有后端改动或重跑Go。沿用“项目超链接 / 复制栏”，源码/规范/示范/快照已同步，不改AWS外部规则、不新增分类、不提交发布部署。生产事实见[权威](../../agent.md)，实现见[设计系统](../modules/kreeper-first-design-system.md#文字链接与复制状态覆盖)。
+
+## Markdown链接下划线（未部署）
+
+原5191示范实际复现常态underline、hover=false；修正为常态无下划线后，真实鼠标命中确认hover=true/focus-visible=false，颜色rgb(3,49,96)、text-decoration-line=underline。移开并点击非链接区域恢复hover=false/focus-visible=false、rgb(0,122,255)/none；独立键盘聚焦hover=false/focus-visible=true，深蓝/underline及2px outline保持，offset3px。没有点击外链跳转或生产写操作。截图`/Users/hinaw/.codex/visualizations/2026/10/10/01a123dc-2f40-7871-855f-a0c71a45c555/markdown-link-hover.png`；本轮只实测桌面链接状态，不扩大为真实触摸硬件测试。
+
+179前端回归与26项独立skill契约、类型检查/Vite通过，补充断言常态none、hover/focus-visible显式underline及规则顺序。沿用“项目超链接”分类，canonical规范/复用CSS与运行示范同步，保留其他未提交改动；未新增设计类型、改动AWS规范或部署，既有大chunk warning保持。生产发布事实仍属于[权威](../../agent.md)，实现见[设计系统](../modules/kreeper-first-design-system.md#markdown链接下划线)。
+
+## 玻璃文件夹商城（未部署）
+
+本轮修正了用户反馈的交互合同：`activeFolder`替代两个独立开关，点击流量包或订阅计划均直接切换；`GlassFolder`移除展开后的小菜单，文件夹下方直接渲染`UserShop.vue`原有完整`.shop-card`；预览按钮只定位对应原版卡片，不再打开第二套商品Modal。超过四项时，文件夹区域wheel阻止页面滚动并切换最多四页的预览窗口，打开时窗口从第一项开始。
+
+179项前端测试、vue-tsc/Vite通过；前端真实本地GET-only样本`http://127.0.0.1:5198/#/shop`核对订阅计划5张完整原版卡片、流量包2张完整原版卡片，以及点击流量包从订阅计划直接切换。AX树确认不再出现`gf-contents`清单，完整商品卡片保留规格、库存/购买状态；文件夹预览仍最多4张。源码分类注释沿用“玻璃文件夹卡片 / 展示卡片 / 区分-信息牌 / 数字展示 / 高亮弧边按钮”，未出现需新增的样式类型。
+
+canonical skill、源码快照/pattern与原5191`#folders`示范同步。未执行生产写操作、未提交发布部署，生产仍由[项目权威](../../agent.md)记录的运行版本负责；真实触摸硬件与OS reduced-motion本轮仍由代码契约覆盖，不扩大声称。
+
+## 开关与手机滚动槽（本地未部署）
+
+项目与canonical设计系统的全局`n-switch`保持参考组件比例：轨道40×23px、滑块17×17px、3px内距，滑块使用500ms `cubic-bezier(.68, -.55, .265, 1.55)`回弹，按下缩放0.96；启用/停用状态色、禁用、焦点与reduced-motion保留。≤768px隐藏PageScrollbar并交还原生body滚动，同时移除桌面滚动条绘制和右侧16px槽位；针对Naive UI弹层滚动锁可能注入的`padding-right`与`scrollbar-gutter`，移动端以`!important`覆盖为0/auto，避免自绘轨道隐藏后仍残留右侧留白。
+
+前端全量180项测试、typecheck、Vite构建及canonical skill 27项契约、typecheck、build、77源/53 pattern/238哈希审计均通过；390×844与360×800仅作本地浏览器几何和无横向溢出检查，真实移动硬件指示器外观未冒充验证。改动仅本地源码、示范和规范，未提交、未发布、未部署，不改变生产运行态；沿用“切换开关 / 页面滚动条”，未出现需新增的样式类型。
+
+## DotMatrix加载与切屏顺序（未部署）
+
+用户反馈卡顿后直接采样原5191：120次帧间隔的中位数16.7ms、最大16.8ms，但两秒仅4种阴影值，旧currentColor/color-mix阴影关键帧发生离散插值；之前animationName/首尾截图验证不足以证明流畅。改用五条对角线的`@property <number>`独立连续相位，按(x+y)/4延迟，在两个半周期中计算.2→1→.2透明度和.7→1→.7直径。无新DOM/JS逐帧计时器、加载门控或尺寸变化；源码和完整skill样式/规范/契约/快照，以及5191/5197运行示范已同步。
+
+修正后Playwright/Chrome独立上下文在原5191的1167×816、390×844、360×800约2.1秒采样分别128/127/127帧、114/115/116种阴影值，帧间隔中位数16.7ms且最大16.8ms；五条相位在200ms均有.465507中间值，16px按钮22帧均产生不同值。20px内容占位和隐藏圆圈包装保持，手机无横向溢出/pageerror；三尺寸相隔137ms截图解码后均有像素变化（398/458/458色彩通道），文件`/tmp/dotmatrix-smooth-{1167,390,360}-{a,b}.png`和`/tmp/dotmatrix-smooth-feedback-{1167,390,360}.png`。5197同样连续；独立DotMatrix准备示范与切屏无重叠，减弱动态效果仍为1.4秒opacity-only。174项前端测试/类型检查/Vite和24项skill契约/类型检查/构建、74源/51pattern/228哈希审计通过。既有大chunk warning保留，没有生产部署或真实手机硬件/其他浏览器帧率验收，不能把本机Chrome约60Hz采样保证为所有设备固定60fps。
+
+173项前端测试、vue-tsc/Vite、24项skill契约/类型检查/独立构建通过。新增回归覆盖准备期并行/连续请求、响应体完整处理、错误终态、重试间隙页面busy、导航取消和旧token隔离、减弱动态效果及加载消失后才开始Shift5；原请求45秒截止时间/失败传播未变。React/Motion/Tailwind依赖未增加，刷新专项SVG保持；模板/CSS/状态边界分类为用户指定“加载反馈”和既有“组件绘制动画”。AWS外部规则未改，无待确认分类或规范偏离。后端未改，未重跑Go，保留原ECharts/示范大chunk warning。
+
+Browser plugin/skill未提供，本轮使用已安装Playwright和Chrome独立headless上下文，不接触用户生产标签页。GET-only隔离样本在1167×816、390×844、360×800注入1200ms慢响应：目标内容hidden、点阵20px且9点可见、box-shadow随时间变化，点阵仍在时没有Shift5离场/clip动画；加载结束后才启动这些动画，最终gate解除且无横向溢出。注入HTTP500后错误终态正常揭示；两次快速导航不被旧响应提前结束。设置页首次失败后400ms重试空档仍保持loading/hidden，成功后显示，分区query切换最终无残留遮罩。减少运动模式保留等待和1.4秒透明度点阵、目标区域hidden，加载后无切屏运动。
+
+完整示范真实Naive组件验证：按钮16px、NSpin20px、选择器16px，圆圈SVG包装display:none且点阵动画存在；反馈区和900ms准备→Shift5→资源圈重播可操作。框架pageerror为空，预期HTTP500仅为错误场景样本。截图位于`/Users/hinaw/.codex/visualizations/2026/10/14/01a1387c-7582-7c81-9e17-fc2195af7e68/dotmatrix-preview/`（loading-desktop、loading-390、loading-360、ready-desktop、showcase-feedback、naive-controls）；本轮没有真实iOS/Android硬件或生产部署验收。初次只更新独立示范5197，遗漏用户原先使用的5191运行副本。
+
+用户反馈仍为圆圈后，浏览器直接复现5191没有loading.css、NSpin为28px且SVG包装display:block；5197则为20px点阵且包装隐藏，原因是运行副本漏同步而非已证明的浏览器缓存。现已在原5191补同步加载样式、DotMatrixLoader、page-loading/Shift5和对应示范/目录项，保留复制/Dialog及其他共享CSS改动，未重启或替换服务。原地址1167×816、390×844、360×800实测20px九点动画、SVG包装隐藏、无横向溢出与pageerror；900ms准备期加载出现而切屏遮罩不出现，加载结束后才切屏并恢复可操作状态。减弱动态效果为1.4秒dot-matrix-calm，等待后无切屏运动。原示范类型检查及74源/51pattern/228哈希审计通过；截图`/tmp/kreeper-loader-fixed-1167-no-preference.png`、`/tmp/kreeper-loader-fixed-390-no-preference.png`、`/tmp/kreeper-loader-fixed-360-no-preference.png`。此次补同步不代表生产已部署。
+
+专项规范、17个复用组件、74份源码覆盖与51个pattern同步；228包哈希审计通过，Wiki17页无断链/孤立/过期源码引用，权威软链接有效，git diff whitespace检查通过。被用户取消的特效卡片文档/分类/来源/按钮变体登记均移除。并发复制/Dialog改动保留；生产仍为v0.2.105，未提交或发布本轮加载变更。
+
+## 复制栏、Dialog取消与滚动轨道验收（未部署）
+
+165前端测试、vue-tsc/Vite和23项skill资源契约/类型检查/构建通过。回归新增Dialog ghost取消责任边界、等高复制输入/按钮、触摸44px、同色pressed/hover、零位移/阴影和固定键盘outline；旧注释断言同步到“复制栏”专项。既有ECharts及完整示范大chunk警告保留；后端未改，未重跑Go。源码、skill规范/资产/完整快照/pattern与5191示范同步，AWS外部规则未改且未重新获取来源。无新增或待确认视觉类型。
+
+生产订阅页仅测量未执行写操作：1167×816视口中轨道x1151/w16、左分界1px、滑块x1155.5/w8，内部左右净空各3.5px；输入34px/复制按钮32px的缺陷也在修改前复现。滚动几何已正确，未修改PageScrollbar。
+
+本地当前青舟构建配GET-only固定样本验证：确认购买仅打开Dialog并取消，没有执行确定或购买；取消/确定均32px高、18px角，取消透明底/text3/1px中性ring；自动焦点保留，真实Tab后focus-visible为2px中性ring、内层border0。订阅复制栏1167/390/360px两侧height32、y和bottom一致，接缝直角/重合1px；390/360px根scrollWidth分别390/360，手机轨道display:none。复制样本链接成功反馈正常，未使用生产凭据。
+
+隔离真实Naive复制控件按住500ms采样（由测试页面事件记录，而非注入class）：primary鼠标按下/释放背景同为accent84%+white，中性复制同为rgb(240,240,240)；两者transform/root-shadow/state-border-shadow均none、水波display:none、按下/释放过渡均220ms，边线宽度始终1px。真实Enter按住同样保持颜色/无位移；focus-visible静态2px蓝outline、offset2px，未移除键盘提示。完整示范两种复制栏均32px等高，取消样式使用同一共享CSS。截图`copy-dialog-desktop.png`、`copy-sub-mobile-360.png`与`copy-controls-showcase.png`位于本任务可视化目录。触摸44px及reduced-motion是源码合同，不冒称真实手机硬件/粗指针实测；完成后恢复视口、关闭临时QA并保留5191。
+
+本轮验收时审计71源文件/50pattern/221包哈希无漂移、缺失或坏链接；Wiki17页无断链、孤立页或过期源码引用，权威软链接有效，git diff whitespace检查通过。验收构建的360px订阅复制栏仍32px等高，青舟fixture及完整示范浏览器error日志为空。临时只读服务和采样页已关闭/移除，5191示范保留。Codex/Claude Code链接共用canonical skill源，内容更新直接生效；Hermes未配置安装，Desk/外部插件未修改。
+
+结束复核期间另一组加载动画工作进入共享工作区：App/api/router/global.css/shift5及新增DotMatrixLoader/page-loading，未由本轮修改、回退或同步到skill。整仓库audit因此报告这组来源漂移/未覆盖；本轮Dialog/复制CSS责任块仍与canonical资产逐字节一致。上面的165测试/build及浏览器证据对应验收时构建，不代表并发加载工作已经通过全量验收或部署。
 
 ## v0.2.105生产发布验收
 
@@ -35,7 +127,13 @@ updated: 2026-10-14
 
 162前端测试、vue-tsc/Vite和21项skill资源契约/类型检查/build通过。新增合同覆盖768px手机原生页面指示器、隐藏自绘轨道和右内距、无槽位侧栏、共享品牌玻璃及包装无第二滚动区；旧侧栏/品牌测试按用户确认的手机合同更新。后端未改，未重跑Go；既有ECharts与示范大chunk警告保留。
 
-当前青舟构建经本地只读fixture实际验收：390×844页面rail display:none、body padding-right:0、html/body scrollbar-width:auto；手机nav宽300px、左右16px、scrollbar-width:none、WebKit display:none、gutter:auto、offsetWidth=clientWidth。长菜单scrollHeight1265/clientHeight716，真实滚动scrollTop从0到549，品牌y0/height64、footer y780/height64不变；抽屉body及body-content-wrapper overflow:hidden且圆角0。360×800同样无轨道/侧栏槽位和页面横向溢出，抽屉关闭后原生body滚动到800px。桌面浏览器模拟窄屏的可见原生指示器由平台决定，不冒充真实手机硬件验证。截图`output/mobile-sidebar-20261014-390.jpg`、`output/mobile-native-page-20261014-360.jpg`。
+当前青舟构建经本地只读fixture实际验收：390×844页面rail display:none、body padding-right:0、html/body scrollbar-width:none；手机nav宽300px、左右16px、scrollbar-width:none、WebKit display:none、gutter:auto、offsetWidth=clientWidth。长菜单scrollHeight1265/clientHeight716，真实滚动scrollTop从0到549，品牌y0/height64、footer y780/height64不变；抽屉body及body-content-wrapper overflow:hidden且圆角0。360×800同样无轨道/侧栏槽位和页面横向溢出，抽屉关闭后原生body滚动到800px。桌面浏览器模拟窄屏不再显示其15px经典滚动槽；真实iOS/Android滚动指示器外观仍由平台决定，未冒充硬件验证。截图`output/mobile-sidebar-20261014-390.jpg`、`output/mobile-native-page-20261014-360.jpg`。
+
+## 开关与手机滚动槽本地修正（未部署）
+
+源码与`kreeper第一设计系统`已同步全局Naive开关：轨道实测目标40×23px，滑块17×17px，3px内距；滑块位置使用500ms `cubic-bezier(.68, -.55, .265, 1.55)`回弹，按下缩放0.96，保留Naive启用/停用色、禁用、键盘焦点及reduced-motion静止语义。此前5191示范中同款局部类已收敛为系统级合同，实际业务写入和生产部署均未执行。
+
+≤768px仍使用原生body滚动，PageScrollbar隐藏；同时撤销桌面浏览器的html/body滚动条绘制，body右内距为0，内容不再被右侧15/16px经典滚动槽挤窄。390×844和360×800本地预览的`html/body/#app`几何、滚动宽度和页面无横向溢出已测量；真实移动平台指示器未以桌面模拟器结果代替。
 
 820×1180竖屏桌面仍为16px自绘轨道/body内距16；菜单32px高、padding6px12px、8px角、13/20/500，与手机相同。折叠宽72、SVG中心约35.5px、子树0；768px切换手机后rail隐藏/内距0。完整示范390×844同样无轨道及侧栏占宽、64px玻璃品牌和直角抽屉；打开二级图表菜单并实际滚动到89px，独立层级线left8px/width1px保留。截图`output/showcase-mobile-sidebar-20261014-390.jpg`。当前测试使用浏览器尺寸覆盖，不声称真实iOS/Android、触摸指针或OS减弱动态效果已实测。
 
@@ -314,6 +412,12 @@ and `/fonts/inter/Inter-Variable.ttf` returned `200`; and the post-restart
 
 # Validation Guide
 
+## 玻璃文件夹命中边界与顶栏材质（未部署）
+
+本地源码将玻璃文件夹的监听从根组件移到实际对象舞台：114px顶部展开留白、透明包装层和文件夹组背景空白不承接点击/悬浮/wheel；实际后板、前盖和展开纸页按钮仍可操作。`#folders` 真实浏览器核对确认顶部透明留白点击前后 `aria-expanded` 不变，实际前盖点击可打开；在五件商品文件夹实际区域滚轮后，预览窗口从“标准/轻量/专业/长期”切换为“轻量/专业/长期/跨地区”，页面 `scrollY` 保持0。文件夹外滚轮仍由页面处理。同页 computed style 确认顶栏与`.gf-tint`共享相同的渐层背景图，顶栏与`.gf-front`共享`blur(22px) saturate(1.5)`。
+
+公共顶栏、控制台顶栏、桌面品牌区和手机 Drawer 品牌区均使用玻璃文件夹前盖渐层、64px高度和底部中性分界线；滚动/菜单打开状态没有恢复旧纯色 scrim。代码/skill合同覆盖实际命中边界、滚轮窗口和材质变量；本轮未执行生产写操作、提交、发布或部署。前端179项回归、`vue-tsc --noEmit -p tsconfig.json`、Vite build、skill合同/审计结果以本轮终端输出为准，既有ECharts大chunk warning仍为非阻断警告。
+
 ## 2026-09-30 Admin user avatar identity palette (local, not deployed)
 
 Admin user avatars now use a stable six-color Apple identity palette: indigo,
@@ -562,3 +666,9 @@ Vue typecheck, Vite build, `go test ./...` and diff check before release; Action
 [project authority](../../agent.md). The authenticated production page showed the
 3-row layout, “时间分组” axis, no visual explanatory copy, and retained both
 keyboard-accessible balance drag handles.
+
+## BranchedMenu 视觉合同复核（本地未部署）
+
+- `AdminSettings.vue` 与 canonical 示例均按用户代码核对：首组默认展开，其他组收起；一级/二级行高 36px，子项缩进 40px，活动分支使用 CSS 弧线和延伸线，无 SVG。
+- 最新 `5197/#navigation` 浏览器实测：收起“面板与节点”后其分支 `grid-template-rows` 与裁剪层高度均为 `0px`；展开后恢复 `84px`，活动项和主干位置保持稳定。
+- `npm test`：180/180；`npm run typecheck`：通过；`npm run build`：通过（仅保留既有 ECharts 大 chunk warning）。skill `audit.mjs`、`verify-assets.mjs`：通过（77 源文件、53 pattern、238 package hashes；28 项独立合同测试通过）。本地未提交、未发布、未部署。
