@@ -1,6 +1,6 @@
 ---
 title: QingZhou Deployment and Artifact Retention
-updated: 2026-10-15
+updated: 2026-10-16
 ---
 
 ## v0.2.112 secondary-sidebar geometry rollout
@@ -467,6 +467,10 @@ SQLite backup passed `PRAGMA integrity_check`. Local/public health now report
 the host `QZ_UPDATE_REPO` is changed through the protected host-service path.
 
 # QingZhou Deployment and Artifact Retention
+
+## v0.2.113 navigation synchronization rollout
+
+Source `caa239c63a1a9bc28f838703238c22529773fa82` and canonical design system `c1713f58b47999855d4df95491639f753f96da3c` are published in [v0.2.113-kreeper-20261016-navigation-sync](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.113-kreeper-20261016-navigation-sync); release run `38855318042` and CI run `38855314717` succeeded. Production remains the native systemd panel at `/opt/qingzhou/qingzhou`, not Docker. Only `qingzhou.service` was restarted after an online SQLite Backup API snapshot and atomic binary replacement; the running database, node and Tunnel services/configuration were preserved. Runtime version/digest, exact rollback location and service invariants are owned by [project authority](../../agent.md); artifact/public-route/browser acceptance is in [Validation](validation.md#v02113导航同步发布验收).
 
 ## 2026-09-26 Embedded frontend resource release
 

@@ -1,12 +1,14 @@
 # Kreeper QingZhou 定制维护
 
-## v0.2.113 导航同步发布候选（2026-10-16）
+## v0.2.113 导航同步（2026-10-16，已发布部署）
 
-发布范围为原版BranchedMenu二级侧边栏（项目配色、无菜单图标、保留SVG分支线/动画）、下拉箭头原地旋转、顶栏搜索/按钮自适应布局、窄屏头像隐藏箭头及页签高亮线几何。QingZhou、canonical设计系统和5191示范已同步；分类注释不新增类型。前端190/190、canonical28/28、类型检查/构建、80/54/247源覆盖审计与真实11宽度浏览器验证通过。发布与生产状态须由本轮Release资产、运行二进制哈希和health复核后登记，不以候选代码推断。
+QingZhou `caa239c`、canonical设计系统`c1713f5`均已推送main，[Release](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.113-kreeper-20261016-navigation-sync)与CI/Release工作流成功。包含原版SVG分支二级侧边栏、项目配色与无菜单图标、下拉箭头原地旋转、顶栏搜索自适应、窄屏头像隐藏箭头和页签高亮线修复；三处源码/规范/示范及分类注释同步。
 
-## 二级侧边栏配色与菜单图标（2026-10-16，本地未部署）
+2026-10-16 13:31:18 CST只更新宿主面板，Release/安装/运行文件SHA-256均为`3cd7931e79da1af69255ac0653ffcd3a85551d851c380d4fb61d0d5d8e093a0e`。回滚目录`/opt/qingzhou/backups/fork-v0.2.113-kreeper-20261016-navigation-sync-20261016-133118`含旧二进制及完整性ok的SQLite Backup API快照；数据库未覆盖，sing-box/Tunnel未重启。完整部署事实由[项目权威](agent.md)维护，门禁和生产只读验收见[Validation](.llm-wiki/guides/validation.md#v02113导航同步发布验收)。
 
-用户确认：项目配色、标准菜单不显示图标，保留SVG分支线和原动画。实际设置页/组件/设计示范/规范已同步；变更仅限默认颜色与默认图标数据，其他源码、参数和事件保持原版。验证见[Validation](.llm-wiki/guides/validation.md)，业务接入见[集成Wiki](.llm-wiki/modules/kreeper-first-design-system.md)，未提交发布或操作生产。
+## 二级侧边栏配色与菜单图标（2026-10-16，已纳入v0.2.113）
+
+用户确认：项目配色、标准菜单不显示图标，保留SVG分支线和原动画。实际设置页/组件/设计示范/规范已同步；变更仅限默认颜色与默认图标数据，其他源码、参数和事件保持原版。验证见[Validation](.llm-wiki/guides/validation.md)，业务接入见[集成Wiki](.llm-wiki/modules/kreeper-first-design-system.md)，已纳入v0.2.113发布边界。
 
 ## 2026-10-15 BranchedMenu 二级侧边栏最终几何同步（已发布部署）
 

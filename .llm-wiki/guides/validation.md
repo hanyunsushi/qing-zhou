@@ -469,6 +469,14 @@ and `/fonts/inter/Inter-Variable.ttf` returned `200`; and the post-restart
 
 # Validation Guide
 
+## v0.2.113导航同步发布验收
+
+- 发布源码`caa239c63a1a9bc28f838703238c22529773fa82`、设计系统`c1713f58b47999855d4df95491639f753f96da3c`；CI/Release全部成功，前端190/190、canonical28/28、两套类型检查与构建、Go tests/vet、80源/54pattern/247哈希审计通过，保留既有ECharts大chunk警告。
+- ARM64 Release资产、宿主安装文件、`/proc`实际运行文件哈希一致；本机/公网health为v0.2.113-kreeper-20261016-navigation-sync。数据库Backup API快照和当前运行库integrity_check均ok；三服务active/NRestarts0，节点/Tunnel PID及配置哈希不变，8081/8882/18082/19000监听保持，面板本次启动error journal行数0。
+- origin首页SHA-256为`f54f9bac8d1ad088767150c227d06158e74a3bfcaefda285cb461f97122ee312`，与本地构建一致；公网HTML资源引用相同，Cloudflare追加自己的检测脚本，因此不声称公网HTML逐字节相同。公网index、DashboardLayout、AdminSettings共6个JS/CSS资源全部200且与本地构建逐字节一致。
+- 认证生产设置页backup直达、基本设置切换只读验收：原SVG分支5组、菜单按钮内SVG0、活动文字rgb(0,122,255)，桌面搜索与操作列间距16px、无横向溢出。生产管理箭头开合采得6种transform中间值，中心误差<0.001px。394×816下箭头display:none、无菜单图标、无页面横向溢出。未保存表单或触发安装/备份/配置写操作；未冒称真实手机硬件验收。
+- Wiki文件链接、孤立页、authority软链接和diff-check通过；本地`.claude/launch.json`及registry无关变更未纳入提交。资产未签名；既有npm依赖告警未宣称清零。
+
 ## 下拉箭头、顶栏与竖屏页签（2026-10-16）
 
 - 原始复现：7px L形边框旋转45/225度，绘图重心偏移；示范顶栏搜索480px且操作列小于按钮内容；竖屏实际页签41px被40px滚动层裁切，基线bottom7与活动线bottom0不共面。
