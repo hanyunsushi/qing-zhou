@@ -57,10 +57,15 @@ const authRouteNames = new Set(['login', 'register', 'forgot-password'])
 const sameAuthShell = (to: { name?: unknown }, from: { name?: unknown }) =>
   authRouteNames.has(String(from.name)) && authRouteNames.has(String(to.name))
 
-router.beforeEach(async (to) => {
+router.beforeEach(async (to, from) => {
   // 加载反馈 / 组件绘制动画：取消旧切屏，先准备权限、模块和目标页请求。
   resetShift5Transition()
-  loadTokens.set(to, beginPageLoad())
+  // 加载反馈：保留布局时立即在内容区定位；同页设置分区只以右侧主体为加载区域。
+  const settingsSection = from.name === 'admin-settings' && to.name === 'admin-settings' && from.path === to.path
+  const retainedLayout = from.matched.length > 1 && to.matched.length > 1 && from.matched[0] === to.matched[0]
+  const loadingTarget = settingsSection ? document.querySelector<HTMLElement>('.settings-main')
+    : retainedLayout ? document.querySelector<HTMLElement>('.layout-content') : null
+  loadTokens.set(to, beginPageLoad(loadingTarget))
   if (to.name === 'oauth-callback') return
   const auth = useAuthStore()
 

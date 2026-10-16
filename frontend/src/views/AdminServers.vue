@@ -300,6 +300,8 @@ const clearing = ref<number|null>(null)
 const preLine = (text:string) => () => h('div', { style: 'white-space:pre-line;line-height:1.75;' }, text)
 function handleClearHostKey(s:any){
   dialog.warning({
+    // 高亮弧边按钮：确认主动作复用统一样式，弹窗风险说明和业务回调保持。
+    positiveButtonProps: { type: 'primary' },
     title: '清除已固定的主机密钥？',
     content: preLine(`面板将忘记「${s.name || s.host}」当前记住的 SSH 主机密钥，并按下一次连接看到的密钥重新记住。\n\n`
       + '✅ 机器重装过系统 / 换了机器 / 供应商做了迁移 → 这是正常操作。\n\n'
@@ -411,6 +413,8 @@ async function refreshVersions(){
 
 function confirmUpgrade(n:any){
   dialog.warning({
+    // 高亮弧边按钮：确认主动作复用统一样式，弹窗风险说明和业务回调保持。
+    positiveButtonProps: { type: 'primary' },
     title: '确认重装 sing-box',
     content: `将在「${n.name}」上安装面板发布的 sing-box（随面板版本走）并重启服务。`
       + '安装期间这台机器上的用户会断线，客户端会自动重连。继续？',

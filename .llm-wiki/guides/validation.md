@@ -3,6 +3,49 @@ title: Validation Guide
 updated: 2026-10-16
 ---
 
+## 双区组合下拉（2026-10-16）
+
+- 项目与canonical共用TopbarHoverMenu的splitLabel可选模式与共享CSS，5191替换原单按钮Naive Dropdown示范；原顶栏调用不传此prop，不改变整体hover行为。已有两枚方向箭头总数保持，Popover/Tooltip仍无SVG/箭头。新增六项运行脚本/模板回归覆盖左右触发、hover→click保持、父级互斥重置、命中桥、触摸/键盘替代、外部/焦点/Esc关闭和监听释放。
+- 1167×816、394×816、360×816实际浏览器测得整体126.5×32px、左88/右36、分割.5px贯穿30px内缘（32px外框去上下1px边界）；箭头与右区水平/垂直中心误差均0，页面横向溢出0。触摸44px命中区由媒体查询与契约覆盖，未声称实测触摸硬件。
+- 仅本地临时只读事件观察器记录真正鼠标输入，不合成事件：左区pointerdown前aria-expanded=true，证明pointerenter已打开；右区pointerdown前=false、点击后=true。离开hover到外部标题时pointerdown前=false；点击保持模式离开到标题时pointerdown前=true，再由外部点击关闭。观察器已从5191移除并重新加载确认。
+- 右区重复点击开/关、Enter/Space、Esc、左区键盘聚焦打开、Tab到右区不重开、Popover互斥和计算服务选择关闭均实测。菜单面板保持一个，运行错误日志为空。桌面与手机截图：output/playwright/split-dropdown-desktop.png、split-dropdown-mobile.png；原生输入记录split-dropdown-native-input.json。
+- 前端209/209、canonical35/35、两套类型检查/Vite和audit80源/54pattern/247哈希通过，保留既有大chunk提示。Wiki链接/孤立页/源引用和权威软链检查通过。分类注释、规范、组件和示范同步，无新增视觉类型或字体/AWS色板变更；未提交发布部署，业务数据未变。
+
+## 加载区域内居中（2026-10-16）
+
+- 原因：App的.page-loading-indicator固定50%/50dvh，将保持不变的侧栏/顶栏也算入了中心。现由当前加载root计算可见区域中心，保留原20px点阵、配色、请求等待、取消/重试及Shift5先后顺序。
+- loading-position测试覆盖整屏、带264px侧栏/64px顶栏的内容、设置分区、滚动后裁切、目标离屏、手机visualViewport偏移；实际composable测试覆盖首次Vue移动布局、侧栏变宽、scroll/viewport resize及所有listener/observer/rAF清理。旧请求/token测试保持，前端202/202、canonical34/34、两套vue-tsc/Vite及80源/54pattern/247哈希audit通过，保留既有大chunk非阻断提示。
+- 实际构建只读fixture：1167×816展开侧栏时中心(707.5,440)，不再是整屏(583.5,408)；侧栏折叠72px后为(611.5,440)，均与实际内容区坐标一致。1280×720同样验得展开(764,392)、折叠(668,392)。侧栏动画采用ResizeObserver绘制前重算；终态精确验收，不用rAF在ResizeObserver之前的采样冒称每个绘制阶段均误差0。
+- 394×816最终版本手机首次723个有效加载采样，全部(197,440)、误差0，未先使用桌面侧栏几何；保留64px顶栏而非整屏y408。手机可见视口/软键盘偏移由单元测试覆盖，未冒称真实移动硬件或真实软键盘验收。
+- 设置分区切换6个有效样本均以settings-main中心定位，x误差0、y亚像素取整误差0.00390625px；标题/二级侧栏不进入范围。5191模块重播点阵实际(707.5,566.703125)，与模块可见区域中心完全相同，外部顶栏与触发行未纳入。
+- 截图output/playwright/loading-region-desktop-fixed.png、loading-region-collapsed.png、loading-region-mobile-fixed.png、loading-region-demo.png；只读fixture只模拟GET、非GET405且无生产转发。源码/注释/canonical loading/motion/reuse规范及示范同步，无新类别、无生产写入或部署。
+
+## 六项视觉复核（2026-10-16）
+
+- 文件夹问题的根因是Shift5的fill-both终帧clip仍为零outset，动画播放完到finish清理前裁断blur22px外投影。实际构建的只读fixture，旧/新各记录41个持有终帧：旧计算clip为inset(0px 0px 0%)；新为inset(-96px -96px calc(0% - 96px))，原动画时长/纸页/翻盖/阴影未减弱。截图记录最终表面，不冒称这些截图本身捕获了持有帧；时序证据来自真实rAF动画采样与关键帧回归。
+- 用户与管理员订单实际DOM验证：成功/已退款均6px角、13px/600、padding3px10px，文字分别rgb(18,166,82)/rgb(227,113,0)。管理员列表及卡片均已替换旧pill；type同时显式映射class，避免Naive只写type但全局选择器无法命中。筛选/退款逻辑不改。
+- 二级页签桌面采得30个不同横坐标；最后bar与活动tab的x/width相同，线高2px、底部对齐。1167/394/360×816分别采28/30/30个横移值，360px原生横滚16px后仍准确同位；三视口横向溢出0。标题显示“切换路由”，单一跟随面仅为行为而非独立类型。
+- 四浮层按钮实测常态到悬浮前后尺寸分别112×32、97×32、73.6484×32、64.3828×32不变；均12px角、1px边框、无shadow/transform，悬浮背景rgb(240,240,240)。示范四按钮SVG0，箭头总数仍2（仅原两个下拉）；Popover打开再点点击下拉后四者aria-expanded只有点击下拉为true，互斥未改。
+- ResourceGauge实际1167/394/360视口中，0.0/42.5/75.0/94.0/100.0%全部完整。76px圈的内圆直径55.3714px，最大文本宽53.09375px；三视口每个值均未进入内圆外，网格自然换行而非压缩五列。计算字号12.16px，%按比例；颜色、单值一位小数和圆弧绘制不变。
+- 前端200/200、canonical33/33、两套vue-tsc/Vite、source/pattern/package audit80/54/247、diff-check通过；保留既有大chunk非阻断提示。回归覆盖普通/文件夹clip终帧分流、状态类型class、原生bar及资源数字适配。规范/示范/注释/权威文档同步，无新增分类、全局字体或AWS色变更。
+- 浏览器用本地实际构建只读fixture（GET模拟，非GET405，未转发生产）与5191实际示范。截图与JSON证据位于output/playwright/visual-six-*.png及本地临时验收记录；无生产写入、无部署，也未冒称真实移动硬件验收。
+
+## 设置页首次入场与分区切换（2026-10-16）
+
+- 根因：DashboardLayout对admin-settings禁用整页hook，而AdminSettings在mount只隐藏settings-main；二级侧栏/标题不在加载门控范围内。修复将首次入口归属整页routeShell，分区切换才归属settingsMain，内部enterOnMount=false避免双重运行。
+- 新增settings-entry-motion实际hook回归，验证首屏、section变更、离开/重新进入的唯一目标壳；同步旧静态期望。前端196/196、canonical32/32、两套类型检查与Vite构建通过；沿用既有大chunk非阻断提示。source/package audit80/54/247通过，业务请求、权限、数据、保存/备份及BranchedMenu组件不改。
+- 浏览器使用实际生产构建的本地只读HTTP fixture，GET设置接口延迟3秒，非GET返回405；无生产API转发或写入。requestAnimationFrame记录DOM可见性/点阵/遮罩阶段：旧构建373个加载帧中341帧侧栏可见、正文0帧；修复桌面367加载帧侧栏/正文/遮罩均0，第一次揭示时侧栏与正文同时可见。
+- 394px设置页直达377个加载帧，侧栏/正文/遮罩均0；从其他页进入368个加载帧也均0。后续section切换219帧侧栏隐藏0、整页门控0、遮罩198帧，加载与遮罩重叠0，页面横向溢出0；离开重进及每次分区完成事件各一次。没有用构建通过代替时序证据，不声称真实移动硬件或线上验收。
+- 截图保存在output/playwright/settings-entry-fixed-ready.png、settings-entry-fixed-loading-mobile.png、settings-entry-fixed-query-mobile.png；逐帧JSON在本地临时验收记录中。canonical规范/示范说明/注释同步，无新增类型、字体、颜色或几何变更。生产未部署，上一轮本地按钮/字体修改保留。
+
+## 数字混排基线（2026-10-16）
+
+- 根因：Courier Prime仅做size-adjust字面校准，升降部仍使用放大后的原字体度量；13px/18.2px的居中混排中，数字与单位基线相差1px。仅改flex baseline会使信息牌由24.1953px长高为25.1953px，不采用该局部补丁。
+- 两个数字face统一ascent-override77.1728%、descent-override19.2154%、line-gap-override0%，将Inter hhea1984/2048、494/2048分别除以1.2553。字号、原组件行高、字体资产、字面高度、颜色、业务与购买逻辑不变；这是项目适配，不冒称AWS参数。
+- 实际浏览器0尺寸inline baseline标记：旧度量对照差1px；11/13/28px × 400/600/700 × inline/flex共18组新度量差0px。实际5191金额牌在1167/394/360×816中，数字与单位range上下边完全一致，计算字号13px/行高18.2px/牌高24.1953125px，横向溢出0。已查看实际桌面画面并保存桌面/手机截图，不冒称真实移动硬件验收。
+- 回归新增字体行度量数学断言，前端195/195、canonical31/31、两套类型检查/Vite和80源/54pattern/247哈希audit通过；保留既有大chunk提示。分类注释为数字展示与信息牌，未新增视觉类型；权威文档、Wiki和canonical同步，尚未提交发布部署。
+
+
 ## 二级侧边栏项目颜色与无菜单图标（2026-10-16）
 
 - 前端187/187、vue-tsc/Vite，canonical28/28与独立typecheck/Vite、audit80/54/247通过，既有大chunk提示仍为非阻断。
@@ -468,6 +511,25 @@ and `/fonts/inter/Inter-Variable.ttf` returned `200`; and the post-restart
 `/opt/qingzhou/backups/fork-v0.2.87-kreeper-20260930-font-contract-20260930-222853/`.
 
 # Validation Guide
+
+## 文件夹滚轮与数字字面（2026-10-16）
+
+- 根因：wheelPreview只检查商品数，未检查open；数字与单位计算字号同为13px，但Courier Prime capHeight1187/2048、Inter1490/2048，字面天然约小20%。前端此前声明无实际文件的Ember回退，而示范自托管Courier Prime，字体来源也不一致。
+- 新增真实处理函数回归覆盖closed5/open5/open4，分别验证preventDefault/stopPropagation/预览位置；字体回归读取原TTF OS/2和head表验证125.53%比例、字体文件/OFL及不覆盖组件字号。全部前端194/194、canonical30/30、两套vue-tsc/Vite通过，保留既有ECharts大chunk警告。
+- 5191真实滚轮（闭合且焦点预展开、未点击）：页面scrollTop2687.5→2932.5，位移245px，仍closed且前四个商品不变；实际点击展开后scrollTop2684→2684，位移0，窗口从标准/轻量/专业/长期切到轻量/专业/长期/跨地区。收起后open=false。透明留白命中边界维持原规则。
+- 同源隔离字体测量页加载真实字体后，Canvas 13px“29”的可见字高：未校准Courier Prime7.8203125px；当前共享face9.8114853px；Inter9.7309570px，差<1%。同时测得字宽15.5898→19.5592px；不声称字体宽度未变。TTF/OFL字节与canonical固定来源一致，构建产物含两份字体文件。
+- 1440/1167/768/394/360×816逐次刷新DOM确认实际视口后验收：页面横向溢出0；价格数字与相邻正文均13px、原line-height18.2px、数值盒18.1953px、信息牌高24.1953px。已查看桌面效果，并保存桌面及360px截图；未冒称真实移动硬件验收。
+- 已读取AWS官方Typography的Typeface/Monospace/Type styles/Fallback/General guidelines；保持官方等宽使用场景与正文角色边界，125.53%是本地光学校准，不是官方字号token。未改独立Go HTML模板、认证/计费/购买业务、数据库或生产；保留上一轮未提交视觉改动。
+
+## 高亮弧边统一与状态牌几何（2026-10-16）
+
+- 修复前实测：inactive标签18px角、0px 7px内距；购买示范为原生button而共享高亮规则只匹配Naive按钮，导致类名正确但外观错误。新增两项项目回归在修复前失败，修复后通过。
+- 全部前端192/192、vue-tsc与Vite通过；canonical29/29、独立vue-tsc/Vite通过。保留既有ECharts大chunk提示；前端集成fixture仍可能打印既有HMR端口占用诊断，测试全数通过，不作为视觉证据。
+- 以修改前脚本逐文件比对，剔除分类注释及新增positiveButtonProps.type=primary后完全一致；模板只改按钮类型/类名/注释。确认原风险文案、回调、权限、loading和禁用未改；warning状态标签、提示和弹窗类型仍保留。
+- 5191真实浏览器1167×816、394×816、360×816均无页面横向溢出；购买按钮为NButton primary，32px高、72px宽、18px角、13px字/左右10px、蓝底白字；点击后背景为统一提亮色且transform=none，无尺寸变化。窄屏仍是fine指针，仅验证几何与CSS触摸44px合同，不冒称真实coarse硬件验收。
+- 五种状态牌均6px角、3px 10px内距，内部--n-border-radius也为6px；状态示范仍正常显示橙色警告牌。Controls按钮为普通/强调/默认弧边/高亮弧边/删除/禁用，页面warning按钮数量0。
+- 打开示范warning Dialog确认：取消透明中性默认弧边、确定蓝色高亮弧边，动画结束后两者均32px高/18px角；positive pressed token为统一accent84%+white。仅打开并取消本地示范，没有执行生产写操作。
+- 已查看并保存购买/状态牌桌面截图、控件分类和360px状态牌截图。源码、规范、快照、pattern及运行示范同轮同步；本轮未提交、未发布、未部署。
 
 ## v0.2.113导航同步发布验收
 

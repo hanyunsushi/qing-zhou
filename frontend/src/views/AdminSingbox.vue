@@ -33,7 +33,7 @@
         <span class="sb-icon"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7v5h-5"/><path d="M4 17v-5h5"/><path d="M6.2 9A7 7 0 0 1 19 7l1 1M4 16l1 1a7 7 0 0 0 12.8-2"/></svg></span><span><b>{{ syncHealthyCount }} / {{ machines.length }}</b><small>{{ syncFailedCount ? `${syncFailedCount} 台下发失败` : '机器同步状态正常' }}</small></span>
       </button>
     </div>
-    <!-- 二级切换路由：活动线由活动页签自身绘制，避免窄屏导航滚动层裁切。 -->
+    <!-- 二级切换路由：单一活动线按页签测量横向移动，与窄屏横向滚动共用坐标。 -->
     <n-tabs v-model:value="tab" animated class="route-switch-2" @update:value="onTabChange">
       <n-tab-pane name="tls" tab="TLS 配置">
         <div class="page-toolbar">
@@ -309,8 +309,9 @@
                   <n-popselect v-if="!r.upstream_inbound_id && !r.egress_id && egresses.length" :options="egressPopOpts" class="qz-wide-menu" scrollable @update:value="(v: number) => attachEgress(r, v)">
                     <n-button class="primary-quiet" size="tiny" quaternary type="primary">＋ 挂出口</n-button>
                   </n-popselect>
-                  <n-button v-else-if="r.upstream_inbound_id" size="tiny" quaternary type="warning" @click="unlinkRelay(r)">解除中转</n-button>
-                  <n-button v-else-if="r.egress_id" size="tiny" quaternary type="warning" @click="unlinkEgress(r)">解除出口</n-button>
+                  <!-- 高亮弧边按钮：解除链路复用统一主动作样式，原解除流程不变。 -->
+                  <n-button v-else-if="r.upstream_inbound_id" size="tiny" type="primary" class="highlight-arc-button" @click="unlinkRelay(r)">解除中转</n-button>
+                  <n-button v-else-if="r.egress_id" size="tiny" type="primary" class="highlight-arc-button" @click="unlinkEgress(r)">解除出口</n-button>
                 </span>
               </div>
             </div>

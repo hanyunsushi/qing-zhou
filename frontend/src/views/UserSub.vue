@@ -69,8 +69,8 @@
         <span class="sub-action-label">安全操作</span>
         <!-- 两个按钮代价完全不同，分开呈现：换地址是纯面板操作、立即生效、不影响
              任何人；换凭据要同步到每个节点才生效，因此默认禁用 + 30 天冷却。 -->
-        <!-- 弧边警告按钮：保留 Naive UI 警告色与圆角样式，提示订阅地址变更风险。 -->
-        <n-button size="small" type="warning" @click="handleResetSub">更换订阅地址</n-button>
+        <!-- 高亮弧边按钮：复用实心Apple蓝与提亮交互，订阅地址变更风险保留在原确认流程。 -->
+        <n-button size="small" type="primary" class="highlight-arc-button" @click="handleResetSub">更换订阅地址</n-button>
         <!-- 禁用与否跟随后端开关，不写死：后端本来就要校验 node_creds_reset_enabled，
              按钮读同一个值才不会出现「管理员开了但按钮还是灰的」。 -->
         <n-tooltip trigger="hover" :disabled="credsResetEnabled">
@@ -802,6 +802,8 @@ function handleResetSub() {
   // so it still needs a confirm — but it does NOT revoke the nodes those clients
   // already hold, and the copy must not claim otherwise.
   dialog.warning({
+    // 高亮弧边按钮：确认主动作复用统一样式，弹窗风险说明和业务回调保持。
+    positiveButtonProps: { type: 'primary' },
     title: '确认更换订阅地址',
     content: '更换后旧地址立即失效，所有已导入的客户端（Clash / sing-box 等）都需要用新地址重新导入。注意：已经从旧地址导出的节点仍然可用，如需彻底吊销请联系管理员重置节点凭据。确定更换？',
     positiveText: '更换', negativeText: '取消',

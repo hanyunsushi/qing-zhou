@@ -8,6 +8,10 @@
 @font-face { font-family: 'Resource Han Rounded CN'; src: url('/fonts/brand/ResourceHanRoundedCN-Medium.woff2') format('woff2'); font-style: normal; font-weight: 450 649; font-display: swap; }
 @font-face { font-family: 'Resource Han Rounded CN'; src: url('/fonts/brand/ResourceHanRoundedCN-Bold.woff2') format('woff2'); font-style: normal; font-weight: 650 900; font-display: swap; }
 
+/* 数字展示：等宽字体按Inter校准字面及升降部度量，混排共用基线；保留组件字号、行高和单位正文。 */
+@font-face { font-family: 'Courier Prime'; src: url('/fonts/courier-prime/CourierPrime-Regular.ttf') format('truetype'); font-style: normal; font-weight: 400; font-display: swap; size-adjust: 125.53%; ascent-override: 77.1728%; descent-override: 19.2154%; line-gap-override: 0%; }
+@font-face { font-family: 'Courier Prime'; src: url('/fonts/courier-prime/CourierPrime-Bold.ttf') format('truetype'); font-style: normal; font-weight: 700; font-display: swap; size-adjust: 125.53%; ascent-override: 77.1728%; descent-override: 19.2154%; line-gap-override: 0%; }
+
 :root {
   /* 全局层级：页面白底、一级模块 250、悬浮/路由轨道 240。 */
   --bg: #ffffff;
@@ -86,7 +90,7 @@
   --ff-heading: "Fraunces", "Source Han Serif SC", serif;
   --ff-body: "Inter", "Resource Han Rounded CN", sans-serif;
   --ff: var(--ff-body);
-  --ff-mono: "Amazon Ember Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --ff-mono: "Courier Prime", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --font-size-body: 14px;
   --line-height-body: 20px;
   --font-size-heading-xl: 28px;
@@ -226,7 +230,7 @@ button, input, textarea, select { font-family: inherit; }
 }
 
 .n-button {
-  /* 普通按钮 / 高亮弧边按钮 / 弧边警告按钮 / 删除按钮：同组使用相同几何，颜色与圆角按各自分类。 */
+  /* 普通按钮 / 高亮弧边按钮 / 删除按钮：同组使用相同几何，颜色与圆角按各自分类。 */
   box-sizing: border-box;
   height: var(--button-height) !important;
   min-height: var(--button-height) !important;
@@ -255,7 +259,8 @@ button, input, textarea, select { font-family: inherit; }
 .n-button:not(.n-button--disabled):active { transform: none; transition-duration: .08s !important; }
 
 /* 高亮弧边按钮：固定实心 Apple 蓝；悬浮、聚焦和按下共用提亮色。 */
-.n-button.n-button--primary-type.highlight-arc-button {
+.n-button.n-button--primary-type.highlight-arc-button,
+.n-dialog__action > .n-button.n-button--primary-type {
   --n-color: var(--accent) !important;
   --n-color-hover: var(--accent-arc-hover) !important;
   --n-color-focus: var(--accent-arc-hover) !important;
@@ -268,24 +273,23 @@ button, input, textarea, select { font-family: inherit; }
   color: #fff !important;
 }
 .n-button.n-button--primary-type.highlight-arc-button:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):hover,
-.n-button.n-button--primary-type.highlight-arc-button:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):focus {
+.n-dialog__action > .n-button.n-button--primary-type:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):hover,
+.n-button.n-button--primary-type.highlight-arc-button:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):focus,
+.n-dialog__action > .n-button.n-button--primary-type:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):focus {
   background: var(--accent-arc-hover) !important;
   color: #fff !important;
   border-color: var(--accent-arc-hover) !important;
 }
 /* 高亮弧边按钮：键盘焦点单独可见，不被通用primary的无阴影规则覆盖。 */
-.n-button.n-button--primary-type.highlight-arc-button:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):focus-visible { box-shadow: var(--focus-ring); }
+.n-button.n-button--primary-type.highlight-arc-button:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):focus-visible,
+.n-dialog__action > .n-button.n-button--primary-type:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):focus-visible { box-shadow: var(--focus-ring); }
 /* 高亮弧边按钮：点击保持悬浮提亮色，不改变按钮位置。 */
 .n-button.n-button--primary-type.highlight-arc-button:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):active,
-.n-button.n-button--primary-type.highlight-arc-button:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled).n-button--pressed {
+.n-dialog__action > .n-button.n-button--primary-type:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):active,
+.n-button.n-button--primary-type.highlight-arc-button:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled).n-button--pressed,
+.n-dialog__action > .n-button.n-button--primary-type:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled).n-button--pressed {
   background: var(--accent-arc-hover) !important;
   border-color: var(--accent-arc-hover) !important;
-}
-/* 弧边警告按钮：点击与悬浮/聚焦共用原有风险提亮色及边框，不改变按钮位置。 */
-.n-button.n-button--warning-type:not(.n-button--secondary):not(.n-button--ghost) {
-  --n-color-pressed: var(--n-color-hover) !important;
-  --n-border-pressed: var(--n-border-hover) !important;
-  --n-text-color-pressed: var(--n-text-color-hover) !important;
 }
 /* 普通按钮 / 标准默认弧边按钮：共用中性ring；Dialog的ghost取消动作同样使用默认弧边。 */
 .n-button.action-button,
@@ -640,16 +644,17 @@ button.n-button--pressed:not(.n-button--disabled) { transform: none !important; 
 }
 .n-button.topbar-language-reference-trigger .n-button__icon { margin: 0 !important; }
 .n-button.topbar-language-reference-trigger .n-button__icon > .n-icon { display: inline-flex !important; align-items: center !important; }
+/* 下拉选择菜单：半像素贯穿分割线，左右留白由各自独立触发区负责。 */
 .topbar-trigger-divider {
   display: inline-block;
-  width: 1px;
+  width: .5px;
   height: 32px;
   min-height: 32px;
   align-self: stretch;
   box-sizing: border-box;
-  flex: 0 0 1px;
+  flex: 0 0 .5px;
   background: currentColor;
-  opacity: .28;
+  opacity: .22;
 }
 /* 下拉选择菜单 / 悬浮下拉菜单：对称绘图固定在10px占位内，只绕中心旋转。 */
 .topbar-trigger-chevron {
@@ -665,6 +670,71 @@ button.n-button--pressed:not(.n-button--disabled) { transform: none !important; 
   transition: transform .2s var(--ease-standard);
 }
 .topbar-trigger-chevron.is-open { transform: rotate(180deg); }
+/* 下拉选择菜单 / 悬浮下拉菜单：加宽双区触发器，分别悬浮反馈；箭头在右侧独立区域正中。 */
+.topbar-split-trigger {
+  display: inline-flex;
+  align-items: stretch;
+  height: 32px;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--topbar-background);
+  color: var(--text-2);
+}
+.topbar-split-label,
+.topbar-split-toggle {
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  height: 100%;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: 500 13px/20px var(--ff-body);
+  letter-spacing: 0;
+  cursor: pointer;
+  transition: background-color .2s ease, color .2s ease;
+}
+.topbar-split-label {
+  min-width: 88px;
+  padding: 0 14px;
+  border-radius: 11px 0 0 11px;
+}
+.topbar-split-toggle {
+  width: 36px;
+  flex: 0 0 36px;
+  padding: 0;
+  border-radius: 0 11px 11px 0;
+}
+.topbar-split-label:hover,
+.topbar-split-label:focus-visible,
+.topbar-split-label:active,
+.topbar-split-toggle:hover,
+.topbar-split-toggle:focus-visible,
+.topbar-split-toggle:active {
+  background: var(--card-hover);
+  color: var(--text);
+}
+.topbar-split-label:focus-visible,
+.topbar-split-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -3px;
+}
+.topbar-split-trigger > .topbar-trigger-divider {
+  height: auto;
+  min-height: 0;
+  margin: 0;
+}
+.topbar-split-toggle .topbar-trigger-chevron { margin: 0; }
+@media (hover: none), (pointer: coarse) {
+  .topbar-split-trigger { height: 44px; }
+  .topbar-split-toggle { width: 44px; flex-basis: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .topbar-split-label, .topbar-split-toggle,
+  .topbar-split-trigger .topbar-trigger-chevron { transition: none; }
+}
 .topbar-hover-trigger .topbar-trigger-divider { display: none; }
 .topbar-hover-trigger .topbar-trigger-chevron { margin-left: 3px; }
 .n-button.topbar-account-trigger {
@@ -908,7 +978,7 @@ button.n-button--pressed:not(.n-button--disabled) { transform: none !important; 
 
 .n-tabs .n-tabs-tab { font-weight: 600; }
 .n-tabs.n-tabs--bar-type .n-tabs-bar { height: 3px; border-radius: var(--r) var(--r) 0 0; }
-/* 二级切换路由：活动线由活动页签自身绘制，避免导航滚动层裁切边缘。 */
+/* 二级切换路由：单一活动线由Naive测量并横向过渡，与实际页签行共用滚动坐标。 */
 .n-tabs.route-switch-2 {
   width: 100%;
   min-width: 0;
@@ -924,7 +994,7 @@ button.n-button--pressed:not(.n-button--disabled) { transform: none !important; 
 }
 /* 二级切换路由：导航文字与活动线保留独立水平留白，避免首个页签贴住外轨左边。 */
 .n-tabs.route-switch-2 .n-tabs-nav-scroll-content {
-  padding-inline: 8px;
+  padding-inline: 0;
   box-sizing: border-box;
   /* 二级切换路由：基线由实际页签行绘制，移除组件另画的一条底边。 */
   border-bottom: 0 !important;
@@ -952,14 +1022,16 @@ button.n-button--pressed:not(.n-button--disabled) { transform: none !important; 
 .n-tabs.route-switch-2 .n-tabs-wrapper {
   position: relative;
   min-width: 100%;
+  padding-inline: 8px;
+  box-sizing: border-box;
 }
 /* 二级切换路由：基线与活动蓝线共用实际页签行，随内容一起滚动，不假定行高。 */
 .n-tabs.route-switch-2 .n-tabs-wrapper::after {
   position: absolute;
   z-index: 0;
-  right: 0;
+  right: 8px;
   bottom: 0;
-  left: 0;
+  left: 8px;
   height: 1px;
   content: '';
   pointer-events: none;
@@ -982,24 +1054,25 @@ button.n-button--pressed:not(.n-button--disabled) { transform: none !important; 
   border-inline-start: 0 !important;
   box-shadow: none !important;
 }
-.n-tabs.route-switch-2 .n-tabs-tab::before { display: none !important; content: none !important; }
-.n-tabs.route-switch-2 .n-tabs-bar { display: none !important; }
-.n-tabs.route-switch-2 .n-tabs-tab--active::after {
+.n-tabs.route-switch-2 .n-tabs-tab::before,
+.n-tabs.route-switch-2 .n-tabs-tab::after { display: none !important; content: none !important; }
+.n-tabs.route-switch-2 .n-tabs-bar {
+  display: block !important;
   position: absolute;
   z-index: 2;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 2px;
+  bottom: 0 !important;
+  height: 2px !important;
   border: 0;
   border-radius: 0 !important;
-  content: '';
   pointer-events: none;
-  background: var(--accent);
+  background: var(--accent) !important;
   clip-path: none;
-  transform: none;
-  width: 100%;
   box-sizing: border-box;
+  transition: left .24s cubic-bezier(.215,.61,.355,1), max-width .24s cubic-bezier(.215,.61,.355,1), opacity .2s ease !important;
+}
+.n-tabs.route-switch-2 .n-tabs-bar.transition-disabled { transition: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .n-tabs.route-switch-2 .n-tabs-bar { transition: none !important; }
 }
 
 /* 二级切换路由：竖屏页签使用类似系统设置的独立横向滚动轨道。 */
@@ -1131,7 +1204,9 @@ button.n-button--pressed:not(.n-button--disabled) { transform: none !important; 
 .n-tag.n-tag--success-type,
 .n-tag.n-tag--warning-type,
 .n-tag.n-tag--error-type,
-.n-tag.n-tag--info-type {
+.n-tag.n-tag--info-type,
+.n-tag.n-tag--inactive-type {
+  --n-border-radius: 6px !important;
   --n-color: var(--status-soft-bg) !important;
   --n-color-hover: var(--status-soft-bg) !important;
   --n-color-pressed: var(--status-soft-bg) !important;

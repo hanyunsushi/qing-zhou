@@ -355,8 +355,8 @@
               <span class="kv">{{ fmtDateTime(o.created_at) }}</span>
             </div>
             <div class="lc-foot">
-              <!-- 弧边警告按钮：保留风险语义、悬浮/聚焦提亮，点击保持颜色且不改变位置，请求状态由业务控制。 -->
-              <n-button v-if="o.status === 'success'" size="tiny" type="warning" @click="openRefund(o.id)">退款</n-button>
+              <!-- 高亮弧边按钮：统一实心Apple蓝、悬浮/聚焦/按下提亮；原风险文案、确认和请求状态由业务控制。 -->
+              <n-button v-if="o.status === 'success'" size="tiny" type="primary" class="highlight-arc-button" @click="openRefund(o.id)">退款</n-button>
             </div>
           </div>
         </div>
@@ -716,6 +716,8 @@ function removePlan(p: any) {
   const queued = p.status === 'queued'
   const quota = fmtBytes(p.traffic_limit)
   dialog.warning({
+    // 高亮弧边按钮：确认主动作复用统一样式，弹窗风险说明和业务回调保持。
+    positiveButtonProps: { type: 'primary' },
     title: isPool ? '确认清空流量包' : queued ? '确认移除未生效套餐' : '确认移除套餐',
     content: isPool
       ? `清空「${u.username}」的流量包（通用流量）余额？该余额立即失效，已用记录一并移除。`
@@ -965,6 +967,8 @@ function handleResetCreds(u: any) {
 // --- Delete ---
 function handleDelete(u: any) {
   dialog.warning({
+    // 高亮弧边按钮：确认主动作复用统一样式，弹窗风险说明和业务回调保持。
+    positiveButtonProps: { type: 'primary' },
     title: '确认删除用户',
     content: `确定删除用户「${u.username}」？其订阅、套餐与设备将一并失效，此操作不可撤销。`,
     positiveText: '删除', negativeText: '取消',

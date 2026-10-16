@@ -3,7 +3,51 @@ title: kreeper第一设计系统 — QingZhou 集成
 updated: 2026-10-16
 ---
 
-# kreeper第一设计系统 — QingZhou 集成
+## 双区组合下拉（2026-10-16，本地未部署）
+
+`TopbarHoverMenu.splitLabel`以两个并列原生button替代单按钮文字/箭头：左区pointerenter/focus及无hover点击替代入口打开；右区click开合/保持，根pointerenter/focusin不触发split模式。内部hover/click状态在父级open=false时重置；hover离开整个root边界关闭，经过命中桥回到触发器不关闭，点击模式移开仍保持，外部pointerdown、focusout、Esc和父级选择/互斥关闭释放。
+
+共享global.css负责左最小88px/水平14px、右36px、整体32px及12px角；.5px/opacity .22分割线贯穿外框内缘，右区grid正中放原10px箭头且margin0。四字标题整体126.5px；触摸媒体为高44px/右区44px；两区独立中性悬浮面、无下沉，减少动态效果取消过渡。普通顶栏不传splitLabel，原trigger插槽与整体悬浮功能保持。canonical组件/规范/快照/pattern/coverage和5191一致；没有新增样式类型或AWS规则变化。验收见[Validation](../guides/validation.md#双区组合下拉2026-10-16)。
+
+## 加载反馈的区域居中
+
+`page-loading.ts`维护pageLoadingTarget并提供loadingRegionCenter/usePageLoadingPosition。router在导航开始即选择保留壳的layout-content或settings-main；Shift5.prepareEnter在挂载时交接实际root。route-page-shell定位为所属layout-content，settings-main优先独立定位，全页qz-shift5-page-shell使用视口。App与Gallery的fixed点阵共用返回style，而按钮/Naive模块符号保持自身布局。
+
+定位取目标与visualViewport交集，排除同壳sticky顶栏；ResizeObserver在布局变化时重算，滚动/窗口/可见视口事件合帧更新，nextTick复核移动首屏。加载结束或取消清理目标和监听，scope销毁释放watch/observer/rAF。目标完全离屏不把符号挪到常驻导航区域。沿用“加载反馈”分类，图形、动画和请求门控不变；canonical规范/源码/示范与注释同步，验收见[Validation](../guides/validation.md#加载区域内居中2026-10-16)，未部署。
+
+## 文件夹投影、状态牌、导航与资源圈
+
+- `shift5.runShift5Enter`对含.gf-root的揭示块使用96px clip outsets，从上边界外开始、终帧保留模糊投影空间；非文件夹块和原1008ms/级联/finish时序不变。
+- `UserOrders`与`AdminOrders`的成功/已退款使用NTag及显式`n-tag--success-type/n-tag--warning-type`，命中全站6px/13px600/3px10px几何。Naive的type prop不自动生成这些class，不以type源码断言替代实际样式验收。
+- `.route-switch-2`复用原Naive活动bar测量left/max-width，以240ms同路由切换节奏过渡；wrapper内距8px、scroll-content零重复内距、baseline与bar共用滚动坐标。移除每个活动tab伪线；reduced-motion/transition-disabled保留。
+- Gallery标题为“切换路由”；四个浮层触发器共用顶栏12px角/固定1px框/透明到中性悬浮面。原click/hover、互斥、选项、Popover/Tooltip不变，保持已有两枚箭头，没有新SVG。
+- ResourceGauge以inline-size容器及min(13px,16cqi)适配百分比、%按.6923em；完整100.0%仍显示一位小数、不截字。示范列以76px最小宽度auto-fit换行，圆弧、颜色、数据和绘制逻辑保持。
+
+沿用“玻璃文件夹卡片 / 组件绘制动画 / 区分-状态牌 / 二级切换路由 / 路由切换组件 / 悬浮下拉菜单 / 数字展示”已有分类，无新增类型。源码、canonical引用/精确快照/pattern与5191同步，验收见[Validation](../guides/validation.md#六项视觉复核2026-10-16)，未发布部署。
+
+## 设置页首次入场与分区切换
+
+`DashboardLayout`整页hook以`route.name === 'admin-settings' ? route.path : route.fullPath`为key，不再禁用设置页入口。首次直达或从其他路由进入，由route-page-shell统一隐藏/揭示标题、二级侧边栏与正文。`AdminSettings`的settings-main hook设置enterOnMount=false，只处理已进入后的分区fullPath变化；分区导航常驻但首次整页不能抢先显示。
+
+沿用“加载反馈 / 组件绘制动画 / 二级侧边栏”分类，未修改BranchedMenu、页面布局、请求/重试、保存和认证。canonical源码快照、pattern、loading/motion规范与5191示范说明同步。实际慢请求与分区验证见[Validation](../guides/validation.md#设置页首次入场与分区切换2026-10-16)，尚未提交、发布、部署。
+
+## 文件夹滚轮与数字字面（2026-10-16，本地未部署）
+
+`GlassFolder.wheelPreview`在原实际对象命中边界内增加受控open门禁：只有`props.open && files.length>4`时preventDefault/stopPropagation并切换预览。闭合、悬浮预展开、收回后及四项以内保持页面滚动；原点击、事件、互斥文件夹与购买逻辑不改。
+
+前端`--ff-mono`和示范统一为自托管Courier Prime Regular/Bold，字体文件和OFL放于`frontend/public/fonts/courier-prime`，复用包沿用同字节资产；两个face统一size-adjust125.53%，从字体capHeight比1490/1187校准到Inter参考字面。该字体层规则覆盖numeric/mono工具类及现有局部数字/日期/IP等宽消费者；单位/说明保持正文，各处字号/行高不变，无transform/zoom逐处放大。四个中英显示/正文角色保持；独立Go HTML模板不在本轮前端范围。
+
+数字face的升降部同时校准：`ascent-override77.1728% / descent-override19.2154% / line-gap-override0%`，由Inter原始hhea度量除以size-adjust比例得到。相同行高的数字与正文共用基线，不对单个金额施加偏移，也不改变字号、原标签高度；“区分-信息牌 / 数字展示”源码注释与canonical同步。验证见[数字混排基线](../guides/validation.md#数字混排基线2026-10-16)。
+
+分类仍为“玻璃文件夹卡片 / 数字展示”，canonical typography/glass-folder/foundations/reuse、字体来源说明、源快照、pattern、coverage与5191运行示范同步。AWS Typography本轮已读取，125.53%明确为项目适配值；无新类型。验证见[Validation](../guides/validation.md#文件夹滚轮与数字字面2026-10-16)，尚未提交发布部署。
+
+## 高亮弧边统一与状态牌几何（2026-10-16，本地未部署）
+
+按钮视觉类型由普通、强调、默认弧边、高亮弧边和删除组成，禁用/loading沿所属类型表达。退款、下架、强制推送、解除链路、变更订阅地址及确认主动作共用高亮弧边：primary、Apple蓝/白字、18px角、32px桌面/44px触摸、悬浮/聚焦/按下同一提亮色、静止点击。原warning按钮调用已迁移；20处warning确认框保留反馈类型并提供positiveButtonProps.type=primary，由`.n-dialog__action`与显式highlight-arc-button共享声明。风险文案、确认、请求状态与原业务回调不改。
+
+`global.css`中success/warning/error/info/inactive五种标签共用根与内部边线6px角、3px 10px、13px/600；inactive原先只设颜色，现已纳入几何规则。canonical FolderSpecimens购买示范直接使用NButton，局部类只负责margin-left布局。Controls移除重复风险按钮示范，套餐操作示范按同一高亮类别。
+
+分类注释、buttons/interactions/semantics/overlays/showcase/foundations、精确source-reference、受影响pattern、coverage和5191示范同步，无新增类型或AWS颜色/排版调整。源码与本地验收见[Validation](../guides/validation.md#高亮弧边统一与状态牌几何2026-10-16)，尚未提交、发布或部署。
 
 ## 下拉箭头、顶栏与竖屏页签（2026-10-16，v0.2.113）
 

@@ -2,13 +2,36 @@
   <div
     ref="rootRef"
     class="topbar-hover-menu"
-    @pointerenter="openMenu"
-    @pointerleave="scheduleClose"
-    @focusin="openMenu"
+    @pointerenter="handleTriggerEnter"
+    @pointerleave="handlePointerLeave"
+    @focusin="handleTriggerEnter"
     @focusout="handleFocusOut"
     @keydown.esc="closeMenu"
   >
-    <slot name="trigger" :open="props.open" />
+    <!-- 下拉选择菜单 / 悬浮下拉菜单：左右独立命中，文字区悬浮、箭头区点击，共用一个互斥面板。 -->
+    <div v-if="props.splitLabel" class="topbar-split-trigger" role="group" :aria-label="props.splitLabel">
+      <button
+        type="button"
+        class="topbar-split-label"
+        aria-haspopup="menu"
+        :aria-expanded="props.open"
+        @pointerenter="openSplitHover"
+        @focus="openSplitHover"
+        @click="openSplitHover"
+      >{{ props.splitLabel }}</button>
+      <span class="topbar-trigger-divider" aria-hidden="true" />
+      <button
+        type="button"
+        class="topbar-split-toggle"
+        :aria-label="`${props.splitLabel}菜单`"
+        aria-haspopup="menu"
+        :aria-expanded="props.open"
+        @click="toggleSplitClick"
+      >
+        <span class="topbar-trigger-chevron" :class="{ 'is-open': props.open }" aria-hidden="true" />
+      </button>
+    </div>
+    <slot v-else name="trigger" :open="props.open" />
     <span
       v-if="props.open"
       class="topbar-hover-menu-hit-bridge"
@@ -25,7 +48,7 @@
         :style="panelStyle"
         role="menu"
         @pointerenter="openMenu"
-        @pointerleave="scheduleClose"
+        @pointerleave="handlePointerLeave"
       >
         <div class="topbar-hover-menu-panel-content">
           <template v-for="option in props.options" :key="String(option.key)">
@@ -60,6 +83,7 @@ export interface TopbarHoverMenuOption {
 const props = withDefaults(defineProps<{
   options: TopbarHoverMenuOption[]
   open: boolean
+  splitLabel?: string
 }>(), {})
 const emit = defineEmits<{ open: []; close: []; select: [key: string] }>()
 
@@ -67,6 +91,7 @@ const rootRef = ref<HTMLElement | null>(null)
 const panelRef = ref<HTMLElement | null>(null)
 const panelPositioned = ref(false)
 const panelStyle = ref<Record<string, string>>({})
+const splitMode = ref<'hover' | 'click' | null>(null)
 let positionFrame: number | undefined
 
 function resetPanelPosition() {
@@ -111,7 +136,37 @@ function openMenu() {
 }
 
 function closeMenu() {
+  splitMode.value = null
   emit('close')
+}
+
+function handleTriggerEnter() {
+  if (!props.splitLabel) openMenu()
+}
+
+function openSplitHover(event?: PointerEvent | FocusEvent | MouseEvent) {
+  if (event && 'pointerType' in event && event.pointerType === 'touch') return
+  if (splitMode.value !== 'click') splitMode.value = 'hover'
+  openMenu()
+}
+
+function toggleSplitClick() {
+  if (props.open && splitMode.value === 'click') {
+    closeMenu()
+    return
+  }
+  splitMode.value = 'click'
+  openMenu()
+}
+
+function handlePointerLeave(event?: PointerEvent) {
+  if (props.splitLabel && (splitMode.value === 'click'
+    || (event?.relatedTarget && rootRef.value?.contains(event.relatedTarget as Node)))) return
+  scheduleClose()
+}
+
+function handleOutsidePointer(event: PointerEvent) {
+  if (props.splitLabel && props.open && !rootRef.value?.contains(event.target as Node)) closeMenu()
 }
 
 function scheduleClose() {
@@ -129,6 +184,7 @@ function selectOption(key: string) {
 
 watch(() => props.open, async (open) => {
   if (!open) {
+    splitMode.value = null
     resetPanelPosition()
     return
   }
@@ -136,9 +192,13 @@ watch(() => props.open, async (open) => {
   schedulePosition()
 })
 
-onMounted(() => window.addEventListener('resize', handleViewportResize))
+onMounted(() => {
+  window.addEventListener('resize', handleViewportResize)
+  document.addEventListener('pointerdown', handleOutsidePointer)
+})
 onBeforeUnmount(() => {
   if (positionFrame !== undefined) window.cancelAnimationFrame(positionFrame)
   window.removeEventListener('resize', handleViewportResize)
+  document.removeEventListener('pointerdown', handleOutsidePointer)
 })
 </script>

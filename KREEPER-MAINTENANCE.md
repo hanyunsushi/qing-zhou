@@ -1,5 +1,11 @@
 # Kreeper QingZhou 定制维护
 
+## v0.2.114 UI合同同步（2026-10-16，发布候选）
+
+发布范围为前面已确认且尚未提交的按钮分类/订单状态牌、玻璃文件夹滚轮与阴影、数字字体混排基线、设置页加载顺序、实际加载区域居中、页签移动线/资源数字适配，以及加宽双区下拉。QingZhou、canonical设计系统、分类注释和5191示范同步；无后端、API、数据库或节点/Tunnel配置变更。
+
+本地前端209/209、canonical35/35、两套类型检查/Vite、Go tests/vet、脚本语法和80源/54pattern/247哈希审计通过。发布标签拟为`v0.2.114-kreeper-20261016-ui-contract-sync`；生产仍为v0.2.113，须由Release/运行二进制及只读生产验收更新事实，不能以候选构建推断上线。完整实施/验证由[设计系统模块](.llm-wiki/modules/kreeper-first-design-system.md)及[Validation](.llm-wiki/guides/validation.md)维护。
+
 ## v0.2.113 导航同步（2026-10-16，已发布部署）
 
 QingZhou `caa239c`、canonical设计系统`c1713f5`均已推送main，[Release](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.113-kreeper-20261016-navigation-sync)与CI/Release工作流成功。包含原版SVG分支二级侧边栏、项目配色与无菜单图标、下拉箭头原地旋转、顶栏搜索自适应、窄屏头像隐藏箭头和页签高亮线修复；三处源码/规范/示范及分类注释同步。

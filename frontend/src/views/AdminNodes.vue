@@ -9,7 +9,7 @@
       <button class="resource-metric" type="button" @click="tab='sources'"><b>{{ sources.length }}</b><span>订阅源 · 启用 {{ sources.filter(s => s.enabled).length }}</span></button>
       <button class="resource-metric" type="button" @click="tab='topology'"><b>{{ inbounds.length }}</b><span>关联入站 · 出口 {{ egresses.length }}</span></button>
     </div>
-    <!-- 二级切换路由：活动线由活动页签自身绘制，避免窄屏导航滚动层裁切。 -->
+    <!-- 二级切换路由：单一活动线按页签测量横向移动，与窄屏横向滚动共用坐标。 -->
     <n-tabs v-model:value="tab" animated class="route-switch-2">
       <!-- 节点（按分组卡片展示，同组节点聚在一张卡片里） -->
       <n-tab-pane name="nodes" tab="节点">

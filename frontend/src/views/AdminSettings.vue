@@ -717,7 +717,8 @@ const dialog = useDialog()
 const route = useRoute()
 const router = useRouter()
 const settingsMain = ref<HTMLElement | null>(null)
-useShift5PageTransition(settingsMain, () => route.fullPath, () => route.name === 'admin-settings')
+// 二级侧边栏 / 组件绘制动画：首屏由布局统一揭示；已进入页面后仅分区主体切屏，导航保持常驻。
+useShift5PageTransition(settingsMain, () => route.fullPath, () => route.name === 'admin-settings', false)
 const config = useConfigStore()
 const settingsLoaded = ref(false)
 const loadError = ref('')
@@ -1189,6 +1190,8 @@ function discardChanges() {
 
 function confirmDiscardChanges() {
   dialog.warning({
+    // 高亮弧边按钮：确认主动作复用统一样式，弹窗风险说明和业务回调保持。
+    positiveButtonProps: { type: 'primary' },
     title: '放弃未保存的更改？',
     content: `将恢复 ${dirtyCount.value} 项设置，已自动保存的 Telegram 接收人不会受影响。`,
     positiveText: '放弃更改',

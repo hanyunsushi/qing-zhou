@@ -364,6 +364,8 @@ async function handleSave() {
 
 function confirmDelete(doc: any) {
   dialog.warning({
+    // 高亮弧边按钮：确认主动作复用统一样式，弹窗风险说明和业务回调保持。
+    positiveButtonProps: { type: 'primary' },
     title: '删除文档？',
     content: `“${doc.title || '未命名文档'}”删除后无法恢复。`,
     positiveText: '确认删除', negativeText: '取消',

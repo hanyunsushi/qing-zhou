@@ -73,7 +73,8 @@ function move(event: PointerEvent) {
 function leave() { px = 0; py = 0; if (!frame) frame = requestAnimationFrame(writePointer) }
 function toggle(open: boolean) { emit('update:open', open) }
 function wheelPreview(event: WheelEvent) {
-  if (props.files.length <= 4) return
+  // 玻璃文件夹卡片：点击展开后才切换纸页；闭合及悬浮预展开均保留页面滚动。
+  if (!props.open || props.files.length <= 4) return
   const delta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX
   if (!delta) return
   event.preventDefault()

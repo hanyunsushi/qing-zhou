@@ -141,6 +141,8 @@ function copyPlain() {
 
 function revoke(t: any) {
   dialog.warning({
+    // 高亮弧边按钮：确认主动作复用统一样式，弹窗风险说明和业务回调保持。
+    positiveButtonProps: { type: 'primary' },
     title: '吊销 Token',
     content: `确定吊销「${t.name}」？使用该 Token 的集成会立即失效。`,
     positiveText: '吊销', negativeText: '取消',

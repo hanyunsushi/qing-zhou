@@ -224,8 +224,10 @@ function handleBuy(pkg: any) {
   const content = queue
     ? `确定花费 ${opt.price_points} 积分购买${what}？\n同一续期组已有套餐正在使用，本次购买将排队，在当前份用完或到期后自动启用（有效期届时才开始计算）。`
     : `确定花费 ${opt.price_points} 积分购买${what}？\n购买成功后立即生效，有效期从购买成功时开始计算；只有同一续期组已有套餐时才会排队。`
-  // 标准默认弧边按钮 / 弧边警告按钮：取消复用共享Dialog中性弧边，确定保留购买风险语义。
-  dialog.warning({ title: '确认购买', content, positiveText: '确定', negativeText: '取消',
+  // 标准默认弧边按钮 / 高亮弧边按钮：取消复用共享Dialog中性弧边，确定使用统一高亮弧边，购买风险说明保留。
+  dialog.warning({
+    // 高亮弧边按钮：确认主动作复用统一样式，弹窗风险说明和业务回调保持。
+    positiveButtonProps: { type: 'primary' }, title: '确认购买', content, positiveText: '确定', negativeText: '取消',
     onPositiveClick: async () => {
       buying.value = pkg.id
       const key = genKey() // one key per confirmed purchase intent; stable across the retry

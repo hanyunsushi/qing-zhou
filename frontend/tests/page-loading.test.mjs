@@ -21,7 +21,7 @@ const frames = {
 }
 function gate() {
   return runInNewContext(transpile(read('../src/utils/page-loading.ts')) +
-    '\n({pageLoading, beginPageLoad, currentPageLoad, trackPageRequest, waitForPageRequests, finishPageLoad, cancelPageLoad, nextPagePaint})', {
+    '\n({pageLoading, beginPageLoad, currentPageLoad, trackPageRequest, waitForPageRequests, finishPageLoad, cancelPageLoad, nextPagePaint, setPageLoadingTarget})', {
     ref, nextTick, window: { setTimeout, clearTimeout }, ...frames,
   })
 }
@@ -94,7 +94,7 @@ test('requests after reveal do not restart route loading; cancellation releases 
   refresh.resolve(); await refreshed
 })
 
-function transition(g, reduced = false) {
+function transition(g, reduced = false, folder = false) {
   const log = []
   class Element {
     constructor() {
@@ -104,11 +104,11 @@ function transition(g, reduced = false) {
       this.classList = { add: name => classes.add(name), remove: name => classes.delete(name), contains: name => classes.has(name) }
     }
     getBoundingClientRect() { return { left: 264, top: 64, width: 600, height: 500 } }
-    querySelector() { return null }
+    querySelector(selector) { return folder && selector === '.gf-root' ? {} : null }
     querySelectorAll() { return [] }
     setAttribute() {}
     remove() { this.isConnected = false }
-    animate(keyframes) { log.push({ type: keyframes[0].clipPath ? 'clip' : this.dataset.stage, loading: g.pageLoading.value }); return { cancel() {} } }
+    animate(keyframes) { log.push({ type: keyframes[0].clipPath ? 'clip' : this.dataset.stage, loading: g.pageLoading.value, keyframes }); return { cancel() {} } }
     dispatchEvent(event) { log.push({ type: event.type, loading: g.pageLoading.value }) }
   }
   const root = new Element()
@@ -147,6 +147,17 @@ test('reduced motion still waits for data before revealing but plays no route an
   pending.resolve(); await request; await enter
   assert.deepEqual(t.log.map(entry => entry.type), ['qz-shift5-entered'])
   assert.equal(g.pageLoading.value, false)
+})
+
+test('folder reveal preserves blur outsets through the held final frame, without changing ordinary reveals', async () => {
+  for (const folder of [false, true]) {
+    const g = gate(); g.beginPageLoad()
+    const t = transition(g, false, folder)
+    await t.run(t.root)
+    const clip = t.log.find(entry => entry.type === 'clip').keyframes
+    assert.equal(clip[1].clipPath, folder ? 'inset(-96px)' : 'inset(0 0 0% 0)')
+    assert.equal(clip[0].clipPath, folder ? 'inset(-96px -96px calc(100% + 96px) -96px)' : 'inset(0 0 100% 0)')
+  }
 })
 
 test('all default Naive loading surfaces use the same compact 3x3 symbol', () => {

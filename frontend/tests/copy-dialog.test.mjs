@@ -22,7 +22,7 @@ test('Dialog ghost cancel uses the shared neutral arc contract without changing 
   assert.equal(base['--n-border-focus'], '0 solid transparent')
   assert.equal(base['--n-border-pressed'], '0 solid transparent')
   assert.match(css, new RegExp(selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ':hover'))
-  assert.match(read('views/UserShop.vue'), /标准默认弧边按钮 \/ 弧边警告按钮：[\s\S]*negativeText: '取消'/)
+  assert.match(read('views/UserShop.vue'), /标准默认弧边按钮 \/ 高亮弧边按钮：[\s\S]*negativeText: '取消'/)
 })
 
 test('joined copy fields share heights and preserve readonly and copy business handlers', () => {

@@ -64,12 +64,13 @@
                   <span v-if="o.status === 'refunded'" class="amount-sub">退 {{ o.refunded_points }}<template v-if="o.refund_ratio > 0 && o.refund_ratio < 1"> ({{ Math.round(o.refund_ratio * 100) }}%)</template></span>
                 </td>
                 <td>
-                  <span class="pill" :class="o.status === 'success' ? 'pill-ok' : 'pill-warn'">{{ o.status === 'success' ? '成功' : '已退款' }}</span>
+                  <!-- 区分-状态牌：成功/已退款复用全站方形标签，不改变筛选和退款逻辑。 -->
+                  <n-tag :type="o.status === 'success' ? 'success' : 'warning'" :class="o.status === 'success' ? 'n-tag--success-type' : 'n-tag--warning-type'" :bordered="false">{{ o.status === 'success' ? '成功' : '已退款' }}</n-tag>
                 </td>
                 <td class="time">{{ fmtDateTime(o.created_at) }}</td>
                 <td class="act-col">
-                  <!-- 弧边警告按钮：保留风险语义、悬浮/聚焦提亮，点击保持颜色且不改变位置，请求状态由业务控制。 -->
-                  <n-button v-if="o.status === 'success'" size="tiny" type="warning" @click="openRefund(o.id)">退款</n-button>
+                  <!-- 高亮弧边按钮：统一实心Apple蓝、悬浮/聚焦/按下提亮；原风险文案、确认和请求状态由业务控制。 -->
+                  <n-button v-if="o.status === 'success'" size="tiny" type="primary" class="highlight-arc-button" @click="openRefund(o.id)">退款</n-button>
                   <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
                   <n-button size="tiny" quaternary class="delete-button" type="error" @click="handleDelete(o)">删除</n-button>
                 </td>
@@ -90,7 +91,8 @@
             <div v-for="o in g.items" :key="o.id" class="list-card">
               <div class="lc-head">
                 <span class="lc-title">{{ o.name || '—' }}</span>
-                <span class="pill" :class="o.status === 'success' ? 'pill-ok' : 'pill-warn'">{{ o.status === 'success' ? '成功' : '已退款' }}</span>
+                <!-- 区分-状态牌：成功/已退款复用全站方形标签，不改变筛选和退款逻辑。 -->
+                  <n-tag :type="o.status === 'success' ? 'success' : 'warning'" :class="o.status === 'success' ? 'n-tag--success-type' : 'n-tag--warning-type'" :bordered="false">{{ o.status === 'success' ? '成功' : '已退款' }}</n-tag>
               </div>
               <div class="lc-meta">
                 <span class="kv">用户 <b>{{ o.username || '已删除' }}</b></span>
@@ -102,8 +104,8 @@
                 <span class="kv">{{ fmtDateTime(o.created_at) }}</span>
               </div>
               <div class="lc-foot">
-                <!-- 弧边警告按钮：保留风险语义、悬浮/聚焦提亮，点击保持颜色且不改变位置，请求状态由业务控制。 -->
-                <n-button v-if="o.status === 'success'" size="tiny" type="warning" @click="openRefund(o.id)">退款</n-button>
+                <!-- 高亮弧边按钮：统一实心Apple蓝、悬浮/聚焦/按下提亮；原风险文案、确认和请求状态由业务控制。 -->
+                <n-button v-if="o.status === 'success'" size="tiny" type="primary" class="highlight-arc-button" @click="openRefund(o.id)">退款</n-button>
                 <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
                 <n-button size="tiny" quaternary class="delete-button" type="error" @click="handleDelete(o)">删除</n-button>
               </div>
@@ -268,6 +270,8 @@ function openRefund(id: number) {
 }
 function handleDelete(o: any) {
   dialog.warning({
+    // 高亮弧边按钮：确认主动作复用统一样式，弹窗风险说明和业务回调保持。
+    positiveButtonProps: { type: 'primary' },
     title: '确认删除订单',
     content: '删除后该订单记录将永久消失（仅用于清理已删除用户的孤儿订单）。确定删除？',
     positiveText: '删除', negativeText: '取消',
@@ -330,10 +334,6 @@ onUnmounted(() => window.removeEventListener('resize', repositionRouteIndicators
   border-color: var(--border); background: var(--card); box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08); transform: none; opacity: 1;
 }
 
-/* 状态胶囊 */
-.pill { display: inline-flex; align-items: center; padding: 1px 9px; border-radius: var(--r); font-size: 12px; font-weight: 600; line-height: 1.6; }
-.pill-ok { background: var(--success-soft); color: var(--success); }
-.pill-warn { background: var(--warn-soft); color: var(--warn); }
 
 /* 桌面表格 */
 .orders-table-wrap { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-sm); overflow-x: auto; }

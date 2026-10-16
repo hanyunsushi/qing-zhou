@@ -42,8 +42,8 @@
         <div style="display:flex;justify-content:flex-end;gap:8px;">
           <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="small" @click="emit('update:show', false)">取消</n-button>
-          <!-- 弧边警告按钮：保留风险语义、悬浮/聚焦提亮，点击保持颜色且不改变位置，请求状态由业务控制。 -->
-          <n-button size="small" type="warning" :loading="submitting" :disabled="!q || q.already_refunded" @click="confirm">
+          <!-- 高亮弧边按钮：统一实心Apple蓝、悬浮/聚焦/按下提亮；原风险文案、确认和请求状态由业务控制。 -->
+          <n-button size="small" type="primary" class="highlight-arc-button" :loading="submitting" :disabled="!q || q.already_refunded" @click="confirm">
             确认退款
           </n-button>
         </div>

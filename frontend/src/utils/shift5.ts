@@ -1,5 +1,5 @@
 import { nextTick, onMounted, watch, type Ref } from 'vue'
-import { currentPageLoad, finishPageLoad, nextPagePaint, waitForPageRequests } from './page-loading'
+import { currentPageLoad, finishPageLoad, nextPagePaint, setPageLoadingTarget, waitForPageRequests } from './page-loading'
 
 const OVERLAY_CLASS = 'qz-shift5-route-transition'
 const PENDING_CLASS = 'qz-shift5-route-transition-pending'
@@ -69,6 +69,7 @@ function track(animation: Animation | null) {
 }
 
 function prepareEnter(root: HTMLElement | null) {
+  setPageLoadingTarget(root)
   animations.forEach(animation => {
     try { animation.cancel() } catch (_) { /* animation already completed */ }
   })
@@ -209,9 +210,11 @@ export async function runShift5Enter(root: HTMLElement | null) {
     })
     revealDuration = Math.max(revealDuration, 1184 + Math.max(0, titleNodes.length - 1) * 16)
     blocks.forEach((block, index) => {
+      // 玻璃文件夹卡片 / 组件绘制动画：揭示边界包含对象的模糊投影，终帧不把阴影裁成横线；原时长与组装动画保持。
+      const hasFolder = block.classList.contains('gf-root') || !!block.querySelector('.gf-root')
       track(block.animate([
-        { clipPath: 'inset(0 0 100% 0)' },
-        { clipPath: 'inset(0 0 0% 0)' },
+        { clipPath: hasFolder ? 'inset(-96px -96px calc(100% + 96px) -96px)' : 'inset(0 0 100% 0)' },
+        { clipPath: hasFolder ? 'inset(-96px)' : 'inset(0 0 0% 0)' },
       ], {
         duration: 1008,
         delay: 50 + index * 38,

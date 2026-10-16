@@ -82,6 +82,7 @@ test('glass folders preserve source geometry and exclude closed sheets from keyb
   assert.doesNotMatch(folder, /class="gf-root"[^>]*@wheel=/)
   assert.match(folder, /event\.preventDefault\(\)/)
   assert.match(folder, /props.files.length <= 4/)
+  assert.match(folder, /if \(!props.open \|\| props.files.length <= 4\) return/)
   assert.match(folder, /--gf-hinge: -11deg; --gf-lift: -34px/)
   assert.match(folder, /\.gf-root:not\(\[data-open\]\):has\(\.gf-interaction:hover\)/)
   assert.match(folder, /--gf-hinge: -24deg; --gf-lift: -96px/)
@@ -89,6 +90,20 @@ test('glass folders preserve source geometry and exclude closed sheets from keyb
   assert.match(folder, /ResizeObserver/)
   assert.match(folder, /prefers-reduced-motion: reduce/)
   assert.doesNotMatch(source, /onAdd|Untitled/)
+})
+test('folder wheel is intercepted only after explicit expansion with more than four files', () => {
+  const code = folder.match(/function wheelPreview\(event: WheelEvent\) \{[\s\S]*?\n\}/)[0]
+    .replace('event: WheelEvent', 'event')
+  for (const [open, count, shouldCapture] of [[false, 5, false], [true, 5, true], [true, 4, false]]) {
+    const start = { value: 0 }
+    const wheel = new Function('props', 'previewStart', 'maxPreviewStart', `${code}; return wheelPreview`)(
+      { open, files: Array(count) }, start, { value: Math.max(0, count - 4) })
+    let prevented = false, stopped = false
+    wheel({ deltaY: 120, deltaX: 0, preventDefault() { prevented = true }, stopPropagation() { stopped = true } })
+    assert.equal(prevented, shouldCapture)
+    assert.equal(stopped, shouldCapture)
+    assert.equal(start.value, shouldCapture ? 1 : 0)
+  }
 })
 test('attachment artwork remains deterministic and produces nonblank RGBA across presets', () => {
   for (const recipe of Object.values(art.ART_PRESETS)) {

@@ -3,8 +3,8 @@
     <div class="page-head">
       <div><h2 class="page-title">套餐管理</h2><p class="page-sub">商品规格、时长阶梯、库存、权限与上下架状态</p></div>
       <div class="page-actions">
-        <!-- 弧边警告按钮：保留风险语义、悬浮/聚焦提亮，点击保持颜色且不改变位置，请求状态由业务控制。 -->
-        <n-button type="warning" :loading="syncing" @click="forceSyncPackages">强制推送</n-button>
+        <!-- 高亮弧边按钮：统一实心Apple蓝、悬浮/聚焦/按下提亮；原风险文案、确认和请求状态由业务控制。 -->
+        <n-button type="primary" class="highlight-arc-button" :loading="syncing" @click="forceSyncPackages">强制推送</n-button>
         <!-- 强调按钮：页面级主操作统一复用强调按钮合同。 -->
         <n-button type="primary" class="action-button action-button--emphasis" @click="openForm()">创建套餐</n-button>
       </div>
@@ -58,8 +58,8 @@
           <div class="lc-foot" style="flex-wrap:wrap;">
             <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
             <n-button size="tiny" class="default-arc-button" @click="openForm(p)">编辑</n-button>
-            <!-- 弧边警告按钮：保留风险语义、悬浮/聚焦提亮，点击保持颜色且不改变位置，请求状态由业务控制。 -->
-            <n-button v-if="p.enabled !== false" size="tiny" type="warning" @click="handleRetire(p)">下架</n-button>
+            <!-- 高亮弧边按钮：统一实心Apple蓝、悬浮/聚焦/按下提亮；原风险文案、确认和请求状态由业务控制。 -->
+            <n-button v-if="p.enabled !== false" size="tiny" type="primary" class="highlight-arc-button" @click="handleRetire(p)">下架</n-button>
             <n-button v-else size="tiny" type="success" @click="handleEnable(p.id)">上架</n-button>
             <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
             <n-button size="tiny" quaternary class="delete-button" type="error" @click="handleDelete(p)">删除</n-button>
@@ -282,6 +282,8 @@ async function handleSave() {
 
 function forceSyncPackages() {
   dialog.warning({
+    // 高亮弧边按钮：确认主动作复用统一样式，弹窗风险说明和业务回调保持。
+    positiveButtonProps: { type: 'primary' },
     title: '确认强制推送',
     content: '这会把所有用户仍持有的订阅套餐同步为当前最新定义，并清零流量与 Edge 日次数已用量。购买记录、积分、有效期和排队状态保留。操作不可撤销，确定继续？',
     positiveText: '确认推送并重置额度',
@@ -378,6 +380,8 @@ function finishPackageTouchDrag(event: PointerEvent) {
 function handleRetire(p: any) {
   const cnt = p.subscribers || 0
   dialog.warning({
+    // 高亮弧边按钮：确认主动作复用统一样式，弹窗风险说明和业务回调保持。
+    positiveButtonProps: { type: 'primary' },
     title: '确认下架套餐',
     content: cnt > 0
       ? `「${p.name}」当前有 ${cnt} 位用户持有。下架会按剩余流量/时间比例给他们退款并清空该套餐，操作不可撤销。确定继续？`
@@ -394,6 +398,8 @@ async function handleEnable(id: number) {
 }
 function handleDelete(p: any) {
   dialog.warning({
+    // 高亮弧边按钮：确认主动作复用统一样式，弹窗风险说明和业务回调保持。
+    positiveButtonProps: { type: 'primary' },
     title: '确认删除套餐',
     content: `确定永久删除「${p.name}」？该操作不可撤销。若仍有用户持有，请先下架。`,
     positiveText: '删除', negativeText: '取消',

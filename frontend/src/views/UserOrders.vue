@@ -90,7 +90,8 @@
             <div class="oi-main">
               <div class="oi-title">{{ o.name || '—' }}</div>
               <div class="oi-meta">
-                <span class="pill" :class="o.status === 'success' ? 'pill-ok' : 'pill-warn'">{{ o.status === 'success' ? '成功' : '已退款' }}</span>
+                <!-- 区分-状态牌：成功/已退款共用全站方形标签几何，状态含义保持。 -->
+                <n-tag :type="o.status === 'success' ? 'success' : 'warning'" :class="o.status === 'success' ? 'n-tag--success-type' : 'n-tag--warning-type'" :bordered="false">{{ o.status === 'success' ? '成功' : '已退款' }}</n-tag>
                 <span class="oi-type">{{ typeLabel(o.type) }}</span>
                 <span class="oi-time" :title="fmtDateTime(o.created_at)">{{ timeAgo(o.created_at) }}</span>
               </div>
@@ -125,7 +126,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
-import { NCard, NSpin, NEmpty, NButton, NRadioGroup, NRadioButton, NSelect, NInput, NIcon } from 'naive-ui'
+import { NCard, NSpin, NEmpty, NButton, NTag, NRadioGroup, NRadioButton, NSelect, NInput, NIcon } from 'naive-ui'
 import { CartOutline } from '@vicons/ionicons5'
 import * as echarts from '@/utils/echarts'
 import { apiList } from '@/api'
@@ -427,11 +428,6 @@ onUnmounted(() => {
 .oi-unit { font-size: 11px; font-weight: 500; color: var(--text-3); margin-left: 3px; }
 /* 区分-状态：退款返还积分提示使用 Apple 警告色。 */
 .oi-refund { font-size: 11.5px; color: var(--warn); margin-top: 2px; font-variant-numeric: tabular-nums; }
-
-/* 状态胶囊 */
-.pill { display: inline-flex; align-items: center; padding: 1px 9px; border-radius: var(--r); font-size: 11.5px; font-weight: 600; line-height: 1.6; }
-.pill-ok { background: var(--success-soft); color: var(--success-text); }
-.pill-warn { background: var(--warn-soft); color: var(--warn-text); }
 
 @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
 </style>

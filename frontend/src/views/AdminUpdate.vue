@@ -286,6 +286,8 @@ async function loadReleases() {
 function confirmRollback() {
   const v = rollback.value?.version || '上一个版本'
   dialog.warning({
+    // 高亮弧边按钮：确认主动作复用统一样式，弹窗风险说明和业务回调保持。
+    positiveButtonProps: { type: 'primary' },
     title: '确认回滚',
     content: `将把面板换回 ${v} 并重启服务。不会下载任何东西，也不会改动数据库。继续？`,
     positiveText: '回滚',
@@ -309,6 +311,8 @@ function confirmInstall() {
   if (!r) return
   const downgrade = r.relation === 'older'
   dialog.warning({
+    // 高亮弧边按钮：确认主动作复用统一样式，弹窗风险说明和业务回调保持。
+    positiveButtonProps: { type: 'primary' },
     title: downgrade ? '确认降级' : '确认安装',
     content: downgrade
       ? `将从 ${info.value?.current} 降级到 ${r.tag}。数据库不会回滚，建议先下载一份备份。继续？`
@@ -322,6 +326,8 @@ function confirmInstall() {
 function confirmUpdate() {
   if (!info.value) return
   dialog.warning({
+    // 高亮弧边按钮：确认主动作复用统一样式，弹窗风险说明和业务回调保持。
+    positiveButtonProps: { type: 'primary' },
     title: '确认更新',
     content: `将从 ${info.value.current || '当前版本'} 更新到 ${info.value.latest}。更新过程中服务会短暂重启，确定继续？`,
     positiveText: '开始更新',

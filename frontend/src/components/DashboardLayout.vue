@@ -182,7 +182,8 @@ const searchQuery = ref('')
 const sidebarQuery = ref('')
 const sidebarCollapsed = ref(false)
 const routeShell = ref<HTMLElement | null>(null)
-useShift5PageTransition(routeShell, () => route.fullPath, () => route.name !== 'admin-settings')
+// 加载反馈 / 组件绘制动画：设置页首次进入由整页壳门控，二级侧边栏与内容一起揭示；分区查询变化交给页面内部。
+useShift5PageTransition(routeShell, () => route.name === 'admin-settings' ? route.path : route.fullPath)
 const { isScrolled } = useTopbarScrollState()
 
 // ---- 响应式：移动端判定 ----

@@ -44,7 +44,7 @@
       </div>
     </n-card>
 
-    <!-- 二级切换路由（切换路由2）：活动线由活动页签自身绘制，避免导航滚动层裁切。 -->
+    <!-- 二级切换路由（切换路由2）：单一活动线按页签测量横向移动，与窄屏横向滚动共用坐标。 -->
     <n-tabs v-model:value="tab" type="line" animated class="ov-tabs route-switch-2">
       <!-- ========== 趋势 ========== -->
       <n-tab-pane name="trend" tab="趋势">

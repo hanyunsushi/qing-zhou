@@ -48,7 +48,7 @@
 .n-base-selection .n-base-loading,
 .n-input .n-base-loading,
 .n-input-number .n-base-loading { --loader-size: 16px; }
-/* 加载反馈：路由等待只占20px，不使用全屏加载面或进度条。 */
+/* 加载反馈：路由点阵只占20px，由目标壳的可见区域定位；无局部目标时使用全页中心。 */
 .page-loading-indicator {
   position: fixed;
   top: 50dvh;

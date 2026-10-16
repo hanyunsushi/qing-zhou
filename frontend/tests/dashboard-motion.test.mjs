@@ -96,7 +96,7 @@ test('Shift5 notifies the revealed root only after clearing the page gates', asy
   const enter = runInNewContext(transpile(read('../src/utils/shift5.ts')) + '\nrunShift5Enter', {
     document, Event, nextTick, onMounted() {}, watch() {},
     currentPageLoad: () => 0, waitForPageRequests: async () => true,
-    finishPageLoad: () => true, nextPagePaint: async () => {},
+    finishPageLoad: () => true, nextPagePaint: async () => {}, setPageLoadingTarget() {},
     window: { matchMedia: () => ({ matches: true }) },
   })
   await enter(root)

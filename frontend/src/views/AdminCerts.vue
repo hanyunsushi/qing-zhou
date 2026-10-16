@@ -288,6 +288,8 @@ async function toggleAuto(c: any, v: boolean) {
 
 function del(c: any) {
   dialog.warning({
+    // 高亮弧边按钮：确认主动作复用统一样式，弹窗风险说明和业务回调保持。
+    positiveButtonProps: { type: 'primary' },
     title: '删除证书',
     content: `确定删除「${c.name}」？若仍被 TLS 配置引用将拒绝删除。`,
     positiveText: '删除', negativeText: '取消',

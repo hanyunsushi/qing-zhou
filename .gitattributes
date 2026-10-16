@@ -1,3 +1,5 @@
 * text=auto eol=lf
 *.png binary
 *.ico binary
+# Preserve the upstream OFL notice byte-for-byte, including its original line spaces.
+frontend/public/fonts/courier-prime/OFL.txt whitespace=-blank-at-eol

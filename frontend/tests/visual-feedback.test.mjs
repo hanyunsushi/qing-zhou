@@ -49,15 +49,13 @@ test('Markdown links are underlined only on hover or keyboard focus', () => {
   assert.match(css, /\.md a:focus-visible \{ outline: 2px solid var\(--accent\); outline-offset: 3px; \}/)
   assert.ok(css.indexOf('.md a {') < css.indexOf('.md a:hover'))
 })
-test('operation buttons use wave-free static clicks and keep highlight and warning hover colors', () => {
+test('operation buttons use wave-free static clicks and keep the unified highlight hover color', () => {
   const css = read('styles/global.css')
   assert.match(css, /\.n-button > \.n-base-wave \{ display: none !important; \}/)
-  const highlight = css.match(/\.n-button\.n-button--primary-type\.highlight-arc-button \{([^}]+)\}/)[1]
+  const highlight = css.match(/\.n-button\.n-button--primary-type\.highlight-arc-button,[^{]*\{([^}]+)\}/)[1]
   assert.match(highlight, /--n-color-pressed: var\(--accent-arc-hover\) !important;/)
   assert.doesNotMatch(highlight, /var\(--accent-strong\)/)
-  const warning = css.match(/\.n-button\.n-button--warning-type[^{}]+\{([^}]+)\}/)[1]
-  assert.match(warning, /--n-color-pressed: var\(--n-color-hover\) !important;/)
-  assert.match(warning, /--n-border-pressed: var\(--n-border-hover\) !important;/)
+  assert.doesNotMatch(css, /\.n-button\.n-button--warning-type/)
   assert.match(css, /button:active:not\(:disabled\),\s*button\.n-button--pressed:not\(\.n-button--disabled\) \{ transform: none !important;/)
   assert.doesNotMatch(css, /transform:translateY\(var\(--button-press-offset\)\) !important;/)
   assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\.n-button \{ --button-press-offset: 0px; \}/)

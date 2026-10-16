@@ -129,7 +129,9 @@ function send() {
   if (!form.title.trim()) return message.warning('请填写标题')
   if (form.target_type === 'selected' && form.user_ids.length === 0) return message.warning('请选择至少一个用户')
   const target = form.target_type === 'all' ? '全部正常用户' : `选中的 ${form.user_ids.length} 个用户`
-  dialog.warning({ title:'确认发送', content:`确定通过 Telegram 向${target}发送此通知吗？`, positiveText:'确认发送', negativeText:'取消', onPositiveClick:submit })
+  dialog.warning({
+    // 高亮弧边按钮：确认主动作复用统一样式，弹窗风险说明和业务回调保持。
+    positiveButtonProps: { type: 'primary' }, title:'确认发送', content:`确定通过 Telegram 向${target}发送此通知吗？`, positiveText:'确认发送', negativeText:'取消', onPositiveClick:submit })
 }
 async function submit() {
   sending.value = true

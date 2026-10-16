@@ -142,6 +142,8 @@ async function handleDelete(g: any) {
   } catch (e: any) {
     if (e.status !== 409) { message.error(e.message); return }
     dialog.warning({
+    // 高亮弧边按钮：确认主动作复用统一样式，弹窗风险说明和业务回调保持。
+    positiveButtonProps: { type: 'primary' },
       title: '确认删除用户组？',
       content: e.message,
       positiveText: '仍然删除',

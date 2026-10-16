@@ -310,6 +310,8 @@ async function saveCloudflare() {
 function removeProvider(provider: Provider) {
   const label = provider === 'oci' ? 'OCI' : 'Cloudflare'
   dialog.warning({
+    // 高亮弧边按钮：确认主动作复用统一样式，弹窗风险说明和业务回调保持。
+    positiveButtonProps: { type: 'primary' },
     title: `清除 ${label} 上游配置`, content: `会删除已加密保存的 ${label} 凭据与上限，无法恢复。确定继续？`, positiveText: '清除', negativeText: '取消',
     onPositiveClick: async () => {
       try {
