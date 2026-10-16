@@ -1,0 +1,12 @@
+/* 二级侧边栏：编译原始BranchedMenu的Tailwind类；作为scoped样式载入，不注入全站reset。 */
+@layer theme, base, components, utilities;
+@theme inline {
+  --spacing: 0.25rem;
+  --font-weight-medium: 500;
+}
+@layer base {
+  *, ::before, ::after { box-sizing:border-box; margin:0; padding:0; border:0 solid; }
+  button { font:inherit; font-feature-settings:inherit; font-variation-settings:inherit; letter-spacing:inherit; color:inherit; border-radius:0; background-color:transparent; opacity:1; }
+}
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+@source "../components/BranchedMenu.vue";

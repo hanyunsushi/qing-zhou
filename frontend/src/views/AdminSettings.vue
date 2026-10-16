@@ -12,11 +12,10 @@
     </div>
 
     <div class="settings-layout">
-      <!-- 二级侧边栏：设置页独立的分支导航，不并入全局主侧栏；分支线由 CSS 绘制。 -->
+      <!-- 二级侧边栏：设置页独立分支导航，原版SVG路径与交互由BranchedMenu负责；路由和搜索由本页接入。 -->
       <aside class="settings-nav" aria-label="设置分区导航">
-        <span ref="settingsNavMarker" class="settings-nav-marker" aria-hidden="true" />
-        <template v-if="settingsSearch.trim()">
-          <div class="settings-nav-group">搜索结果</div>
+        <div v-if="settingsSearch.trim()" class="settings-search-results">
+          <div class="settings-search-heading">搜索结果</div>
           <button v-for="section in filteredSettingsSections" :key="section.id" type="button"
                   :class="{ active: activeSectionId === section.id }"
                   :aria-current="activeSectionId === section.id ? 'page' : undefined"
@@ -24,40 +23,11 @@
             <span>{{ section.label }}</span>
           </button>
           <div v-if="!filteredSettingsSections.length" class="settings-search-empty">没有匹配的设置</div>
-        </template>
-        <template v-else>
-          <section v-for="(group, groupIndex) in settingsGroups" :key="group.label"
-                   class="settings-nav-group-wrap"
-                   :data-open="isSettingsGroupOpen(group.label) ? '' : undefined">
-            <!-- 二级侧边栏：一级分区控制子项展开，当前分区由独立活动标记跟随。 -->
-            <button :ref="el => (settingsGroupButtons[groupIndex] = el as HTMLButtonElement | null)"
-                    type="button" class="settings-nav-group"
-                    :aria-expanded="isSettingsGroupOpen(group.label)"
-                    @click="toggleSettingsGroup(group.label)">
-              <span>{{ group.label }}</span>
-            </button>
-            <div class="settings-nav-branch">
-              <div class="settings-nav-branch-clip">
-                <div class="settings-nav-children" :style="{ height: `${12 + group.sections.length * 36}px` }">
-                  <!-- 二级侧边栏：活动分支沿 CSS 主干延伸到当前叶子，等价于参考组件的 reach path。 -->
-                  <span v-if="activeSettingsItemIndex(group) >= 0"
-                        class="settings-nav-active-reach"
-                        :data-on="isSettingsGroupOpen(group.label) ? '' : undefined"
-                        :style="{ height: `${14 + activeSettingsItemIndex(group) * 36}px` }"
-                        aria-hidden="true" />
-                  <button v-for="section in group.sections" :key="section.id" type="button"
-                          class="settings-nav-item"
-                          :class="{ active: activeSectionId === section.id }"
-                          :aria-current="activeSectionId === section.id ? 'page' : undefined"
-                          :tabindex="isSettingsGroupOpen(group.label) ? 0 : -1"
-                          @click="selectSettingsSection(section.id)">
-                    <span>{{ section.label }}</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </section>
-        </template>
+        </div>
+        <BranchedMenu v-show="!settingsSearch.trim()" :key="settingsMenuKey" :items="settingsMenuItems"
+                      :default-active="activeSectionId" :default-open="settingsMenuDefaultOpen"
+                      color="var(--text)" accent-color="var(--accent)" line-color="var(--border)"
+                      aria-label="设置分支导航" @select="onSettingsMenuSelect" />
       </aside>
       <main ref="settingsMain" class="settings-main">
       <div v-if="activeSection" class="settings-section-head">
@@ -730,6 +700,7 @@
 </template>
 
 <script setup lang="ts">
+import BranchedMenu from '@/components/BranchedMenu.vue'
 import InfoNotice from '@/components/InfoNotice.vue'
 import OAuth2Settings from '@/components/OAuth2Settings.vue'
 import RefreshButton from '@/components/RefreshButton.vue'
@@ -784,78 +755,35 @@ const settingsSearch = ref('')
 const activeSectionId = ref('settings-basic')
 const activeSection = computed(() => settingsSections.find(section => section.id === activeSectionId.value) || settingsSections[0])
 const activeSectionGroup = computed(() => settingsGroups.find(group => group.sections.some(section => section.id === activeSectionId.value))?.label || '')
-// BranchedMenu 的 defaultOpen=0：首次只展开第一组；路由直达时再打开所属组。
-const openSettingsGroups = ref(new Set(settingsGroups.slice(0, 1).map(group => group.label)))
-const settingsNavMarker = ref<HTMLSpanElement | null>(null)
-const settingsGroupButtons: (HTMLButtonElement | null)[] = []
-let settingsNavResizeObserver: ResizeObserver | null = null
-const activeSettingsGroupIndex = computed(() => settingsGroups.findIndex(group => group.label === activeSectionGroup.value))
-const settingsNavMarkerShown = computed(() =>
-  !settingsSearch.value.trim() && activeSettingsGroupIndex.value >= 0 &&
-  openSettingsGroups.value.has(activeSectionGroup.value)
-)
+const settingsMenuItems = settingsGroups.map(group => ({
+  label: group.label,
+  children: group.sections.map(section => ({ value: section.id, label: section.label })),
+}))
+// 二级侧边栏：通过原组件公开参数和select事件接入；外部路由改变时才重建默认状态。
+const settingsMenuKey = ref(0)
+const settingsMenuSelection = ref(activeSectionId.value)
+const settingsMenuDefaultOpen = computed(() => [...new Set([0, settingsGroups.findIndex(group =>
+  group.sections.some(section => section.id === activeSectionId.value)
+)])].filter(index => index >= 0))
+function onSettingsMenuSelect(id: string) {
+  settingsMenuSelection.value = id
+  void selectSettingsSection(id)
+}
+watch(activeSectionId, id => {
+  if (settingsMenuSelection.value !== id) {
+    settingsMenuSelection.value = id
+    settingsMenuKey.value++
+  }
+})
 const filteredSettingsSections = computed(() => {
   const query = settingsSearch.value.trim().toLocaleLowerCase()
   if (!query) return settingsSections
   return settingsSections.filter(section => `${section.label} ${section.note} ${section.description} ${section.keywords}`.toLocaleLowerCase().includes(query))
 })
 
-function isSettingsGroupOpen(label: string) {
-  return openSettingsGroups.value.has(label)
-}
-
-function activeSettingsItemIndex(group: SettingsGroup) {
-  return group.sections.findIndex(section => section.id === activeSectionId.value)
-}
-
-function toggleSettingsGroup(label: string) {
-  const next = new Set(openSettingsGroups.value)
-  if (next.has(label)) next.delete(label)
-  else next.add(label)
-  openSettingsGroups.value = next
-}
-
-function openSettingsGroupForSection(id: string) {
-  const group = settingsGroups.find(item => item.sections.some(section => section.id === id))
-  if (!group || openSettingsGroups.value.has(group.label)) return
-  openSettingsGroups.value = new Set(openSettingsGroups.value).add(group.label)
-}
-
-function placeSettingsNavMarker(glide = true) {
-  const marker = settingsNavMarker.value
-  const head = settingsGroupButtons[activeSettingsGroupIndex.value]
-  if (!marker) return
-  const on = settingsNavMarkerShown.value && head
-  if (!glide) marker.style.transition = 'none'
-  if (on) marker.style.top = `${head.offsetTop + (head.offsetHeight - 16) / 2}px`
-  marker.toggleAttribute('data-on', Boolean(on))
-  if (!glide) {
-    void marker.offsetHeight
-    marker.style.transition = ''
-  }
-}
-
-function bindSettingsNavMarker() {
-  settingsNavResizeObserver?.disconnect()
-  void nextTick(() => {
-    placeSettingsNavMarker(true)
-    let first = true
-    settingsNavResizeObserver = new ResizeObserver(() => {
-      if (first) {
-        first = false
-        return
-      }
-      placeSettingsNavMarker(false)
-    })
-    const nav = settingsNavMarker.value?.parentElement
-    if (nav) settingsNavResizeObserver.observe(nav)
-  })
-}
-
 async function selectSettingsSection(id: string, clearSearch = false) {
   if (!settingsSections.some(section => section.id === id)) return
   activeSectionId.value = id
-  openSettingsGroupForSection(id)
   if (clearSearch) settingsSearch.value = ''
   const query = { ...route.query, section: id.replace(/^settings-/, '') }
   await router.replace({ query })
@@ -876,10 +804,8 @@ watch(() => route.query.section, value => {
   const id = `settings-${Array.isArray(value) ? value[0] : value || 'basic'}`
   if (settingsSections.some(section => section.id === id)) {
     activeSectionId.value = id
-    openSettingsGroupForSection(id)
   }
 }, { immediate: true })
-watch(() => [activeSettingsGroupIndex.value, settingsNavMarkerShown.value, settingsSearch.value], bindSettingsNavMarker, { flush: 'post' })
 const loading = ref(false)
 const saving = ref(false)
 const testingSmtp = ref(false)
@@ -1686,12 +1612,10 @@ async function loadSettings() {
 
 onMounted(() => {
   window.addEventListener('beforeunload', handleBeforeUnload)
-  bindSettingsNavMarker()
   loadSettings()
 })
 onBeforeUnmount(() => {
   window.removeEventListener('beforeunload', handleBeforeUnload)
-  settingsNavResizeObserver?.disconnect()
 })
 </script>
 
@@ -1700,41 +1624,14 @@ onBeforeUnmount(() => {
 .settings-hero .page-sub { margin-bottom:0; }
 .settings-search { width:min(380px,42vw); }
 .settings-layout { display:grid; grid-template-columns:fit-content(240px) minmax(0, 1fr); align-items:start; gap:22px; }
-/* 二级侧边栏：独立设置导航使用 CSS 主干、分支和活动标记，不使用 SVG。 */
-.settings-nav { position:sticky; top:84px; display:flex; width:fit-content; max-width:min(240px, 100%); flex-direction:column; gap:0; padding:0 0 0 14px; border:0; border-radius:0; background:transparent; box-shadow:none; }
-.settings-nav::before { position:absolute; top:8px; bottom:0; left:0; width:1.5px; border-radius:1px; content:''; background:linear-gradient(to bottom, var(--border) 0%, var(--border) 55%, transparent 100%); }
-.settings-nav-marker { position:absolute; top:-1px; left:0; z-index:1; opacity:0; width:1.5px; height:16px; border-radius:1px; background:var(--accent); pointer-events:none; transition:top .22s cubic-bezier(.23,1,.32,1), opacity .15s ease; }
-.settings-nav-marker[data-on] { opacity:1; }
-.settings-nav-group-wrap { position:relative; display:flex; flex-direction:column; }
-.settings-nav-group-wrap > .settings-nav-group { position:relative; display:block; width:100%; min-height:36px; margin:0; padding:9px 0; border:0; border-radius:0; background:transparent; color:var(--text-3); text-align:left; font:500 calc(14px + 1px)/1.2 var(--ff-body); cursor:pointer; transition:color .2s ease; }
-.settings-nav-group-wrap > .settings-nav-group:hover { color:var(--text); }
-.settings-nav-group-wrap[data-open] > .settings-nav-group { color:var(--text); }
-.settings-nav-branch { display:grid; grid-template-rows:0fr; transition:grid-template-rows .3s cubic-bezier(.23,1,.32,1); }
-.settings-nav-group-wrap[data-open] .settings-nav-branch { grid-template-rows:1fr; }
-.settings-nav-branch-clip { min-height:0; overflow:hidden; }
-.settings-nav-children { position:relative; box-sizing:border-box; min-height:0; overflow:hidden; padding:6px 0; }
-.settings-nav-children::before { position:absolute; top:0; bottom:calc(36px - 10px); left:14px; width:1.5px; border-radius:1px; content:''; background:var(--border); opacity:0; transition:opacity .2s ease; }
-.settings-nav-group-wrap[data-open] .settings-nav-children::before { opacity:1; transition:opacity .25s ease .1s; }
-.settings-nav-active-reach { position:absolute; top:0; left:14px; z-index:0; width:1.5px; border-radius:1px; background:var(--accent); opacity:0; pointer-events:none; transition:height .4s cubic-bezier(.23,1,.32,1), opacity .2s ease; }
-.settings-nav-group-wrap[data-open] .settings-nav-active-reach[data-on] { opacity:1; transition:height .4s cubic-bezier(.23,1,.32,1), opacity .25s ease .1s; }
-.settings-nav-item { position:relative; z-index:1; display:flex; align-items:center; gap:8px; width:100%; height:36px; min-height:36px; margin:0; padding:0 0 0 40px; border:0; border-radius:0; background:transparent; color:var(--text-2); text-align:left; font:400 14px/1.2 var(--ff-body); cursor:pointer; transition:color .2s ease; }
-.settings-nav-item::before,
-.settings-nav-item::after { position:absolute; top:calc(50% - 5px); left:14px; box-sizing:border-box; width:18px; height:10px; border-bottom:1.5px solid var(--border); border-left:1.5px solid var(--border); border-bottom-left-radius:10px; content:''; opacity:0; transition:opacity .2s ease; }
-.settings-nav-group-wrap[data-open] .settings-nav-item::before { opacity:1; transition:opacity .25s ease .1s; }
-.settings-nav-item::after { border-color:var(--accent); clip-path:inset(0 100% 0 0); transition:clip-path .4s cubic-bezier(.23,1,.32,1), opacity .2s ease; }
-.settings-nav-group-wrap[data-open] .settings-nav-item.active::after { opacity:1; clip-path:inset(0); transition:clip-path .4s cubic-bezier(.23,1,.32,1), opacity .25s ease .1s; }
-.settings-nav-item:hover { color:var(--text); }
-.settings-nav-item.active { color:var(--accent); font-weight:500; }
-.settings-nav button:focus:not(:focus-visible) { outline:none; }
-.settings-nav button:focus-visible { outline:2px solid color-mix(in srgb, var(--accent) 65%, transparent); outline-offset:1px; }
-.settings-nav-item span { white-space:nowrap; }
-.settings-nav-item small { display:none; }
-.settings-nav > .settings-nav-group { padding:5px 9px 5px; color:var(--text-3); font-size:10.5px; font-weight:700; letter-spacing:.08em; }
-.settings-nav > .settings-nav-group:first-child { padding-top:0; }
-.settings-nav > button { position:relative; display:block; min-height:36px; padding:9px 0; border:0; border-radius:0; background:transparent; color:var(--text-2); text-align:left; font:400 14px/18px var(--ff-body); cursor:pointer; transition:color .2s ease; }
-.settings-nav > button:hover { color:var(--text); }
-.settings-nav > button.active { color:var(--accent); font-weight:600; }
-.settings-nav > button span { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+/* 二级侧边栏：实际页面使用与示范相同的 BranchedMenu；此处只负责粘性/搜索容器。 */
+.settings-nav { position:sticky; top:84px; min-width:0; max-width:min(240px, 100%); border:0; border-radius:0; background:transparent; box-shadow:none; }
+.settings-search-results { padding-left:14px; }
+.settings-search-heading { padding-bottom:8px; color:var(--text-3); font-size:12px; }
+.settings-search-results > button { display:block; min-height:36px; width:100%; padding:9px 0; border:0; background:transparent; color:var(--text-2); text-align:left; font:400 14px/1.2 var(--ff-body); cursor:pointer; }
+.settings-search-results > button:hover { color:var(--text); }
+.settings-search-results > button.active { color:var(--accent); font-weight:500; }
+.settings-search-results > button:focus-visible { outline:2px solid var(--accent); outline-offset:-2px; }
 .settings-search-empty { padding:20px 10px; color:var(--text-3); font-size:12px; text-align:center; }
 .settings-main { min-width:0; max-width:920px; }
 .settings-section-head { margin:1px 0 13px; }
@@ -1874,8 +1771,6 @@ onBeforeUnmount(() => {
 @media (max-width: 900px) {
   .settings-layout { grid-template-columns:1fr; }
   .settings-nav { top:64px; z-index:6; width:100%; max-height:min(46vh,420px); overflow-y:auto; overscroll-behavior:contain; background:var(--bg); }
-  .settings-nav-group-wrap > .settings-nav-group { min-height:36px; }
-  .settings-nav-item { min-height:36px; }
   .settings-search-empty { min-width:160px; }
   .settings-main { max-width:none; }
 }
@@ -1890,9 +1785,6 @@ onBeforeUnmount(() => {
   .section-operation { align-items:stretch; flex-direction:column; }
   .settings-actions { bottom:8px; flex-wrap:wrap; }
   .settings-dirty-copy { flex-basis:100%; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .settings-nav-marker, .settings-nav-active-reach, .settings-nav-branch, .settings-nav-item::before, .settings-nav-item::after, .settings-nav-children::before, .settings-nav-group-wrap > .settings-nav-group, .settings-nav-item { transition:none; }
 }
 @media (max-width: 560px) {
   .settings-section :deep(.n-form-item-blank) { min-width:0; width:100%; }

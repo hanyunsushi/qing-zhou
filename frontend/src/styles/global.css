@@ -651,19 +651,20 @@ button.n-button--pressed:not(.n-button--disabled) { transform: none !important; 
   background: currentColor;
   opacity: .28;
 }
+/* 下拉选择菜单 / 悬浮下拉菜单：对称绘图固定在10px占位内，只绕中心旋转。 */
 .topbar-trigger-chevron {
   display: inline-block;
-  width: 7px;
-  height: 7px;
-  flex: 0 0 7px;
+  width: 10px;
+  height: 10px;
+  flex: 0 0 10px;
   margin: 0 1px 0 0;
-  border-right: 1.5px solid currentColor;
-  border-bottom: 1.5px solid currentColor;
-  transform: translateY(-1px) rotate(45deg);
+  background: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1 3l4 4 4-4' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  transform: rotate(0deg);
   transform-origin: center;
   transition: transform .2s var(--ease-standard);
 }
-.topbar-trigger-chevron.is-open { transform: translateY(-1px) rotate(225deg); }
+.topbar-trigger-chevron.is-open { transform: rotate(180deg); }
 .topbar-hover-trigger .topbar-trigger-divider { display: none; }
 .topbar-hover-trigger .topbar-trigger-chevron { margin-left: 3px; }
 .n-button.topbar-account-trigger {
@@ -925,6 +926,8 @@ button.n-button--pressed:not(.n-button--disabled) { transform: none !important; 
 .n-tabs.route-switch-2 .n-tabs-nav-scroll-content {
   padding-inline: 8px;
   box-sizing: border-box;
+  /* 二级切换路由：基线由实际页签行绘制，移除组件另画的一条底边。 */
+  border-bottom: 0 !important;
 }
 /* 二级切换路由：窄屏页签保留原生横向滚动，不把超出内容直接绘制到视口外。 */
 .n-tabs.route-switch-2 .n-tabs-nav-scroll-wrapper {
@@ -946,16 +949,17 @@ button.n-button--pressed:not(.n-button--disabled) { transform: none !important; 
 .n-tabs.route-switch-2 .n-tabs-nav-scroll-wrapper::after {
   box-shadow: none !important;
 }
-.n-tabs.route-switch-2 .n-tabs-nav {
+.n-tabs.route-switch-2 .n-tabs-wrapper {
   position: relative;
+  min-width: 100%;
 }
-/* 二级切换路由：整条所属模块轨道先绘制中性基线，活动蓝线覆盖对应页签区段。 */
-.n-tabs.route-switch-2 .n-tabs-nav::after {
+/* 二级切换路由：基线与活动蓝线共用实际页签行，随内容一起滚动，不假定行高。 */
+.n-tabs.route-switch-2 .n-tabs-wrapper::after {
   position: absolute;
   z-index: 0;
-  right: 8px;
+  right: 0;
   bottom: 0;
-  left: 8px;
+  left: 0;
   height: 1px;
   content: '';
   pointer-events: none;
@@ -1001,13 +1005,8 @@ button.n-button--pressed:not(.n-button--disabled) { transform: none !important; 
 /* 二级切换路由：竖屏页签使用类似系统设置的独立横向滚动轨道。 */
 @media (max-width: 768px) {
   .n-tabs.route-switch-2 .n-tabs-nav-scroll-wrapper {
-    height: 40px;
     scrollbar-width: thin;
     scrollbar-color: var(--border-strong) transparent;
-  }
-  /* 滚动条占用 wrapper 底部空间时，基线仍与 33px 页签内容底边重合。 */
-  .n-tabs.route-switch-2 .n-tabs-nav::after {
-    bottom: 7px;
   }
   .n-tabs.route-switch-2 .n-tabs-nav-scroll-wrapper::-webkit-scrollbar {
     display: block;

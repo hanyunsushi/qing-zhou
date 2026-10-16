@@ -519,7 +519,8 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
      A viewport width here hides the right-side account controls whenever the
      document has a scrollbar or Naive UI temporarily locks the page. */
   width: 100%; max-width: 100%;
-  height: var(--app-header-height); display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 400px) minmax(0, 1fr);
+  /* 顶栏：操作列按真实内容占宽，搜索列可收缩，避免按钮侵入输入框。 */
+  height: var(--app-header-height); display: grid; grid-template-columns: minmax(120px, 1fr) minmax(0, 400px) max-content;
   align-items: center; gap: 16px; padding: 0 24px;
   background: var(--topbar-surface);
   /* 顶栏分界线：与页面一级布局使用同一中性边线。 */
@@ -550,7 +551,7 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
 .header-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .header-title { font-weight: 650; font-size: 16px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 /* 填写框 */
-.header-search { position: relative; width: min(100%, 400px); justify-self: center; }
+.header-search { position: relative; width: min(100%, 400px); min-width: 0; justify-self: center; }
 .header-search-icon { position: absolute; left: 13px; top: 50%; z-index: 2; transform: translateY(-50%); color: var(--text-2); pointer-events: none; }
 .header-search :deep(.n-input) { height: 36px; border-radius: var(--r) !important; box-shadow: none; transition: color .25s var(--ease-standard), background-color .25s var(--ease-standard), border-color .25s var(--ease-standard), box-shadow .25s var(--ease-standard) !important; }
 .header-search :deep(.n-input.n-input--focus) { background: var(--card) !important; box-shadow: none !important; }
@@ -574,6 +575,8 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
 }
 .user-avatar svg { width: 16px; height: 16px; display: block; }
 .app-shell.mobile .account-button { width: 34px; padding: 3px !important; }
+/* 悬浮下拉菜单：窄屏账户只显示头像，箭头不占用图标按钮空间。 */
+.app-shell.mobile .account-button :deep(.topbar-trigger-chevron) { display: none; }
 .icon-btn {
   display: inline-flex; align-items: center; justify-content: center;
   width: 42px; height: 42px; flex: 0 0 42px; padding: 10px;
@@ -716,6 +719,6 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
 :global(.mobile-sidebar-drawer-root .sidebar-surface),
 :global(.mobile-sidebar-drawer .n-drawer-body-content-wrapper) { border-radius: 0 !important; }
 @media (max-width: 1080px) {
-  .layout-header { grid-template-columns: minmax(0, 1fr) minmax(200px, 360px) minmax(0, 1fr); gap: 12px; }
+  .layout-header { grid-template-columns: minmax(120px, 1fr) minmax(0, 360px) max-content; gap: 12px; }
 }
 </style>

@@ -1,7 +1,15 @@
 ---
 title: Validation Guide
-updated: 2026-10-15
+updated: 2026-10-16
 ---
+
+## 二级侧边栏项目颜色与无菜单图标（2026-10-16）
+
+- 前端187/187、vue-tsc/Vite，canonical28/28与独立typecheck/Vite、audit80/54/247通过，既有大chunk提示仍为非阻断。
+- 回归以项目内原附件fixture为独立基线，明确仅允许默认颜色token和默认图标字段/导入变化；其余script与整个template逐字一致。没有删除原SVG分支路径或重写动画，没有增加inert/焦点外观/组件v-model。
+- 真实浏览器示范桌面、390×844、360×844：按钮内菜单SVG0，原分支SVG2，活动字/路径rgb(0,122,255)，正文oklch(.21 0 0)，中性线oklch(.92 0 0)；页面横向溢出0。点击Quick start后原stroke-dashoffset动画43个不同中间值、终值0px，已查看截图。
+- 实际设置页仍用原组件只读fixture（模拟GET、禁止写入），检查backup直达、update切换、Telegram搜索/无结果、折叠与Enter/Tab/Space、390/360px；不将本地fixture等同认证生产。
+- 未提交、未发布、未部署；没有验证真实移动硬件或生产写操作。原版直接运行A/B证据属于本轮颜色/无默认图标调整前的已测基线，不用旧截图证明新颜色。
 
 ## 二级侧边栏视觉修复（已发布部署）
 
@@ -460,6 +468,16 @@ and `/fonts/inter/Inter-Variable.ttf` returned `200`; and the post-restart
 `/opt/qingzhou/backups/fork-v0.2.87-kreeper-20260930-font-contract-20260930-222853/`.
 
 # Validation Guide
+
+## 下拉箭头、顶栏与竖屏页签（2026-10-16）
+
+- 原始复现：7px L形边框旋转45/225度，绘图重心偏移；示范顶栏搜索480px且操作列小于按钮内容；竖屏实际页签41px被40px滚动层裁切，基线bottom7与活动线bottom0不共面。
+- 新增`frontend/tests/navigation-geometry.test.mjs`三项回归，修复前均失败，修复后通过；全部前端190/190、vue-tsc/Vite通过。canonical28/28、独立vue-tsc/Vite通过；保留既有ECharts >500kB chunk警告。
+- 真实浏览器5191：点击下拉、弹出选择、管理、设计体验四个入口开/关测量；每个采集18次状态，含8/9/11/10个不同transform中间值，中心偏移最大0.000004px（浮点误差），按钮宽高变化0。
+- 宽度1440/1280/1167/1080/1024/900/769/768/394/390/360，均无页面横向溢出；桌面搜索与操作按钮保留16/12px间距；<=768搜索不渲染、头像旁箭头display:none。各宽度活动线与实际页签行bottom差0且没有裁切。
+- 360px逐一点击四页签，并触发最后一项横向滚动scrollLeft16，活动线仍对齐且选中项完整可见。最终394px确认组件重复底边为0px、滚动层与实际页签行均41px，活动底线不再丢失。已查看桌面下拉和394px截图。
+- 源/资产审计80源文件、54组件/页面pattern、247包哈希通过；Wiki 16页无断链和孤立页，权威软链接有效，项目/skill diff-check通过。
+- 以上是本地示范浏览器与两套源码构建证据，不是生产或真实手机硬件验收；未提交、未发布、未部署。
 
 ## 玻璃文件夹命中边界与顶栏材质（未部署）
 

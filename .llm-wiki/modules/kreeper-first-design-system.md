@@ -1,10 +1,24 @@
 ---
 title: kreeper第一设计系统 — QingZhou 集成
-updated: 2026-10-15
+updated: 2026-10-16
 ---
 
 # kreeper第一设计系统 — QingZhou 集成
 
+## 下拉箭头、顶栏与竖屏页签（2026-10-16，本地未部署）
+
+- `global.css`的`.topbar-trigger-chevron`采用10×10px固定占位和对称SVG mask，只有0/180度旋转，避免L形边框视觉重心翻转移位；四个示范/顶栏入口共享实现。
+- `DashboardLayout.vue`与可复用`KreeperShell.vue`同步：操作列max-content、标题至少120px、搜索min-width0且最大400/360px；<=768头像按钮同时隐藏姓名和箭头。
+- `.route-switch-2`的中性基线位于实际`.n-tabs-wrapper::after`，与活动页签底线共用bottom0和横向滚动坐标；滚动层自然撑高，移除固定40px和bottom7补偿、组件重复底边。
+
+沿用“下拉选择菜单 / 悬浮下拉菜单 / 顶栏 / 填写框 / 二级切换路由”分类，源码/CSS注释、canonical复用资产、精确源快照、pattern、规范和coverage同步。没有新增类型、颜色/字体/AWS规则改变。原版二级侧边栏不改。验收见[Validation](../guides/validation.md#下拉箭头顶栏与竖屏页签2026-10-16)。
+
+
+## 二级侧边栏：项目颜色、去菜单图标（2026-10-16，本地未部署）
+
+用户确认仅移除菜单项前的SVG图标，保留原SVG分支线和动画。BranchedMenu的模板与附件逐字相同；script仅将默认颜色改为项目正文/Apple蓝/中性边界token，并去掉默认菜单icon字段和对应未使用导入，其他参数、状态、路径与事件保持原版。可选图标API仍在，标准默认菜单与实际设置数据不提供icon。
+
+实际AdminSettings与Gallery共用该组件，示范不再放于深色承载面。canonical导航/侧栏/语义/复用/来源、source-reference、pattern、coverage和测试已同步；分类仍为“二级侧边栏”，没有新增类型或AWS规则变化。验证见[Validation](../guides/validation.md#二级侧边栏项目颜色与无菜单图标2026-10-16)，生产未操作。
 
 ## 2026-10-15 二级侧边栏视觉修复（本地未部署）
 
