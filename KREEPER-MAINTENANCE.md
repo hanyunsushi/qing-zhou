@@ -1,10 +1,10 @@
 # Kreeper QingZhou 定制维护
 
-## v0.2.114 UI合同同步（2026-10-16，发布候选）
+## v0.2.114 UI合同同步（2026-10-16，已发布部署）
 
-发布范围为前面已确认且尚未提交的按钮分类/订单状态牌、玻璃文件夹滚轮与阴影、数字字体混排基线、设置页加载顺序、实际加载区域居中、页签移动线/资源数字适配，以及加宽双区下拉。QingZhou、canonical设计系统、分类注释和5191示范同步；无后端、API、数据库或节点/Tunnel配置变更。
+QingZhou `34c3d3b`、canonical `7d42361`已同步推送main，[Release](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.114-kreeper-20261016-ui-contract-sync)与CI/Release workflow成功。已确认的按钮/状态牌、文件夹/数字、加载/页签/仪表和双区下拉改动均纳入；项目、注释与完整示范一致。
 
-本地前端209/209、canonical35/35、两套类型检查/Vite、Go tests/vet、脚本语法和80源/54pattern/247哈希审计通过。发布标签拟为`v0.2.114-kreeper-20261016-ui-contract-sync`；生产仍为v0.2.113，须由Release/运行二进制及只读生产验收更新事实，不能以候选构建推断上线。完整实施/验证由[设计系统模块](.llm-wiki/modules/kreeper-first-design-system.md)及[Validation](.llm-wiki/guides/validation.md)维护。
+原生宿主仅替换面板并重启qingzhou.service，数据库/节点/Tunnel保持；运行版本、SHA-256、回滚点与检查由[项目权威](agent.md)维护，具体验收见[Validation](.llm-wiki/guides/validation.md#v02114发布与生产验收)。保留已有大chunk、依赖/Actions提示与未签名资产边界，不声称已整改。
 
 ## v0.2.113 导航同步（2026-10-16，已发布部署）
 

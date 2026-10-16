@@ -3,6 +3,10 @@ title: QingZhou Deployment and Artifact Retention
 updated: 2026-10-16
 ---
 
+## v0.2.114 UI contract synchronization rollout
+
+Source `34c3d3bf93570d61e6eb2d6b7605d0a9f3bf78da` and canonical design system `7d42361b50db392ac56b6070c156a345117de353` are released as [v0.2.114-kreeper-20261016-ui-contract-sync](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.114-kreeper-20261016-ui-contract-sync). CI `38887258501` and release `38887263135` succeeded. Native rollout verified the exact asset digest, took an online SQLite Backup API snapshot and atomically replaced only the panel. Database/configuration and node/Tunnel PIDs are unchanged; local/public health, active executable digests and12 public JS/CSS/font assets pass. Runtime checksum/backup location belong to [project authority](../../agent.md), production browser boundaries and gates to [Validation](validation.md#v02114发布与生产验收).
+
 ## v0.2.112 secondary-sidebar geometry rollout
 
 QingZhou source `11f2b579d6ee4bb319e44779f7dc603d019fc366` and canonical
