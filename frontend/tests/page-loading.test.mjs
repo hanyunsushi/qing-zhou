@@ -178,6 +178,6 @@ test('dot matrix interpolates numeric diagonal phases instead of discrete shadow
     assert.match(css, new RegExp(`@keyframes dot-matrix-wave-${i} \\{\\s*0%, 100% \\{ --loader-diagonal-${i}: \\.2; \\}\\s*50% \\{ --loader-diagonal-${i}: 1;`))
   }
   assert.match(css, /animation-delay: 0s, calc\(var\(--loader-cycle, 1s\) \* \.25\)/)
-  assert.match(css, /calc\(\(var\(--loader-diagonal-0\) - 1\) \* \.045em\)/)
+  assert.match(css, /background: radial-gradient\(circle calc\(\.12em \+ \(var\(--loader-diagonal-0\) - 1\) \* \.045em\)/)
   assert.doesNotMatch(css, /(?:0|25|50|75|100)%\s*\{\s*box-shadow:/)
 })

@@ -25,8 +25,10 @@
   height: .24em;
   border-radius: 50%;
   content: "";
+  /* 加载反馈：原点直接绘制；零偏移外阴影会被自身边框盒裁掉，不能充当左上角圆点。 */
+  background: radial-gradient(circle calc(.12em + (var(--loader-diagonal-0) - 1) * .045em),
+    color-mix(in srgb, currentColor calc(var(--loader-diagonal-0) * 100%), transparent) 100%, transparent 100%);
   box-shadow:
-    0 0 0 calc((var(--loader-diagonal-0) - 1) * .045em) color-mix(in srgb, currentColor calc(var(--loader-diagonal-0) * 100%), transparent),
     .38em 0 0 calc((var(--loader-diagonal-1) - 1) * .045em) color-mix(in srgb, currentColor calc(var(--loader-diagonal-1) * 100%), transparent),
     .76em 0 0 calc((var(--loader-diagonal-2) - 1) * .045em) color-mix(in srgb, currentColor calc(var(--loader-diagonal-2) * 100%), transparent),
     0 .38em 0 calc((var(--loader-diagonal-1) - 1) * .045em) color-mix(in srgb, currentColor calc(var(--loader-diagonal-1) * 100%), transparent),
@@ -82,8 +84,8 @@
 @media (prefers-reduced-motion: reduce) {
   .dot-matrix-loader::before,
   .n-base-loading::before {
+    background: currentColor;
     box-shadow:
-      0.00em 0.00em 0 0 currentColor,
       0.38em 0.00em 0 0 currentColor,
       0.76em 0.00em 0 0 currentColor,
       0.00em 0.38em 0 0 currentColor,

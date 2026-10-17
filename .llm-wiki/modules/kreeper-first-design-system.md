@@ -3,6 +3,10 @@ title: kreeper第一设计系统 — QingZhou 集成
 updated: 2026-10-17
 ---
 
+## DotMatrix左上角绘制修复
+
+loading.css在同一伪元素内以径向背景直接画左上角原点，其余8点保持原偏移阴影。原零偏移外阴影被浏览器裁掉自身边框盒内部区域，导致相位变化但该点不可见；新背景半径`.12em + (phase - 1) × .045em`与原缩放公式相同，仍由diagonal-0驱动。低动态模式直接画currentColor圆，九点一起低频透明度呼吸。独立DotMatrix及Naive BaseLoading共用修复；16/20px占位、对角时序/颜色、加载区域居中与请求/切屏顺序保持。分类仍为加载反馈，无新类型或AWS/字体变更。青舟/canonical/5191共用相同CSS；像素及连续相位验收见[Validation](../guides/validation.md#dotmatrix左上角绘制2026-10-17)。生产上线事实由权威文档维护。
+
 ## 青舟实际侧栏动效接入（v0.2.116已部署）
 
 DashboardLayout桌面/手机均复用KreeperSidebarMenu、sidebar-motion-react.tsx、sidebar-motion.ts及sidebar-motion.css，与canonical/5191同一字节源码。SharedLayoutBg悬浮、子菜单整行错峰/模糊/位移及兄弟重排、200ms整栏宽度及文字错峰直接执行来源React Motion。保留既有单项目MenuOption、权限/路由与外部帮助回调、筛选和选择关闭手机Drawer；不引入多项目最高层，不改页面内部BranchedMenu。
@@ -224,7 +228,7 @@ PageScrollbar居中按实际内部15px轨道验收：外宽16px包含左侧1px�
 
 `utils/page-loading.ts`按导航token收集准备期请求，`api/index.ts`追踪完整fetch/JSON与原45秒截止时间，成功或失败均落定；Vue更新和绘制安静期包含连续请求，目标壳实际NSpin/按钮/aria-busy状态保留重试间隙的加载门控。router只准备scope，目标页隐藏挂载，`shift5.ts`在API和字体/媒体就绪后撤掉加载符号一帧，再离场/揭示。快速导航取消旧动画和门控，旧响应不能提前揭示新页；取消/错误释放等待。后续刷新不重启路由加载；减弱动态效果保留数据等待，跳过切屏。模板/CSS/状态边界已标记“加载反馈 / 组件绘制动画”，复用代码与示范同步，未发布部署。
 
-默认点阵以五条对角线的CSS `@property <number>`连续相位计算透明度与半径，保持用户来源的对角延迟及两个半周期ease-in-out；不使用曾造成四档跳变的整组阴影关键帧。无需新DOM或JS逐帧循环，原尺寸/颜色/切屏顺序保持。验收必须逐帧确认中间值与实际像素变化，不能只检查animationName和截图首尾；当前Chrome实测及浏览器兼容边界见skill loading和[Validation](../guides/validation.md#dotmatrix加载与切屏顺序未部署)。
+默认点阵以五条对角线的CSS `@property <number>`连续相位计算透明度与半径（左上角改由径向背景直接绘制，其余8点为阴影），保持用户来源的对角延迟及两个半周期ease-in-out；不使用曾造成四档跳变的整组阴影关键帧。无需新DOM或JS逐帧循环，原尺寸/颜色/切屏顺序保持。验收必须逐帧确认中间值与实际像素变化，不能只检查animationName和截图首尾；当前Chrome实测及浏览器兼容边界见skill loading和[Validation](../guides/validation.md#dotmatrix加载与切屏顺序未部署)。
 
 ## 后台监控范围切换与公开入口
 

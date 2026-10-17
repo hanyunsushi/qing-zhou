@@ -3,6 +3,13 @@ title: Validation Guide
 updated: 2026-10-17
 ---
 
+## DotMatrix左上角绘制2026-10-17
+
+- 同一浏览器把修复前/后CSS放在8个固定相位0/.125/.25/.375/.5/.625/.75/.875秒对照。原左上角8次采样RGB均≥254，接近白底；修复后由约(201,228,255)过渡至(5,123,246)再变暗。64px放大/20px蓝色/16px继承白色的24种相位与尺寸组合，共216个圆心像素全部有实际绘制。
+- 实际DotMatrix组件采257帧，diagonal-0范围.2→1、210个不同数值，径向背景随相位连续改变半径/透明度；实际NSpin20px与NButton行内16px均使用修复背景。低动态CSS分支在隔离fixture强制启用后使用currentColor实心原点及1.4s呼吸，并未声称修改/测试操作系统设置。
+- 394×816实际独立/Naive加载器尺寸20/20/16px、无横向溢出。5191运行示范重启并刷新，反馈区真实NSpin的::before为动画径向背景，未用旧缓存当作新实现。截图output/dot-matrix-origin-fix.png、dot-matrix-394.png和dot-matrix-showcase-fixed.png。
+- 214项前端测试、vue-tsc/Vite、46项canonical及独立类型检查/构建、示范构建通过。青舟/CSS资产/源快照/5191逐字一致，audit101源/55patterns/259hashes通过。沿用加载反馈分类，无业务请求/路由/定位/字体/AWS变化；上线与运行态另按发布记录验收。
+
 ## v0.2.116实际侧栏发布与生产验收
 
 - 青舟`a0772d7e2b7fb219e43bfff5a9c740b13b0db1e2`和canonical`50a5df747d029a18f3d689ca38b6ae70b741c914`均推送；[v0.2.116-kreeper-20261017-sidebar-sync](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.116-kreeper-20261017-sidebar-sync)与CI39001783028/Release39001785424成功。214前端/46canonical、两套类型检查/构建、Go tests/vet、CI race、101源/55patterns/259hashes通过，4份动画运行资产三处字节一致。
