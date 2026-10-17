@@ -7,7 +7,7 @@ updated: 2026-10-17
 
 共享global.css补齐现有表单/数据控件合同：Checkbox4px角，点击无外焦点阴影；普通Radio按HeroUI3.2.6官方control/indicator及field-shadow源码适配到Naive原生input，项目颜色/字体保持。原全局胶囊根规则仅限button式radio组，普通组无底框；route-switch不变。分页页码及左右翻页8px角、选中蓝底白字，显式覆盖全局-item18px兜底。
 
-canonical CSS/精确源快照/分类与forms/content/source规范、许可、5191的Controls说明示范同步；未增加HeroUI运行依赖、未改业务事件/数据请求。用户已直接指定三个既有控件及其样式决定，无待确认类别；本次未改AWS字体/图表规范。验证归属[Validation](../guides/validation.md#表单选择与分页2026-10-17)。
+canonical CSS/精确源快照/分类与forms/content/source规范、许可、5191的Controls说明示范同步；未增加HeroUI运行依赖、未改业务事件/数据请求。用户已直接指定三个既有控件及其样式决定，无待确认类别；本次未改AWS字体/图表规范。已随v0.2.118提交发布部署；本地验证见[Validation](../guides/validation.md#表单选择与分页2026-10-17)，生产范围见[发布验收](../guides/validation.md#v02118表单选择与分页发布验收)。
 
 ## DotMatrix左上角绘制修复
 
@@ -21,7 +21,7 @@ DashboardLayout桌面/手机均复用KreeperSidebarMenu、sidebar-motion-react.t
 
 ## 发布状态
 
-青舟源码`48c4f84953e0079640bc352b09ed6deb623d2ab9`和canonical`5a0098c137bb3c6476537284c54aa193de334644`已随[v0.2.117](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.117-kreeper-20261017-dot-matrix-origin)提交发布部署，包含实际侧栏及点阵原点绘制修复；可选多项目最高层仍只用于多项目复用/示范。历史记录按日期保留，当前运行态见[发布验收](../guides/validation.md#v02117点阵发布验收)。
+青舟`caa7615c9e61a5e2cfda10ac3fea2673e4d1196b`、canonical`916d8cc5c3dbeb07100564c9c3c63380c2170806`已随[v0.2.118](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.118-kreeper-20261017-form-controls)提交发布部署，含共享表单选择与分页样式；可选多项目层仅供多项目复用/示范，青舟保持单项目导航。独立CPU/内存后端修改仍未提交/部署。当前生产证据见[发布验收](../guides/validation.md#v02118表单选择与分页发布验收)。
 
 ## 顶栏竖屏按实际按钮内容显示
 

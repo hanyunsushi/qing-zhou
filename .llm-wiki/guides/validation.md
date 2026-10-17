@@ -3,6 +3,12 @@ title: Validation Guide
 updated: 2026-10-17
 ---
 
+## v0.2.118表单选择与分页发布验收
+
+青舟`caa7615c9e61a5e2cfda10ac3fea2673e4d1196b`、canonical`916d8cc5c3dbeb07100564c9c3c63380c2170806`已推送main；[v0.2.118-kreeper-20261017-form-controls](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.118-kreeper-20261017-form-controls)及CI39022255878/Release39022258456成功。214前端/46复用契约、三套类型检查/Vite、Go CI race、101源/55pattern/262hash与Wiki16页通过。部署只包含已提交UI及其许可，单独的CPU/内存后端仍为本地未提交状态。
+
+SQLite在线一致性快照/运行库完整性ok；ARM64Release、安装/proc摘要一致，面板原子替换后本机/公网health一致；三服务active/NRestarts0，节点/Tunnel PID、配置哈希、8081/8882/18082/19000及启动error journal0通过。精确摘要/回滚点见[权威](../../agent.md)。公网/admin资源引用及6项相关JS/CSS与精确提交的独立构建匹配。浏览器：生产新资源index-BR38n723.css已加载；未保存的新增TLS抽屉只读核对普通Radio16px/8px圆形、选中Apple蓝/白点且组透明无边框，随后Esc关闭。订阅页15个复选框计算4px角、边线shadow none，未切换业务值；账户页3个分页控件8px角，活动页蓝底白字，两侧禁用状态保留。生产console error为空，未保存/提交表单。 本地交互范围见[本项验收](#表单选择与分页2026-10-17)，不将本地测试冒称全部生产表单验收。
+
 ## v0.2.117点阵发布验收
 
 - 青舟`48c4f84953e0079640bc352b09ed6deb623d2ab9`、canonical`5a0098c137bb3c6476537284c54aa193de334644`已推送，[v0.2.117-kreeper-20261017-dot-matrix-origin](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.117-kreeper-20261017-dot-matrix-origin)及CI39006294082/Release39006296823成功；214前端/46canonical、类型检查/构建、示范构建、Go CI race与audit101/55/259通过。三处loading.css逐字相同，业务/定位/字体/AWS不变，沿用加载反馈分类。

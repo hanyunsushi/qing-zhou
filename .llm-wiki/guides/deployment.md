@@ -3,6 +3,12 @@ title: QingZhou Deployment and Artifact Retention
 updated: 2026-10-17
 ---
 
+## Form control release v0.2.118
+
+Source`caa7615c9e61a5e2cfda10ac3fea2673e4d1196b` and canonical`916d8cc5c3dbeb07100564c9c3c63380c2170806` are released as [v0.2.118-kreeper-20261017-form-controls](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.118-kreeper-20261017-form-controls); CI39022255878/release39022258456 pass. Shared checkbox/radio/pagination styling and source attribution are synchronized; unrelated uncommitted CPU/memory backend edits are excluded.
+
+Panel-only atomic replacement verified the Release/installed/running digest and online SQLite Backup API snapshot, preserving database/configuration/node/Tunnel processes. Local/public health and 6 related public resources agree with the exact committed source build. Runtime checksum/backup belong to [authority](../../agent.md), browser scope to [Validation](validation.md#v02118表单选择与分页发布验收).
+
 ## DotMatrix origin release v0.2.117
 
 Source`48c4f84953e0079640bc352b09ed6deb623d2ab9` and canonical`5a0098c137bb3c6476537284c54aa193de334644` are released as [v0.2.117-kreeper-20261017-dot-matrix-origin](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.117-kreeper-20261017-dot-matrix-origin); CI39006294082/release39006296823 pass. The first loading dot is directly painted because the zero-offset outer shadow is clipped; eight other dots, timing, geometry, inherited color and loading/route lifecycle remain.
