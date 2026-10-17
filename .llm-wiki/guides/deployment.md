@@ -3,6 +3,12 @@ title: QingZhou Deployment and Artifact Retention
 updated: 2026-10-17
 ---
 
+## Console entry and responsive subscription release v0.2.121
+
+Source `81cf535d330f094e617504a606b52a7c95595b22` and canonical design-system commit `3f66efab0dcd15fcfcae55b27339bc2e83f1c342` are pushed to main. Release [v0.2.121-kreeper-20261017-console-subscription-ui](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.121-kreeper-20261017-console-subscription-ui), CI `39044777099`, and Release build `39044777727` succeeded. The change gates the whole console shell during home-to-console entry, preserves chrome for in-console routes, and aligns mobile subscription node controls and button semantics. No API or database migration.
+
+At `2026-10-17T23:37:45+08:00`, only the native panel binary was atomically replaced and `qingzhou.service` restarted. The Release ARM64 asset, installed binary, and `/proc` executable match SHA-256 `cbfa96c1b9e70ba3f286822b14ef0d6770d87adc262a34ea4dfd146b10bbf9e2`. Rollback directory `/opt/qingzhou/backups/fork-v0.2.121-kreeper-20261017-console-subscription-ui-20261017-233124` contains the old binary, runtime configuration and an online SQLite Backup API snapshot (`integrity_check=ok`). Runtime and protected configuration remained intact; local/public health report the new version, all services remain active, node/Tunnel PIDs are unchanged, and nine core public JS/CSS assets match the source build. Release binaries remain unsigned because signing is not configured. Detailed runtime evidence belongs to [authority](../../agent.md); verification evidence is in [Validation](validation.md#首页进入控制台与订阅页窄屏本地验收2026-10-17).
+
 ## Pagination clipping release v0.2.120
 
 Source`99a3c9f8cab0673519c484006fa49ae2675342d8` and canonical`83c9ccf72150979cde60f053e2a5b67eb41df880` are released as [v0.2.120-kreeper-20261017-pagination-clip](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.120-kreeper-20261017-pagination-clip); CI39024651689/release39024653950 pass. Shared table clipping now belongs to the internal wrapper, leaving sibling pagination corners intact. Native paging/internal scroll, all prior backend behavior and data remain unchanged.

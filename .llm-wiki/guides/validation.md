@@ -1,4 +1,7 @@
 ---
+title: Validation Guide
+updated: 2026-10-17
+---
 
 ## 首页进入控制台与订阅页窄屏本地验收（2026-10-17）
 
@@ -6,10 +9,9 @@
 - 394×816 下 `documentElement.scrollWidth === innerWidth === 394`；桌面表格 `display:none`、移动卡片 `display:grid`，两个节点卡片右缘均为 366px，长节点名和完整线路/延迟/状态/操作均在卡片内。自动续订方框与 label 中心 Y 均为 809.8px。状态牌 computed radius 为 6px、font-size 为 13px、实际高度约 24px。
 - 打开本地订阅计划后，`#shop-package-1 .sc-queue-note` 是 `InfoNotice` 的 `div[role=status]`，无成功勾；非 GET fixture 操作仅本地模拟。页面未产生横向溢出。
 - 门禁：青舟前端 `220/220` 测试、typecheck/build；canonical `46/46` contracts、独立 typecheck/build、coverage audit `101/55/263` 均通过。构建保留已有 ECharts 大 chunk 与 React `use client` bundler 提示。
-- 当前工作区未提交、未发布、未部署；生产运行态未改变。
-title: Validation Guide
-updated: 2026-10-17
----
+- 已提交青舟 `81cf535d330f094e617504a606b52a7c95595b22` 与 canonical `3f66efab0dcd15fcfcae55b27339bc2e83f1c342`；Release [v0.2.121-kreeper-20261017-console-subscription-ui](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.121-kreeper-20261017-console-subscription-ui)，CI `39044777099` 和 Release `39044777727` 均成功。
+- 已部署，Release ARM64/安装/proc 二进制 SHA-256 为 `cbfa96c1b9e70ba3f286822b14ef0d6770d87adc262a34ea4dfd146b10bbf9e2`。在线 SQLite Backup API 回滚快照 integrity_check=ok；本机/公网 health 新版本一致，首页 HTTP 200，三个服务 active/NRestarts=0，节点/Tunnel PID、端口和配置哈希未变，启动 error journal 为空。9 个核心 JS/CSS 与精确本地构建匹配。Release 未签名，因为签名未配置。
+- 无 API/数据库迁移或节点/订阅业务改动。完整部署与回滚位置见[项目权威](../../agent.md)。
 
 ## 危险按钮语义校正（2026-10-17）
 
@@ -18,7 +20,7 @@ updated: 2026-10-17
 - QingZhou 前端 221/221 测试通过，vue-tsc/Vite 生产构建通过；canonical 契约 47/47、独立 typecheck/build 通过，audit 101 source / 55 patterns / 263 hashes 通过。
 - 本地 5191 浏览器 1280×720 截图中，普通/强调/弧边/高亮/删除/禁用样例无重叠。禁用高亮的 computed style 为 disabled=true、opacity 0.5、白字/Apple 蓝底、18px 圆角、32px 高、transform none；AX 同样标记 disabled。覆盖导航已显示“默认弧边、高亮弧边、删除、禁用”，不再列警告按钮。
 - 仅生产构建的既有 Framer Motion use-client 与大 chunk 警告，以及前端测试中的本地 HMR 24678 端口占用诊断；均未导致门禁失败。5191 控制台唯一 error 是现存 favicon.ico 404，与本次按钮无关。
-- 生产未修改；本地改动未提交、未发布、未部署。
+- 已纳入 v0.2.121 并部署。生产运行态与资源校验见上方发布验收；按钮权限、禁用、确认与业务回调不变。
 
 ## v0.2.120分页裁切发布验收
 

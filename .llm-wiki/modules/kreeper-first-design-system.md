@@ -1,19 +1,19 @@
 ---
-
-## 控制台首帧入场与订阅管理窄屏（2026-10-17，本地未发布）
-
-App 根路由在整页加载首帧就隐藏路由子树，DotMatrixLoader 与 PageScrollbar 保持在壳外；`fullShellTransitionPending`持续隐藏到揭示 overlay 已挂载，嵌套布局挂载期跳过父级已接管的首个 route key。路由把首页 `monitor` 与认证后 Dashboard 视为不同壳。同一 DashboardLayout 内切换只加载 `.layout-content`，顶栏/侧栏常驻，设置页分区仍沿用 `.settings-main`。全局 Tag theme 提供 default/success/warning/error/info/primary 语义色，Tag 统一 6px/13px/600/3px 10px；复选框文字混排时方框与 label 垂直居中。订阅页 768px 以下隐藏宽表，显示可换行的节点纵向卡片并保留选择、批量与启停行为。商城续期排队提示改用 `InfoNotice`，不再呈现成功勾或信息牌。
-
-用户侧源码与 5191 示范保持同步；全壳/正文门控责任归“加载反馈”，移动布局沿用“展示信息模块/展示卡片/复选框/区分-状态牌”，提示沿用“提示信息”。未新增视觉类别或 AWS 字体/色板改动。当前本地未发布，浏览器和测试证据见[Validation](../guides/validation.md#首页进入控制台与订阅页窄屏本地验收2026-10-17)。
 title: kreeper第一设计系统 — QingZhou 集成
 updated: 2026-10-17
 ---
 
-## 危险按钮语义校正（2026-10-17，本地未发布）
+## 控制台首帧入场与订阅管理窄屏（2026-10-17，已发布部署）
+
+App 根路由在整页加载首帧就隐藏路由子树，DotMatrixLoader 与 PageScrollbar 保持在壳外；`fullShellTransitionPending`持续隐藏到揭示 overlay 已挂载，嵌套布局挂载期跳过父级已接管的首个 route key。路由把首页 `monitor` 与认证后 Dashboard 视为不同壳。同一 DashboardLayout 内切换只加载 `.layout-content`，顶栏/侧栏常驻，设置页分区仍沿用 `.settings-main`。全局 Tag theme 提供 default/success/warning/error/info/primary 语义色，Tag 统一 6px/13px/600/3px 10px；复选框文字混排时方框与 label 垂直居中。订阅页 768px 以下隐藏宽表，显示可换行的节点纵向卡片并保留选择、批量与启停行为。商城续期排队提示改用 `InfoNotice`，不再呈现成功勾或信息牌。
+
+用户侧源码与 5191 示范保持同步；全壳/正文门控责任归“加载反馈”，移动布局沿用“展示信息模块/展示卡片/复选框/区分-状态牌”，提示沿用“提示信息”。未新增视觉类别或 AWS 字体/色板改动。已随 v0.2.121 发布部署，源码和验收见[Validation](../guides/validation.md#首页进入控制台与订阅页窄屏本地验收2026-10-17)。
+
+## 危险按钮语义校正（2026-10-17，已发布部署）
 
 订阅页的凭据重置及批量启停是非删除风险动作，使用高亮弧边蓝色语义；凭据重置仍由后端管理员开关禁用，tooltip、真实请求 loading 和回调保持。API Token 不可逆吊销保留危险色，但改用 delete-button 的红字透明外观。无独立红色警告按钮类别；真正删除/不可逆吊销与其他风险操作分开归类。
 
-青舟源码、canonical 页面模式/源码快照、按钮规范及 5191 Controls 示范已同步。无权限、API、确认、数据或业务流程修改；本地未提交、未发布、未部署，验证见[Validation](../guides/validation.md#危险按钮语义校正2026-10-17)。
+青舟源码、canonical 页面模式/源码快照、按钮规范及 5191 Controls 示范已同步。无权限、API、确认、数据或业务流程修改；已随 v0.2.121 发布部署，验证见[Validation](../guides/validation.md#危险按钮语义校正2026-10-17)。
 
 ## 分页角落裁切（2026-10-17）
 
