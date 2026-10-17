@@ -62,7 +62,9 @@ router.beforeEach(async (to, from) => {
   resetShift5Transition()
   // 加载反馈：保留布局时立即在内容区定位；同页设置分区只以右侧主体为加载区域。
   const settingsSection = from.name === 'admin-settings' && to.name === 'admin-settings' && from.path === to.path
-  const retainedLayout = from.matched.length > 1 && to.matched.length > 1 && from.matched[0] === to.matched[0]
+  // 首页监控和认证后的控制台都使用根路径，不能仅凭 matched[0] 判成同一常驻壳。
+  const retainedLayout = from.name !== 'monitor' && to.name !== 'monitor'
+    && from.matched.length > 1 && to.matched.length > 1 && from.matched[0] === to.matched[0]
   const loadingTarget = settingsSection ? document.querySelector<HTMLElement>('.settings-main')
     : retainedLayout ? document.querySelector<HTMLElement>('.layout-content') : null
   loadTokens.set(to, beginPageLoad(loadingTarget))
@@ -98,7 +100,8 @@ router.beforeResolve((to, from) => {
     && from.path === to.path
     && from.query.section !== to.query.section
   if (from.name && to.fullPath !== from.fullPath && to.name !== 'oauth-callback' && !sameAuthShell(to, from)) {
-    const sameDashboardShell = from.matched.length > 1
+    const sameDashboardShell = from.name !== 'monitor' && to.name !== 'monitor'
+      && from.matched.length > 1
       && to.matched.length > 1
       && from.matched[0] === to.matched[0]
     prepareShift5Route(settingsSectionChange ? 'settings' : sameDashboardShell ? 'content' : 'full')

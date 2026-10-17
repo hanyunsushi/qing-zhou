@@ -58,7 +58,8 @@
             <span class="kv">最近使用 {{ t.last_used_at ? fmtDateTime(t.last_used_at) : '从未' }}</span>
           </div>
           <div class="lc-foot">
-            <n-button v-if="!t.revoked_at" size="tiny" type="error" @click="revoke(t)">吊销</n-button>
+            <!-- 删除按钮：吊销会永久使 Token 凭据失效，保留红字删除语义。 -->
+            <n-button v-if="!t.revoked_at" size="tiny" type="error" quaternary class="delete-button" @click="revoke(t)">吊销</n-button>
           </div>
         </div>
       </div>

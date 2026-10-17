@@ -118,7 +118,7 @@ function transition(g, reduced = false, folder = false) {
     querySelector: () => root, createElement: () => new Element(),
   }
   const run = runInNewContext(transpile(read('../src/utils/shift5.ts')) + '\nrunShift5Enter', {
-    ...g, document, Event, HTMLElement: Element, nextTick, onMounted() {}, watch() {}, ...frames,
+    ...g, document, Event, HTMLElement: Element, nextTick, ref, onMounted() {}, watch() {}, ...frames,
     getComputedStyle: () => ({ display: 'block', visibility: 'visible', opacity: '1' }),
     window: { matchMedia: () => ({ matches: reduced }), setTimeout: fn => setTimeout(fn, 0) },
   })

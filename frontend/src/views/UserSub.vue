@@ -75,7 +75,8 @@
              按钮读同一个值才不会出现「管理员开了但按钮还是灰的」。 -->
         <n-tooltip trigger="hover" :disabled="credsResetEnabled">
           <template #trigger>
-            <n-button size="small" type="error" :disabled="!credsResetEnabled" :loading="resettingCreds"
+            <!-- 高亮弧边按钮：凭据重置属于风险主动作，使用蓝色语义；禁用由管理员开关控制。 -->
+            <n-button size="small" type="primary" class="highlight-arc-button" :disabled="!credsResetEnabled" :loading="resettingCreds"
                       @click="handleResetNodeCreds">重置节点凭据</n-button>
           </template>
           该功能暂时禁用，有需要请联系管理员
@@ -327,41 +328,64 @@
       </n-form>
     </n-modal>
 
-    <!-- 节点列表 -->
-    <n-card size="small" class="sec" title="节点列表">
+    <!-- 展示信息模块：手机标题与筛选/操作分行，节点详情在纵向卡片中完整显示。 -->
+    <n-card size="small" class="sec nodes-section" title="节点列表">
       <template #header-extra>
-        <n-space size="small">
-          <n-input v-model:value="search" placeholder="搜索节点 / 线路" size="small" style="width:160px;" clearable />
+        <div class="nodes-toolbar">
+          <n-input v-model:value="search" class="nodes-search" placeholder="搜索节点 / 线路" size="small" clearable />
           <!-- 下拉选择菜单：协议筛选弹层复用顶栏菜单合同，触发选择器保持原样。 -->
-          <n-select v-model:value="protoFilter" :options="protoOptions" placeholder="协议" size="small" style="width:100px;" clearable />
+          <n-select v-model:value="protoFilter" class="nodes-protocol" :options="protoOptions" placeholder="协议" size="small" clearable />
+          <div class="nodes-actions">
           <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="small" @click="handlePing" :loading="pinging">测速</n-button>
           <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="small" @click="handleToggleAll(true)">全启用</n-button>
           <!-- 标准默认弧边按钮：使用32px中性描边与18px圆角；业务事件、加载和禁用条件保持原定义。 -->
           <n-button size="small" @click="handleToggleAll(false)">全禁用</n-button>
-        </n-space>
+          </div>
+        </div>
       </template>
       <!-- 按套餐分节：一个节点归哪份套餐，决定的是它走谁的流量和有效期，所以这条
            归属线才是节点列表真正的分组依据（后端 plan_id 就是计费用的那个桶）。 -->
       <div v-for="g in nodeGroups" :key="g.planId" class="ngrp">
         <div class="ngrp-head">
+          <!-- 复选框：手机全选与桌面表格共用同一组选择key。 -->
+          <n-checkbox class="mobile-node-select-all" :checked="g.nodes.length > 0 && g.nodes.every((n:any) => (selectedByPlan[g.planId] || []).includes(n.key))"
+                      :indeterminate="g.nodes.some((n:any) => (selectedByPlan[g.planId] || []).includes(n.key)) && !g.nodes.every((n:any) => (selectedByPlan[g.planId] || []).includes(n.key))"
+                      :aria-label="`选择${g.planName}全部节点`" @update:checked="enabled => selectPlanNodes(g, enabled)" />
           <span class="ngrp-name">{{ g.planName }}</span>
           <span class="ngrp-meta">{{ g.nodes.length }} 个节点<template v-if="g.offCount"> · {{ g.offCount }} 个禁用</template></span>
           <span style="flex:1;"></span>
           <n-button size="tiny" quaternary @click="handlePlanToggle(g, true)">全启用</n-button>
           <n-button size="tiny" quaternary @click="handlePlanToggle(g, false)">全禁用</n-button>
         </div>
-        <n-data-table :columns="nodeCols" :data="g.nodes" :bordered="false" size="small"
+        <n-data-table class="nodes-desktop-table" :columns="nodeCols" :data="g.nodes" :bordered="false" size="small" :scroll-x="760" :scrollbar-props="{ trigger: 'none' }"
                       :pagination="g.nodes.length > 20 ? { pageSize: 20 } : false" :row-key="(r:any)=>r.key"
                       :checked-row-keys="selectedByPlan[g.planId] || []"
                       @update:checked-row-keys="(k:any) => selectedByPlan[g.planId] = k" />
+        <!-- 展示卡片 / 复选框 / 区分-状态牌：窄屏保留节点名、完整线路、延迟、状态与原启停动作。 -->
+        <div class="nodes-mobile-list">
+          <article v-for="node in g.nodes" :key="node.key" class="mobile-node-card">
+            <div class="mobile-node-head">
+              <n-checkbox :checked="(selectedByPlan[g.planId] || []).includes(node.key)" :aria-label="`选择节点${node.name}`"
+                          @update:checked="enabled => selectNode(g.planId, node.key, enabled)" />
+              <strong>{{ node.name }}</strong>
+            </div>
+            <div class="mobile-node-route"><span class="mobile-node-label">线路</span><NodeRoute :node="node" /></div>
+            <div class="mobile-node-foot">
+              <span class="mobile-node-latency"><span class="mobile-node-label">延迟</span><span :style="{ color: node.latency == null ? 'var(--text-3)' : latencyColor(node.latency) }">{{ node.latency == null ? '—' : node.latency < 0 ? '超时' : `${node.latency}ms` }}</span></span>
+              <n-tag :type="node.disabled ? 'default' : 'success'" :bordered="false">{{ node.disabled ? '禁用' : '启用' }}</n-tag>
+              <n-button size="tiny" @click="toggleNode(node)">{{ node.disabled ? '启用' : '禁用' }}</n-button>
+            </div>
+          </article>
+        </div>
       </div>
       <n-empty v-if="!loadingNodes && !nodeGroups.length" :description="nodes.length ? '没有匹配的节点' : '暂无节点'" style="padding:28px 0;" />
       <div v-if="selectedKeys.length" style="margin-top:10px;display:flex;gap:8px;align-items:center;">
         <span style="font-size:12px;color:var(--text-3);">已选 {{ selectedKeys.length }} 个</span>
-        <n-button size="small" type="primary" @click="handleBulk(true)">批量启用</n-button>
-        <n-button size="small" type="error" @click="handleBulk(false)">批量禁用</n-button>
+        <!-- 高亮弧边按钮：批量启用与禁用共用风险操作样式，保留各自的业务动作。 -->
+        <n-button size="small" type="primary" class="highlight-arc-button" @click="handleBulk(true)">批量启用</n-button>
+        <n-button size="small" type="primary" class="highlight-arc-button" @click="handleBulk(false)">批量禁用</n-button>
       </div>
       <div style="margin-top:8px;font-size:11px;color:var(--text-3);">共 {{ nodes.length }} 个节点，{{ filteredNodes.length }} 个匹配，{{ nodes.filter((n:any)=>n.disabled).length }} 个禁用。线路一栏从左到右是客户端实际走的路径：入口机 → 中转机 → 出网。</div>
     </n-card>
@@ -750,6 +774,18 @@ const nodeCols = [
   },
 ]
 
+// 展示卡片 / 复选框：手机只更换承载布局，继续复用相同线路渲染和批量选择状态。
+const NodeRoute = (props: { node: any }) => renderTopo(props.node)
+function selectNode(planId: string | number, key: string, enabled: boolean) {
+  const keys = new Set(selectedByPlan.value[planId] || [])
+  if (enabled) keys.add(key)
+  else keys.delete(key)
+  selectedByPlan.value[planId] = [...keys]
+}
+function selectPlanNodes(group: { planId: string | number; nodes: any[] }, enabled: boolean) {
+  selectedByPlan.value[group.planId] = enabled ? group.nodes.map(node => node.key) : []
+}
+
 async function toggleNode(node: any) {
   try {
     const newDisabled = !node.disabled
@@ -914,7 +950,7 @@ onMounted(async () => {
 .pl-name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pl-sub { font-size: 11px; color: var(--text-3); white-space: nowrap; }
 .pl-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; min-width: 0; flex-wrap: wrap; }
-.pl-actions :deep(.n-checkbox__label) { padding-left: 4px; color: var(--text-3); font-size: 11px; }
+.pl-actions :deep(.n-checkbox__label) { padding-left: 4px; color: var(--text-3); font-size: 12px; line-height: 20px; }
 .pl-seg { position: relative; padding: 0 0 14px 20px; }
 .pl-seg:last-child { padding-bottom: 0; }
 /* 连接线从圆点下方一直画到下一段，最后一段不画 */
@@ -971,6 +1007,38 @@ onMounted(async () => {
 .ngrp-head { display: flex; align-items: center; gap: 8px; padding: 0 2px 6px; }
 .ngrp-name { font-weight: 650; font-size: 13px; }
 .ngrp-meta { font-size: 11px; color: var(--text-3); }
+/* 展示信息模块 / 填写框 / 普通按钮：标题和工具栏按可用宽度独立换行。 */
+.nodes-toolbar { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: 8px; min-width: 0; }
+.nodes-search { width: 160px; }
+.nodes-protocol { width: 100px; }
+.nodes-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.nodes-mobile-list, .mobile-node-select-all { display: none; }
+@media (max-width: 768px) {
+  .nodes-section :deep(.n-card-header) { flex-direction: column; align-items: stretch; gap: 12px; }
+  .nodes-section :deep(.n-card-header__main), .nodes-section :deep(.n-card-header__extra) { width: 100%; min-width: 0; }
+  .nodes-toolbar { display: grid; grid-template-columns: minmax(0, 1fr) 100px; justify-content: stretch; }
+  .nodes-search, .nodes-protocol { width: 100%; min-width: 0; }
+  .nodes-actions { grid-column: 1 / -1; }
+  .nodes-desktop-table { display: none; }
+  .mobile-node-select-all { display: inline-flex; }
+  .ngrp-head { flex-wrap: wrap; }
+  .ngrp-name { overflow-wrap: anywhere; }
+  .plan-grid { grid-template-columns: minmax(0, 1fr); }
+  .pl-head { flex-wrap: wrap; }
+  .pl-name { min-width: 0; }
+  .pl-actions { justify-content: flex-start; }
+  /* 展示卡片 / 区分-状态牌：每项完整显示，不把操作推到视口右侧之外。 */
+  .nodes-mobile-list { display: grid; gap: 10px; }
+  .mobile-node-card { min-width: 0; padding: 12px; border-radius: 12px; background: var(--bg); }
+  .mobile-node-head { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .mobile-node-head strong { min-width: 0; overflow-wrap: anywhere; font-size: 13px; font-weight: 600; }
+  .mobile-node-route { display: grid; gap: 4px; margin: 8px 0 12px; min-width: 0; }
+  .mobile-node-label { font-size: 12px; color: var(--text-3); }
+  .mobile-node-route :deep(.qz-hop) { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+  .mobile-node-foot { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .mobile-node-latency { display: flex; gap: 6px; margin-right: auto; font-size: 12px; }
+  .mobile-node-foot > .n-button { flex-shrink: 0; }
+}
 @media (max-width: 900px) { .sub-summary { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) {
   .sub-summary { grid-template-columns: 1fr; }

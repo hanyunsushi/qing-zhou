@@ -2,8 +2,9 @@
   <n-config-provider :theme-overrides="themeOverrides" :locale="zhCN" :date-locale="dateZhCN">
     <n-message-provider>
       <n-dialog-provider>
+        <!-- 加载反馈：整页/跨壳路由首帧隐藏页面壳；局部加载只隐藏正文。 -->
         <router-view v-slot="{ Component, route: viewRoute }">
-          <div ref="rootShell" class="qz-shift5-page-shell" :key="rootViewKey(viewRoute)">
+          <div ref="rootShell" class="qz-shift5-page-shell" :class="{ 'qz-shift5-full-shell-pending': (pageLoading && (!pageLoadingTarget || pageLoadingTarget === rootShell)) || fullShellTransitionPending }" :key="rootViewKey(viewRoute)">
             <component :is="Component" />
           </div>
         </router-view>
@@ -21,26 +22,24 @@ import type { GlobalThemeOverrides } from 'naive-ui'
 import { useConfigStore } from '@/stores/config'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { useShift5PageTransition } from '@/utils/shift5'
+import { fullShellTransitionPending, useShift5PageTransition } from '@/utils/shift5'
 import PageScrollbar from '@/components/PageScrollbar.vue'
 import DotMatrixLoader from '@/components/DotMatrixLoader.vue'
-import { pageLoading, usePageLoadingPosition } from '@/utils/page-loading'
+import { pageLoading, pageLoadingTarget, usePageLoadingPosition } from '@/utils/page-loading'
 
 const route = useRoute()
 const rootShell = ref<HTMLElement | null>(null)
 const loadingPosition = usePageLoadingPosition()
 const authRouteNames = new Set(['login', 'register', 'forgot-password'])
 const rootViewKey = (viewRoute: { matched: Array<{ name?: string | symbol | null }> }) => {
-  const name = String(viewRoute.matched[0]?.name || 'layout')
+  const name = String(viewRoute.matched[0]?.name || (viewRoute.matched.length ? 'layout' : 'pending'))
   return authRouteNames.has(name) ? 'auth' : name
 }
 useShift5PageTransition(
   rootShell,
-  () => {
-    const name = String(route.matched[0]?.name || 'layout')
-    return authRouteNames.has(name) ? 'auth' : name
-  },
-  () => route.matched[0]?.name === 'monitor' || authRouteNames.has(String(route.matched[0]?.name)),
+  () => rootViewKey(route),
+  // 加载反馈 / 组件绘制动画：首次整壳进入统一隐藏顶栏、侧栏和正文；内部路由仍由常驻布局负责。
+  () => route.matched.length > 0 && route.name !== 'oauth-callback',
 )
 
 const themeOverrides: GlobalThemeOverrides = {
@@ -57,6 +56,15 @@ const themeOverrides: GlobalThemeOverrides = {
     borderColor: '#d5dbdb',
     textColorBase: '#16191f',
     fontFamily: 'var(--ff-body)',
+  },
+  // 区分-状态牌：Naive类型通过theme传递，不依赖调用处额外拼接类型class。
+  Tag: {
+    color: 'var(--inactive-soft)', colorBordered: 'var(--inactive-soft)', textColor: 'var(--inactive-text)', border: '1px solid transparent',
+    colorSuccess: 'var(--success-soft)', colorBorderedSuccess: 'var(--success-soft)', textColorSuccess: 'var(--success-text)', borderSuccess: '1px solid transparent',
+    colorWarning: 'var(--warn-soft)', colorBorderedWarning: 'var(--warn-soft)', textColorWarning: 'var(--warn-text)', borderWarning: '1px solid transparent',
+    colorError: 'var(--danger-soft)', colorBorderedError: 'var(--danger-soft)', textColorError: 'var(--danger-text)', borderError: '1px solid transparent',
+    colorInfo: 'var(--info-soft)', colorBorderedInfo: 'var(--info-soft)', textColorInfo: 'var(--info-text)', borderInfo: '1px solid transparent',
+    colorPrimary: 'var(--info-soft)', colorBorderedPrimary: 'var(--info-soft)', textColorPrimary: 'var(--info-text)', borderPrimary: '1px solid transparent',
   },
   // 提示信息 / 警告信息：各类反馈沿用浅色语义面和图标，不附加边框线。
   Alert: {

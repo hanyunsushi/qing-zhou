@@ -57,8 +57,8 @@
         </div>
 
         <div class="sc-foot">
-          <!-- 区分-信息牌：排队说明使用 Apple 蓝信息面，避免与成功状态混淆。 -->
-          <div v-if="willQueue(pkg)" class="sc-queue-note">✓ 同续期组正在使用 · 本次将排队，当前份结束后自动启用</div>
+          <!-- 提示信息：续期组排队说明复用普通提示，不使用成功勾或信息牌。 -->
+          <InfoNotice v-if="willQueue(pkg)" class="sc-queue-note">同续期组正在使用 · 本次将排队，当前份结束后自动启用</InfoNotice>
           <div class="sc-price">
             <span class="sc-points">{{ priceOf(pkg) }}</span>
             <span class="sc-unit">积分</span>
@@ -103,6 +103,7 @@
 import { ref, computed, nextTick, onMounted } from 'vue'
 import { NButton, NEmpty, NSpin, useMessage, useDialog } from 'naive-ui'
 import GlassFolder, { type GlassFolderFile } from '@/components/GlassFolder.vue'
+import InfoNotice from '@/components/InfoNotice.vue'
 import { useAuthStore } from '@/stores/auth'
 import { apiList, apiPost } from '@/api'
 import { fmtTotal, yuan } from '@/utils/format'
@@ -404,6 +405,6 @@ onMounted(async () => {
 .sc-yuan { font-size: 12px; color: var(--text-3); margin-top: 2px; }
 .sc-stock { font-size: 11px; color: var(--text-3); margin-top: 6px; }
 .sc-stock.hot { color: var(--warn); }
-.sc-queue-note { font-size: 11px; color: var(--info); background: var(--info-soft); border: 1px solid transparent; border-radius: 8px; padding: 5px 8px; margin-bottom: 10px; line-height: 1.4; }
+.sc-queue-note { margin-bottom: 10px; }
 .sc-buy { margin-top: 12px; }
 </style>

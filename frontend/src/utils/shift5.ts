@@ -1,4 +1,4 @@
-import { nextTick, onMounted, watch, type Ref } from 'vue'
+import { nextTick, onMounted, ref, watch, type Ref } from 'vue'
 import { currentPageLoad, finishPageLoad, nextPagePaint, setPageLoadingTarget, waitForPageRequests } from './page-loading'
 
 const OVERLAY_CLASS = 'qz-shift5-route-transition'
@@ -12,6 +12,7 @@ let transitionToken = 0
 let leavePromise: Promise<void> | null = null
 let activeScope: 'full' | 'content' | 'settings' = 'full'
 let pendingRoot: HTMLElement | null = null
+export const fullShellTransitionPending = ref(false)
 
 // 组件绘制动画：新导航撤销旧动画；加载阶段没有切屏遮罩或离场运动。
 export function resetShift5Transition() {
@@ -22,6 +23,7 @@ export function resetShift5Transition() {
   overlay = null
   pendingRoot?.classList.remove('qz-shift5-enter-pending')
   pendingRoot = null
+  fullShellTransitionPending.value = false
   document.documentElement.classList.remove(PENDING_CLASS)
   leavePromise = null
   activeScope = 'full'
@@ -70,6 +72,7 @@ function track(animation: Animation | null) {
 
 function prepareEnter(root: HTMLElement | null) {
   setPageLoadingTarget(root)
+  fullShellTransitionPending.value = activeScope === 'full' && !!root
   animations.forEach(animation => {
     try { animation.cancel() } catch (_) { /* animation already completed */ }
   })
@@ -81,6 +84,7 @@ function prepareEnter(root: HTMLElement | null) {
 
 function lockScope(scope: 'full' | 'content' | 'settings', host: HTMLElement | null) {
   if (!['content', 'settings'].includes(scope) || !host) return
+  fullShellTransitionPending.value = false
   if (pendingRoot && pendingRoot !== host) pendingRoot.classList.remove('qz-shift5-enter-pending')
   pendingRoot = host
   host.classList.add('qz-shift5-enter-pending')
@@ -95,6 +99,7 @@ function finish(token: number) {
   if (overlay?.isConnected) overlay.remove()
   overlay = null
   activeScope = 'full'
+  fullShellTransitionPending.value = false
   const revealedRoot = pendingRoot
   revealedRoot?.classList.remove('qz-shift5-enter-pending')
   pendingRoot = null
@@ -186,6 +191,7 @@ export async function runShift5Enter(root: HTMLElement | null) {
     if (token !== transitionToken) return
     const host = ['content', 'settings'].includes(activeScope) ? root : null
     const current = ensureOverlay('revealing', host)
+    fullShellTransitionPending.value = false
     const blocks = collectBlocks(root)
     document.documentElement.classList.remove(PENDING_CLASS)
     root.classList.remove('qz-shift5-enter-pending')
@@ -243,8 +249,27 @@ export async function runShift5Enter(root: HTMLElement | null) {
 }
 
 export function useShift5PageTransition(root: Ref<HTMLElement | null>, routeKey: () => string, enabled: () => boolean = () => true, enterOnMount = true) {
-  onMounted(() => { if (enterOnMount && enabled()) void runShift5Enter(root.value) })
+  // 组件绘制动画：挂载期的首个route key由父级整壳切换拥有，避免重复揭示子壳。
+  const initialRouteKey = routeKey()
+  let mounted = false
+  let routeChangedBeforeMount = false
+  let ignoredInitialRouteKey: string | null = null
+  onMounted(() => {
+    mounted = true
+    if (routeChangedBeforeMount || routeKey() !== initialRouteKey) ignoredInitialRouteKey = routeKey()
+    if (enterOnMount && enabled()) void runShift5Enter(root.value)
+  })
   watch(routeKey, async () => {
+    if (!mounted) {
+      routeChangedBeforeMount = true
+      return
+    }
+    const key = routeKey()
+    if (ignoredInitialRouteKey === key) {
+      ignoredInitialRouteKey = null
+      return
+    }
+    ignoredInitialRouteKey = null
     await nextTick()
     if (enabled()) void runShift5Enter(root.value)
   })

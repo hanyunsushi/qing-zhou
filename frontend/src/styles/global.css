@@ -135,6 +135,8 @@
 .qz-shift5-route-transition-pending .route-page-shell > *:not(.qz-shift5-route-transition) {
   visibility: hidden !important;
 }
+/* 加载反馈：首次整页加载与跨壳导航首帧直接隐藏路由内容，点阵加载器留在壳外可见。 */
+.qz-shift5-full-shell-pending > * { visibility: hidden !important; }
 .route-page-shell { position: relative; }
 .qz-shift5-enter-pending { visibility: hidden !important; }
 .qz-shift5-page-shell {
@@ -1121,6 +1123,9 @@ button.n-button--pressed:not(.n-button--disabled) { transform: none !important; 
   --n-box-shadow-focus: none !important;
 }
 .n-checkbox .n-checkbox-box__border { box-shadow: none !important; }
+/* 复选框：方框采用实际16px高度居中，标签字号变化不再通过空格行盒把方框挤偏。 */
+.n-checkbox.n-checkbox--show-label { align-items: center; }
+.n-checkbox .n-checkbox-box-wrapper { height: var(--n-size); align-self: center; }
 .n-checkbox:not(.n-checkbox--disabled):not(.n-checkbox--checked):not(.n-checkbox--indeterminate) .n-checkbox-box__border {
   border: var(--n-border) !important;
 }
@@ -1320,7 +1325,18 @@ button.n-button--pressed:not(.n-button--disabled) { transform: none !important; 
   background: transparent !important;
   box-shadow: none !important;
 }
-.n-tag { border-radius: var(--r-control) !important; font-weight: 600; }
+/* 区分-状态牌 / 信息牌 / 身份牌：所有原生NTag共享几何，类型色由theme提供，显式变体仍可覆盖。 */
+.n-tag.n-tag {
+  --n-border-radius: 6px !important;
+  border-radius: 6px !important;
+  padding: 3px 10px !important;
+  height: auto;
+  min-height: 24px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.n-tag .n-tag__border { border-radius: 6px !important; }
 /* 区分-状态牌：Apple 语义色浅底 + 加深文字，统一 6px 圆角、semibold 字重、紧凑内边距。 */
 .n-tag.n-tag--success-type,
 .n-tag.n-tag--warning-type,
@@ -1360,7 +1376,6 @@ button.n-button--pressed:not(.n-button--disabled) { transform: none !important; 
 .n-button:not(.n-button--disabled):focus-visible { box-shadow: var(--focus-ring); }
 /* 普通按钮 / 标准默认弧边按钮：鼠标聚焦不额外添加焦点圈，也不清除用于描边的box-shadow；键盘提示只由focus-visible负责。 */
 .n-button:not(.n-button--disabled):active { transform: none; }
-.n-tag { --n-border-radius: var(--r-control) !important; }
 
 #app {
   position: relative;

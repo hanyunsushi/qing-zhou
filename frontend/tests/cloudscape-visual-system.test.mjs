@@ -159,11 +159,11 @@ test('Shift5 owns page lifecycle motion while dashboard child routes keep the ch
   assert.match(layout, /<aside v-if="!isMobile" class="app-sider sidebar-surface sidebar-motion-rail"/)
   assert.match(layout, /<header class="layout-header" :class="\{ 'is-scrolled': isScrolled, 'is-menu-open': openMenu !== null \}"/)
   assert.match(layout, /<div ref="routeShell" :key="viewRoute\.path" class="route-page-shell">/)
-  assert.match(layout, /useShift5PageTransition\(routeShell, \(\) => route\.name === 'admin-settings' \? route\.path : route\.fullPath\)/)
+  assert.match(layout, /useShift5PageTransition\(routeShell, \(\) => route\.name === 'admin-settings' \? route\.path : route\.fullPath, \(\) => true, false\)/)
   const settings = read('src/views/AdminSettings.vue')
   assert.match(settings, /<main ref="settingsMain" class="settings-main">/)
   assert.match(settings, /useShift5PageTransition\(settingsMain, \(\) => route\.fullPath, \(\) => route\.name === 'admin-settings', false\)/)
-  assert.match(app, /useShift5PageTransition\([\s\S]*route\.matched\[0\]\?\.name === 'monitor'/)
+  assert.match(app, /useShift5PageTransition\([\s\S]*route\.name !== 'oauth-callback'/)
   assert.match(app, /const authRouteNames = new Set\(\['login', 'register', 'forgot-password'\]\)/)
   assert.match(app, /return authRouteNames\.has\(name\) \? 'auth' : name/)
   assert.match(router, /const sameAuthShell = \(to:[\s\S]*authRouteNames\.has\(String\(from\.name\)\)[\s\S]*!sameAuthShell\(to, from\)/)
@@ -227,12 +227,12 @@ test('shop empty-state reload uses the shared normal button contract', () => {
   assert.match(shop, /\.shop-card:hover \{[\s\S]*?box-shadow: 0 8px 28px/)
 })
 
-test('shop plan identity and queue note use the Apple blue information surface', () => {
+test('shop keeps plan identity while queue guidance uses the standard notice', () => {
   const shop = read('src/views/UserShop.vue')
   assert.match(shop, /<!-- 区分-信息牌：订阅计划类型使用 Apple 蓝信息语义，不表达成功状态。 -->\s*<span class="sc-badge"[\s\S]*?typeMeta\(pkg\.type\)\.label/)
-  assert.match(shop, /<!-- 区分-信息牌：排队说明使用 Apple 蓝信息面，避免与成功状态混淆。 -->\s*<div v-if="willQueue\(pkg\)" class="sc-queue-note">/)
+  assert.match(shop, /<InfoNotice v-if="willQueue\(pkg\)" class="sc-queue-note">同续期组正在使用/)
   assert.match(shop, /\.t-plan \{ color: var\(--info\); background: var\(--info-soft\); border-color: transparent; \}/)
-  assert.match(shop, /\.sc-queue-note \{[\s\S]*?color: var\(--info\); background: var\(--info-soft\); border: 1px solid transparent;/)
+  assert.doesNotMatch(shop, /✓ 同续期组|\.sc-queue-note \{[^}]*background:/)
   assert.doesNotMatch(shop, /\.t-plan \{[^}]*#4b7a5c|\.sc-queue-note \{[^}]*#4b7a5c/)
 })
 
@@ -1098,4 +1098,13 @@ test('subscription QR and reset-subscription actions declare their arc button ty
   assert.match(source, /高亮弧边按钮：固定使用实心 Apple 蓝，悬浮\/聚焦时变亮。[\s\S]*?<n-button size="small" type="primary" class="highlight-arc-button" @click="showQr=!showQr">\{\{ showQr\?'隐藏':'显示' \}\}二维码<\/n-button>/)
   assert.match(source, /高亮弧边按钮：复用实心Apple蓝与提亮交互，订阅地址变更风险保留在原确认流程。[\s\S]*?<n-button size="small" type="primary" class="highlight-arc-button" @click="handleResetSub">更换订阅地址<\/n-button>/)
   assert.match(source, /class="highlight-arc-button"/)
+})
+
+test('non-delete risk actions use the highlighted arc button contract', () => {
+  const subscription = read('src/views/UserSub.vue')
+  const tokens = read('src/views/AdminAPITokens.vue')
+  assert.match(subscription, /type="primary" class="highlight-arc-button" :disabled="!credsResetEnabled" :loading="resettingCreds"[\s\S]*?handleResetNodeCreds/)
+  assert.match(subscription, /type="primary" class="highlight-arc-button" @click="handleBulk\(false\)">批量禁用/)
+  assert.match(tokens, /删除按钮：吊销会永久使 Token 凭据失效[\s\S]*?type="error" quaternary class="delete-button" @click="revoke\(t\)">吊销/)
+  assert.doesNotMatch(subscription, /type="error"[^\n]*handleResetNodeCreds|type="error"[^\n]*handleBulk\(false\)/)
 })

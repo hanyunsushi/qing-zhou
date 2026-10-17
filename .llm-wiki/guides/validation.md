@@ -1,7 +1,24 @@
 ---
+
+## 首页进入控制台与订阅页窄屏本地验收（2026-10-17）
+
+- 5211 使用当前 Vite build 的只读 fixture：首页到控制台慢响应采到 227 个 DotMatrix 显示帧，顶栏/侧栏可见帧均为 0；加载器移除到 overlay 接管有 1 个采样帧，根壳 `fullShellTransitionPending` 仍生效、导航可见帧为 0。嵌套布局挂载期间跳过由父级整壳转换接管的初始 route key。控制台内部 `/sub` 到 `/shop` 延迟请求实测 150 个加载帧，顶栏与侧栏 150 帧始终可见。真实生产站点未写入/未部署。
+- 394×816 下 `documentElement.scrollWidth === innerWidth === 394`；桌面表格 `display:none`、移动卡片 `display:grid`，两个节点卡片右缘均为 366px，长节点名和完整线路/延迟/状态/操作均在卡片内。自动续订方框与 label 中心 Y 均为 809.8px。状态牌 computed radius 为 6px、font-size 为 13px、实际高度约 24px。
+- 打开本地订阅计划后，`#shop-package-1 .sc-queue-note` 是 `InfoNotice` 的 `div[role=status]`，无成功勾；非 GET fixture 操作仅本地模拟。页面未产生横向溢出。
+- 门禁：青舟前端 `220/220` 测试、typecheck/build；canonical `46/46` contracts、独立 typecheck/build、coverage audit `101/55/263` 均通过。构建保留已有 ECharts 大 chunk 与 React `use client` bundler 提示。
+- 当前工作区未提交、未发布、未部署；生产运行态未改变。
 title: Validation Guide
 updated: 2026-10-17
 ---
+
+## 危险按钮语义校正（2026-10-17）
+
+- UserSub 凭据重置保持 disabled=!credsResetEnabled、真实 loading 与原确认/请求，仅将按钮映射到 type=primary + highlight-arc-button；订阅节点的批量启停统一采用高亮弧边。API Token 吊销语义不可逆，使用 type=error + quaternary + delete-button 红字透明删除外观。真正删除按钮不变。
+- 设计系统规范明确不设独立红色警告按钮：非删除风险动作使用高亮弧边，删除/不可逆吊销使用删除外观。Controls 示范增加禁用高亮弧边，展示禁用仍继承所属类别语义。
+- QingZhou 前端 221/221 测试通过，vue-tsc/Vite 生产构建通过；canonical 契约 47/47、独立 typecheck/build 通过，audit 101 source / 55 patterns / 263 hashes 通过。
+- 本地 5191 浏览器 1280×720 截图中，普通/强调/弧边/高亮/删除/禁用样例无重叠。禁用高亮的 computed style 为 disabled=true、opacity 0.5、白字/Apple 蓝底、18px 圆角、32px 高、transform none；AX 同样标记 disabled。覆盖导航已显示“默认弧边、高亮弧边、删除、禁用”，不再列警告按钮。
+- 仅生产构建的既有 Framer Motion use-client 与大 chunk 警告，以及前端测试中的本地 HMR 24678 端口占用诊断；均未导致门禁失败。5191 控制台唯一 error 是现存 favicon.ico 404，与本次按钮无关。
+- 生产未修改；本地改动未提交、未发布、未部署。
 
 ## v0.2.120分页裁切发布验收
 
