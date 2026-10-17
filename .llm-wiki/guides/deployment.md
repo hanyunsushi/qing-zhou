@@ -3,6 +3,12 @@ title: QingZhou Deployment and Artifact Retention
 updated: 2026-10-17
 ---
 
+## Pagination clipping release v0.2.120
+
+Source`99a3c9f8cab0673519c484006fa49ae2675342d8` and canonical`83c9ccf72150979cde60f053e2a5b67eb41df880` are released as [v0.2.120-kreeper-20261017-pagination-clip](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.120-kreeper-20261017-pagination-clip); CI39024651689/release39024653950 pass. Shared table clipping now belongs to the internal wrapper, leaving sibling pagination corners intact. Native paging/internal scroll, all prior backend behavior and data remain unchanged.
+
+Panel-only replacement verified Release/installed/running digests and an online SQLite Backup API snapshot, preserving database/configuration/node/Tunnel. Local/public health and 6 related assets match exact source. Runtime digest/backup belong to [authority](../../agent.md), browser scope to [Validation](validation.md#v02120分页裁切发布验收).
+
 ## Complete local-change release v0.2.119
 
 Source`ccbbf1a62fdb05ca6a1143b9071df53fd4ad1979` and canonical`09f54b3e2378c9c9608329f7c9dfc1b7c7df280a` are released as [v0.2.119-kreeper-20261017-table-heatmap](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.119-kreeper-20261017-table-heatmap); CI39023621437/release39023623887 pass. All outstanding QingZhou changes are included: neutral unchecked checkbox borders, shared CPU/memory heatmap classification/regressions, existing maintenance documentation and showcase launch configuration. Canonical/5191 additionally synchronize full desktop table columns and narrow internal scrolling. No cache cleanup or database migration runs as part of deployment.

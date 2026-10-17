@@ -5,7 +5,7 @@ updated: 2026-10-17
 
 ## 分页角落裁切（2026-10-17）
 
-共享global.css将.n-data-table根overflow改为visible，只在内部.n-data-table-wrapper继承18px角并overflow hidden。分页是wrapper的外置兄弟，不再被根右下18px圆角切掉；保持分页8px、尺寸/配色、禁用、数据与切页模型。内部700px横滚/表格轮廓不变。canonical CSS/快照/数据内容规范、5191同步，沿用展示信息模块/分页分类，无新类型或AWS字体/图表变更。证据见[Validation](../guides/validation.md#分页角落裁切2026-10-17)。
+共享global.css将.n-data-table根overflow改为visible，只在内部.n-data-table-wrapper继承18px角并overflow hidden。分页是wrapper的外置兄弟，不再被根右下18px圆角切掉；保持分页8px、尺寸/配色、禁用、数据与切页模型。内部700px横滚/表格轮廓不变。canonical CSS/快照/数据内容规范、5191同步，沿用展示信息模块/分页分类，无新类型或AWS字体/图表变更。已随v0.2.120提交发布部署；本地证据见[Validation](../guides/validation.md#分页角落裁切2026-10-17)，生产范围见[发布验收](../guides/validation.md#v02120分页裁切发布验收)。
 
 ## 复选框中性边线与表格完整显示（2026-10-17）
 
@@ -31,7 +31,7 @@ DashboardLayout桌面/手机均复用KreeperSidebarMenu、sidebar-motion-react.t
 
 ## 发布状态
 
-青舟`ccbbf1a62fdb05ca6a1143b9071df53fd4ad1979`、canonical`09f54b3e2378c9c9608329f7c9dfc1b7c7df280a`已随[v0.2.119](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.119-kreeper-20261017-table-heatmap)提交发布部署，全部待发布本地改动纳入；Checkbox中性边线、完整表格/内部横滚与CPU/内存热力图规则同步。多项目最高层仍仅供多项目复用/示范，青舟保持单项目导航。运行态见[发布验收](../guides/validation.md#v02119完整发布验收)。
+青舟`99a3c9f8cab0673519c484006fa49ae2675342d8`、canonical`83c9ccf72150979cde60f053e2a5b67eb41df880`已随[v0.2.120](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.120-kreeper-20261017-pagination-clip)提交发布部署，含分页角落裁切修复及既有全部改动；单项目/多项目导航边界保持，运行态见[发布验收](../guides/validation.md#v02120分页裁切发布验收)。
 
 ## 顶栏竖屏按实际按钮内容显示
 

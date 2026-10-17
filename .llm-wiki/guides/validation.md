@@ -3,6 +3,12 @@ title: Validation Guide
 updated: 2026-10-17
 ---
 
+## v0.2.120分页裁切发布验收
+
+青舟`99a3c9f8cab0673519c484006fa49ae2675342d8`、canonical`83c9ccf72150979cde60f053e2a5b67eb41df880`已推送main；[v0.2.120-kreeper-20261017-pagination-clip](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.120-kreeper-20261017-pagination-clip)与CI39024651689/Release39024653950成功。214前端/46复用契约、三套类型检查/Vite、Go CI race、101源/55pattern/262hash与Wiki16页通过。没有后端/API/数据库变更，v0.2.119的CPU/内存规则保持。
+
+SQLite在线快照/运行库integrity_check=ok，ARM64Release/安装/proc摘要一致；本机/公网health一致，三服务active/NRestarts0、节点/Tunnel PID/配置哈希、四端口与启动error journal0通过。摘要/回滚点归[权威](../../agent.md)。公网/admin资源引用及6项相关JS/CSS与精确源码独立构建匹配。生产浏览器：生产账户页1280×720同一分页按钮，部署前右下三个采样点均命中n-card-content；部署后同位置三点全部命中禁用下一页按钮自身。根overflow visible、内部wrapper overflow hidden/radius18，加载index-8IpwDQcW.css，console error为空；只读检查未操作业务。1167/394/360px示范首末页及启用/禁用角点另在本地验证。 本地首末页/手机角点与截图见[裁切复现](#分页角落裁切2026-10-17)。
+
 ## v0.2.119完整发布验收
 
 青舟`ccbbf1a62fdb05ca6a1143b9071df53fd4ad1979`、canonical`09f54b3e2378c9c9608329f7c9dfc1b7c7df280a`均已推送main；[v0.2.119-kreeper-20261017-table-heatmap](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.119-kreeper-20261017-table-heatmap)及CI39023621437/Release39023623887成功。214前端/46复用契约、三套类型检查/Vite、Go全量tests/vet和CI race、101源/55pattern/262hash与Wiki16页通过。按用户要求纳入全部青舟本地改动，含CPU/内存后端、维护文档及.claude预览配置；未执行缓存清理。
