@@ -3,6 +3,10 @@ title: kreeper第一设计系统 — QingZhou 集成
 updated: 2026-10-17
 ---
 
+## 发布状态
+
+青舟源码`af9b00b92df2f9a5b8bfc5c5c09281f847ca1a58`和设计系统`dc7b0e5e273204f32ff5b86a46f3c89086b8f048`已随[v0.2.115](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.115-kreeper-20261017-navigation-contracts)提交发布；业务顶栏/双区菜单已部署，canonical侧栏与多项目示范保持复用包边界。后文各任务的本地验收记录保留当时范围；生产状态以[发布验收](../guides/validation.md#v02115发布与生产验收)为准。
+
 ## 顶栏竖屏按实际按钮内容显示
 
 global.css与canonical kreeper.css共享规则作用于公共/控制台header-right按钮：orientation:portrait或≤768px，有功能SVG只显示SVG；无SVG保留文字与自身宽度，不补图标、不隐藏入口。附带CSS下拉箭头不算功能图标。AppHeader/PublicHeader不再写按入口类名强制隐藏的局部规则；DashboardLayout/Shell管理入口只有文字，有权限时手机也保留；账户SVG入口补齐可访问名称。图标fine32px/coarse44px，权限/菜单/事件保持。沿用顶栏/普通按钮/悬浮下拉菜单分类，源快照/pattern/规范/5191同步；[验收](../guides/validation.md#顶栏按内容显示2026-10-17)。本地未部署。

@@ -3,6 +3,12 @@ title: QingZhou Deployment and Artifact Retention
 updated: 2026-10-16
 ---
 
+## Navigation contracts release v0.2.115
+
+Source `af9b00b92df2f9a5b8bfc5c5c09281f847ca1a58` and canonical `dc7b0e5e273204f32ff5b86a46f3c89086b8f048` are released as [v0.2.115-kreeper-20261017-navigation-contracts](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.115-kreeper-20261017-navigation-contracts). CI39000120903 and release39000123367 succeeded. Business changes cover content-based portrait topbar controls and independent split-menu contents/anchors. Optional source-motion/project-sidebar assets are synchronized in the canonical package/showcase; QingZhou production keeps its existing single-project navigation implementation.
+
+Native rollout verified the ARM64 release digest, preserved an integrity-checked SQLite Backup API snapshot and old executable/configuration, then replaced only the panel. Installed/running digests and local/public health agree; node/Tunnel PIDs and protected hashes remain unchanged. 6 public frontend resources match the exact local source build. Runtime checksum/backup location belong to [authority](../../agent.md), browser and validation evidence to [Validation](validation.md#v02115发布与生产验收).
+
 ## v0.2.114 UI contract synchronization rollout
 
 Source `34c3d3bf93570d61e6eb2d6b7605d0a9f3bf78da` and canonical design system `7d42361b50db392ac56b6070c156a345117de353` are released as [v0.2.114-kreeper-20261016-ui-contract-sync](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.114-kreeper-20261016-ui-contract-sync). CI `38887258501` and release `38887263135` succeeded. Native rollout verified the exact asset digest, took an online SQLite Backup API snapshot and atomically replaced only the panel. Database/configuration and node/Tunnel PIDs are unchanged; local/public health, active executable digests and12 public JS/CSS/font assets pass. Runtime checksum/backup location belong to [project authority](../../agent.md), production browser boundaries and gates to [Validation](validation.md#v02114发布与生产验收).

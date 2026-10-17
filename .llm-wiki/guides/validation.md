@@ -3,6 +3,14 @@ title: Validation Guide
 updated: 2026-10-17
 ---
 
+## v0.2.115发布与生产验收
+
+- 青舟`af9b00b92df2f9a5b8bfc5c5c09281f847ca1a58`、canonical`dc7b0e5e273204f32ff5b86a46f3c89086b8f048`均已推送，Release[v0.2.115-kreeper-20261017-navigation-contracts](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.115-kreeper-20261017-navigation-contracts)与CI39000120903/Release39000123367成功。211前端/46canonical、两套类型检查/构建、Go tests/vet、CI race和80/54/253审计通过。
+- 原生面板原子部署：Release/安装/proc摘要一致，本机/公网health均为v0.2.115。数据库在线一致性快照和运行库完整性ok；三服务active/NRestarts0，节点/Tunnel PID及受保护配置哈希未变，四监听保持，启动error journal0行。运行时精确SHA/回滚位置归项目权威，不在此重复。
+- 公网/admin入口200且引用当前入口资源；6项index/Monitor/DashboardLayout相关JS/CSS与本地构建逐字节一致。只核验HTML资源引用，不把Cloudflare追加检测脚本当作源码漂移。
+- 生产浏览器验收：820×1180公共三入口均32px SVG、文字/用户名/箭头隐藏、图标中心误差0；同尺寸控制台“管理”无SVG保留13px文字/66px宽、账户只显示32px SVG。360×800控制台两类入口仍并存、无横向溢出，管理Enter展开/Esc关闭。 截图output/playwright/release115-public-portrait.jpg和release115-dashboard-portrait.jpg。只读导航/展开菜单，没有购买、保存、退款、安装等业务写入。指针仍fine，44px coarse命中只属源码证据。
+- canonical/源码/源快照/pattern/5191运行副本、分类注释、规范和Wiki同步；多项目/React侧栏为复用包和示范能力，青舟生产未接入，不用上线结论扩大该边界。临时验证标签关闭、视口复原，Wiki16页链接/孤立页/权威软链及diff-check通过。
+
 ## 顶栏按内容显示（2026-10-17）
 
 用户明确这是通用响应规则：有功能SVG才收敛为图标，纯文字保留文字。公共与控制台header-right共用实际:has(svg)判定；移除PublicHeader/AppHeader的局部强制入口规则，不为纯文字入口增加SVG。DashboardLayout/Shell管理入口取消手机隐藏但保留管理员权限，账户补aria-label/title。下拉方向箭头由CSS绘制，不算功能SVG，保持文字按钮原交互。
