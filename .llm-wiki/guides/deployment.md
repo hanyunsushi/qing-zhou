@@ -3,6 +3,12 @@ title: QingZhou Deployment and Artifact Retention
 updated: 2026-10-17
 ---
 
+## Complete local-change release v0.2.119
+
+Source`ccbbf1a62fdb05ca6a1143b9071df53fd4ad1979` and canonical`09f54b3e2378c9c9608329f7c9dfc1b7c7df280a` are released as [v0.2.119-kreeper-20261017-table-heatmap](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.119-kreeper-20261017-table-heatmap); CI39023621437/release39023623887 pass. All outstanding QingZhou changes are included: neutral unchecked checkbox borders, shared CPU/memory heatmap classification/regressions, existing maintenance documentation and showcase launch configuration. Canonical/5191 additionally synchronize full desktop table columns and narrow internal scrolling. No cache cleanup or database migration runs as part of deployment.
+
+The native panel-only rollout verifies Release/installed/running digests and an online SQLite Backup API snapshot, preserving database/configuration/node/Tunnel processes. Local/public health and 6 related resources match exact committed source. Four production heatmap ranges match CPU/memory recomputation for 188 completed buckets. Runtime digest/backup belong to [authority](../../agent.md), browser scope to [Validation](validation.md#v02119完整发布验收).
+
 ## Form control release v0.2.118
 
 Source`caa7615c9e61a5e2cfda10ac3fea2673e4d1196b` and canonical`916d8cc5c3dbeb07100564c9c3c63380c2170806` are released as [v0.2.118-kreeper-20261017-form-controls](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.118-kreeper-20261017-form-controls); CI39022255878/release39022258456 pass. Shared checkbox/radio/pagination styling and source attribution are synchronized; unrelated uncommitted CPU/memory backend edits are excluded.

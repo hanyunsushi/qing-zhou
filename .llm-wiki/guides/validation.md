@@ -3,6 +3,14 @@ title: Validation Guide
 updated: 2026-10-17
 ---
 
+## v0.2.119完整发布验收
+
+青舟`ccbbf1a62fdb05ca6a1143b9071df53fd4ad1979`、canonical`09f54b3e2378c9c9608329f7c9dfc1b7c7df280a`均已推送main；[v0.2.119-kreeper-20261017-table-heatmap](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.119-kreeper-20261017-table-heatmap)及CI39023621437/Release39023623887成功。214前端/46复用契约、三套类型检查/Vite、Go全量tests/vet和CI race、101源/55pattern/262hash与Wiki16页通过。按用户要求纳入全部青舟本地改动，含CPU/内存后端、维护文档及.claude预览配置；未执行缓存清理。
+
+在线SQLite Backup API快照/运行库integrity_check=ok，ARM64Release/安装/proc摘要相同；面板原子替换后本机/公网health一致，三服务active/NRestarts0，节点/Tunnel PID与受保护配置哈希不变，四端口及启动error journal0通过。精确摘要/回滚点归[权威](../../agent.md)。公网/admin资源引用及6项相关JS/CSS与精确提交独立构建匹配。
+
+公开热力图1h/6h/24h/7d四范围共188个已完成历史桶与运行库只读CPU/内存重算结果逐项一致，97个桶相对旧磁盘分类变化；最后实时桶排除，避免HTTP/SQL采样期间新指标产生假差异。双接口/四范围/11阈值用例由Go回归覆盖，生产抽样不冒称穷尽所有服务器条件。浏览器：生产订阅页加载index-BAOFWNi-.css，15个Checkbox已渲染，未选样本计算为中性1px rgb(213,219,219)、4px角、shadow none，选中样本保持蓝底勾选；console error为空。未点击或修改自动续订等业务值。项目CSS和示范资产逐字节匹配，1167/394/360px本地表格查看、内部横滚与Checkbox点击/hover/focus终态均通过。 示范表格完整列与手机横滚证据见[本地验收](#表格完整显示与复选框边线2026-10-17)。
+
 ## v0.2.118表单选择与分页发布验收
 
 青舟`caa7615c9e61a5e2cfda10ac3fea2673e4d1196b`、canonical`916d8cc5c3dbeb07100564c9c3c63380c2170806`已推送main；[v0.2.118-kreeper-20261017-form-controls](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.118-kreeper-20261017-form-controls)及CI39022255878/Release39022258456成功。214前端/46复用契约、三套类型检查/Vite、Go CI race、101源/55pattern/262hash与Wiki16页通过。部署只包含已提交UI及其许可，单独的CPU/内存后端仍为本地未提交状态。

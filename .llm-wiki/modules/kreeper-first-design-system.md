@@ -7,7 +7,7 @@ updated: 2026-10-17
 
 未选且非禁用/半选的Checkbox在hover/点击focus时显式保持常态中性1px边线，选中/半选蓝色填充与勾选保持，禁用语义和独立键盘outline保留。canonical与5191同字节CSS。Gallery宽表六列总宽和scroll-x统一700px（原列宽800px却声明760px）；1167px展开侧栏时743px容器内完整显示操作列，窄屏保持Naive独立横滚和常显轨道，数据/列/查看动作不变。模板、CSS分类及forms/content规范与快照同步，无新增样式类型或AWS字体/色板变化。
 
-用户本轮要求纳入青舟全部本地改动，后端CPU/内存负载分类、既有维护文档和.claude预览配置一起提交；实际运行态由权威维护。本地验证见[Validation](../guides/validation.md#表格完整显示与复选框边线2026-10-17)。
+用户本轮要求纳入青舟全部本地改动，后端CPU/内存负载分类、既有维护文档和.claude预览配置一起提交；已随v0.2.119提交发布部署，生产范围见[发布验收](../guides/validation.md#v02119完整发布验收)。本地验证见[Validation](../guides/validation.md#表格完整显示与复选框边线2026-10-17)。
 
 ## 复选框、单选框与分页（2026-10-17）
 
@@ -27,7 +27,7 @@ DashboardLayout桌面/手机均复用KreeperSidebarMenu、sidebar-motion-react.t
 
 ## 发布状态
 
-青舟`caa7615c9e61a5e2cfda10ac3fea2673e4d1196b`、canonical`916d8cc5c3dbeb07100564c9c3c63380c2170806`已随[v0.2.118](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.118-kreeper-20261017-form-controls)提交发布部署，含共享表单选择与分页样式；可选多项目层仅供多项目复用/示范，青舟保持单项目导航。独立CPU/内存后端修改仍未提交/部署。当前生产证据见[发布验收](../guides/validation.md#v02118表单选择与分页发布验收)。
+青舟`ccbbf1a62fdb05ca6a1143b9071df53fd4ad1979`、canonical`09f54b3e2378c9c9608329f7c9dfc1b7c7df280a`已随[v0.2.119](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.119-kreeper-20261017-table-heatmap)提交发布部署，全部待发布本地改动纳入；Checkbox中性边线、完整表格/内部横滚与CPU/内存热力图规则同步。多项目最高层仍仅供多项目复用/示范，青舟保持单项目导航。运行态见[发布验收](../guides/validation.md#v02119完整发布验收)。
 
 ## 顶栏竖屏按实际按钮内容显示
 
