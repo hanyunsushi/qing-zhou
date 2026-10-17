@@ -3,6 +3,14 @@ title: Validation Guide
 updated: 2026-10-17
 ---
 
+## 青舟实际侧栏接入2026-10-17
+
+- 实际DashboardLayout只读fixture直接挂载生产组件与菜单/路由处理，未重造侧栏；桌面1167px、手机394px覆盖整栏折叠、从图标展开指定组、筛选自动展示父级/无结果、管理员/普通用户权限、叶子跳转与帮助回调、手机选后关闭Drawer。
+- 原生操作rAF记录整栏宽72↔264的中间值、94帧文字插值和28帧子项opacity/y/blur插值；子菜单终态filter=none，无退出子树残留。实际nav滚动402px后共享hover与目标行顶部差0px，文字位于命中堆栈顶层；不存在额外最高项目层，横向溢出0。
+- 手机Drawer宽300px、圆角0，nav scrollbar-width:none/gutter:auto；普通用户无管理员入口，帮助选择后路由/help且Drawer退出完成。未调用生产写入API。
+- 前端214项、canonical46项、两套类型检查/构建、Go tests/vet通过；来源函数AST/variants契约仍保持，4份桥接/动画/CSS资产与canonical及5191相同。审计101源/55patterns/259hashes：source总数改为按实际条目计算，并新增tsx覆盖/计数一致性门禁；既有80数字为旧计数，不代表本轮新增21个业务文件。
+- 运行态发布验收待后续记录，未用本地结果冒充生产上线。
+
 ## v0.2.115发布与生产验收
 
 - 青舟`af9b00b92df2f9a5b8bfc5c5c09281f847ca1a58`、canonical`dc7b0e5e273204f32ff5b86a46f3c89086b8f048`均已推送，Release[v0.2.115-kreeper-20261017-navigation-contracts](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.115-kreeper-20261017-navigation-contracts)与CI39000120903/Release39000123367成功。211前端/46canonical、两套类型检查/构建、Go tests/vet、CI race和80/54/253审计通过。

@@ -32,7 +32,7 @@ test('sidebar empty feedback replaces the menu in the result track on desktop an
     const elements = nav.children.filter(node => node.type === 1)
     assert.equal(elements[0].props.find(prop => prop.name === 'class').value.content, 'sidebar-filter')
     assert.equal(elements[1].props.find(prop => prop.name === 'class').value.content, 'sidebar-search-empty')
-    assert.equal(elements[2].tag, 'n-menu')
+    assert.equal(elements[2].tag, 'KreeperSidebarMenu')
     assert.ok(elements[2].props.some(prop => prop.type === 7 && prop.name === 'else'))
   }
   const emptyStyle = layout.match(/\.sidebar-search-empty \{([^}]+)\}/)[1]

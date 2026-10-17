@@ -1,7 +1,7 @@
 <template>
   <div class="app-shell" :class="{ mobile: isMobile }">
     <!-- 桌面侧边栏 -->
-    <aside v-if="!isMobile" class="app-sider sidebar-surface" :class="{ 'is-collapsed': sidebarCollapsed }">
+    <aside v-if="!isMobile" class="app-sider sidebar-surface sidebar-motion-rail" :class="{ 'is-collapsed': sidebarCollapsed }">
       <!-- 顶栏 / 品牌标识：桌面品牌区与右侧顶栏共享玻璃材质和滚动/菜单状态。 -->
       <div class="sidebar-brand" :class="{ 'is-scrolled': isScrolled, 'is-menu-open': openMenu !== null }" @click="router.push('/')">
         <!-- Logo -->
@@ -20,7 +20,8 @@
         <!-- 侧边栏 / 菜单归类级别：桌面展开状态受控；收起后仅保留最外层可操作入口的 SVG。 -->
         <!-- 提示信息：筛选空状态占据菜单结果区，与有结果的位置一致。 -->
         <div v-if="sidebarQuery.trim() && !menuOptions.length" class="sidebar-search-empty" role="status">无结果</div>
-        <n-menu v-else :value="activeKey" :options="menuOptions" :expanded-keys="sidebarExpandedKeys" :indent="18" :node-props="menuNodeProps" @update:expanded-keys="updateSidebarExpandedKeys" @update:value="handleMenuSelect" />
+        <!-- 侧边栏 / 组件绘制动画：桌面和手机复用同一源码动效，业务菜单与选择处理保持。 -->
+        <KreeperSidebarMenu v-else :value="activeKey" :options="menuOptions" :collapsed="sidebarCollapsed" :reveal-matches="!!sidebarQuery.trim()" :expanded-keys="sidebarExpandedKeys" @update:expanded-keys="updateSidebarExpandedKeys" @update:value="handleMenuSelect" />
       </nav>
       <!-- 侧边栏折叠按钮：桌面切换完整导航与图标轨道，移动端继续使用抽屉；桌面与移动 Drawer 共用同一 footer 样式。 -->
       <div class="sidebar-footer">
@@ -64,7 +65,7 @@
             </div>
             <!-- 提示信息：手机筛选空状态同样替换菜单结果区。 -->
             <div v-if="sidebarQuery.trim() && !menuOptions.length" class="sidebar-search-empty" role="status">无结果</div>
-            <n-menu v-else :value="activeKey" :options="menuOptions" :default-expanded-keys="defaultExpandedKeys" :indent="18" :node-props="menuNodeProps" @update:value="goAndClose" />
+            <KreeperSidebarMenu v-else :value="activeKey" :options="menuOptions" :reveal-matches="!!sidebarQuery.trim()" :default-expanded-keys="defaultExpandedKeys" @update:value="goAndClose" />
           </nav>
           <!-- 侧边栏折叠按钮：移动端沿用同一 footer 几何，收起即关闭 Drawer。 -->
           <div class="sidebar-footer">
@@ -153,7 +154,8 @@
 <script setup lang="ts">
 import { h, computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { NDrawer, NDrawerContent, NButton, NIcon, NMenu, NAutoComplete } from 'naive-ui'
+import KreeperSidebarMenu from './KreeperSidebarMenu.vue'
+import { NDrawer, NDrawerContent, NButton, NIcon, NAutoComplete } from 'naive-ui'
 import type { MenuGroupOption, MenuOption } from 'naive-ui'
 import {
   SpeedometerOutline, LinkOutline, CartOutline,
@@ -213,11 +215,6 @@ type SidebarMenuOption = (MenuOption | MenuGroupOption) & { sidebarLabel?: strin
 // 侧边栏 / 菜单归类级别：一级为静态标题；收起时以中性圆点标记分组，不提供导航动作。
 function menuSection(key: string, label: string, children: MenuOption[]): SidebarMenuOption {
   return { type: 'group', key, label: groupLabel(label), children, sidebarLabel: label }
-}
-
-function menuNodeProps(option: MenuOption | MenuGroupOption) {
-  const label = typeof option.label === 'string' ? option.label : ''
-  return sidebarCollapsed.value && label ? { title: label } : {}
 }
 
 function toggleSidebar() {
@@ -415,6 +412,8 @@ onMounted(() => window.addEventListener('keydown', focusSidebarFilter))
 onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
 </script>
 
+<style src="../styles/sidebar-motion.css"></style>
+
 <style scoped>
 /* 侧边栏 */
 .app-shell { display: flex; min-height: 100vh; background: var(--bg); }
@@ -499,6 +498,8 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
 /* 提示信息：空状态位于正常菜单轨道，不绘制浮层。 */
 .sidebar-search-empty { padding: 12px; color: var(--sidebar-muted); text-align: center; font: 400 13px/20px var(--ff-body); }
 .sidebar-menu {
+  /* 侧边栏 / 组件绘制动画：Motion管理兄弟布局，不让浏览器滚动锚定抵消原子菜单动效。 */
+  overflow-anchor: none;
   /* stable scrollbar-gutter 已占用右侧轨道，因此只保留左侧 16px 内容内轨。 */
   box-sizing: border-box; flex: 1 1 auto; min-height: 0; width: 100%; min-width: 0; max-width: 100%; overflow-x: hidden; overflow-y: auto; scrollbar-gutter: stable; contain: inline-size; padding: 0 0 var(--sidebar-content-gap) 16px;
   scrollbar-width: auto; scrollbar-color: auto;

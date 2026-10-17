@@ -137,7 +137,7 @@ test('node cards use drag-and-drop for the shared subscription order', () => {
 
 test('sidebar uses the Cloudflare documentation sidebar treatment', () => {
   assert.match(layout, /\/\* 侧边栏 \*\//)
-  assert.match(layout, /class="app-sider sidebar-surface"/)
+  assert.match(layout, /class="app-sider sidebar-surface sidebar-motion-rail"/)
   assert.match(layout, /class="sidebar-surface mobile-sidebar"/)
   assert.match(layout, /class="mobile-sidebar-drawer-root" content-class="mobile-sidebar-drawer"/)
   assert.match(layout, /\.sidebar-surface \{[\s\S]*?--sidebar-bg: var\(--bg\);[\s\S]*?--sidebar-card: var\(--bg\);[\s\S]*?--sidebar-hover: #f0f0f0;[\s\S]*?--sidebar-content-gap: 20px;[\s\S]*?background: var\(--sidebar-bg\);[\s\S]*?display: flex; flex-direction: column;/)
@@ -176,7 +176,7 @@ test('sidebar uses the Cloudflare documentation sidebar treatment', () => {
   assert.match(layout, /:deep\(\.n-menu-item-content--selected::after\) \{ display: none; \}/)
   assert.match(globalStyles, /侧边栏例外：全局 \[class\*="-item"\] 圆角兜底会匹配 Naive UI 的/)
   assert.match(globalStyles, /\.sidebar-menu \.n-menu-item-content,[\s\S]*?border-radius: 8px !important;/)
-  assert.match(globalStyles, /\.sidebar-menu \.n-submenu-children \{[\s\S]*?position: relative !important;[\s\S]*?width: auto !important;[\s\S]*?margin: 2px 0 2px 12px !important;[\s\S]*?padding-left: 16px !important;[\s\S]*?border-left: 0 !important;/)
+  assert.match(globalStyles, /\.sidebar-menu \.n-submenu-children:not\(\[data-motion-pop-id\]\) \{[\s\S]*?position: relative !important;[\s\S]*?width: auto !important;[\s\S]*?margin: 2px 0 2px 12px !important;[\s\S]*?padding-left: 16px !important;[\s\S]*?border-left: 0 !important;/)
   assert.match(globalStyles, /\.sidebar-menu \.n-submenu-children::before \{[\s\S]*?left: 8px;[\s\S]*?width: 1px;[\s\S]*?background: var\(--sidebar-border\);/)
   assert.match(globalStyles, /\.sidebar-menu \.n-submenu-children \{[\s\S]*?overflow-x: clip !important;[\s\S]*?overflow-y: visible !important;/)
   assert.doesNotMatch(layout, /:global\(\.sidebar-menu \.n-menu(?:-item|\-item-content|\-submenu)/)
@@ -185,10 +185,10 @@ test('sidebar uses the Cloudflare documentation sidebar treatment', () => {
 })
 
 test('desktop sidebar collapses to an accessible icon rail and keeps the mobile drawer unchanged', () => {
-  assert.match(layout, /class="app-sider sidebar-surface" :class="\{ 'is-collapsed': sidebarCollapsed \}"/)
+  assert.match(layout, /class="app-sider sidebar-surface sidebar-motion-rail" :class="\{ 'is-collapsed': sidebarCollapsed \}"/)
   assert.match(layout, /侧边栏折叠按钮：桌面切换完整导航与图标轨道，移动端继续使用抽屉；桌面与移动 Drawer 共用同一 footer 样式。[\s\S]*?aria-label="sidebarCollapsed \? '展开侧栏' : '收起侧栏'"[\s\S]*?aria-expanded="!sidebarCollapsed"[\s\S]*?aria-controls="desktop-sidebar-nav"[\s\S]*?@click="toggleSidebar"/)
   assert.match(layout, /:expanded-keys="sidebarExpandedKeys"[\s\S]*?@update:expanded-keys="updateSidebarExpandedKeys"/)
-  assert.match(layout, /function menuNodeProps\(option: MenuOption \| MenuGroupOption\)[\s\S]*?return sidebarCollapsed\.value && label \? \{ title: label \} : \{\}/)
+  assert.match(layout, /<KreeperSidebarMenu v-else[^>]*:collapsed="sidebarCollapsed"[^>]*:reveal-matches="!!sidebarQuery.trim\(\)"/)
   assert.match(layout, /\.app-sider\.is-collapsed \{ width: 72px; min-width: 72px; max-width: 72px; flex-basis: 72px; \}/)
   assert.match(layout, /\.app-sider\.is-collapsed :deep\(\.n-menu-item-content-header\)[\s\S]*?clip: rect\(0, 0, 0, 0\) !important;/)
   assert.match(layout, /\.app-sider\.is-collapsed :deep\(\.n-submenu-children\) \{ display: none !important; \}/)

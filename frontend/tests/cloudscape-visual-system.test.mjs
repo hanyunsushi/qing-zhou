@@ -156,7 +156,7 @@ test('Shift5 owns page lifecycle motion while dashboard child routes keep the ch
   assert.match(shift5, /startShift5Leave\(scope: 'full' \| 'content' \| 'settings' = 'full'\)/)
   assert.match(shift5, /\['content', 'settings'\]\.includes\(activeScope\) \? root : null/)
   assert.match(router, /prepareShift5Route\(settingsSectionChange \? 'settings' : sameDashboardShell \? 'content' : 'full'\)/)
-  assert.match(layout, /<aside v-if="!isMobile" class="app-sider sidebar-surface"/)
+  assert.match(layout, /<aside v-if="!isMobile" class="app-sider sidebar-surface sidebar-motion-rail"/)
   assert.match(layout, /<header class="layout-header" :class="\{ 'is-scrolled': isScrolled, 'is-menu-open': openMenu !== null \}"/)
   assert.match(layout, /<div ref="routeShell" :key="viewRoute\.path" class="route-page-shell">/)
   assert.match(layout, /useShift5PageTransition\(routeShell, \(\) => route\.name === 'admin-settings' \? route\.path : route\.fullPath\)/)
@@ -371,7 +371,7 @@ test('settings navigation integrates the original SVG BranchedMenu', () => {
   assert.match(component, /strokeDashoffset: kid.value === active \? 0 : length\(k\)/)
   assert.match(component, /HugeiconsIcon/)
   assert.match(globalCss, /\.sidebar-menu \.n-menu-item-content:hover::before \{[\s\S]*?box-shadow: none !important;/)
-  assert.match(globalCss, /\.sidebar-menu \.n-submenu-children \{[\s\S]*?position: relative !important;[\s\S]*?margin: 2px 0 2px 12px !important;[\s\S]*?padding-left: 16px !important;[\s\S]*?border-left: 0 !important;/)
+  assert.match(globalCss, /\.sidebar-menu \.n-submenu-children:not\(\[data-motion-pop-id\]\) \{[\s\S]*?position: relative !important;[\s\S]*?margin: 2px 0 2px 12px !important;[\s\S]*?padding-left: 16px !important;[\s\S]*?border-left: 0 !important;/)
   assert.match(globalCss, /\.sidebar-menu \.n-submenu-children::before \{[\s\S]*?left: 8px;[\s\S]*?width: 1px;[\s\S]*?background: var\(--sidebar-border\);/)
 })
 

@@ -1457,13 +1457,16 @@ button.resource-metric { color:inherit; text-align:left; font:inherit; cursor:po
   overflow-y: visible !important;
   contain: inline-size;
 }
-.sidebar-menu .n-submenu-children {
+.sidebar-menu .n-submenu-children:not([data-motion-pop-id]) {
   position: relative !important;
-  box-sizing: border-box !important;
   width: auto !important;
+  margin: 2px 0 2px 12px !important;
+}
+/* 侧边栏 / 组件绘制动画：退出子树的位置由原Motion popLayout测量。 */
+.sidebar-menu .n-submenu-children {
+  box-sizing: border-box !important;
   min-width: 0 !important;
   max-width: none !important;
-  margin: 2px 0 2px 12px !important;
   padding-left: 16px !important;
   border-left: 0 !important;
   overflow-x: clip !important;
