@@ -753,6 +753,23 @@ button.n-button--pressed:not(.n-button--disabled) { transform: none !important; 
   line-height: 20px !important;
   letter-spacing: 0 !important;
 }
+/* 顶栏 / 普通按钮 / 悬浮下拉菜单：竖屏按实际内容收敛；有功能SVG只显示图标，纯文字入口不变。 */
+@media (orientation: portrait), (max-width: 768px) {
+  :is(.app-header, .layout-header) .header-right .n-button:has(svg) {
+    width: 32px !important; min-width: 32px !important; height: 32px !important; min-height: 32px !important;
+    padding: 0 !important; gap: 0 !important; flex-shrink: 0;
+  }
+  :is(.app-header, .layout-header) .header-right .n-button:has(svg) .n-button__icon { margin: 0 !important; }
+  :is(.app-header, .layout-header) .header-right .n-button:has(svg) .n-button__content { gap: 0 !important; font-size: 0 !important; line-height: 0 !important; }
+  :is(.app-header, .layout-header) .header-right .n-button:has(svg) .n-button__content > :not(svg):not(:has(svg)) { display: none !important; }
+  :is(.app-header, .layout-header) .header-right .n-button:has(.n-button__icon svg) .n-button__content { display: none !important; }
+}
+/* 顶栏：仅图标按钮的触摸命中区为44px；纯文字按钮继续使用自身几何。 */
+@media (pointer: coarse) and (orientation: portrait), (pointer: coarse) and (max-width: 768px) {
+  :is(.app-header, .layout-header) .header-right .n-button:has(svg) {
+    width: 44px !important; min-width: 44px !important; height: 44px !important; min-height: 44px !important;
+  }
+}
 .n-button.topbar-language-reference-trigger:focus-visible {
   outline: 2px solid var(--accent) !important;
   outline-offset: 2px !important;

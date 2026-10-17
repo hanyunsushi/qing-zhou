@@ -1,7 +1,91 @@
 ---
 title: Validation Guide
-updated: 2026-10-16
+updated: 2026-10-17
 ---
+
+## 顶栏按内容显示（2026-10-17）
+
+用户明确这是通用响应规则：有功能SVG才收敛为图标，纯文字保留文字。公共与控制台header-right共用实际:has(svg)判定；移除PublicHeader/AppHeader的局部强制入口规则，不为纯文字入口增加SVG。DashboardLayout/Shell管理入口取消手机隐藏但保留管理员权限，账户补aria-label/title。下拉方向箭头由CSS绘制，不算功能SVG，保持文字按钮原交互。
+
+5191实际Shell在820×1180同一顶栏：管理无SVG、13px文字可见、宽66px；账户有SVG、文字display:none/content字号0、宽32px，根横向溢出0。360×800仍同时显示管理文字和账户图标，管理Enter打开菜单/Esc关闭；未因收窄删除纯文字入口。截图output/playwright/topbar-content-rule-portrait.jpg。公共#public在360px匿名“登录”无SVG、字号13px可见；切到已登录，三入口实际含SVG，均32px、文字/姓名/箭头隐藏，溢出0；恢复横屏后原文字显示。
+
+源码、canonical复用、源快照/pattern/中文语义注释、规范/coverage和5191运行副本同步，无新类别、字体或AWS规则变更。指针仍fine，coarse44px只作源码验证。项目与canonical检查、审计和Wiki lint结果由同步状态维护；未提交部署。前项按公共已登录入口枚举的规则被本内容判定合同取代。
+
+## 公共顶栏竖屏图标入口（2026-10-17）
+
+AppHeader和canonical PublicHeader将控制台/管理文字包装为topbar-action-label，并补齐三个入口aria-label/title。orientation:portrait或max-width768px隐藏文字、账户名和箭头；空Naive content不占位，图标/账户内容间距归零。fine32px方形、coarse44px方形命中。权限、导航回调和菜单状态不改。样式与语义注释/规范/源快照/pattern/5191同步，无新类别或AWS颜色/排版变化。
+
+实际业务AppHeader以原Vue组件、真实Naive/全局CSS/TopbarHoverMenu/路由运行，本地fixture仅提供确定的已登录store，不连接生产或业务API。1280×720横屏三入口文字可见。820×1180竖屏三按钮32×32、文字/姓名/箭头全display:none，SVG中心偏差x/y均0，根横向溢出0；管理Enter可打开原菜单，Esc关闭，控制台点击后路由变/dashboard。360×800仍三SVG方形/无横向溢出。截图output/playwright/public-header-portrait-820.jpg、public-header-mobile-360.jpg。指针仍fine，44px触摸媒体仅源码确认，不声称真机触摸测量。
+
+5191#public切到已登录状态，820×1180同为三SVG/文字隐藏/32px方形/无溢出，恢复横屏后文字恢复；截图output/playwright/public-demo-portrait-820.jpg。业务构建含类型检查、canonical46/46契约与独立类型检查/构建通过。生产未部署，本地fixture与临时浏览器验证页验收后清理；运行状态及文档/快照检查见当前同步状态。
+
+## 项目首字笔画裁切（2026-10-17）
+
+1167×816实际测量：SVG范围x33–51，图标位x26–54，文字框x64–212；首字区域elementsFromPoint最上层是STRONG，其下为copy和按钮，没有SVG覆盖。放大实际截图确认首字左侧笔画被裁切；撤去文字区/strong/small的紧贴overflow:hidden，改为overflow:clip加4px overflow-clip-margin后，“设/基/页/认”的左侧笔画恢复。原文字框和SVG仍保持13px净间距；48px行、36px文字区、字号/行高、单行省略及两套Motion动效不改。只测Range/排版框未能发现这一字形绘制问题，前项“未越界”证据不应当作首字完整的证明。
+
+修正前后同范围原始截图output/playwright/project-glyph-{before,after}.jpg；无font/transform补偿、无修改SVG位置。canonical样式、规范、分类注释、coverage、5191运行副本与项目权威/Wiki同步，沿用多项目路由导航类别；无新类型或AWS规则变化，未提交部署。当前检查结果由同步状态维护。
+
+## 整栏文字错峰与项目文字边界回归（2026-10-17）
+
+上一轮给项目内label显式animate，绕过了原RAIL_STAGGER_VARIANTS共同父级，导致整栏展开的30ms错峰丢失。RailVariantScope现在捕获该父级的公开MotionContext，仅对项目内动作label用Provider回接；无新motion祖先、无逐项delay或自控animate，原RAIL_LABEL_VARIANTS与源码父级负责调度。项目行的SUBMENU variants保持独立，披露时label initial=false且不横移。项目行仍48px，内距6px10px；文字限高36px网格，14/20标题与11/16副标题、min-width0/单行省略，保留完整汉字行盒。
+
+1167×816“页面示范”5项：整栏展开108帧，文字先后出现且存在不同x/opacity中间态，约102ms首三项x=-13.12/-16.02/-19.15、后两项x=-20；整行上移/模糊/淡入采样0帧。终值x0/opacity1，收起终值x=-20/opacity0；标题文字在整栏展开108帧中越过按钮上下边界0帧。独立项目展开133帧，整行初始y=-6/blur3/opacity0，前五项非零采样47/89/140/181/231ms，文字横移0帧，终态filter none。项目关闭132帧后子树卸载。采样不充当精确计时，动画参数由原源码直接调度。证据output/playwright/project-{rail,disclosure}-context-{open,close}.json。
+
+桌面文字区148×36px、标题20px/说明16px，文字没有横向溢出；394×816和360×800手机文字区184×36px、Drawer300px、根横向溢出0。viewport仍fine指针，不声称真机触摸验证。截图output/playwright/project-copy-context-mobile-360.png与project-copy-context-desktop.png。
+
+46/46canonical契约、独立类型检查和Vite构建通过，新增回归检查验证label接回原祖先/没有显式animate/单项目继承保持。设计系统规范、分类注释、coverage/运行5191副本与项目权威/Wiki同步；无新分类或AWS token变更，字幕行高为该项目行的本地几何修正。实际QingZhou业务导航未改，未提交部署。临时采样清理及审计结果由当前同步状态维护。
+
+## 项目披露与整栏折叠分离（2026-10-17）
+
+整栏收起只保留精确的project:<key>展开key，清空其内原导航可展开组与隐藏筛选。项目body不再受整栏collapsed门禁/CSS隐藏；项目图标可在72px轨道独立开合，普通深层组仍先展开整栏再打开。最高层披露的动作行复用原SUBMENU_ITEM_VARIANTS及入场filter释放；文字initial=false、单独响应整栏状态，避免由项目open/closed触发整栏横移。原单项目树与路由不变。
+
+1167×816实际浏览器：展开图表子菜单后收起整栏，侧栏72px、设计系统项目保持expanded=true、15个原导航图标显示，行40px/x15.5px，深层菜单0；在窄轨道打开页面示范后两项目同时展开、宽度仍72px。关闭页面示范后点击图表组，侧栏264px并显示原子项；收回再展开后两项目各自状态保留，深层菜单仍0。单项目模式0项目行/4原分组/15导航入口，收起仍72px且无深层菜单。
+
+逐帧采样：展开121帧，整行初值y=-6/blur3/opacity0；前六项首次非零采样为47/102/139/189/231/272ms，跨静态分组持续错峰，文字横移采样0帧。终值opacity1/transform none/filter none。收回120帧，popLayout原位absolute退出、反向逐项淡出/模糊并卸载；记录output/playwright/project-tier-motion-{open,close}.json。采样为实际运行证据，不把帧采样误称精确计时或所有动画的完整来源一致性证明。
+
+394×816手机独立关闭设计系统、打开页面示范保持Drawer；项目行48px、抽屉300px/0圆角、scrollbar none，根横向溢出0。360×800仍300px抽屉/隐藏滚动条/溢出0，截图output/playwright/project-tier-mobile-360.png。手机指针仍fine，仅声明viewport/键盘验证，不声称真机触摸验收。最终桌面截图output/playwright/project-tier-collapsed.png。
+
+规范、中文分类注释、canonical组件/示范/coverage与运行5191副本同步；沿用“多项目路由导航 / 侧边栏 / 组件绘制动画”，无新类型、字体或AWS规则变动。实际QingZhou DashboardLayout/router/BranchedMenu未改，本项未提交或部署。45/45canonical契约、独立类型检查/Vite构建通过；设计系统审计80源/54pattern/253哈希通过。Wiki16页无断链/孤立页，权威软链有效，diff --check通过；临时采样代码已移除，最终运行warn/error为空。
+
+## 项目最高层折叠分组（2026-10-17）
+
+用户要求把最高层变为各自菜单的折叠父级。原独立卡片切换区/字母Logo/蓝底/侧标撤掉，每个项目各自包含options，48px行、18px描边SVG/28px图标位、16px原Motion箭头与中性共享hover/active面。项目披露彼此独立、只显示所属菜单，项目内key按父项目隔离，叶子发送原route key。项目头只更新上下文/开合，手机不关Drawer；叶子关闭。单项目无任何最高层。
+
+1167×816浏览器测量项目父行/按钮均232×48px，收回后相邻两行y138/188、无重叠；图标轨道40×40、图标中心x35.5px，箭头不占位。项目body入场clip/opacity有中间帧，收回保留absolute原位退出、下方项目行连续spring回位，证据output/playwright/project-accordion-{open,close}.json。方向键独立开合、双项目同开、筛选未打开项目并清空恢复、单项目0最高层/4原分组均核对。394×816与360×800手机项目行48px、Drawer300px/0圆角/scrollbar none/横向溢出0；开项目保持抽屉、选叶子关闭。运行warn/error为空。
+
+43/43契约通过，包括跨项目相同route key的内部namespace/原路由保留，以及项目结构/几何/独立菜单/生命周期边界；独立Vue/TSX类型检查/构建通过，原use-client和大chunk非阻塞提示保留。规范/注释/5191与权威/Wiki同步，无新视觉分类、字体/AWS颜色/排版变动。无提交/发布/部署，实际青舟单项目业务入口未接入。
+
+## 侧栏动画完整源码复核（2026-10-17）
+
+子菜单闪烁修正：原open终态blur(0px)仍创建行级层叠上下文，跨行共享背景会覆盖相邻行文字。保留源variant对象，以局部SUBMENU_SHARED_ITEM_VARIANTS追加transitionEnd.filter=none；不改入场/退出时序或取消退出blur3。重复子项切换采集282帧，子项filter全部none、opacity最小1，243帧共享背景仍有运动；收回模糊正常、退出后节点归零。证据output/playwright/submenu-flicker-{before,after}.json；源码契约增加保留原对象/仅释放终态滤镜的断言。
+
+用户补充指出子菜单缺少动效：定位为nested分支仍使用静态hover/active面，仅有展开/退出。子树现在独立复用原SharedLayoutBg，选中投影ID按父路径隔离；源码函数保持，原45ms入场/25ms反向退出不变。实际浏览器证据output/playwright/submenu-{open,close,hover-selection}.json：33px子项间悬浮位移由-29.216→-12.0275→-3.31983→0，选中面由-32.9155→-16.2779→-4.63064→0；父面仍在父入口。入场y-6/opacity0/blur3依次恢复，退出层x28/y518保持，最终移除。394×816手机两个子项可见、0横向溢出、nav scrollbar none。42/42canonical与类型检查/构建通过，规范/注释/示范同步；未提交或部署。
+
+本轮实际发现：Motion Vue适配缺少兄弟布局联动，展开后的相邻菜单第一帧直接跳到终点；额外group动画控制改变传播层级，源SharedLayoutBg的入口/子树包装拆开；旧CSS还覆盖箭头及popLayout定位。长导航的滚动偏移未进入投影，导致收回时上方入口和退出层错移。旧版“variants相同/局部片段出现中间帧”不能作为效果一致的验收。
+
+已改为Vue桥接直接执行来源React Motion；SharedLayoutBg源函数AST与完整fixture核对，仅补项目CSS包装class。单一父级错峰、整项子variants/popLayout、原弹簧箭头和直接motion.li孩子保留。真实nav由layoutScroll测量，关闭overflow-anchor，静态定位规则只作用于非退出子树，退出保留padding并撤重复margin。
+
+本地真实浏览器对照运行完整第一份组件/示范和完整第二份SessionNavBar（Next/UI宿主依赖为无动画占位），不是缩写几行动画。1167×816记录：悬浮面在34px行距内连续共享投影；子树展开/收回时相邻行执行67px原弹簧，收回期间退出层x28/y516保持不变、下方行67→34.45→9.86→2.31→0.53→0连续回位。200ms rail收放至264/72，原标签按序x/opacity联动；两来源依赖版本未知、端点/控制方式按项目保留，不声称整组件逐帧完全相同。桌面帧证据位于output/playwright/sidebar-final-{open,close,hover,rail}.json，来源对照为sidebar-full-original-*.json。394×816与360×800抽屉为300px、0圆角、scrollbar none、无横向溢出；手机子菜单可开合。
+
+42/42 canonical契约、独立Vue/TSX类型检查/Vite构建，211/211青舟前端与类型检查/构建通过。React use-client指令被Vite忽略及既有大chunk提示不阻塞构建。分类注释、source-reference依赖快照、来源许可、侧栏/动效/复用/示范/coverage及项目文档同步。没有生产运行态检查、提交或部署；青舟业务入口不接入本扩展。
+
+## 多项目路由导航（2026-10-16）
+
+- 只修改canonical复用Shell/Gallery及规范/契约/覆盖，不把项目层接到青舟DashboardLayout。项目源码快照80项仍逐字一致；0/1项目guard、受控选择、当前项目不重复触发、失效key显示回退、手机关闭抽屉及桌面折叠边界加入契约。
+- 39/39设计契约、独立vue-tsc/Vite build通过；QingZhou前端211/211通过。80源/54pattern/247包哈希审计通过；现有大chunk警告保留。字体/数字/AWS色板未改变，本轮不声称重新验证外部AWS规范。
+- 1167×816实际浏览器：两个项目行48px；切换到页面示范仅显示其“页面示范/接入指南”菜单，顶栏/内容落点一起变化。搜索无结果替换原菜单结果轨道而保留项目入口；切换回设计系统清空搜索并恢复基础/交互/数据等分组。单项目模式项目层DOM数0，原筛选top84px及侧栏264px保持。
+- 折叠后侧栏72px、两个项目按钮40×40px且x15.5px，与40px菜单共用中心；Enter激活项目切换实测。394×816和360×816抽屉300px，项目行268×48px，scrollbar-width:none、gutter:auto，页面横向溢出0；选另一项目后抽屉关闭。是浏览器窄屏验证，不冒称触摸硬件实测。
+- 本地截图：output/playwright/project-routing-desktop.png、project-routing-collapsed.png、project-routing-mobile.png。示范提供多项目/单项目开关；默认零项目或单项目的guard另由运行源码单测验证。模板/样式均按用户授权新分类“多项目路由导航”标注，未套用二级侧边栏分类。
+- Wiki断链/孤立页/源码引用/权威软链与git diff-check通过。本轮没有提交、发布或部署，生产状态不由本地示范推断；保留先前下拉独立菜单修正与无关launch/registry改动。
+
+## 双区下拉独立菜单（2026-10-16）
+
+- 修正原两侧共用options与保持模式的误解。hoverOptions/原options分别供给左/右菜单，独立aria-expanded、右箭头仅右菜单展开时旋转；面板单一渲染，按各自触发区定位并在数据或当前侧变化后重测。组件、分类注释、canonical引用/源快照/pattern及5191同步，不改CSS几何/颜色。
+- 新增/调整脚本回归先失败（menuOptions不存在），后8项通过，覆盖两份选项双向切换、父级关闭、普通顶栏兼容、左右定位、状态与原焦点/触摸/Esc/清理；前端211/211、canonical36/36、两套类型检查/Vite通过，audit80/54/247无漂移，已有大chunk提示保持。
+- 实际1167×816浏览器：左计算/存储/网络服务，右新建项目/导入配置/导出配置，左→右→左直接替换，开放菜单数恒1。相应按钮expanded交替为true，左开时箭头不旋转；左右各自菜单中心误差0，按钮126.5px保持，右箭头二维中心误差0。
+- 394×816与360×816两种菜单均实测，单菜单/无横向溢出/右面板处于视口8px边界内，箭头中心误差0。Enter/Space、Shift+Tab到左菜单、Esc/Tab到右区不重开、Popover互斥、右菜单选择后关闭且旁边弹出选择文字不变均通过。触摸硬件未实测，保留单测的点击替代边界。
+- 真实pointerdown观察：左区按下前为hover+三项服务，右区按下前仍hover+三项服务、右点击后为click+三项操作，证明不是左点击才展开或右悬浮就切换。仅本地临时观察器，未合成事件，验收后已移除。截图output/playwright/dual-menu-left.png、dual-menu-right.png、dual-menu-mobile.png，原生输入记录dual-menu-native-input.json。
+- Wiki链接/孤立页/源引用/权威软链及diff-check通过；本地未提交未部署，线上仍是已验证的v0.2.114，本轮无生产写入。
 
 ## v0.2.114发布与生产验收
 

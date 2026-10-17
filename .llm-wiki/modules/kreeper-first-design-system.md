@@ -1,19 +1,37 @@
 ---
 title: kreeper第一设计系统 — QingZhou 集成
-updated: 2026-10-16
+updated: 2026-10-17
 ---
 
-## 双区组合下拉（2026-10-16，v0.2.114）
+## 顶栏竖屏按实际按钮内容显示
 
-`TopbarHoverMenu.splitLabel`以两个并列原生button替代单按钮文字/箭头：左区pointerenter/focus及无hover点击替代入口打开；右区click开合/保持，根pointerenter/focusin不触发split模式。内部hover/click状态在父级open=false时重置；hover离开整个root边界关闭，经过命中桥回到触发器不关闭，点击模式移开仍保持，外部pointerdown、focusout、Esc和父级选择/互斥关闭释放。
+global.css与canonical kreeper.css共享规则作用于公共/控制台header-right按钮：orientation:portrait或≤768px，有功能SVG只显示SVG；无SVG保留文字与自身宽度，不补图标、不隐藏入口。附带CSS下拉箭头不算功能图标。AppHeader/PublicHeader不再写按入口类名强制隐藏的局部规则；DashboardLayout/Shell管理入口只有文字，有权限时手机也保留；账户SVG入口补齐可访问名称。图标fine32px/coarse44px，权限/菜单/事件保持。沿用顶栏/普通按钮/悬浮下拉菜单分类，源快照/pattern/规范/5191同步；[验收](../guides/validation.md#顶栏按内容显示2026-10-17)。本地未部署。
 
-共享global.css负责左最小88px/水平14px、右36px、整体32px及12px角；.5px/opacity .22分割线贯穿外框内缘，右区grid正中放原10px箭头且margin0。四字标题整体126.5px；触摸媒体为高44px/右区44px；两区独立中性悬浮面、无下沉，减少动态效果取消过渡。普通顶栏不传splitLabel，原trigger插槽与整体悬浮功能保持。canonical组件/规范/快照/pattern/coverage和5191一致；没有新增样式类型或AWS规则变化。验收见[Validation](../guides/validation.md#双区组合下拉2026-10-16)。
+## 复用侧栏直接运行来源React动画
+
+KreeperSidebarMenu为Vue数据/事件桥接，sidebar-motion-react.tsx运行来源SharedLayoutBg、layout-position、popLayout与两个附件的父子variants。删除Motion Vue适配和额外分组动画祖先/累计延迟；SharedLayoutBg的直接motion.li孩子和relative/z10内容层保留，顶层入口与子树属于同一投影结构。真实nav以layoutScroll参与测量，关闭overflow-anchor；退出定位/宽高不再被旧CSS覆盖，padding/层级线保留。Vue label/icon只在React独占叶节点挂载并随root卸载清理。每组子菜单也独立复用来源SharedLayoutBg与弹簧选中投影，父路径隔离layoutId/hover作用域；原错峰展开/反向退出保持，撤掉子项静态hover背景。子项入场完成追加transitionEnd.filter=none，释放blur(0px)形成的层叠上下文，防止滑动背景盖住相邻行文字；退出仍使用原blur3。
+
+依赖React/react-dom19.2.0和framer-motion14.3.0；当前青舟frontend仅devDependencies供canonical验证，业务DashboardLayout/router/BranchedMenu未import。原项目颜色、264/72/300px、32px行、单项目边界、底部控制/键盘/搜索继续保留。分类注释为侧边栏/组件绘制动画，无新类型、字体或AWS规则变动。完整源码/验收范围及未部署边界见[Validation](../guides/validation.md#侧栏动画完整源码复核2026-10-17)。
+
+## 可选多项目路由最高层
+
+仅projects.length>1启用；每个项目头位于其所属菜单上一级，点击独立展开/收回分组与页面。头部48px、SVG替代字母Logo、右侧同款Motion箭头、与其他入口相同中性共享悬浮/选中面，撤掉独立项目切换区/蓝底/侧标。单项目无此层，实际青舟DashboardLayout/router不接入。
+
+项目数据提供key/label与caption/icon/options/expandedKeys；Shell按project:<key>隔离内部key，保存sidebarRouteKey与sidebarProjectOwner，跨项目同名路由不串披露/选中。选择项目头只控制披露和上下文；手机保持Drawer，选择叶子才navigate并关闭。项目key不会混入页面navigate。筛选临时打开匹配父级、清空恢复状态，顶栏searchItems仍由宿主按当前上下文提供。项目切换不重建React root或清空其他披露；桌面整栏收起保留最高项目层的开合key与原导航入口图标，仅清空原二级起的可展开子菜单和筛选；项目图标在72px轨道独立开合，点击深层组才展开整栏。
+
+项目最高层复用原SharedLayoutBg、spring箭头、popLayout/clip与兄弟重排；各动作整行使用原子菜单y=-6/blur3/opacity及45ms进入/25ms反向退出错峰，文字通过公开MotionContext接回原整栏stagger父级，保留源码30ms/20ms横移错峰，不用逐项animate；项目披露不驱动文字横移；内容flow-root包含分组margin，项目按钮和父盒都保持48px；文字区36px限高网格、标题20px/说明16px行高、6px纵向内距，垂直居中且单行省略；文字区及strong/small采用overflow:clip与4px overflow-clip-margin保留首字越出排版框的笔画，SVG轨道与动效不改。折叠40×40图标行居中，手机300px直角/隐藏原生滚动条。规范、分类注释、coverage与5191同步；[本地验收](../guides/validation.md#项目最高层折叠分组2026-10-17)。
+
+## 双区组合下拉（独立菜单，本地未部署）
+
+用户明确左右是不同菜单。TopbarHoverMenu在splitLabel模式下以hoverOptions提供左服务菜单、options提供右操作菜单；computed menuOptions按splitMode选对应数据。左hover/focus总是切到左菜单，右click总是切到右菜单或再次关闭；当前侧单一渲染，不叠加，两边expanded状态独立，箭头只表示右菜单。菜单positionPanel分别以文字区/箭头区为锚，原根坐标、8px视口夹取及桥保持；当前侧或选项变化后重新定位。外部/焦点/Esc、父级互斥与监听清理沿用。
+
+共享CSS未改，保持左88/右36/总126.5px和触摸44px合同；普通顶栏不传splitLabel，原trigger槽与整体hover不变。示范左为计算/存储/网络，右为新建/导入/导出，独立selectDropdownMenu只关闭组合菜单和显示示范反馈，不更改旁边“弹出选择”的选中值。项目/注释/canonical规范/精确快照/pattern/coverage及5191一致，无新视觉分类或AWS规则改变。验收见[独立菜单](../guides/validation.md#双区下拉独立菜单2026-10-16)；v0.2.114是修正前发布，未冒称本地修正已上线。
 
 ## 加载反馈的区域居中
 
 `page-loading.ts`维护pageLoadingTarget并提供loadingRegionCenter/usePageLoadingPosition。router在导航开始即选择保留壳的layout-content或settings-main；Shift5.prepareEnter在挂载时交接实际root。route-page-shell定位为所属layout-content，settings-main优先独立定位，全页qz-shift5-page-shell使用视口。App与Gallery的fixed点阵共用返回style，而按钮/Naive模块符号保持自身布局。
 
-定位取目标与visualViewport交集，排除同壳sticky顶栏；ResizeObserver在布局变化时重算，滚动/窗口/可见视口事件合帧更新，nextTick复核移动首屏。加载结束或取消清理目标和监听，scope销毁释放watch/observer/rAF。目标完全离屏不把符号挪到常驻导航区域。沿用“加载反馈”分类，图形、动画和请求门控不变；canonical规范/源码/示范与注释同步，验收见[Validation](../guides/validation.md#加载区域内居中2026-10-16)，未部署。
+定位取目标与visualViewport交集，排除同壳sticky顶栏；ResizeObserver在布局变化时重算，滚动/窗口/可见视口事件合帧更新，nextTick复核移动首屏。加载结束或取消清理目标和监听，scope销毁释放watch/observer/rAF。目标完全离屏不把符号挪到常驻导航区域。沿用“加载反馈”分类，图形、动画和请求门控不变；canonical规范/源码/示范与注释同步，验收见[Validation](../guides/validation.md#加载区域内居中2026-10-16)，已随v0.2.114发布部署。
 
 ## 文件夹投影、状态牌、导航与资源圈
 

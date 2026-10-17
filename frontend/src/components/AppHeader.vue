@@ -10,16 +10,17 @@
     </div>
     <div class="header-right">
       <template v-if="auth.isLoggedIn">
-        <n-button class="header-nav-trigger topbar-language-reference-trigger" quaternary size="small" @click="router.push('/dashboard')">
+        <!-- 顶栏 / 普通按钮：有功能SVG时竖屏仅显示SVG，纯文字按钮保留文字；可访问名称与动作不变。 -->
+        <n-button class="header-nav-trigger topbar-language-reference-trigger" aria-label="控制台" title="控制台" quaternary size="small" @click="router.push('/dashboard')">
           <template #icon><n-icon><HomeOutline /></n-icon></template>
-          控制台
+          <span class="topbar-action-label">控制台</span>
         </n-button>
         <!-- 悬浮下拉菜单：管理入口与账户入口共用同一菜单圆角合同。 -->
         <TopbarHoverMenu v-if="auth.isAdmin" :open="openMenu === 'admin'" :options="adminMenu" @open="setMenuOpen('admin', true)" @close="setMenuOpen('admin', false)" @select="handleNav">
           <template #trigger>
-            <n-button class="header-nav-trigger header-dropdown-trigger topbar-language-reference-trigger topbar-hover-trigger" quaternary size="small" :aria-expanded="openMenu === 'admin'" aria-haspopup="menu">
+            <n-button class="header-nav-trigger header-dropdown-trigger topbar-language-reference-trigger topbar-hover-trigger" aria-label="管理" title="管理" quaternary size="small" :aria-expanded="openMenu === 'admin'" aria-haspopup="menu">
               <template #icon><n-icon><SettingsOutline /></n-icon></template>
-              管理
+              <span class="topbar-action-label">管理</span>
               <span class="topbar-trigger-chevron" :class="{ 'is-open': openMenu === 'admin' }" aria-hidden="true" />
             </n-button>
           </template>
@@ -27,7 +28,7 @@
         <!-- 悬浮下拉菜单：账户入口与管理入口共用同一菜单圆角合同。 -->
         <TopbarHoverMenu :open="openMenu === 'account'" :options="userMenu" @open="setMenuOpen('account', true)" @close="setMenuOpen('account', false)" @select="handleNav">
           <template #trigger>
-            <n-button class="header-nav-trigger header-dropdown-trigger topbar-language-reference-trigger topbar-account-trigger topbar-hover-trigger" quaternary size="small" :aria-expanded="openMenu === 'account'" aria-haspopup="menu">
+            <n-button class="header-nav-trigger header-dropdown-trigger topbar-language-reference-trigger topbar-account-trigger topbar-hover-trigger" aria-label="账户菜单" title="账户菜单" quaternary size="small" :aria-expanded="openMenu === 'account'" aria-haspopup="menu">
               <svg class="topbar-account-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.25"/><path d="M5.9 19c.75-3.35 2.8-5.1 6.1-5.1s5.35 1.75 6.1 5.1"/></svg>
               <span class="account-name">{{ auth.user?.username }}</span>
               <span class="topbar-trigger-chevron" :class="{ 'is-open': openMenu === 'account' }" aria-hidden="true" />
@@ -147,4 +148,5 @@ function handleNav(key: string) {
   .app-header { width: 100%; max-width: 100%; padding: 0 12px 0 16px; }
   .header-right { gap: 2px; }
 }
+
 </style>

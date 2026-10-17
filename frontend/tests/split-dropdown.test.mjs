@@ -10,12 +10,12 @@ const script = parse(source).descriptor.scriptSetup.content.replace(/^import .*$
 const compiled = ts.transpileModule(script, { compilerOptions: { target: ts.ScriptTarget.ESNext, module: ts.ModuleKind.None } }).outputText.replace(/^export \{\};?$/gm, '')
 
 function fixture(splitLabel = '点击下拉') {
-  const props = { options: [], open: false, splitLabel }, watchers = [], mounted = [], disposed = [], events = [], listeners = new Map()
+  const props = { options: [{ key: 'export', label: '导出配置' }], hoverOptions: [{ key: 'compute', label: '计算服务' }], open: false, splitLabel }, watchers = [], mounted = [], disposed = [], events = [], listeners = new Map()
   const target = prefix => ({
     addEventListener: (name, fn) => listeners.set(`${prefix}:${name}`, fn),
     removeEventListener: name => listeners.delete(`${prefix}:${name}`),
   })
-  const model = runInNewContext(compiled + '\n({handleTriggerEnter,openSplitHover,toggleSplitClick,handlePointerLeave,handleFocusOut,handleOutsidePointer,closeMenu,selectOption,splitMode,rootRef})', {
+  const model = runInNewContext(compiled + '\n({handleTriggerEnter,openSplitHover,toggleSplitClick,handlePointerLeave,handleFocusOut,handleOutsidePointer,closeMenu,selectOption,splitMode,rootRef,panelRef,panelStyle,positionPanel,menuOptions})', {
     defineProps: () => props, withDefaults: p => p,
     defineEmits: () => (event, key) => {
       events.push([event, key])
@@ -24,9 +24,9 @@ function fixture(splitLabel = '点击下拉') {
         watchers.forEach(fn => fn(props.open))
       }
     },
-    ref: value => ({ value }), watch: (_get, callback) => watchers.push(callback), nextTick: async () => {},
+    ref: value => ({ value }), computed: get => ({ get value() { return get() } }), watch: (_get, callback) => watchers.push(callback), nextTick: async () => {},
     onMounted: fn => mounted.push(fn), onBeforeUnmount: fn => disposed.push(fn),
-    window: { ...target('window'), requestAnimationFrame: () => 1, cancelAnimationFrame() {} },
+    window: { ...target('window'), innerWidth: 1167, requestAnimationFrame: () => 1, cancelAnimationFrame() {} },
     document: target('document'),
   })
   mounted.forEach(fn => fn())
@@ -48,19 +48,51 @@ test('left hover opens, right/root hover does not; leaving hover closes', () => 
   assert.equal(menu.props.open, false)
 })
 
-test('right click pins the same menu and toggles closed without hover or focus reopening', () => {
+test('right click pins its own menu and toggles closed without root hover or focus reopening', () => {
   const menu = fixture()
   menu.toggleSplitClick()
   assert.equal(menu.props.open, true)
   menu.handlePointerLeave()
-  menu.openSplitHover({ pointerType: 'mouse' })
+  menu.handleTriggerEnter()
   assert.equal(menu.splitMode.value, 'click')
   menu.toggleSplitClick()
   menu.handleTriggerEnter()
   assert.equal(menu.props.open, false)
 })
 
-test('hover can hand over to click; mutual-parent closure clears a stale pinned mode', () => {
+test('the two sides switch distinct option sets in both directions without stacking menus', () => {
+  const menu = fixture()
+  menu.openSplitHover()
+  assert.equal(menu.menuOptions.value, menu.props.hoverOptions)
+  menu.toggleSplitClick()
+  assert.equal(menu.menuOptions.value, menu.props.options)
+  assert.equal(menu.props.open, true)
+  menu.openSplitHover({ pointerType: 'mouse' })
+  assert.equal(menu.menuOptions.value, menu.props.hoverOptions)
+  assert.equal(menu.splitMode.value, 'hover')
+  menu.handlePointerLeave()
+  assert.equal(menu.props.open, false)
+})
+
+test('each menu anchors to its own trigger region while preserving the panel gap', () => {
+  const menu = fixture()
+  const rect = { left: 300, width: 126.5, height: 32 }
+  const regions = {
+    '.topbar-split-label': { left: 301, width: 88 },
+    '.topbar-split-toggle': { left: 389.5, width: 36 },
+  }
+  menu.rootRef.value = { getBoundingClientRect: () => rect, querySelector: key => ({ getBoundingClientRect: () => regions[key] }) }
+  menu.panelRef.value = { getBoundingClientRect: () => ({ width: 160 }) }
+  menu.openSplitHover()
+  menu.positionPanel()
+  assert.equal(menu.panelStyle.value['--topbar-menu-left'], '-35px')
+  menu.toggleSplitClick()
+  menu.positionPanel()
+  assert.equal(menu.panelStyle.value['--topbar-menu-left'], '27.5px')
+  assert.equal(menu.panelStyle.value['--topbar-menu-top'], '40px')
+})
+
+test('mutual-parent closure clears the selected submenu and ordinary menus do not use hoverOptions', () => {
   const menu = fixture()
   menu.openSplitHover()
   menu.toggleSplitClick()
@@ -70,6 +102,9 @@ test('hover can hand over to click; mutual-parent closure clears a stale pinned 
   menu.openSplitHover()
   menu.handlePointerLeave()
   assert.equal(menu.props.open, false)
+  const ordinary = fixture('')
+  ordinary.openSplitHover()
+  assert.equal(ordinary.menuOptions.value, ordinary.props.options)
 })
 
 test('touch does not hover-open; tap/keyboard fallback opens and outside/Escape/focus-out close', () => {
@@ -109,6 +144,9 @@ test('split regions are sibling native buttons with keyboard focus and a single 
   assert.match(template, /class="topbar-split-label"[\s\S]*?@pointerenter="openSplitHover"[\s\S]*?@focus="openSplitHover"/)
   assert.match(template, /class="topbar-split-toggle"[\s\S]*?@click="toggleSplitClick"/)
   assert.match(template, /@keydown.esc="closeMenu"/)
+  assert.match(template, /:aria-expanded="props.open && splitMode === 'hover'"/)
+  assert.match(template, /:aria-expanded="props.open && splitMode === 'click'"/)
+  assert.match(template, /'is-open': props.open && splitMode === 'click'/)
   assert.equal((template.match(/class="topbar-trigger-chevron"/g) || []).length, 1)
   assert.doesNotMatch(template, /<svg\b/)
 })

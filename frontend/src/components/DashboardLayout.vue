@@ -119,7 +119,7 @@
           <kbd>Ctrl K</kbd>
         </div>
         <div class="header-right">
-          <template v-if="auth.isAdmin && !isMobile">
+          <template v-if="auth.isAdmin">
             <TopbarHoverMenu :open="openMenu === 'admin'" :options="adminQuickMenu" @open="setMenuOpen('admin', true)" @close="setMenuOpen('admin', false)" @select="handleAdminSelect">
               <template #trigger>
               <!-- 悬浮下拉菜单：管理入口与账户入口共享顶栏控件几何。 -->
@@ -130,7 +130,7 @@
           <!-- 悬浮下拉菜单：控制台账户入口采用共享的触发器悬浮几何。 -->
           <TopbarHoverMenu :open="openMenu === 'account'" :options="userMenu" @open="setMenuOpen('account', true)" @close="setMenuOpen('account', false)" @select="handleUserSelect">
             <template #trigger>
-            <n-button quaternary size="small" class="account-button dashboard-dropdown-trigger topbar-language-reference-trigger topbar-account-trigger topbar-hover-trigger" :aria-expanded="openMenu === 'account'" aria-haspopup="menu">
+            <n-button quaternary size="small" aria-label="账户菜单" title="账户菜单" class="account-button dashboard-dropdown-trigger topbar-language-reference-trigger topbar-account-trigger topbar-hover-trigger" :aria-expanded="openMenu === 'account'" aria-haspopup="menu">
               <svg class="topbar-account-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.25"/><path d="M5.9 19c.75-3.35 2.8-5.1 6.1-5.1s5.35 1.75 6.1 5.1"/></svg>
               <span v-if="!isMobile" class="account-name">{{ auth.user?.username }}</span>
               <span class="topbar-trigger-chevron" :class="{ 'is-open': openMenu === 'account' }" aria-hidden="true" />

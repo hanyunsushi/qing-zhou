@@ -8,13 +8,13 @@
     @focusout="handleFocusOut"
     @keydown.esc="closeMenu"
   >
-    <!-- 下拉选择菜单 / 悬浮下拉菜单：左右独立命中，文字区悬浮、箭头区点击，共用一个互斥面板。 -->
+    <!-- 下拉选择菜单 / 悬浮下拉菜单：文字区悬浮、箭头区点击，分别提供不同选项的菜单，始终互斥。 -->
     <div v-if="props.splitLabel" class="topbar-split-trigger" role="group" :aria-label="props.splitLabel">
       <button
         type="button"
         class="topbar-split-label"
         aria-haspopup="menu"
-        :aria-expanded="props.open"
+        :aria-expanded="props.open && splitMode === 'hover'"
         @pointerenter="openSplitHover"
         @focus="openSplitHover"
         @click="openSplitHover"
@@ -25,10 +25,10 @@
         class="topbar-split-toggle"
         :aria-label="`${props.splitLabel}菜单`"
         aria-haspopup="menu"
-        :aria-expanded="props.open"
+        :aria-expanded="props.open && splitMode === 'click'"
         @click="toggleSplitClick"
       >
-        <span class="topbar-trigger-chevron" :class="{ 'is-open': props.open }" aria-hidden="true" />
+        <span class="topbar-trigger-chevron" :class="{ 'is-open': props.open && splitMode === 'click' }" aria-hidden="true" />
       </button>
     </div>
     <slot v-else name="trigger" :open="props.open" />
@@ -47,11 +47,13 @@
         :class="{ 'is-positioned': panelPositioned }"
         :style="panelStyle"
         role="menu"
+        :aria-label="props.splitLabel ? `${props.splitLabel} · ${splitMode === 'hover' ? '悬浮菜单' : '点击菜单'}` : undefined"
+        :data-split-menu="props.splitLabel ? splitMode : undefined"
         @pointerenter="openMenu"
         @pointerleave="handlePointerLeave"
       >
         <div class="topbar-hover-menu-panel-content">
-          <template v-for="option in props.options" :key="String(option.key)">
+          <template v-for="option in menuOptions" :key="String(option.key)">
             <div v-if="option.type === 'divider'" class="topbar-hover-menu-divider" role="separator" />
             <button
               v-else
@@ -71,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 export interface TopbarHoverMenuOption {
   label?: string
@@ -84,6 +86,7 @@ const props = withDefaults(defineProps<{
   options: TopbarHoverMenuOption[]
   open: boolean
   splitLabel?: string
+  hoverOptions?: TopbarHoverMenuOption[]
 }>(), {})
 const emit = defineEmits<{ open: []; close: []; select: [key: string] }>()
 
@@ -92,6 +95,9 @@ const panelRef = ref<HTMLElement | null>(null)
 const panelPositioned = ref(false)
 const panelStyle = ref<Record<string, string>>({})
 const splitMode = ref<'hover' | 'click' | null>(null)
+const menuOptions = computed(() => props.splitLabel && splitMode.value === 'hover'
+  ? props.hoverOptions ?? []
+  : props.options)
 let positionFrame: number | undefined
 
 function resetPanelPosition() {
@@ -105,9 +111,13 @@ function positionPanel() {
   if (!root || !panel) return
 
   const rootRect = root.getBoundingClientRect()
+  const anchor = props.splitLabel
+    ? root.querySelector<HTMLElement>(splitMode.value === 'hover' ? '.topbar-split-label' : '.topbar-split-toggle') ?? root
+    : root
+  const anchorRect = anchor.getBoundingClientRect()
   const panelRect = panel.getBoundingClientRect()
   const gutter = 8
-  const centeredLeft = rootRect.left + rootRect.width / 2 - panelRect.width / 2
+  const centeredLeft = anchorRect.left + anchorRect.width / 2 - panelRect.width / 2
   const maxLeft = Math.max(gutter, window.innerWidth - panelRect.width - gutter)
   const viewportLeft = Math.min(Math.max(centeredLeft, gutter), maxLeft)
 
@@ -146,7 +156,7 @@ function handleTriggerEnter() {
 
 function openSplitHover(event?: PointerEvent | FocusEvent | MouseEvent) {
   if (event && 'pointerType' in event && event.pointerType === 'touch') return
-  if (splitMode.value !== 'click') splitMode.value = 'hover'
+  splitMode.value = 'hover'
   openMenu()
 }
 
@@ -191,6 +201,8 @@ watch(() => props.open, async (open) => {
   await nextTick()
   schedulePosition()
 })
+// 下拉选择菜单 / 悬浮下拉菜单：切换独立菜单内容后按对应触发区重新定位，沿用视口夹取与命中桥。
+watch([splitMode, () => props.options, () => props.hoverOptions], handleViewportResize, { flush: 'post' })
 
 onMounted(() => {
   window.addEventListener('resize', handleViewportResize)
