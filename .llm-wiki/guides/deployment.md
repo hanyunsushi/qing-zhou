@@ -708,8 +708,8 @@ The fork does not carry a custom writable `/data/probe` Docker adaptation.
 Container builds use the upstream hosted-probe location `/opt/qingzhou/probe`;
 the host-service production path remains independent of this container setting.
 
-The shared retention workflow is
-`/Users/hinaw/Documents/Codex/2026-09-17/oci/oci-retention-cleanup.sh`. Its normal
+The historical shared retention workflow used
+`/Users/hinaw/Documents/Codex/2026-09-17/oci/oci-retention-cleanup.sh`. Its recorded normal
 mode retains up to the three newest existing custom `qingzhou:kreeper-*` or
 `qingzhou:rollback-*` Docker images as optional containerized rollback material;
 they are never the active production artifact. When that rollback path is no
@@ -722,6 +722,24 @@ Sub2API/website Docker resources, the host binary, `/opt/qingzhou/backups`, the
 SQLite database, sing-box configuration, service definitions, or secrets.
 Normal cleanup accepts zero remaining QingZhou images and an absent retired
 volume; it does not recreate either resource after the dedicated purge.
+
+The maintained shared cleanup entry is now
+`/Users/hinaw/.local/share/oci-maintenance/oci-retention-cleanup.sh`, with a
+companion Python implementation and README in that directory. This rebuild
+implements cache/dangling-image cleanup only; it does not implement the
+historical `--purge-qingzhou` mode. Run without arguments to produce a private
+dry-run plan; review its exact deletion IDs and protected inventory, then run
+`--apply --plan /absolute/path/to/plan.json`. Apply rejects inventory drift and
+concurrent Docker builds, holds the shared host lock, preserves every tagged
+image and volume, and verifies container/service identity, mounts, protected
+file hashes and health afterward. Sub2API and website must each have three
+rollback tags; this mode stops on a different count rather than deleting tags.
+Only untagged images without digests or container references and engine-unused
+builder cache are deleted. In-use cache remains. No timer is installed.
+
+Cleanup measurements, retained runtime identities and the historical execution
+gap are owned by the [runtime authority](../../agent.md#监控高负载的运行态排查).
+Checking rollback-tag counts alone does not verify build-cache retention.
 
 Before a host-binary rollout, back up the binary, database, environment, service
 definitions, and `/etc/qingzhou-sing-box`; after restart verify `/api/health`,

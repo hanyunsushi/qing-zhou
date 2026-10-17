@@ -1113,12 +1113,15 @@ button.n-button--pressed:not(.n-button--disabled) { transform: none !important; 
     background: var(--text-3);
   }
 }
-/* 复选框：小尺寸方框使用4px角；鼠标点击无外晕，键盘焦点独立绘制。 */
+/* 复选框：4px角；未选时悬浮/点击保持中性边线，无外晕，键盘焦点独立绘制。 */
 .n-checkbox {
   --n-border-radius: 4px !important;
   --n-box-shadow-focus: none !important;
 }
 .n-checkbox .n-checkbox-box__border { box-shadow: none !important; }
+.n-checkbox:not(.n-checkbox--disabled):not(.n-checkbox--checked):not(.n-checkbox--indeterminate) .n-checkbox-box__border {
+  border: var(--n-border) !important;
+}
 .n-checkbox:focus-visible .n-checkbox-box {
   outline: 2px solid var(--accent);
   outline-offset: 2px;

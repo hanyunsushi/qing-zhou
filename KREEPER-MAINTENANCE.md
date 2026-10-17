@@ -2,6 +2,10 @@
 
 Checkbox4px/无点击外晕、HeroUI源样式普通Radio、分页8px方角与选中蓝底白字已同步项目/canonical/5191。只替换宿主面板，在线数据库快照与节点/Tunnel/配置保护验收通过；CPU/内存后端的独立未提交改动未发布。精确版本/摘要/回滚点见[权威](agent.md)，本地与生产范围见[Validation](.llm-wiki/guides/validation.md#v02118表单选择与分页发布验收)。
 
+## 共享 OCI 缓存清理入口
+
+共享手动入口为 `/Users/hinaw/.local/share/oci-maintenance/oci-retention-cleanup.sh`，默认 dry-run，复核私有计划后 `--apply --plan`；仅处理无引用悬空镜像与未使用构建缓存，所有带标签镜像、数据卷、宿主文件和回滚材料受保护。当前模式不含历史 `--purge-qingzhou`，没有新增定时任务。执行测量与运行态不变证明见[项目权威](agent.md#监控高负载的运行态排查)，工作流见[Deployment](.llm-wiki/guides/deployment.md)。
+
 ## 2026-10-17 DotMatrix左上角绘制 v0.2.117（已发布部署）
 
 共享加载样式直接绘制原点，修复零偏移外阴影被自身盒裁掉导致缺失左上角；青舟/canonical/5191同步，原时序/尺寸/定位及切屏合同保持。数据库一致性备份、面板原子替换及节点/Tunnel保护验收通过。精确版本/摘要/回滚点见[权威](agent.md)，门禁/像素/浏览器范围见[Validation](.llm-wiki/guides/validation.md#v02117点阵发布验收)。

@@ -713,7 +713,8 @@ func (a *API) buildHeatmap(w http.ResponseWriter, r *http.Request, publicOnly bo
 		}
 	}
 
-	// Bucketed aggregation: track per-bucket worst (max) load class per server.
+	// Bucketed aggregation: track the worst CPU/memory load class per server.
+	// Disk capacity is displayed separately and does not classify load.
 	all, err := a.st.ListAllMetricsSince(startTs)
 	if err != nil {
 		fail(w, 500, "查询指标失败")
@@ -729,18 +730,15 @@ func (a *API) buildHeatmap(w http.ResponseWriter, r *http.Request, publicOnly bo
 			continue
 		}
 		cpu := m.CPUPercent
-		var memPct, diskPct float64
+		var memPct float64
 		if m.MemTotal > 0 {
 			memPct = float64(m.MemUsed) / float64(m.MemTotal) * 100
 		}
-		if m.DiskTotal > 0 {
-			diskPct = float64(m.DiskUsed) / float64(m.DiskTotal) * 100
-		}
 		class := 0
-		if cpu >= 70 || memPct >= 70 || diskPct >= 70 {
+		if cpu >= 70 || memPct >= 70 {
 			class = 1
 		}
-		if cpu >= 90 || memPct >= 90 || diskPct >= 90 {
+		if cpu >= 90 || memPct >= 90 {
 			class = 2
 		}
 		cur := matrix[ri][b]

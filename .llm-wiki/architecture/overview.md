@@ -1,6 +1,6 @@
 ---
 title: System Overview
-updated: 2026-09-18
+updated: 2026-10-17
 ---
 
 # System Overview
@@ -52,6 +52,12 @@ The upstream-management flow is independent of node telemetry:
 See also: [Official Usage](../modules/official-usage.md), [Admin Upstreams](../apis/admin-upstreams.md).
 
 The admin monitor adds the combined `上游余额` card directly after the `面板本机` server card. OCI and Cloudflare are shown as draggable subcards, and their order is shared with 上游管理 through `settings.admin_upstream_balance_order`. The card is administrator-only and does not alter the public monitor payload.
+
+## Monitoring status semantics
+
+`internal/api/monitor.go` 的 `buildHeatmap` 同时用于公开与管理员监控矩阵：仅 CPU 使用率或内存占用率达到 70% 时分类为“高负载”，任一达到 90% 时为“严重负载”；其余有效样本为正常，无样本为无数据。磁盘容量占用率和 `load1`、`load5`、`load15` 均不参与此分类。磁盘指标继续采集、存储并在资源卡与详情中展示。内存采集由 `internal/sysmetrics/sysmetrics_linux.go` 的 `readMemInfo` 使用 `MemTotal - MemAvailable`，不是将所有文件缓存计为已用。
+
+`/api/monitor/heatmap` 与 `/api/admin/monitor/heatmap` 把所选 1h、6h、24h 或 7d 划为 48 个时间桶，每桶保留全部有效样本中最严重的 CPU/内存分类，不取均值，也不等同于当前瞬时状态。分类在查询时从原始指标计算，CPU/内存规则生效后历史桶也按同一口径重算，不迁移或改写历史指标。前端 `frontend/src/views/Monitor.vue`、`AdminMonitor.vue` 与 `frontend/src/utils/heatmap-skyline.ts` 展示这一分类。`internal/api/monitor_local_test.go` 的 `TestHeatmapLoadUsesOnlyCPUAndMemory` 覆盖两个接口、四种范围、磁盘满载不升级、CPU/内存阈值、缺少内存总量、桶内最严重分类和无数据哨兵。运行状态与源码生效边界见[项目权威](../../agent.md)，历史排查与清理见[运行态诊断](../../agent.md#监控高负载的运行态排查)。
 
 ## Remote backups and disaster recovery
 

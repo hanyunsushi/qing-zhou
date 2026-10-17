@@ -1,0 +1,18 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "kreeper-showcase",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "/Users/hinaw/Library/Mobile Documents/com~apple~CloudDocs/obsidian vault/knowledge vault/ai/agent-skills/custom/kreeper-first-design-system/scripts/preview-showcase.mjs",
+        "/Users/hinaw/qing-zhou-fork/frontend",
+        "--out",
+        "/tmp/kreeper-showcase",
+        "--port",
+        "5192"
+      ],
+      "port": 5192
+    }
+  ]
+}

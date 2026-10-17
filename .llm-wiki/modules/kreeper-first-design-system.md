@@ -3,6 +3,12 @@ title: kreeper第一设计系统 — QingZhou 集成
 updated: 2026-10-17
 ---
 
+## 复选框中性边线与表格完整显示（2026-10-17）
+
+未选且非禁用/半选的Checkbox在hover/点击focus时显式保持常态中性1px边线，选中/半选蓝色填充与勾选保持，禁用语义和独立键盘outline保留。canonical与5191同字节CSS。Gallery宽表六列总宽和scroll-x统一700px（原列宽800px却声明760px）；1167px展开侧栏时743px容器内完整显示操作列，窄屏保持Naive独立横滚和常显轨道，数据/列/查看动作不变。模板、CSS分类及forms/content规范与快照同步，无新增样式类型或AWS字体/色板变化。
+
+用户本轮要求纳入青舟全部本地改动，后端CPU/内存负载分类、既有维护文档和.claude预览配置一起提交；实际运行态由权威维护。本地验证见[Validation](../guides/validation.md#表格完整显示与复选框边线2026-10-17)。
+
 ## 复选框、单选框与分页（2026-10-17）
 
 共享global.css补齐现有表单/数据控件合同：Checkbox4px角，点击无外焦点阴影；普通Radio按HeroUI3.2.6官方control/indicator及field-shadow源码适配到Naive原生input，项目颜色/字体保持。原全局胶囊根规则仅限button式radio组，普通组无底框；route-switch不变。分页页码及左右翻页8px角、选中蓝底白字，显式覆盖全局-item18px兜底。

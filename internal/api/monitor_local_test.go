@@ -557,6 +557,77 @@ func TestHeatmapRespectsPublicVisibility(t *testing.T) {
 	}
 }
 
+func TestHeatmapLoadUsesOnlyCPUAndMemory(t *testing.T) {
+	for _, tc := range []struct {
+		name     string
+		cpu      float64
+		memUsed  int64
+		memTotal int64
+		diskUsed int64
+		want     int
+	}{
+		{"below warning", 69.99, 6999, 10000, 6999, 0},
+		{"disk at warning", 5, 2000, 10000, 7000, 0},
+		{"disk at critical", 5, 2000, 10000, 9000, 0},
+		{"disk full", 5, 2000, 10000, 10000, 0},
+		{"cpu at warning with full disk", 70, 2000, 10000, 10000, 1},
+		{"cpu below critical", 89.99, 2000, 10000, 10000, 1},
+		{"cpu at critical", 90, 2000, 10000, 10000, 2},
+		{"memory at warning with full disk", 5, 7000, 10000, 10000, 1},
+		{"memory below critical", 5, 8999, 10000, 10000, 1},
+		{"memory at critical", 5, 9000, 10000, 10000, 2},
+		{"memory without total", 5, 9000, 0, 10000, 0},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			a, st := newNodeUpgradeAPI(t)
+			ts := time.Now().Add(-30 * time.Second).Unix()
+			if err := st.InsertMetrics(store.LocalNodeID, store.ServerMetrics{
+				Ts: ts, CPUPercent: tc.cpu, MemUsed: tc.memUsed, MemTotal: tc.memTotal,
+				DiskUsed: tc.diskUsed, DiskTotal: 10000,
+			}); err != nil {
+				t.Fatal(err)
+			}
+			// A newer quiet sample must not erase the bucket's worst CPU/memory class.
+			if err := st.InsertMetrics(store.LocalNodeID, store.ServerMetrics{
+				Ts: ts, MemTotal: 10000, DiskTotal: 10000,
+			}); err != nil {
+				t.Fatal(err)
+			}
+			setVisible(t, a, store.LocalNodeID, true)
+			for _, endpoint := range []struct {
+				path string
+				h    http.HandlerFunc
+			}{
+				{"/api/admin/monitor/heatmap", a.handleMonitorHeatmap},
+				{"/api/monitor/heatmap", a.handleMonitorPublicHeatmap},
+			} {
+				for _, period := range []string{"1h", "6h", "24h", "7d"} {
+					var body struct {
+						Data struct {
+							Matrix     [][]int `json:"matrix"`
+							StateCount int     `json:"state_count"`
+						} `json:"data"`
+					}
+					path := endpoint.path + "?range=" + period
+					getJSON(t, endpoint.h, path, &body)
+					if body.Data.StateCount != 4 || len(body.Data.Matrix) != 1 || len(body.Data.Matrix[0]) != 48 {
+						t.Fatalf("%s: unexpected matrix shape/states: %+v", path, body.Data)
+					}
+					for i, class := range body.Data.Matrix[0] {
+						want := 3 // Unsampled buckets remain no-data.
+						if i == 47 {
+							want = tc.want
+						}
+						if class != want {
+							t.Fatalf("%s: bucket %d class = %d, want %d", path, i, class, want)
+						}
+					}
+				}
+			}
+		})
+	}
+}
+
 func TestMonitorOverviewDeduplicatesEnabledLoopbackAsset(t *testing.T) {
 	a, st := newNodeUpgradeAPI(t)
 	sampleLocal(t, st, 12.5)

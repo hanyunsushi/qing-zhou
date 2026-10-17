@@ -9,6 +9,12 @@ updated: 2026-10-17
 
 SQLite在线一致性快照/运行库完整性ok；ARM64Release、安装/proc摘要一致，面板原子替换后本机/公网health一致；三服务active/NRestarts0，节点/Tunnel PID、配置哈希、8081/8882/18082/19000及启动error journal0通过。精确摘要/回滚点见[权威](../../agent.md)。公网/admin资源引用及6项相关JS/CSS与精确提交的独立构建匹配。浏览器：生产新资源index-BR38n723.css已加载；未保存的新增TLS抽屉只读核对普通Radio16px/8px圆形、选中Apple蓝/白点且组透明无边框，随后Esc关闭。订阅页15个复选框计算4px角、边线shadow none，未切换业务值；账户页3个分页控件8px角，活动页蓝底白字，两侧禁用状态保留。生产console error为空，未保存/提交表单。 本地交互范围见[本项验收](#表单选择与分页2026-10-17)，不将本地测试冒称全部生产表单验收。
 
+## 负载矩阵仅 CPU/内存（2026-10-17）
+
+`TestHeatmapLoadUsesOnlyCPUAndMemory` 在改动前复现磁盘 70%/90%/100% 导致错误升级；改动后 11 组场景 × 公开/管理员两接口 × 1h/6h/24h/7d 四范围（88 次接口响应）通过。验证 CPU/内存 70%/90% 边界、低于临界值、满盘不升级、缺少内存总量、桶内安静新样本不覆盖最严重分类和无样本桶保留 3。
+
+专项 `go test ./internal/api -run 'TestHeatmap|TestMonitorOverviewDeduplicatesEnabledLoopbackAsset' -count=1`、全量 `go test ./...`、`go vet ./...` 及 `git diff --check` 通过。前端源码、图表状态/颜色与数据库结构未改；没有执行前端视觉验收或生产部署。新分类查询原始历史指标，部署后历史桶自动按同口径重算；生产生效边界由[项目权威](../../agent.md)维护。
+
 ## v0.2.117点阵发布验收
 
 - 青舟`48c4f84953e0079640bc352b09ed6deb623d2ab9`、canonical`5a0098c137bb3c6476537284c54aa193de334644`已推送，[v0.2.117-kreeper-20261017-dot-matrix-origin](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.117-kreeper-20261017-dot-matrix-origin)及CI39006294082/Release39006296823成功；214前端/46canonical、类型检查/构建、示范构建、Go CI race与audit101/55/259通过。三处loading.css逐字相同，业务/定位/字体/AWS不变，沿用加载反馈分类。
@@ -953,3 +959,11 @@ keyboard-accessible balance drag handles.
 浏览器1167×816、394×816、360×800验证无横向溢出：点击标签选择完整、Up键切回紧凑且有静态2px键盘焦点；分页2显示QZ-04行、下一页禁用，上一页回1；route-switch近30天选择与240底/16px角保持。Checkbox鼠标点击无外晕。截图在本地ignored output/controls/desktop.png、mobile.png、pagination.png。尺寸模拟不等于真实手机硬件验收；未声称Naive原生非焦点分页项目具有新增键盘能力。
 
 214前端测试、46canonical契约测试、生产/复用/示范三套类型检查与Vite构建通过；审计101源/55pattern/262包哈希、Wiki16页和diff空白检查通过。沿用用户指定现有复选框/单选框/分页细则，模板/CSS分类责任注释、canonical forms/content/foundations/semantics/sources/许可及5191同步；本轮未改AWS字体或图表规则。未提交的CPU/内存热力图后端及其文档修改不纳入此发布，生产证据另补。
+
+## 表格完整显示与复选框边线（2026-10-17）
+
+1167×816：实际表格/滚动容器743px，scrollWidth743、scrollLeft0，右侧查看按钮边界1030.84小于表格右边1079；点击查看正常打开原信息浮层。394×816：表格310px、内容700px，可横滚到scrollLeft390（最大值），查看按钮完整可见且原动作有效；360×800页面无横向溢出，表格276px，所有列仍在内部横滚。Naive横轨display:block/opacity1。截图output/table-checkbox/table-desktop.png、table-mobile.png。
+
+接受条款取消选中后鼠标仍hover、根仍focus：计算border为1px rgb(213,219,219)，box-shadow none，无点击蓝边；4px角/勾选填充/禁用和独立键盘焦点保持，未改表单事件。CSS/模板责任注释沿用复选框/展示信息模块/分页，无新增类型；未改AWS字体/图表规则。
+
+214前端/46canonical、生产/复用/示范类型检查与构建、Go全量测试/vet、audit101源/55pattern/262hash通过；既有CPU/内存热力图11例×双接口×四范围随全量Go测试复核。用户授权青舟全部本地改动一起发布，包含该后端、维护文档及.claude/launch.json；没有触发OCI缓存清理。生产验收另补。
