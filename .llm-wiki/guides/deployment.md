@@ -3,6 +3,12 @@ title: QingZhou Deployment and Artifact Retention
 updated: 2026-10-16
 ---
 
+## Actual sidebar source-motion release v0.2.116
+
+Source `a0772d7e2b7fb219e43bfff5a9c740b13b0db1e2` and canonical `50a5df747d029a18f3d689ca38b6ae70b741c914` are released as [v0.2.116-kreeper-20261017-sidebar-sync](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.116-kreeper-20261017-sidebar-sync); CI39001783028/release39001785424 pass. Actual desktop/mobile DashboardLayout now executes the same source Motion implementation as the package/showcase, retaining single-project business navigation and callbacks. Optional multi-project tier is excluded.
+
+The ARM64 artifact digest was checked before an online SQLite Backup API snapshot and atomic panel-only replacement. Installed/running digests, local/public health, protected configurations and node/Tunnel PIDs agree; public frontend resources match the source build. Runtime checksum/rollback location belong to [authority](../../agent.md), actual browser gates to [Validation](validation.md#v02116实际侧栏发布与生产验收).
+
 ## Navigation contracts release v0.2.115
 
 Source `af9b00b92df2f9a5b8bfc5c5c09281f847ca1a58` and canonical `dc7b0e5e273204f32ff5b86a46f3c89086b8f048` are released as [v0.2.115-kreeper-20261017-navigation-contracts](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.115-kreeper-20261017-navigation-contracts). CI39000120903 and release39000123367 succeeded. Business changes cover content-based portrait topbar controls and independent split-menu contents/anchors. Optional source-motion/project-sidebar assets are synchronized in the canonical package/showcase; QingZhou production keeps its existing single-project navigation implementation.

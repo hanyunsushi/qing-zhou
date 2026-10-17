@@ -3,13 +3,21 @@ title: Validation Guide
 updated: 2026-10-17
 ---
 
+## v0.2.116实际侧栏发布与生产验收
+
+- 青舟`a0772d7e2b7fb219e43bfff5a9c740b13b0db1e2`和canonical`50a5df747d029a18f3d689ca38b6ae70b741c914`均推送；[v0.2.116-kreeper-20261017-sidebar-sync](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.116-kreeper-20261017-sidebar-sync)与CI39001783028/Release39001785424成功。214前端/46canonical、两套类型检查/构建、Go tests/vet、CI race、101源/55patterns/259hashes通过，4份动画运行资产三处字节一致。
+- 原子部署只更新宿主面板，Release/安装/proc摘要一致；本机/公网health均v0.2.116，在线SQLite快照及运行库完整性ok，三服务active/NRestarts0，节点/Tunnel进程及保护配置保持，四监听和启动无error日志通过。精确摘要/回滚点由[权威](../../agent.md)维护。
+- 公网/admin入口引用当前资源；6项index/Monitor/DashboardLayout相关JS/CSS与本地精确源码构建逐字节一致，实际DashboardLayout chunk包含桥接及原Motion。HTML仅核验引用，不把Cloudflare附加检测脚本计为源码漂移。
+- 生产浏览器：生产1167×816实际侧栏存在React Motion根，264/72px收放和图标中心35.5px正确；图标打开指定分组、子菜单开合/退出无残留且filter=none；筛选显示匹配父级、无结果在原结果区；滚动后共享hover与目标行差0px、路由进入/admin/monitor并正确选中，无多项目层或横向溢出。394×816手机Drawer300px/直角、nav无滚动条/gutter:auto，同源动效根；筛选控制台并选择后回/dashboard且抽屉关闭。 无新的console error；只读菜单操作/导航，无保存、购买、退款或安装。截图output/sidebar-production-116-desktop.png及output/sidebar-production-116-mobile.png。本地原生操作逐帧数据与手机/普通角色边界见[实际侧栏接入](#青舟实际侧栏接入2026-10-17)；不把本地插值帧扩大为未知原附件环境逐帧完全相同。
+- 沿用侧边栏/组件绘制动画分类，没有新增类型、字体或AWS规则变更；页面内部二级BranchedMenu保留、青舟无多项目最高层。来源及React/Motion运行许可保留。Wiki16页链接/孤立页/权威软链和diff检查通过；生产验证标签结束后关闭并恢复视口；本地采样fixture标签在结束后崩溃为data URL，清理被浏览器URL策略拦截，采样脚本已移除并停止本地服务。
+
 ## 青舟实际侧栏接入2026-10-17
 
 - 实际DashboardLayout只读fixture直接挂载生产组件与菜单/路由处理，未重造侧栏；桌面1167px、手机394px覆盖整栏折叠、从图标展开指定组、筛选自动展示父级/无结果、管理员/普通用户权限、叶子跳转与帮助回调、手机选后关闭Drawer。
 - 原生操作rAF记录整栏宽72↔264的中间值、94帧文字插值和28帧子项opacity/y/blur插值；子菜单终态filter=none，无退出子树残留。实际nav滚动402px后共享hover与目标行顶部差0px，文字位于命中堆栈顶层；不存在额外最高项目层，横向溢出0。
 - 手机Drawer宽300px、圆角0，nav scrollbar-width:none/gutter:auto；普通用户无管理员入口，帮助选择后路由/help且Drawer退出完成。未调用生产写入API。
 - 前端214项、canonical46项、两套类型检查/构建、Go tests/vet通过；来源函数AST/variants契约仍保持，4份桥接/动画/CSS资产与canonical及5191相同。审计101源/55patterns/259hashes：source总数改为按实际条目计算，并新增tsx覆盖/计数一致性门禁；既有80数字为旧计数，不代表本轮新增21个业务文件。
-- 运行态发布验收待后续记录，未用本地结果冒充生产上线。
+- 本地验收已纳入v0.2.116，运行态范围由上方发布验收维护。
 
 ## v0.2.115发布与生产验收
 

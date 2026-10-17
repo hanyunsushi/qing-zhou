@@ -3,15 +3,15 @@ title: kreeper第一设计系统 — QingZhou 集成
 updated: 2026-10-17
 ---
 
-## 青舟实际侧栏动效接入（v0.2.116候选）
+## 青舟实际侧栏动效接入（v0.2.116已部署）
 
 DashboardLayout桌面/手机均复用KreeperSidebarMenu、sidebar-motion-react.tsx、sidebar-motion.ts及sidebar-motion.css，与canonical/5191同一字节源码。SharedLayoutBg悬浮、子菜单整行错峰/模糊/位移及兄弟重排、200ms整栏宽度及文字错峰直接执行来源React Motion。保留既有单项目MenuOption、权限/路由与外部帮助回调、筛选和选择关闭手机Drawer；不引入多项目最高层，不改页面内部BranchedMenu。
 
-新增运行依赖React/react-dom19.2.0、framer-motion14.3.0及jsx=react-jsx；来源/许可保留frontend/SIDEBAR-NOTICES.md。nav使用layoutScroll且overflow-anchor:none，静态几何不覆盖popLayout退出定位，入场终值释放filter层。分类为侧边栏/组件绘制动画，无新增类型或AWS/字体变更。验收见[Validation](../guides/validation.md#青舟实际侧栏接入2026-10-17)；生产在发布完成前仍为v0.2.115。
+新增运行依赖React/react-dom19.2.0、framer-motion14.3.0及jsx=react-jsx；来源/许可保留frontend/SIDEBAR-NOTICES.md。nav使用layoutScroll且overflow-anchor:none，静态几何不覆盖popLayout退出定位，入场终值释放filter层。分类为侧边栏/组件绘制动画，无新增类型或AWS/字体变更。验收见[Validation](../guides/validation.md#青舟实际侧栏接入2026-10-17)；已随v0.2.116部署，运行态证据见[发布验收](../guides/validation.md#v02116实际侧栏发布与生产验收)。
 
 ## 发布状态
 
-青舟源码`af9b00b92df2f9a5b8bfc5c5c09281f847ca1a58`和设计系统`dc7b0e5e273204f32ff5b86a46f3c89086b8f048`已随[v0.2.115](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.115-kreeper-20261017-navigation-contracts)提交发布；业务顶栏/双区菜单已部署，canonical侧栏与多项目示范保持复用包边界。后文各任务的本地验收记录保留当时范围；生产状态以[发布验收](../guides/validation.md#v02115发布与生产验收)为准。
+青舟源码`a0772d7e2b7fb219e43bfff5a9c740b13b0db1e2`和canonical`50a5df747d029a18f3d689ca38b6ae70b741c914`已随[v0.2.116](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.116-kreeper-20261017-sidebar-sync)提交发布部署，实际侧栏与设计系统/示范同源执行React Motion；仅可选多项目层留在复用包/示范边界。历史任务记录按各自日期保留，当前运行态见[发布验收](../guides/validation.md#v02116实际侧栏发布与生产验收)。
 
 ## 顶栏竖屏按实际按钮内容显示
 
@@ -21,7 +21,7 @@ global.css与canonical kreeper.css共享规则作用于公共/控制台header-ri
 
 KreeperSidebarMenu为Vue数据/事件桥接，sidebar-motion-react.tsx运行来源SharedLayoutBg、layout-position、popLayout与两个附件的父子variants。删除Motion Vue适配和额外分组动画祖先/累计延迟；SharedLayoutBg的直接motion.li孩子和relative/z10内容层保留，顶层入口与子树属于同一投影结构。真实nav以layoutScroll参与测量，关闭overflow-anchor；退出定位/宽高不再被旧CSS覆盖，padding/层级线保留。Vue label/icon只在React独占叶节点挂载并随root卸载清理。每组子菜单也独立复用来源SharedLayoutBg与弹簧选中投影，父路径隔离layoutId/hover作用域；原错峰展开/反向退出保持，撤掉子项静态hover背景。子项入场完成追加transitionEnd.filter=none，释放blur(0px)形成的层叠上下文，防止滑动背景盖住相邻行文字；退出仍使用原blur3。
 
-依赖React/react-dom19.2.0和framer-motion14.3.0；青舟DashboardLayout桌面与手机已接入相同桥接/源码资产，三项依赖列入runtime dependencies；页面内部BranchedMenu保持独立。原项目颜色、264/72/300px、32px行、单项目边界、底部控制/键盘/搜索继续保留。分类注释为侧边栏/组件绘制动画，无新类型、字体或AWS规则变动。完整源码/验收范围及未部署边界见[Validation](../guides/validation.md#侧栏动画完整源码复核2026-10-17)。
+依赖React/react-dom19.2.0和framer-motion14.3.0；青舟DashboardLayout桌面与手机已接入相同桥接/源码资产，三项依赖列入runtime dependencies；页面内部BranchedMenu保持独立。原项目颜色、264/72/300px、32px行、单项目边界、底部控制/键盘/搜索继续保留。分类注释为侧边栏/组件绘制动画，无新类型、字体或AWS规则变动。来源源码/本地复核记录见[Validation](../guides/validation.md#侧栏动画完整源码复核2026-10-17)。
 
 ## 可选多项目路由最高层
 
