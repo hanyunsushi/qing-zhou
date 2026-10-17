@@ -975,3 +975,9 @@ keyboard-accessible balance drag handles.
 接受条款取消选中后鼠标仍hover、根仍focus：计算border为1px rgb(213,219,219)，box-shadow none，无点击蓝边；4px角/勾选填充/禁用和独立键盘焦点保持，未改表单事件。CSS/模板责任注释沿用复选框/展示信息模块/分页，无新增类型；未改AWS字体/图表规则。
 
 214前端/46canonical、生产/复用/示范类型检查与构建、Go全量测试/vet、audit101源/55pattern/262hash通过；既有CPU/内存热力图11例×双接口×四范围随全量Go测试复核。用户授权青舟全部本地改动一起发布，包含该后端、维护文档及.claude/launch.json；没有触发OCI缓存清理。生产验收另补。
+
+## 分页角落裁切（2026-10-17）
+
+1167×816原末页下一页button矩形与根容器右/下边相等，根overflow:hidden/radius18导致按钮右下三个点（right-4/bottom-4、right-2/bottom-8、right-8/bottom-2）elementFromPoint均命中外层spec-depth-2而非按钮。改为根visible、内部wrapper hidden并继承18px后，三点全部命中禁用下一页button；切回首页的启用下一页同样命中。不是单纯宽度溢出，不以矩形相等宣称未裁切。
+
+394/360px末页按钮角点均命中，页面横向溢出0；内部内容仍700px且只在表内横滚。首/末页与启用/禁用几何保持；业务分页模型不变。截图output/pagination-clip/before.png、after.png、mobile.png。214前端测试及生产类型检查/Vite通过；canonical46测试、复用/示范构建、101源/55pattern/262hash与Wiki检查通过。模板使用原分页责任边界，新增CSS展示信息模块/分页注释；无新类型或AWS修改。生产验收另补。

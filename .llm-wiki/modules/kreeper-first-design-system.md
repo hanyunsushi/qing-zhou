@@ -3,6 +3,10 @@ title: kreeper第一设计系统 — QingZhou 集成
 updated: 2026-10-17
 ---
 
+## 分页角落裁切（2026-10-17）
+
+共享global.css将.n-data-table根overflow改为visible，只在内部.n-data-table-wrapper继承18px角并overflow hidden。分页是wrapper的外置兄弟，不再被根右下18px圆角切掉；保持分页8px、尺寸/配色、禁用、数据与切页模型。内部700px横滚/表格轮廓不变。canonical CSS/快照/数据内容规范、5191同步，沿用展示信息模块/分页分类，无新类型或AWS字体/图表变更。证据见[Validation](../guides/validation.md#分页角落裁切2026-10-17)。
+
 ## 复选框中性边线与表格完整显示（2026-10-17）
 
 未选且非禁用/半选的Checkbox在hover/点击focus时显式保持常态中性1px边线，选中/半选蓝色填充与勾选保持，禁用语义和独立键盘outline保留。canonical与5191同字节CSS。Gallery宽表六列总宽和scroll-x统一700px（原列宽800px却声明760px）；1167px展开侧栏时743px容器内完整显示操作列，窄屏保持Naive独立横滚和常显轨道，数据/列/查看动作不变。模板、CSS分类及forms/content规范与快照同步，无新增样式类型或AWS字体/色板变化。

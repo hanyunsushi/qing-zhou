@@ -984,11 +984,13 @@ button.n-button--pressed:not(.n-button--disabled) { transform: none !important; 
   color: var(--text) !important;
 }
 
+/* 展示信息模块 / 分页：圆角裁切只属于数据区，外置分页与焦点不能被根容器裁掉。 */
 .n-data-table {
   border-radius: var(--r-sm);
-  overflow: hidden;
+  overflow: visible;
   border: 0;
 }
+.n-data-table .n-data-table-wrapper { border-radius: inherit; overflow: hidden; }
 .n-data-table .n-data-table-th { background: var(--card) !important; font-weight: 600; }
 .n-data-table .n-data-table-td { border-bottom-color: var(--border) !important; }
 .n-data-table .n-data-table-tr:hover .n-data-table-td { background: var(--card-hover) !important; }
