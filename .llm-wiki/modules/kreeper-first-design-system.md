@@ -5,7 +5,7 @@ updated: 2026-10-17
 
 ## DotMatrix左上角绘制修复
 
-loading.css在同一伪元素内以径向背景直接画左上角原点，其余8点保持原偏移阴影。原零偏移外阴影被浏览器裁掉自身边框盒内部区域，导致相位变化但该点不可见；新背景半径`.12em + (phase - 1) × .045em`与原缩放公式相同，仍由diagonal-0驱动。低动态模式直接画currentColor圆，九点一起低频透明度呼吸。独立DotMatrix及Naive BaseLoading共用修复；16/20px占位、对角时序/颜色、加载区域居中与请求/切屏顺序保持。分类仍为加载反馈，无新类型或AWS/字体变更。青舟/canonical/5191共用相同CSS；像素及连续相位验收见[Validation](../guides/validation.md#dotmatrix左上角绘制2026-10-17)。生产上线事实由权威文档维护。
+loading.css在同一伪元素内以径向背景直接画左上角原点，其余8点保持原偏移阴影。原零偏移外阴影被浏览器裁掉自身边框盒内部区域，导致相位变化但该点不可见；新背景半径`.12em + (phase - 1) × .045em`与原缩放公式相同，仍由diagonal-0驱动。低动态模式直接画currentColor圆，九点一起低频透明度呼吸。独立DotMatrix及Naive BaseLoading共用修复；16/20px占位、对角时序/颜色、加载区域居中与请求/切屏顺序保持。分类仍为加载反馈，无新类型或AWS/字体变更。青舟/canonical/5191共用相同CSS；像素及连续相位验收见[Validation](../guides/validation.md#dotmatrix左上角绘制2026-10-17)。本项已随v0.2.117发布部署，运行态范围见[发布验收](../guides/validation.md#v02117点阵发布验收)。
 
 ## 青舟实际侧栏动效接入（v0.2.116已部署）
 
@@ -15,7 +15,7 @@ DashboardLayout桌面/手机均复用KreeperSidebarMenu、sidebar-motion-react.t
 
 ## 发布状态
 
-青舟源码`a0772d7e2b7fb219e43bfff5a9c740b13b0db1e2`和canonical`50a5df747d029a18f3d689ca38b6ae70b741c914`已随[v0.2.116](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.116-kreeper-20261017-sidebar-sync)提交发布部署，实际侧栏与设计系统/示范同源执行React Motion；仅可选多项目层留在复用包/示范边界。历史任务记录按各自日期保留，当前运行态见[发布验收](../guides/validation.md#v02116实际侧栏发布与生产验收)。
+青舟源码`48c4f84953e0079640bc352b09ed6deb623d2ab9`和canonical`5a0098c137bb3c6476537284c54aa193de334644`已随[v0.2.117](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.117-kreeper-20261017-dot-matrix-origin)提交发布部署，包含实际侧栏及点阵原点绘制修复；可选多项目最高层仍只用于多项目复用/示范。历史记录按日期保留，当前运行态见[发布验收](../guides/validation.md#v02117点阵发布验收)。
 
 ## 顶栏竖屏按实际按钮内容显示
 

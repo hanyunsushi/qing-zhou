@@ -1,3 +1,7 @@
+## 2026-10-17 DotMatrix左上角绘制 v0.2.117（已发布部署）
+
+共享加载样式直接绘制原点，修复零偏移外阴影被自身盒裁掉导致缺失左上角；青舟/canonical/5191同步，原时序/尺寸/定位及切屏合同保持。数据库一致性备份、面板原子替换及节点/Tunnel保护验收通过。精确版本/摘要/回滚点见[权威](agent.md)，门禁/像素/浏览器范围见[Validation](.llm-wiki/guides/validation.md#v02117点阵发布验收)。
+
 ## 2026-10-17 青舟实际侧栏动效 v0.2.116（已发布部署）
 
 实际桌面/手机DashboardLayout接入canonical与5191相同的原Motion悬浮、子菜单/兄弟重排和整栏/文字动效，保持单项目导航与原权限/业务回调；React/Motion为运行依赖。CI/Release及数据库一致性快照、面板原子替换、节点/Tunnel/配置保护验收完成。精确版本/摘要/回滚点见[权威](agent.md)，浏览器与门禁见[Validation](.llm-wiki/guides/validation.md#v02116实际侧栏发布与生产验收)。

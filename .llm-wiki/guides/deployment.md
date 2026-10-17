@@ -1,7 +1,13 @@
 ---
 title: QingZhou Deployment and Artifact Retention
-updated: 2026-10-16
+updated: 2026-10-17
 ---
+
+## DotMatrix origin release v0.2.117
+
+Source`48c4f84953e0079640bc352b09ed6deb623d2ab9` and canonical`5a0098c137bb3c6476537284c54aa193de334644` are released as [v0.2.117-kreeper-20261017-dot-matrix-origin](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.117-kreeper-20261017-dot-matrix-origin); CI39006294082/release39006296823 pass. The first loading dot is directly painted because the zero-offset outer shadow is clipped; eight other dots, timing, geometry, inherited color and loading/route lifecycle remain.
+
+Panel-only atomic rollout verifies the ARM64 digest and online SQLite Backup API snapshot, preserving configurations/node/Tunnel processes. Active/installed/Release digests and public/local health agree; relevant public resources match the source build. Runtime checksum/rollback location belong to [authority](../../agent.md), browser scope to [Validation](validation.md#v02117点阵发布验收).
 
 ## Actual sidebar source-motion release v0.2.116
 

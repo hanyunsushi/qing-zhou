@@ -3,6 +3,13 @@ title: Validation Guide
 updated: 2026-10-17
 ---
 
+## v0.2.117点阵发布验收
+
+- 青舟`48c4f84953e0079640bc352b09ed6deb623d2ab9`、canonical`5a0098c137bb3c6476537284c54aa193de334644`已推送，[v0.2.117-kreeper-20261017-dot-matrix-origin](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.117-kreeper-20261017-dot-matrix-origin)及CI39006294082/Release39006296823成功；214前端/46canonical、类型检查/构建、示范构建、Go CI race与audit101/55/259通过。三处loading.css逐字相同，业务/定位/字体/AWS不变，沿用加载反馈分类。
+- 原子替换宿主面板前保存在线SQLite一致性快照，快照/运行库完整性ok；Release/安装/proc摘要相同，本机/公网health为v0.2.117。三服务active/NRestarts0，节点/Tunnel PID与配置哈希保持，四监听和启动error journal0行通过。精确摘要/回滚点由[权威](../../agent.md)维护。
+- 公网/admin入口引用与6项index/Monitor/DashboardLayout相关JS/CSS匹配精确源码构建；公共入口CSS包含原点radial-gradient和低动态currentColor背景。只核对HTML引用，不以Cloudflare附加脚本推断源码漂移。
+- 生产浏览器：生产加载当前index-CfPeV3em.css，CSSOM解析出共享原点radial-gradient规则；由控制台原生键盘选择监控管理，在真实路由等待期观察到20px全局DotMatrix，diagonal-0=.203895、背景半径1.68351px/透明度.203895，证明生产实际加载节点已采用修复。本次只读导航，未修改数据。 无console error，未操作业务写入。逐相位像素与连续动画来自[本地实际组件对照](#dotmatrix左上角绘制2026-10-17)，不以生产短暂加载状态冒称已采完整循环。对照动图output/dot-matrix-origin-fix.gif；临时本地验收标签关闭并恢复视口。
+
 ## DotMatrix左上角绘制2026-10-17
 
 - 同一浏览器把修复前/后CSS放在8个固定相位0/.125/.25/.375/.5/.625/.75/.875秒对照。原左上角8次采样RGB均≥254，接近白底；修复后由约(201,228,255)过渡至(5,123,246)再变暗。64px放大/20px蓝色/16px继承白色的24种相位与尺寸组合，共216个圆心像素全部有实际绘制。
