@@ -3,6 +3,12 @@ title: kreeper第一设计系统 — QingZhou 集成
 updated: 2026-10-17
 ---
 
+## 复选框、单选框与分页（2026-10-17）
+
+共享global.css补齐现有表单/数据控件合同：Checkbox4px角，点击无外焦点阴影；普通Radio按HeroUI3.2.6官方control/indicator及field-shadow源码适配到Naive原生input，项目颜色/字体保持。原全局胶囊根规则仅限button式radio组，普通组无底框；route-switch不变。分页页码及左右翻页8px角、选中蓝底白字，显式覆盖全局-item18px兜底。
+
+canonical CSS/精确源快照/分类与forms/content/source规范、许可、5191的Controls说明示范同步；未增加HeroUI运行依赖、未改业务事件/数据请求。用户已直接指定三个既有控件及其样式决定，无待确认类别；本次未改AWS字体/图表规范。验证归属[Validation](../guides/validation.md#表单选择与分页2026-10-17)。
+
 ## DotMatrix左上角绘制修复
 
 loading.css在同一伪元素内以径向背景直接画左上角原点，其余8点保持原偏移阴影。原零偏移外阴影被浏览器裁掉自身边框盒内部区域，导致相位变化但该点不可见；新背景半径`.12em + (phase - 1) × .045em`与原缩放公式相同，仍由diagonal-0驱动。低动态模式直接画currentColor圆，九点一起低频透明度呼吸。独立DotMatrix及Naive BaseLoading共用修复；16/20px占位、对角时序/颜色、加载区域居中与请求/切屏顺序保持。分类仍为加载反馈，无新类型或AWS/字体变更。青舟/canonical/5191共用相同CSS；像素及连续相位验收见[Validation](../guides/validation.md#dotmatrix左上角绘制2026-10-17)。本项已随v0.2.117发布部署，运行态范围见[发布验收](../guides/validation.md#v02117点阵发布验收)。

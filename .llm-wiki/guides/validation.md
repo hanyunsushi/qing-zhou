@@ -939,3 +939,11 @@ keyboard-accessible balance drag handles.
 - `AdminSettings.vue` 与 canonical 示例均按用户代码核对：首组默认展开，其他组收起；一级/二级行高 36px，子项缩进 40px，活动分支使用 CSS 弧线和延伸线，无 SVG。
 - 最新 `5197/#navigation` 浏览器实测：收起“面板与节点”后其分支 `grid-template-rows` 与裁剪层高度均为 `0px`；展开后恢复 `84px`，活动项和主干位置保持稳定。
 - `npm test`：180/180；`npm run typecheck`：通过；`npm run build`：通过（仅保留既有 ECharts 大 chunk warning）。skill `audit.mjs`、`verify-assets.mjs`：通过（77 源文件、53 pattern、238 package hashes；28 项独立合同测试通过）。本轮作为发布前验证记录，发布状态以本页新增的最终记录为准。
+
+## 表单选择与分页（2026-10-17）
+
+本轮共享CSS：Checkbox16px/4px、点击box与border的计算shadow均none；禁用/选中禁用保留Naive处理。普通Radio按官方HeroUI3.2.6源码适配：16px圆形蓝底/白点、14px内部×.4286、200ms指示点/100ms按压控件、原三层field-shadow；API/name/value及原生键盘互斥保持。普通组去胶囊，route-switch按钮组仍为16/12/4。分页四个页码/左右控件计算角均8px，选中Apple蓝/白字，悬浮/按下同提亮；全局-item18px覆盖已显式消除。
+
+浏览器1167×816、394×816、360×800验证无横向溢出：点击标签选择完整、Up键切回紧凑且有静态2px键盘焦点；分页2显示QZ-04行、下一页禁用，上一页回1；route-switch近30天选择与240底/16px角保持。Checkbox鼠标点击无外晕。截图在本地ignored output/controls/desktop.png、mobile.png、pagination.png。尺寸模拟不等于真实手机硬件验收；未声称Naive原生非焦点分页项目具有新增键盘能力。
+
+214前端测试、46canonical契约测试、生产/复用/示范三套类型检查与Vite构建通过；审计101源/55pattern/262包哈希、Wiki16页和diff空白检查通过。沿用用户指定现有复选框/单选框/分页细则，模板/CSS分类责任注释、canonical forms/content/foundations/semantics/sources/许可及5191同步；本轮未改AWS字体或图表规则。未提交的CPU/内存热力图后端及其文档修改不纳入此发布，生产证据另补。

@@ -1113,7 +1113,106 @@ button.n-button--pressed:not(.n-button--disabled) { transform: none !important; 
     background: var(--text-3);
   }
 }
-.n-radio-group {
+/* 复选框：小尺寸方框使用4px角；鼠标点击无外晕，键盘焦点独立绘制。 */
+.n-checkbox {
+  --n-border-radius: 4px !important;
+  --n-box-shadow-focus: none !important;
+}
+.n-checkbox .n-checkbox-box__border { box-shadow: none !important; }
+.n-checkbox:focus-visible .n-checkbox-box {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* 单选框：HeroUI 3.2.6 control/indicator样式适配到Naive原生input；项目配色与表单行为保持。 */
+.n-radio-group:not(:has(.n-radio-button)) {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.n-radio {
+  --n-radio-size: 16px !important;
+  --n-label-padding: 0 0 0 12px !important;
+  --n-label-line-height: 20px !important;
+  --n-label-font-weight: 500 !important;
+  --n-text-color: var(--text) !important;
+  --n-color: var(--bg) !important;
+  --n-color-active: var(--accent) !important;
+  --n-dot-color-active: #fff !important;
+  --n-box-shadow: 0 2px 4px rgba(0,0,0,.04), 0 1px 2px rgba(0,0,0,.06), 0 0 1px rgba(0,0,0,.06) !important;
+  --n-box-shadow-hover: var(--n-box-shadow) !important;
+  --n-box-shadow-active: var(--n-box-shadow) !important;
+  --n-box-shadow-focus: var(--n-box-shadow) !important;
+}
+.n-radio .n-radio__dot {
+  border-radius: 8px;
+  transition: background-color 200ms cubic-bezier(0,0,.2,1), box-shadow 200ms cubic-bezier(0,0,.2,1), transform 100ms cubic-bezier(0,0,.2,1);
+}
+.n-radio .n-radio__dot::before {
+  inset: 1px;
+  width: auto;
+  height: auto;
+  border-radius: 8px;
+  opacity: 1;
+  background: var(--bg);
+  transform: scale(1);
+  transition: transform 200ms cubic-bezier(0,0,.2,1), background-color 200ms cubic-bezier(0,0,.2,1);
+}
+.n-radio:not(.n-radio--disabled):hover .n-radio__dot::before { background: var(--card-hover); }
+.n-radio.n-radio--checked .n-radio__dot {
+  background: var(--accent);
+  box-shadow: var(--n-box-shadow);
+}
+.n-radio.n-radio--checked .n-radio__dot::before {
+  background: #fff;
+  transform: scale(.4286);
+}
+.n-radio:not(.n-radio--disabled):active .n-radio__dot { transform: translateY(-50%) scale(.95); }
+.n-radio.n-radio--checked:not(.n-radio--disabled):active .n-radio__dot { background: var(--accent-button-hover); }
+.n-radio.n-radio--checked:not(.n-radio--disabled):active .n-radio__dot::before { transform: scale(.5714); }
+.n-radio:has(.n-radio-input:focus-visible) .n-radio__dot {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.n-radio.n-radio--disabled { opacity: .5; }
+.n-radio.n-radio--disabled .n-radio__dot { background: var(--bg-subtle); box-shadow: inset 0 0 0 1px var(--border); }
+.n-radio.n-radio--disabled .n-radio__dot::before { background: var(--bg-subtle); }
+.n-radio.n-radio--disabled.n-radio--checked .n-radio__dot { background: var(--accent); box-shadow: none; }
+.n-radio.n-radio--disabled.n-radio--checked .n-radio__dot::before { background: #fff; }
+@media (hover: none), (pointer: coarse) {
+  .n-radio, .n-checkbox { min-height: 44px; align-items: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .n-radio .n-radio__dot, .n-radio .n-radio__dot::before { transition: none; }
+  .n-radio:not(.n-radio--disabled):active .n-radio__dot { transform: translateY(-50%); }
+  .n-radio.n-radio--checked:not(.n-radio--disabled):active .n-radio__dot::before { transform: scale(.4286); }
+}
+
+/* 分页：页码和左右翻页共用8px方角；选中蓝底白字，禁用保留原生语义。 */
+.n-pagination {
+  --n-item-border-radius: 8px !important;
+  --n-item-color-active: var(--accent) !important;
+  --n-item-color-active-hover: var(--accent-button-hover) !important;
+  --n-item-text-color-active: #fff !important;
+  --n-item-border-active: 1px solid var(--accent) !important;
+}
+.n-pagination .n-pagination-item { border-radius: 8px !important; }
+.n-pagination .n-pagination-item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.n-pagination .n-pagination-item--active:not(.n-pagination-item--disabled):active { color: #fff; }
+@media (hover: none), (pointer: coarse) {
+  .n-pagination { --n-item-size: 44px !important; }
+}
+
+/* 路由切换组件：胶囊外轨只用于button式单选组，不影响普通单选框。 */
+.n-radio-group:has(.n-radio-button) {
   display: inline-flex; align-items: center; gap: 0;
   padding: 3px; border: 1px solid var(--border); border-radius: var(--r-control);
   background: var(--bg-subtle);
