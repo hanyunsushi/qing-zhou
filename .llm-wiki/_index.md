@@ -9,6 +9,7 @@ updated: 2026-10-15
 - [System Overview](architecture/overview.md) - QingZhou boundaries and admin data flow.
 
 # Modules
+- [Console OIDC Backend](modules/console-oidc-backend.md) - Original-site and Console callback compatibility.
 - [Official Usage](modules/official-usage.md) - direct OCI and Cloudflare provider adapters.
 - [Subscription Auto Renewal](modules/subscription-auto-renew.md) - queued-plan renewal and charging rules.
 - [Subscription Routing](modules/subscription-routing.md) - opt-in Clash CN return-node group and provider rules.

@@ -125,11 +125,11 @@ func (a *API) isHTTPS(r *http.Request) bool {
 	return strings.HasPrefix(a.publicBase(r), "https://")
 }
 
-func setAuthCookie(w http.ResponseWriter, tok string, secure bool) {
+func setAuthCookie(w http.ResponseWriter, r *http.Request, tok string, secure bool) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     cookieName,
 		Value:    tok,
-		Path:     "/",
+		Path:     authCookiePath(r),
 		HttpOnly: true,
 		Secure:   secure,
 		SameSite: http.SameSiteLaxMode,

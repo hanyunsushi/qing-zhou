@@ -34,6 +34,7 @@ type oauthFixture struct {
 	verified         bool
 	fault            string
 	exchanges        int
+	exchangeRedirect string
 }
 type oauthRoundTripFunc func(*http.Request) (*http.Response, error)
 
@@ -63,7 +64,11 @@ func newOAuthFixture(t *testing.T) *oauthFixture {
 			f.exchanges++
 			r.ParseForm()
 			id, secret, has := r.BasicAuth()
-			if !has || id != f.c.ClientID || secret != f.c.ClientSecret || r.Form.Get("redirect_uri") != f.c.RedirectURL || r.Form.Get("grant_type") != "authorization_code" || oauthHash(r.Form.Get("code_verifier")) != f.challenge {
+			redirect := f.c.RedirectURL
+			if f.exchangeRedirect != "" {
+				redirect = f.exchangeRedirect
+			}
+			if !has || id != f.c.ClientID || secret != f.c.ClientSecret || r.Form.Get("redirect_uri") != redirect || r.Form.Get("grant_type") != "authorization_code" || oauthHash(r.Form.Get("code_verifier")) != f.challenge {
 				http.Error(w, "bad exchange", 400)
 				return
 			}
@@ -123,8 +128,11 @@ func (f *oauthFixture) save(t *testing.T) {
 	}
 }
 func (f *oauthFixture) start(t *testing.T) (string, *http.Cookie) {
+	return f.startAt(t, "https://panel.example")
+}
+func (f *oauthFixture) startAt(t *testing.T, origin string) (string, *http.Cookie) {
 	t.Helper()
-	r := httptest.NewRequest("POST", "https://panel.example/api/auth/oauth2/start", strings.NewReader("{}"))
+	r := httptest.NewRequest("POST", origin+"/api/auth/oauth2/start", strings.NewReader("{}"))
 	r.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	f.a.handleOAuthStart(w, r)
@@ -141,6 +149,13 @@ func (f *oauthFixture) start(t *testing.T) (string, *http.Cookie) {
 	}
 	u, _ := url.Parse(body.Data.URL)
 	q := u.Query()
+	redirect := f.c.RedirectURL
+	if f.exchangeRedirect != "" {
+		redirect = f.exchangeRedirect
+	}
+	if q.Get("redirect_uri") != redirect {
+		t.Fatalf("redirect_uri = %q, want %q", q.Get("redirect_uri"), redirect)
+	}
 	f.nonce = q.Get("nonce")
 	f.challenge = q.Get("code_challenge")
 	if q.Get("code_challenge_method") != "S256" || q.Get("scope") != "openid profile email" || q.Get("response_type") != "code" || f.nonce == "" {

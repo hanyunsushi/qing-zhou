@@ -262,6 +262,7 @@ func (a *API) startOAuth(w http.ResponseWriter, r *http.Request, bind bool) {
 		fail(w, 400, "认证中心尚未启用")
 		return
 	}
+	c = oauthConfigForRequest(c, r)
 	var req struct {
 		Password string `json:"password"`
 	}
@@ -348,6 +349,7 @@ func (a *API) handleOAuthCallback(w http.ResponseWriter, r *http.Request) {
 		fail(w, 400, "认证中心尚未启用，请返回首页重新登录")
 		return
 	}
+	c = oauthConfigForRequest(c, r)
 	u, _ := url.Parse(c.RedirectURL)
 	dest := u.Scheme + "://" + u.Host + "/#/oauth2/callback"
 	finish := func(code string) { http.Redirect(w, r, dest+"?error="+code, http.StatusSeeOther) }

@@ -67,7 +67,7 @@ func (a *API) issueLoginWithSecurity(w http.ResponseWriter, r *http.Request, u *
 	if err != nil {
 		return "", err
 	}
-	setAuthCookie(w, tok, secure)
+	setAuthCookie(w, r, tok, secure)
 	return tok, nil
 }
 
@@ -206,7 +206,7 @@ func (a *API) handleLogout(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     cookieName,
 		Value:    "",
-		Path:     "/",
+		Path:     authCookiePath(r),
 		HttpOnly: true,
 		MaxAge:   -1,
 	})
