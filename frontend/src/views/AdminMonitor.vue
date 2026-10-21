@@ -122,7 +122,7 @@
             <router-link class="srv-name project-link" :to="{ name: 'admin-monitor-detail', params: { id: s.id } }" :aria-label="`查看${s.name}监控详情`">{{ s.name }}</router-link>
             <!-- 区分-信息牌：面板自采集说明采集来源，不表达健康状态。 -->
             <n-tag v-if="s.local || s.panel_metrics" size="small" type="info" :bordered="false">面板自采集</n-tag>
-            <n-tooltip v-else-if="s.metrics && s.probe_outdated" trigger="hover">
+            <n-tooltip :show-arrow="false" v-else-if="s.metrics && s.probe_outdated" trigger="hover">
               <template #trigger>
                 <n-tag size="small" type="warning" :bordered="false">探针 {{ s.probe_version || '版本未知' }} · 待升级</n-tag>
               </template>
@@ -135,7 +135,7 @@
         <template #header-extra>
           <n-space :size="4" align="center" wrap>
             <!-- 切换开关：公开可见性用于首页，保持独立于管理员监控和探针启用。 -->
-            <n-tooltip trigger="hover">
+            <n-tooltip :show-arrow="false" trigger="hover">
               <template #trigger>
                 <n-switch :value="s.public_visible" :aria-label="`${s.name}首页公开可见性`" size="small" :loading="visSaving === s.id" @update:value="(v:boolean) => setPublicVisible(s, v)" />
               </template>

@@ -709,7 +709,6 @@ import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import { NAlert, NCard, NCheckbox, NForm, NFormItem, NInput, NInputGroup, NInputNumber, NSelect, NSwitch, NButton, NSpace, NSpin, useDialog, useMessage } from 'naive-ui'
 import { apiGet, apiPost, apiPut, apiDelete, apiList, apiDownload } from '@/api'
 import { useConfigStore } from '@/stores/config'
-import { useShift5PageTransition } from '@/utils/shift5'
 import { fmtBytes } from '@/utils/format'
 
 const message = useMessage()
@@ -717,8 +716,7 @@ const dialog = useDialog()
 const route = useRoute()
 const router = useRouter()
 const settingsMain = ref<HTMLElement | null>(null)
-// 二级侧边栏 / 组件绘制动画：首屏由布局统一揭示；已进入页面后仅分区主体切屏，导航保持常驻。
-useShift5PageTransition(settingsMain, () => route.fullPath, () => route.name === 'admin-settings', false)
+// 二级侧边栏：已加载分区直接切换；页面首次进入仍由布局统一揭示。
 const config = useConfigStore()
 const settingsLoaded = ref(false)
 const loadError = ref('')

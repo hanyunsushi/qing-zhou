@@ -1,6 +1,6 @@
 ---
 title: Validation Guide
-updated: 2026-10-17
+updated: 2026-10-20
 ---
 
 ## 首页进入控制台与订阅页窄屏本地验收（2026-10-17）
@@ -1006,3 +1006,13 @@ keyboard-accessible balance drag handles.
 1167×816原末页下一页button矩形与根容器右/下边相等，根overflow:hidden/radius18导致按钮右下三个点（right-4/bottom-4、right-2/bottom-8、right-8/bottom-2）elementFromPoint均命中外层spec-depth-2而非按钮。改为根visible、内部wrapper hidden并继承18px后，三点全部命中禁用下一页button；切回首页的启用下一页同样命中。不是单纯宽度溢出，不以矩形相等宣称未裁切。
 
 394/360px末页按钮角点均命中，页面横向溢出0；内部内容仍700px且只在表内横滚。首/末页与启用/禁用几何保持；业务分页模型不变。截图output/pagination-clip/before.png、after.png、mobile.png。214前端测试及生产类型检查/Vite通过；canonical46测试、复用/示范构建、101源/55pattern/262hash与Wiki检查通过。模板使用原分页责任边界，新增CSS展示信息模块/分页注释；无新类型或AWS修改。生产验收另补。
+
+## 共享反馈与预载设置切换（2026-10-20）
+
+验证：Host37项测试/类型，AI5文件52项弹窗/设置定向回归、修改源lint、类型/独立构建；青舟230项/类型/独立构建；四根密封Console构建通过。canonical121源/59组件patterns/311包hash审计零漂移，50契约/复用类型/隔离构建通过。真实浏览器验证原31个中间动效姿态、360/390/768/1167/1920宽度无横溢出、18px角、无按钮消息与Dialog、自动关闭、异步false仅回调一次、返回焦点、双层Esc2→1→0、低动态无旋转/缩放/模糊及44px触摸关闭。实际青舟合成登录成功0按钮、Inter/Resource Han Rounded CN与18px表面，设置basic→cert无矩阵/入场/溢出；AI独立与编译Console均无自动Driver/账户重放入口、插件浅蓝无边框18px、复选框16px/4px及原512px创建用户弹窗；AI实际错误消息在Console overlay scope中为白面18px/4px16px阴影，只有原关闭入口。合成浏览器未访问生产API。
+
+Canonical/QZ shared source matched; AI excludes the Naive provider and maps its existing LoadingSpinner import. QZ useMessage real synthetic login has0 new action buttons; settings group expansion and basic→cert navigation create no page loading/reveal. Source guard regression verifies that a later actual page route still starts its normal content gate. Evidence and native rollout belong to [authority](../../agent.md#共享反馈表面与设置即时切换2026-10-20当前已部署).
+
+## 共享消息绘制与图标（2026-10-20）
+
+FeedbackMessages复用现有Apple语义圆形状态图标与白色符号，滚动消息栈增加16px绘制留白；无新增动作，原面板Motion与计时不变。230前端测试、类型/native构建、canonical121源/59patterns/311hash及50契约/隔离构建通过。本地实际合成登录的成功反馈仍0按钮、18px/白面，预载设置切换无加载/横溢出。独立生产binary/SQLite备份/配置与212旧静态核验归[权威](../../agent.md#共享消息图标与阴影绘制修正2026-10-20当前已部署)，不以合成UI声称生产认证完成。

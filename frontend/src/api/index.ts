@@ -1,5 +1,6 @@
 /* ---------- API 封装 ---------- */
 
+import { navigateWithinConsole, embeddedRequestSignal } from '@/runtime/runtime-keys'
 import { useAuthStore } from '@/stores/auth'
 import { withRequestDeadline, type ApiRequestOptions } from './network'
 import { trackPageRequest } from '@/utils/page-loading'
@@ -21,9 +22,10 @@ async function request<T = any>(path: string, opts: RequestInit & ApiRequestOpti
       headers['Authorization'] = 'Bearer ' + auth.token
     }
 
-    const res = await fetch(path, {
+    const requestPath = globalThis.__QINGZHOU_MICROFRONTEND__ ? `/api/kreeproxy${path}` : path
+    const res = await fetch(requestPath, {
       ...init,
-      signal,
+      signal: embeddedRequestSignal(signal),
       headers,
       credentials: 'include',
     })
@@ -40,8 +42,12 @@ async function request<T = any>(path: string, opts: RequestInit & ApiRequestOpti
         // Session died mid-use — bounce to the standalone login page so the user
         // isn't stranded on a dead screen of failing calls.
         const h = window.location.hash
-        if (path !== '/api/auth/me' && !h.startsWith('#/oauth2/callback') && h && !h.startsWith('#/login') && !h.startsWith('#/register') && !h.startsWith('#/forgot-password')) {
-          window.location.hash = '/login'
+        const embedded = globalThis.__QINGZHOU_MICROFRONTEND__ === true
+        // 认证提交失败留在原表单展示后端错误；只有受保护请求失效才跳转登录。
+        const authSubmission = ['/api/auth/login', '/api/auth/register', '/api/auth/forgot', '/api/auth/oauth2/start'].includes(path)
+        if (path !== '/api/auth/me' && !authSubmission && !h.startsWith('#/oauth2/callback') && (embedded || (h && !h.startsWith('#/login') && !h.startsWith('#/register') && !h.startsWith('#/forgot-password')))) {
+          if (embedded) navigateWithinConsole('/login')
+          else window.location.hash = '/login'
         }
       }
       const err = new Error((body && body.msg) || `请求失败 ${res.status}`) as ApiError
@@ -104,8 +110,9 @@ export function apiDelete<T = any>(path: string, options: ApiRequestOptions = {}
 export async function apiDownload(path: string, fallbackName: string, options: ApiRequestOptions = {}): Promise<void> {
   return withRequestDeadline(options, async signal => {
     const auth = useAuthStore()
-    const res = await fetch(path, {
-      signal,
+    const requestPath = globalThis.__QINGZHOU_MICROFRONTEND__ ? `/api/kreeproxy${path}` : path
+    const res = await fetch(requestPath, {
+      signal: embeddedRequestSignal(signal),
       headers: auth.token ? { Authorization: 'Bearer ' + auth.token } : {},
       credentials: 'include',
     })

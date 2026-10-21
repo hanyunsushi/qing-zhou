@@ -1,7 +1,13 @@
 ---
 title: kreeper第一设计系统 — QingZhou 集成
-updated: 2026-10-17
+updated: 2026-10-21
 ---
+
+## Hover, material and placeholder source synchronization
+
+The latest canonical contract is synchronized into runtime global CSS and UserDashboard: neutral/default-arc/header triggers retain text-2 and fixed1px rings while a gray inset shadow animates0→32px over400ms ease both directions. Solid primary, highlight-arc, joined-copy and Teleport confirmation actions share32px/32% white inset light on unchanged Apple blue; keyboard focus and real loading remain independent. Empty/result illustrations use the supplied transparent SVG; message/notification panels use the topbar glass without changing modal base material. Existing dimensions, geometry, source references and app branding are preserved. No new visual category or font/chart rule.
+
+232 frontend tests, native andMFE builds/artifact validation, Go tests/vet pass. Canonical audit121sources/59patterns/315hashes and50 contracts/typecheck/isolated build pass. Local showcase computed styles verify neutral/primary base values and400ms pseudo layers, not full native/production hover animation acceptance. This publication is a source commit/push only; historical deployment evidence below is not a rollout of this increment.
 
 ## 控制台首帧入场与订阅管理窄屏（2026-10-17，已发布部署）
 
@@ -358,3 +364,37 @@ skill的`scripts/preview-showcase.mjs`可生成独立预览；`scripts/audit.mjs
 青舟派生代码 CC BY-NC-SA 4.0，字体 OFL；规范来源不改变代码许可。字体文件、实际字重/变量轴和原字节快照属于可复用资产事实，按需见 skill assets/fonts/LICENSES.md；AWS 来源与字体类型定义仍由 typography 专页负责。
 
 See Also: [Project Authority](../../agent.md), [Validation](../guides/validation.md), [System Overview](../architecture/overview.md).
+
+## Console 嵌入边界
+
+独立页面的视觉数值继续保留；顶栏/侧栏的嵌入条件、原生CSS作用域、浮层及Shift5定位属于 [Console适配](console-microfrontend.md)。本地设计系统 audit 报告这些源码/模板及新增 runtime 与通用快照不同；Host专用业务接入不写回通用资产；共享Motion的异步项目/子菜单可见性修复、可选顶栏控件slot、规范与完整示范已同步，并只更新受影响的源/包hash。全量audit仍保留24项既有MFE源码/模板/未覆盖runtime差异，不批量刷新掩盖。未出现需新增的样式类型，未改 AWS 字体/图表值。
+
+## 认证模式局部准备
+
+AuthPage左侧说明保持视口高度，不受右侧注册表单长度影响；同认证壳路由只把auth-form-stack设为加载目标，不隐藏左侧或品牌。现有表单和验证保留。canonical认证/加载/动效规范、AuthSpecimen及AuthPage源快照/pattern同步；具体路由责任见[Console模块](console-microfrontend.md#stable-authentication-modes)。沿用加载反馈、二级切换路由与展示信息模块分类。
+
+## 认证失败可见性
+
+认证拒绝在原表单中用既有error NAlert/role=alert持久展示，修正重试/切换模式才清除。嵌入NMessageProvider的to指向应用样式范围内独立挂载点，保留固定定位、图标与字体，不随页面pending隐藏；独立站保留默认body目标。canonical认证/浮层规范、AuthSpecimen失败场景与AuthPage快照/pattern同步；沿用警告信息/提示信息分类，无新类型或AWS规则改动。
+
+## 2026-10-19 AI复盘的共享合同边界
+
+用户授权表格固定边界由投影/渐变改1px中性分隔线，canonical assets/styles/kreeper.css与references/content.md同步；不改浮层阴影。AI右上主操作普通强调8px、200ms外环、标准刷新/点阵颜色、InfoNotice、Select和横向设置切换由AI自身承担，未复制其业务源到青舟快照。青舟原设置二级侧栏与现生产视觉保持；共享canonical的新表格规则未声称已部署青舟。当前完整审计111源/55patterns/287hash，49孤立契约/类型/Vite构建通过，AI运行/发布证据归AI与Console权威。无新分类、字体/图表色值更改。
+
+## Console brand and AI date/overlay adaptation
+
+User-authorized canonical BrandMark removes filter/shadow, while optional Shell application version sits at the brand region lower right rather than a content footer. Source-reference preserves the original QingZhou component as a historical runtime exception; QingZhou runtime/production was not changed. AI directly copies canonical React date runtime/CSS/motion tokens/license and uses Vue value/query adapter; operations retains time fields around the natural-day component. Select geometry/pending state, empty table gutter and Ops content-container layout remain application-owned corrections. Canonical audit and reusable-asset verification are recorded by authority, separately from AI/Console production.
+
+## Arrowless tooltip fallback
+
+UserSub and AdminMonitor explicitly set show-arrow=false at all four NTooltip uses. The global arrow-wrapper fallback now also matches Naive's default --show-arrow state; the old :not filter accidentally excluded the exact defaults it needed to hide. Only decorative arrows are suppressed; flyout surfaces, placement and18px radius remain. Runtime global CSS, both reviewed source snapshots/patterns and the canonical reusable CSS/overlay contract are synchronized, with only their reviewed hashes refreshed. AI removes its handwritten equivalents in its own shared components; see[AI review](/Users/hinaw/sub2api-src/.llm-wiki/modules/ai-design-review.md#arrowless-overlays-and-account-card-controls).
+
+QingZhou228 tests/typecheck/native build pass. Compiled Console subscription hints open/close with zero arrow DOM at1167px and390px, retaining18px rounding and fitting the mobile viewport. Canonical111-source/55-pattern/287-hash audit plus49 contracts/typecheck/isolated build pass. No new category, AWS font/chart change or QingZhou content redesign. Native executable rollout/backup and Console release evidence are maintained by each[authority](../../agent.md), not inferred from source status.
+
+## Shared query calendar and bounded route overlay
+
+AdminUsageReport replaces only its custom date filter with `components/date-range/SystemDateRangePicker.vue`, using the canonical React/Motion runtime, CSS, motion tokens and MIT attribution. The bridge maps original millisecond endpoints/local days to the original load handler; max-date and existing preset values remain. `usageRoot` supplies the actual report boundary. Filter groups wrap with min-width0, selects/growing fields fit the content width, and only the range-switch track scrolls locally. This also prevents focus scrolling from horizontally shifting the hidden Tabs ancestor and clipping the expanded calendar. Existing relative chart ranges retain their own single moving indicators; UserSub expiry remains a record-editing field.
+
+Shift5 root overlays use the visible intersection below the retained header with explicit fixed important geometry. The microfrontend CSS scoper maps the overlay's own root to `:scope.qz-shift5-route-transition`; a descendant-only selector leaves that body-mounted root in document flow and creates temporary blank scroll space. The source and canonical reusable utility share this correction. Settings keep their original secondary navigation, natural page scrolling and content visuals.
+
+Changed categories are existing 日期范围选择器 / 填写框 / 路由切换组件 / 组件绘制动画; no new category, AWS palette/typography rule or QingZhou-wide visual migration. Canonical reviewed source references, AdminUsageReport pattern, date-range pattern and affected hashes are synchronized. Build/browser/deployment evidence is owned by [authority](../../agent.md).

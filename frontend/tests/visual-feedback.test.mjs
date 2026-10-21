@@ -11,11 +11,25 @@ test('all alert types and order surfaces keep their borderless contract', () => 
   assert.match(read('views/UserDashboard.vue'), /<n-alert[^>]*:bordered="false"/)
   assert.match(read('views/UserOrders.vue'), /\.order-item \{[^}]*border: 0;/)
 })
+test('feedback messages use topbar glass while modal surfaces keep their base material', () => {
+  const css = read('components/feedback/feedback.css')
+  assert.match(css, /\.kf-feedback-panel \{[^}]*background: var\(--bg, #fff\) !important;/)
+  assert.match(css, /\.kf-feedback-panel\.kf-feedback-message \{ background: var\(--topbar-surface\) !important; backdrop-filter: var\(--topbar-backdrop-filter\); -webkit-backdrop-filter: var\(--topbar-backdrop-filter\); \}/)
+})
+test('neutral and emphasis hovers share 400ms inset animation without text darkening or ring growth', () => {
+  const css = read('styles/global.css')
+  assert.match(css, /--neutral-hover-fill: inset 0 0 32px rgb\(0 7 7 \/ \.12\)/)
+  assert.match(css, /\.n-button\.topbar-language-reference-trigger::after \{[^}]*inset: -1px;[^}]*transition: box-shadow \.4s ease;/)
+  assert.match(css, /\.n-button\.action-button--normal,[^{]*\{[^}]*--action-button-fg: var\(--text-2\);[^}]*--action-button-fg-hover: var\(--text-2\);/)
+  assert.match(css, /\.n-button\.n-button--primary-type[^{}]*::after \{[^}]*inset: -1px;[^}]*transition: box-shadow \.4s ease;/)
+  assert.match(css, /box-shadow: inset 0 0 32px rgb\(255 255 255 \/ \.32\)/)
+  assert.doesNotMatch(css, /box-shadow:0 0 0 2px var\(--action-button-border-hover\)/)
+})
 test('navigation searches report no results and collapsed groups retain dot landmarks', () => {
   const layout = read('components/DashboardLayout.vue')
   assert.equal((layout.match(/role="status">无结果/g) || []).length, 3)
   assert.match(layout, /:show-empty="!!searchQuery.trim\(\)"/)
-  assert.match(layout, /menu-group-dot[^}]*'aria-hidden': 'true'/)
+  assert.match(read('composables/useSidebarNavigation.ts'), /menu-group-dot[^}]*'aria-hidden': 'true'/)
   assert.match(layout, /\.mobile-sidebar-drawer-root \.n-drawer-body-content-wrapper/)
 })
 test('sidebar empty feedback replaces the menu in the result track on desktop and mobile', () => {

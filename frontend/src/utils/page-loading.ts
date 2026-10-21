@@ -98,15 +98,15 @@ export function loadingRegionCenter(target: LoadingRect | null, viewport: Loadin
 }
 
 // 加载反馈：跟随当前加载壳的真实尺寸、滚动和手机可见视口；结束后释放监听与观察器。
-export function usePageLoadingPosition() {
+export function usePageLoadingPosition(fallbackRegion: () => HTMLElement | null = () => null) {
   const position = ref<ReturnType<typeof loadingRegionCenter>>({ visibility: 'hidden' })
   let observer: ResizeObserver | undefined, frame = 0
   function region() {
     const target = pageLoadingTarget.value
-    if (!target || !target.isConnected) return null
+    if (!target || !target.isConnected) return fallbackRegion()
     if (target.classList.contains('settings-main')) return target
     if (target.classList.contains('route-page-shell')) return target.closest<HTMLElement>('.layout-content') || target
-    if (target.classList.contains('qz-shift5-page-shell')) return null
+    if (target.classList.contains('qz-shift5-page-shell')) return fallbackRegion()
     return target
   }
   function measure() {

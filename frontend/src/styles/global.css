@@ -297,10 +297,24 @@ button, input, textarea, select { font-family: inherit; }
 .n-button.action-button,
 .n-button.n-button--default-type:where(:not(.n-button--secondary):not(.action-button)):where(:not(.n-button--ghost), .n-dialog__action > .n-button--ghost):has(> .n-button__border) { min-height:var(--button-height) !important; height:var(--button-height) !important; padding:0 var(--button-padding-inline) !important; border-radius:8px !important; border:0 !important; font-size:var(--button-font-size); font-weight:500; line-height:var(--button-line-height); letter-spacing:0; transition:color .1s ease-in-out,background-color .2s ease-in-out,box-shadow .2s ease-in-out,opacity .2s ease-in-out,transform .2s ease-in-out !important; }
 .n-button.action-button--normal,
-.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.action-button)):where(:not(.n-button--ghost), .n-dialog__action > .n-button--ghost):has(> .n-button__border) { --action-button-bg: transparent; --action-button-fg: var(--text-3); --action-button-border: var(--border); --action-button-bg-hover: transparent; --action-button-fg-hover: var(--text-2); --action-button-border-hover: var(--border-strong); --n-border: 0 solid transparent !important; --n-border-hover: 0 solid transparent !important; --n-border-focus: 0 solid transparent !important; --n-border-pressed: 0 solid transparent !important; background:var(--action-button-bg) !important; color:var(--action-button-fg) !important; box-shadow:0 0 0 1px var(--action-button-border) !important; }
-.n-button.action-button--normal:hover:not(.n-button--disabled), .n-button.action-button--normal:focus-visible:not(.n-button--disabled),
-.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.action-button)):where(:not(.n-button--ghost), .n-dialog__action > .n-button--ghost):has(> .n-button__border):hover:not(.n-button--disabled),
-.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.action-button)):where(:not(.n-button--ghost), .n-dialog__action > .n-button--ghost):has(> .n-button__border):focus-visible:not(.n-button--disabled) { background:var(--action-button-bg-hover) !important; color:var(--action-button-fg-hover) !important; box-shadow:0 0 0 2px var(--action-button-border-hover) !important; }
+.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.action-button)):where(:not(.n-button--ghost), .n-dialog__action > .n-button--ghost):has(> .n-button__border) { --action-button-bg: transparent; --action-button-fg: var(--text-2); --action-button-border: var(--border); --action-button-bg-hover: transparent; --action-button-fg-hover: var(--text-2); --action-button-border-hover: var(--border); --n-border: 0 solid transparent !important; --n-border-hover: 0 solid transparent !important; --n-border-focus: 0 solid transparent !important; --n-border-pressed: 0 solid transparent !important; background:var(--action-button-bg) !important; color:var(--action-button-fg) !important; box-shadow:0 0 0 1px var(--action-button-border) !important; }
+.n-button.action-button--normal:hover:not(.n-button--disabled),
+.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.action-button)):where(:not(.n-button--ghost), .n-dialog__action > .n-button--ghost):has(> .n-button__border):hover:not(.n-button--disabled) { background:var(--action-button-bg-hover) !important; color:var(--action-button-fg-hover) !important; box-shadow:0 0 0 1px var(--action-button-border) !important; }
+.n-button.action-button--normal:focus-visible:not(.n-button--disabled),
+.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.action-button)):where(:not(.n-button--ghost), .n-dialog__action > .n-button--ghost):has(> .n-button__border):focus-visible:not(.n-button--disabled) { background:var(--action-button-bg) !important; color:var(--action-button-fg) !important; box-shadow:0 0 0 2px var(--border-strong) !important; }
+/* 普通按钮 / 标准默认弧边按钮 / 顶栏触发器：共用灰色内阴影悬浮背景，背景层覆盖完整边界但不改边框几何。 */
+.n-button.action-button--normal,
+.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.action-button)):where(:not(.n-button--ghost), .n-dialog__action > .n-button--ghost):has(> .n-button__border),
+.n-button.topbar-language-reference-trigger { --neutral-hover-rest: inset 0 0 rgb(0 7 7 / .12); --neutral-hover-fill: inset 0 0 32px rgb(0 7 7 / .12); position: relative; }
+.n-button.action-button--normal::after,
+.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.action-button)):where(:not(.n-button--ghost), .n-dialog__action > .n-button--ghost):has(> .n-button__border)::after,
+.n-button.topbar-language-reference-trigger::after { content: ""; position: absolute; inset: -1px; z-index: 2; border-radius: inherit; pointer-events: none; box-shadow: var(--neutral-hover-rest); transition: box-shadow .4s ease; }
+.n-button.action-button--normal:not(.n-button--disabled):not(:disabled):hover::after,
+.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.action-button)):where(:not(.n-button--ghost), .n-dialog__action > .n-button--ghost):has(> .n-button__border):not(.n-button--disabled):not(:disabled):hover::after,
+.n-button.topbar-language-reference-trigger:not(.n-button--disabled):not(:disabled):hover::after { box-shadow: var(--neutral-hover-fill); }
+.n-button.action-button--normal > .n-button__content,
+.n-button.n-button--default-type:where(:not(.n-button--secondary):not(.action-button)):where(:not(.n-button--ghost), .n-dialog__action > .n-button--ghost):has(> .n-button__border) > .n-button__content,
+.n-button.topbar-language-reference-trigger > .n-button__content { position: relative; z-index: 3; }
 /* 标准默认弧边按钮：按下复用悬浮色，不下沉、不变深；Dialog ghost取消动作也遵循同一合同。 */
 .n-button.n-button--default-type:where(:not(.n-button--secondary):not(.action-button)):where(:not(.n-button--ghost), .n-dialog__action > .n-button--ghost):has(> .n-button__border) {
   --n-color-pressed: var(--action-button-bg-hover) !important;
@@ -309,9 +323,9 @@ button, input, textarea, select { font-family: inherit; }
 }
 /* 标准默认弧边按钮：唯一视觉差异是弧边圆角，描边颜色/粗细与普通按钮相同。 */
 .n-button.n-button--default-type:where(:not(.n-button--secondary):not(.action-button)):where(:not(.n-button--ghost), .n-dialog__action > .n-button--ghost):has(> .n-button__border) { border-radius:var(--r-control) !important; }
-/* 强调按钮：背景和 ring 悬浮时同步提亮，并覆盖全局 primary hover 状态。 */
-.n-button.action-button--emphasis { --action-button-bg: var(--accent); --action-button-fg: #fff; --action-button-border: var(--accent); --action-button-bg-hover: var(--accent-button-hover); --action-button-border-hover: var(--accent-button-hover); --n-border: 0 solid transparent !important; --n-border-hover: 0 solid transparent !important; --n-border-focus: 0 solid transparent !important; --n-border-pressed: 0 solid transparent !important; background:var(--action-button-bg) !important; color:var(--action-button-fg) !important; box-shadow:0 0 0 1px var(--action-button-border) !important; }
-.n-button.n-button--primary-type.action-button--emphasis:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):hover, .n-button.n-button--primary-type.action-button--emphasis:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):focus-visible { background:var(--action-button-bg-hover) !important; color:var(--action-button-fg) !important; box-shadow:0 0 0 2px var(--action-button-border-hover) !important; }
+/* 强调按钮：固定蓝底与1px外ring，悬浮仅播放共享白色内光，不扩圈。 */
+.n-button.action-button--emphasis { --action-button-bg: var(--accent); --action-button-fg: #fff; --action-button-border: var(--accent); --action-button-bg-hover: var(--accent); --action-button-border-hover: var(--accent); --n-border: 0 solid transparent !important; --n-border-hover: 0 solid transparent !important; --n-border-focus: 0 solid transparent !important; --n-border-pressed: 0 solid transparent !important; background:var(--action-button-bg) !important; color:var(--action-button-fg) !important; box-shadow:0 0 0 1px var(--action-button-border) !important; }
+.n-button.n-button--primary-type.action-button--emphasis:not(.n-button--secondary):not(.n-button--ghost):not(.n-button--disabled):hover { background:var(--action-button-bg) !important; color:var(--action-button-fg) !important; box-shadow:0 0 0 1px var(--action-button-border) !important; }
 /* 按钮 / 下拉菜单按钮：点击不改变位置；颜色、焦点、真实 loading 反馈由各自分类保留。 */
 button:active:not(:disabled),
 button.n-button--pressed:not(.n-button--disabled) { transform: none !important; transition-duration: .08s !important; }
@@ -600,13 +614,13 @@ button.n-button--pressed:not(.n-button--disabled) { transform: none !important; 
 }
 .n-button.n-button--quaternary-type.topbar-language-reference-trigger {
   --n-color: var(--topbar-background) !important;
-  --n-color-hover: var(--card-hover) !important;
-  --n-color-focus: var(--card-hover) !important;
-  --n-color-pressed: var(--card-hover) !important;
+  --n-color-hover: var(--topbar-background) !important;
+  --n-color-focus: var(--topbar-background) !important;
+  --n-color-pressed: var(--topbar-background) !important;
   --n-text-color: var(--text-2) !important;
-  --n-text-color-hover: var(--text) !important;
-  --n-text-color-focus: var(--text) !important;
-  --n-text-color-pressed: var(--text) !important;
+  --n-text-color-hover: var(--text-2) !important;
+  --n-text-color-focus: var(--text-2) !important;
+  --n-text-color-pressed: var(--text-2) !important;
   --n-border: 1px solid var(--border) !important;
   --n-border-hover: 1px solid var(--border) !important;
   --n-border-focus: 1px solid var(--border) !important;
@@ -622,18 +636,8 @@ button.n-button--pressed:not(.n-button--disabled) { transform: none !important; 
 .n-button.topbar-language-reference-trigger:focus-visible {
   border-radius: 12px !important;
   border-color: var(--border) !important;
-  background: var(--card-hover) !important;
-  background-color: var(--card-hover) !important;
-}
-.n-button.n-button--quaternary-type.topbar-language-reference-trigger:hover,
-.n-button.n-button--quaternary-type.topbar-language-reference-trigger:focus,
-.n-button.n-button--quaternary-type.topbar-language-reference-trigger:focus-visible,
-.n-button.n-button--quaternary-type.topbar-language-reference-trigger:active {
-  --n-color: var(--card-hover) !important;
-  --n-color-hover: var(--card-hover) !important;
-  --n-color-focus: var(--card-hover) !important;
-  --n-color-pressed: var(--card-hover) !important;
-  background-color: var(--card-hover) !important;
+  background: var(--topbar-background) !important;
+  background-color: var(--topbar-background) !important;
 }
 .n-button.topbar-language-reference-trigger .n-button__content {
   display: inline-flex !important;
@@ -776,10 +780,10 @@ button.n-button--pressed:not(.n-button--disabled) { transform: none !important; 
   outline: 2px solid var(--accent) !important;
   outline-offset: 2px !important;
 }
-/* 浮层和反馈：Naive UI默认箭头由show-arrow显式关闭；此选择器仅兜底示范与共享浮层，避免影响普通卡片。 */
-.n-popover:not(.n-popover-shared--show-arrow) .n-popover-arrow-wrapper,
-.n-tooltip:not(.n-popover-shared--show-arrow) .n-popover-arrow-wrapper,
-.n-popover-shared:not(.n-popover-shared--show-arrow) .n-popover-arrow-wrapper { display: none !important; }
+/* 浮层和反馈：Naive UI默认箭头由show-arrow显式关闭；兜底也覆盖默认show-arrow类，仅隐藏提示浮层箭头。 */
+.n-popover .n-popover-arrow-wrapper,
+.n-tooltip .n-popover-arrow-wrapper,
+.n-popover-shared .n-popover-arrow-wrapper { display: none !important; }
 /* 下拉选择菜单：只重绘弹层本体，不触碰触发按钮；几何与顶栏悬浮菜单一致。 */
 .n-base-select-menu,
 .n-dropdown-menu {
@@ -1720,4 +1724,48 @@ button.resource-metric { color:inherit; text-align:left; font:inherit; cursor:po
 @media (prefers-reduced-motion: reduce) {
   .n-button { --button-press-offset: 0px; }
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+/* 强调按钮 / 高亮弧边按钮 / 复制栏：所有实心主按钮共用白色内光，覆盖正文和Teleport弹窗。 */
+:root .n-button.n-button--primary-type:not(.n-button--secondary):not(.n-button--ghost):not(.primary-quiet) {
+  position: relative;
+  --n-border-hover: var(--n-border) !important;
+  --n-border-focus: var(--n-border) !important;
+  --n-border-pressed: var(--n-border) !important;
+  background: var(--accent) !important;
+  color: #fff !important;
+}
+:root .n-button.n-button--primary-type:not(.n-button--secondary):not(.n-button--ghost):not(.primary-quiet):is(:hover, :focus, :active, .n-button--pressed) {
+  background: var(--accent) !important;
+  color: #fff !important;
+}
+:root .n-button.n-button--primary-type:not(.n-button--secondary):not(.n-button--ghost):not(.primary-quiet)::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: 2;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 #ffffff26;
+  transition: box-shadow .4s ease;
+}
+:root .n-button.n-button--primary-type:not(.n-button--secondary):not(.n-button--ghost):not(.primary-quiet):not(.n-button--disabled):not(:disabled):is(:hover, :active, :focus-visible)::after {
+  box-shadow: inset 0 0 32px rgb(255 255 255 / .32);
+}
+:root .n-button.n-button--primary-type:not(.n-button--secondary):not(.n-button--ghost):not(.primary-quiet) > .n-button__content { position: relative; z-index: 3; }
+:root .n-button.n-button--primary-type:not(.n-button--secondary):not(.n-button--ghost):not(.primary-quiet):not(.n-button--disabled):focus-visible { box-shadow: var(--focus-ring); }
+/* 提示信息 / 展示信息模块：空态和结果页共用用户SVG，描述和操作保留原语义。 */
+.n-empty .n-empty__icon,
+.n-result .n-result-icon {
+  width: min(160px, 100%) !important;
+  height: 100px !important;
+  opacity: 1;
+  filter: none;
+  background: url('../assets/illustrations/kreeper-placeholder-transparent.svg') center / contain no-repeat;
+}
+.n-empty .n-empty__icon > *,
+.n-result .n-result-icon > * { visibility: hidden; }
+.n-result .n-result-icon { margin-inline: auto; }
+@media (prefers-reduced-motion: reduce) {
+  :root .n-button.n-button--primary-type:not(.n-button--secondary):not(.n-button--ghost):not(.primary-quiet)::after { transition: none; }
 }

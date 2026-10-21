@@ -14,10 +14,13 @@
       <div class="auth-main-inner">
         <!-- 项目超链接：认证品牌返回首页，保留品牌链接位置。 -->
         <router-link to="/" class="auth-brand project-link" :aria-label="`返回${siteName}`"><BrandMark :size="44" /><span><strong>{{ siteName }}</strong><small>服务控制台</small></span></router-link>
-        <div class="auth-form-stack">
+        <!-- 加载反馈：认证模式共享外壳，只隐藏正在准备的右侧表单。 -->
+        <div ref="formStack" class="auth-form-stack" :class="{ 'auth-form-pending': formPending }" :aria-busy="formPending" :inert="formPending">
           <header class="auth-view-header"><span class="auth-kicker">{{ isRegister ? '创建账户' : isForgot ? '账户恢复' : '欢迎回来' }}</span><h2 class="auth-title">{{ isRegister ? '注册' : isForgot ? '找回密码' : '登录' }}</h2><p class="auth-sub">{{ pageSubtitle }}</p></header>
           <!-- 二级切换路由：登录与注册是认证模式切换，使用活动底线而非卡片按钮。 -->
           <nav class="auth-mode-nav" aria-label="认证方式"><router-link to="/login" :class="{ active: !isRegister && !isForgot }">登录</router-link><router-link to="/register" :class="{ active: isRegister }">注册</router-link></nav>
+          <!-- 警告信息：服务端认证失败保留在表单区，可读且不自动消失。 -->
+          <n-alert v-if="submitError" type="error" role="alert">{{ submitError }}</n-alert>
           <div v-if="isRegister && !config.config.registration_open" class="auth-notice" role="status">当前暂未开放注册，请联系管理员获取账户。</div>
           <!-- 填写框：登录与注册共用同一组表单控件和错误槽位。 -->
           <n-form v-else-if="!isForgot" ref="formRef" class="auth-fields" :model="form" :rules="isRegister ? registerRules : loginRules" label-placement="top" @submit.prevent="submit">
@@ -48,15 +51,19 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { NButton, NForm, NFormItem, NInput, useMessage } from 'naive-ui'
+import { NAlert, NButton, NForm, NFormItem, NInput, useMessage } from 'naive-ui'
 import type { FormInst, FormRules } from 'naive-ui'
 import { useAuthStore } from '@/stores/auth'
 import { useConfigStore } from '@/stores/config'
 import { apiPost } from '@/api'
 import BrandMark from '@/components/BrandMark.vue'
+import { pageLoading, pageLoadingTarget } from '@/utils/page-loading'
 
 const route = useRoute(), router = useRouter(), auth = useAuthStore(), config = useConfigStore(), message = useMessage()
+const formStack = ref<HTMLElement | null>(null)
+const formPending = computed(() => pageLoading.value && pageLoadingTarget.value === formStack.value)
 const formRef = ref<FormInst | null>(null), forgotFormRef = ref<FormInst | null>(null), loading = ref(false), oauthLoading = ref(false)
+const submitError = ref('')
 const form = reactive({ username: '', password: '', email: '', code: '' })
 const forgotForm = reactive({ email: '' })
 const isRegister = computed(() => route.name === 'register'), isForgot = computed(() => route.name === 'forgot-password')
@@ -69,6 +76,7 @@ const registerRules: FormRules = { username: loginRules.username, password: { re
 const forgotRules: FormRules = { email: { required: true, message: '请输入邮箱', trigger: 'blur' } }
 
 function resetAuthForms() {
+  submitError.value = ''
   form.username = ''
   form.password = ''
   form.email = ''
@@ -81,6 +89,7 @@ function resetAuthForms() {
 watch(() => route.name, resetAuthForms)
 
 async function submit() {
+  submitError.value = ''
   try { await formRef.value?.validate() } catch { return }
   loading.value = true
   try {
@@ -99,7 +108,7 @@ async function submit() {
       await router.replace(redirectTarget.value)
     }
   } catch (error: any) {
-    message.error(error?.message || (isRegister.value ? '注册失败' : '登录失败'))
+    submitError.value = error?.message || (isRegister.value ? '注册失败' : '登录失败')
   } finally {
     loading.value = false
   }
@@ -109,8 +118,10 @@ async function handleOAuth() { oauthLoading.value = true; try { const data = awa
 </script>
 
 <style scoped>
+/* 加载反馈：保留表单占位和左侧内容，点阵由页面壳定位到表单可见区域。 */
+.auth-form-pending{visibility:hidden}
 .auth-page-shell{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);min-height:100dvh;background:var(--bg);color:var(--text)}
-.auth-aside{display:grid;min-height:100dvh;align-items:center;padding:clamp(32px,6vw,72px);background:var(--text);color:var(--bg)}
+.auth-aside{display:grid;min-height:100dvh;height:100dvh;position:sticky;top:0;align-self:start;align-items:center;padding:clamp(32px,6vw,72px);background:var(--text);color:var(--bg)}
 .auth-aside-inner{width:100%;max-width:440px;margin-inline:auto}.auth-kicker{display:block;margin:0 0 14px;color:var(--text-3);font-size:12px;font-weight:650;line-height:1.2;letter-spacing:.04em}.auth-aside .auth-kicker{color:color-mix(in srgb,var(--bg) 64%,transparent)}
 .auth-quote{margin:0 0 22px;color:var(--bg);font-family:var(--ff-heading);font-size:clamp(40px,5vw,64px);font-weight:500;line-height:1.04;letter-spacing:0}.auth-aside-copy{max-width:34rem;margin:0 0 28px;color:color-mix(in srgb,var(--bg) 76%,transparent);font-size:15px;line-height:1.65}.auth-points{display:grid;border-top:1px solid color-mix(in srgb,var(--bg) 22%,transparent)}.auth-point{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;padding:18px 0;border-bottom:1px solid color-mix(in srgb,var(--bg) 16%,transparent);color:color-mix(in srgb,var(--bg) 86%,transparent);font-size:15px;line-height:1.45;transition:color .18s ease,background-color .18s ease}.auth-point:hover{color:var(--bg);background:color-mix(in srgb,var(--bg) 7%,transparent)}.auth-point>span:first-child{color:color-mix(in srgb,var(--bg) 56%,transparent);font:600 12px/1.45 var(--ff-mono)}
 .auth-main{display:grid;min-height:100dvh;align-items:center;justify-items:center;padding:clamp(32px,6vw,72px) clamp(20px,4vw,44px)}.auth-main-inner{display:grid;width:100%;max-width:460px;align-content:center}.auth-brand{display:inline-flex;width:max-content;max-width:100%;align-items:center;gap:12px;margin-bottom:32px;color:var(--text);text-decoration:none}.auth-brand>span{display:grid;gap:3px}.auth-brand strong{color:var(--text);font-family:var(--ff-heading);font-size:20px;font-weight:500;line-height:1.08}.auth-brand small{color:var(--text-3);font-size:13px;line-height:1.35}.auth-form-stack{display:grid;gap:20px}.auth-view-header{display:grid;gap:6px}.auth-view-header .auth-kicker,.auth-sub{min-height:20px;margin:0;color:var(--text-3);font-size:14px;line-height:1.5}.auth-title{margin:0;color:var(--text);font-family:var(--ff-heading);font-size:clamp(32px,4vw,44px);font-weight:500;line-height:1.05;letter-spacing:0}

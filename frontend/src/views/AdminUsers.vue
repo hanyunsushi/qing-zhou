@@ -369,6 +369,7 @@
 </template>
 
 <script setup lang="ts">
+import { useConsoleActions } from '@/runtime/console-actions'
 import { ref, computed, reactive, watch, onMounted, h } from 'vue'
 import {
   NSpin, NInput, NInputNumber, NButton, NModal, NForm, NFormItem, NIcon,
@@ -1001,6 +1002,11 @@ async function load() {
   } catch (e: any) { message.error('加载失败：' + (e?.message || '请稍后重试')) } finally { loading.value = false }
 }
 onMounted(load)
+
+useConsoleActions([
+  { key: 'refresh', label: '刷新', run: () => load(), loading: () => loading.value },
+  { key: 'create-user', label: '新增用户', variant: 'primary', run: () => openCreate() }
+])
 </script>
 
 <style scoped>

@@ -1,6 +1,6 @@
 ---
 title: QingZhou Deployment and Artifact Retention
-updated: 2026-10-17
+updated: 2026-10-20
 ---
 
 ## Console entry and responsive subscription release v0.2.121
@@ -826,3 +826,7 @@ version; `qingzhou.service` and `qingzhou-sing-box.service` were active and
 enabled, `127.0.0.1:8081`, `*:8882`, and `127.0.0.1:18082` were listening, and
 the service error journal was empty. Active binary SHA-256:
 `6022692c35a91686a817f31a9aa68390633c778c0e0f8dff9c0763c52c29acc6`.
+
+## Feedback frontend release 2026-10-20
+
+Panel-only native rollout keeps productv0.2.80/backendcommit `b48cb4a2e70058ff881b4c000dc9a4014d76dda6`. Installed/running digest `38147f7ab0ded2b26564a10db833548d30be9914f19c5f13e75102069a52fa2a`, rollback `/opt/qingzhou/backups/feedback-20261020T114736Z`, SQLite Backup API integrityok, protected-config/node/Tunnel/container invariants passed. Old131 native static dependencies are retained and hash-verified; publichealth/bootstrap/4resources match. No database/config/auth/backend migration. Console `console-20261020-feedback-a` is independently sealed and activated; details belong to [authority](../../agent.md#共享反馈表面与设置即时切换2026-10-20当前已部署).

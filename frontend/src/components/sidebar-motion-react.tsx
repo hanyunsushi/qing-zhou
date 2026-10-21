@@ -183,15 +183,30 @@ function groupItems(options:MenuOption[]){
  if(visible.length&&visible.every(item=>item.sidebarProject))return [{key:'projects',group:false,item:visible[0],items:visible}]
  return visible.map((item,index)=>({key:String(item.key??index),group:item.type==='group',item,items:(item.type==='group'?item.children??[]:[item]).filter(child=>child.show!==false).map(child=>item.disabled?{...child,disabled:true}:child)}))
 }
-function renderGroups(groups:ReturnType<typeof groupItems>,props:SidebarMotionProps,activeId:string,reduce:boolean,projectChild=false){
+// 组件绘制动画：首次披露保留父级错峰；已挂载列表随后收到异步菜单时跳过旧的closed快照。
+function ProjectChildren({items,props,activeId,reduce}:{items:MenuOption[];props:SidebarMotionProps;activeId:string;reduce:boolean}) {
+ const mounted=useRef(false)
+ useLayoutEffect(()=>{mounted.current=true},[])
+ return <>{renderGroups(groupItems(items),props,activeId,reduce,true,mounted.current)}</>
+}
+// 侧边栏 / 组件绘制动画：悬浮增强必须接到实际li，不能把只返回Fragment的中间组件当菜单行。
+const SubmenuChildren = forwardRef<HTMLElement, {items:MenuOption[];props:SidebarMotionProps;activeId:string;reduce:boolean}>(function SubmenuChildren({items,props,activeId,reduce},ref) {
+ const mounted=useRef(false)
+ useLayoutEffect(()=>{mounted.current=true},[])
+ return <SharedLayoutBg ref={ref} as="ul" inset={0} pillClassName="sidebar-hover-projection" pillContainerClassName="sidebar-hover-container" className="n-submenu-children sidebar-submenu-motion-list" role="menu" variants={reduce?undefined:SUBMENU_VARIANTS} initial={reduce?false:'closed'} animate={reduce?{opacity:1}:'open'} exit={reduce?{opacity:0}:'closed'} transition={reduce?{duration:.12}:undefined}>
+  {items.map(item=>renderItem({...props,item,activeId,reduce,nested:true,late:mounted.current}))}
+ </SharedLayoutBg>
+})
+
+function renderGroups(groups:ReturnType<typeof groupItems>,props:SidebarMotionProps,activeId:string,reduce:boolean,projectChild=false,late=false){
  return groups.map(group=><div key={group.key} className={group.group?'n-menu-item-group':undefined}>
   {group.group&&<div className="n-menu-item-group-title"><VueContent item={group.item}/></div>}
   <SharedLayoutBg as="ul" inset={0} pillClassName="sidebar-hover-projection" pillContainerClassName={group.items[0]?.sidebarProject?'sidebar-hover-container sidebar-project-hover-container':'sidebar-hover-container'} className="sidebar-motion-list">
-   {group.items.map(item=>item.type==='divider'?<hr key={String(item.key)} className="sidebar-menu-divider"/>:renderItem({...props,item,activeId,reduce,projectChild}))}
+   {group.items.map(item=>item.type==='divider'?<hr key={String(item.key)} className="sidebar-menu-divider"/>:renderItem({...props,item,activeId,reduce,projectChild,late}))}
   </SharedLayoutBg>
  </div>)
 }
-function renderItem({item,activeId,reduce,nested=false,projectChild=false,...props}:SidebarMotionProps&{item:MenuOption;activeId:string;reduce:boolean;nested?:boolean;projectChild?:boolean}){
+function renderItem({item,activeId,reduce,nested=false,projectChild=false,late=false,...props}:SidebarMotionProps&{item:MenuOption;activeId:string;reduce:boolean;nested?:boolean;projectChild?:boolean;late?:boolean}){
  const children=item.children?.filter(child=>child.show!==false).map(child=>item.disabled?{...child,disabled:true}:child)
  const project=!!item.sidebarProject,expandable=project||!!children?.length,open=(project||!props.collapsed)&&props.expandedKeys.includes(item.key as string|number)
  const contains=(it:MenuOption):boolean=>(String(it.sidebarRouteKey??it.key)===String(props.value)&&(!it.sidebarProjectOwner||it.sidebarProjectOwner===props.projectKey))||!!it.children?.some(contains)
@@ -210,14 +225,13 @@ function renderItem({item,activeId,reduce,nested=false,projectChild=false,...pro
   {expandable&&<AnimatePresence initial={false} mode="popLayout">
    {/* 侧边栏 / 组件绘制动画：子菜单独立复用源码悬浮面与选中面，保留原展开/退出variants。 */}
    {open&&(project?<motion.div key="project-content" id={activeId+'-project-'+String(item.key)} className="sidebar-project-content" role="group" aria-label={label+'导航'} variants={reduce?undefined:SUBMENU_VARIANTS} initial={reduce?false:'closed'} animate={reduce?{opacity:1}:'open'} exit={reduce?{opacity:0}:'closed'} transition={reduce?{duration:.12}:undefined}>
-    {renderGroups(groupItems(children??[]),props,activeId+'-project-'+String(item.key),reduce,true)}
-   </motion.div>:<SharedLayoutBg key="sidebar-submenu" as="ul" inset={0} pillClassName="sidebar-hover-projection" pillContainerClassName="sidebar-hover-container" className="n-submenu-children sidebar-submenu-motion-list" role="menu" variants={reduce?undefined:SUBMENU_VARIANTS} initial={reduce?false:'closed'} animate={reduce?{opacity:1}:'open'} exit={reduce?{opacity:0}:'closed'} transition={reduce?{duration:.12}:undefined}>
-    {children!.map(child=>renderItem({...props,item:child,activeId:activeId+'-sub-'+String(item.key),reduce,nested:true}))}
-   </SharedLayoutBg>)}
+    <ProjectChildren items={children??[]} props={props} activeId={activeId+'-project-'+String(item.key)} reduce={reduce}/>
+   </motion.div>:<SubmenuChildren key="sidebar-submenu" items={children!} props={props} activeId={activeId+'-sub-'+String(item.key)} reduce={reduce}/>)}
   </AnimatePresence>}
  </>
  // 附件1：Motion li的layout与整项子variants保持原层级；每级SharedLayoutBg独立增强直接子项。
- return <motion.li key={String(item.key)} className={cn(project?'sidebar-project-section':expandable?'n-submenu':'n-menu-item sidebar-leaf','sidebar-motion-item')} role={expandable?'group':'none'} aria-expanded={expandable?open:undefined} layout={!nested&&!reduce?'position':undefined} transition={!nested?(reduce?{duration:0}:SPRING_LAYOUT):undefined} variants={(nested||projectChild)&&!reduce?SUBMENU_SHARED_ITEM_VARIANTS:undefined}>
+ // 组件绘制动画：异步加入已展开菜单的行从当前终态挂载，不继承父级首次closed快照；退出仍由父级variants编排。
+ return <motion.li key={String(item.key)} initial={late?false:undefined} className={cn(project?'sidebar-project-section':expandable?'n-submenu':'n-menu-item sidebar-leaf','sidebar-motion-item')} role={expandable?'group':'none'} aria-expanded={expandable?open:undefined} layout={!nested&&!reduce?'position':undefined} transition={!nested?(reduce?{duration:0}:SPRING_LAYOUT):undefined} variants={(nested||projectChild)&&!reduce?SUBMENU_SHARED_ITEM_VARIANTS:undefined}>
   {content}
  </motion.li>
 }

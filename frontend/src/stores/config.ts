@@ -4,7 +4,8 @@ import { apiGet } from '@/api'
 
 export const DEFAULT_SITE_NAME = 'Kreeproxy'
 export const DEFAULT_SITE_DESCRIPTION = '仅限个人在中国大陆以外地区依法依规使用'
-export const DEFAULT_BRAND_ICON = '/kreeproxy-brand.png'
+// 品牌标识：资源随构建base固定到版本目录，独立站仍使用根路径下的同一图片。
+export const DEFAULT_BRAND_ICON = `${import.meta.env.BASE_URL}kreeproxy-brand.png`
 
 export interface SiteConfig {
   oauth2_enabled: boolean
@@ -51,7 +52,7 @@ export const useConfigStore = defineStore('config', () => {
   })
 
   function applyBrowserBranding() {
-    if (typeof document === 'undefined') return
+    if (typeof document === 'undefined' || globalThis.__QINGZHOU_MICROFRONTEND__) return
     const name = config.value.site_name?.trim() || DEFAULT_SITE_NAME
     const icon = config.value.brand_icon_data_uri || DEFAULT_BRAND_ICON
     const type = icon.startsWith('data:image/png') ? 'image/png'
@@ -81,7 +82,7 @@ export const useConfigStore = defineStore('config', () => {
       if (data) {
         const normalized = { ...data }
         if (!normalized.site_name?.trim() || normalized.site_name.trim() === '轻舟') normalized.site_name = DEFAULT_SITE_NAME
-        if (!normalized.brand_icon_data_uri || normalized.brand_icon_data_uri === '/qingzhou-mark.svg') normalized.brand_icon_data_uri = DEFAULT_BRAND_ICON
+        if (!normalized.brand_icon_data_uri || normalized.brand_icon_data_uri === '/qingzhou-mark.svg' || normalized.brand_icon_data_uri === '/kreeproxy-brand.png') normalized.brand_icon_data_uri = DEFAULT_BRAND_ICON
         if (!normalized.site_description?.trim()) normalized.site_description = DEFAULT_SITE_DESCRIPTION
         Object.assign(config.value, normalized)
       }

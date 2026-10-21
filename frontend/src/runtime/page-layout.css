@@ -1,0 +1,32 @@
+/* 展示信息模块：嵌入整页使用正文视口，页面内部原有样式与留白保持。 */
+@container console-page (min-width: 0px) {
+  :root.console-kreeproxy-surface :is(.auth-page-shell, .auth-aside, .auth-main) { min-height: var(--console-page-height, 100dvh); }
+  /* 展示信息模块：说明区高度不随右侧注册字段增长，滚动时保留在顶栏下。 */
+  :root.console-kreeproxy-surface .auth-aside { height: var(--console-page-height, 100dvh); top: 64px; }
+  :root.console-kreeproxy-surface .monitor-page { min-height: var(--console-page-height, 100vh); }
+}
+/* 展示卡片：原监控断点以正文宽度判断，保留原列数、字体、内距和卡片样式。 */
+@container console-page (max-width: 1080px) {
+  :root.console-kreeproxy-surface .monitor-page .summary-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@container console-page (max-width: 760px) {
+  :root.console-kreeproxy-surface .monitor-page .monitor-content { padding: 16px 13px 40px; }
+  :root.console-kreeproxy-surface .monitor-page .hero-title { font-size: 20px; }
+  :root.console-kreeproxy-surface .monitor-page .summary-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  :root.console-kreeproxy-surface .monitor-page .server-grid { grid-template-columns: 1fr; }
+  :root.console-kreeproxy-surface .monitor-page .upstream-balance-grid { grid-template-columns: 1fr 1fr; }
+  :root.console-kreeproxy-surface .monitor-page .heat-legend { display: none; }
+}
+@container console-page (max-width: 380px) {
+  :root.console-kreeproxy-surface .monitor-page .summary-icon { width: 38px; height: 38px; }
+  :root.console-kreeproxy-surface .monitor-page .summary-val { font-size: 20px; }
+}
+/* 展示信息模块：复用原认证页860px断点，只按实际可用宽度判断。 */
+@container console-page (max-width: 860px) {
+  :root.console-kreeproxy-surface .auth-page-shell { grid-template-columns: 1fr; }
+  :root.console-kreeproxy-surface .auth-aside { display: none; }
+  :root.console-kreeproxy-surface .auth-main { align-items: start; padding-top: 32px; padding-bottom: 32px; }
+}
+
+/* 顶栏：公共/控制台原动作Teleport到Host后只保留控件，不叠加第二层顶栏表面。 */
+:root.console-kreeproxy-surface.console-original-header .header-right { display: flex; align-items: center; gap: 8px; }

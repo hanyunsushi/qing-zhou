@@ -12,6 +12,7 @@ function moduleURL(source) {
 const networkURL = moduleURL(await readFile(new URL('../src/api/network.ts', import.meta.url), 'utf8'))
 const { withRequestDeadline } = await import(networkURL)
 const apiSource = (await readFile(new URL('../src/api/index.ts', import.meta.url), 'utf8'))
+  .replace("import { navigateWithinConsole, embeddedRequestSignal } from '@/runtime/runtime-keys'", 'const navigateWithinConsole = path => globalThis.testEmbeddedNavigate?.(path); const embeddedRequestSignal = signal => signal')
   .replace("import { useAuthStore } from '@/stores/auth'", 'const useAuthStore = () => globalThis.testAuth')
   .replace("import { trackPageRequest } from '@/utils/page-loading'", 'const trackPageRequest = run => run()')
   .replaceAll("from './network'", `from '${networkURL}'`)
@@ -87,4 +88,34 @@ test('failure also cleans cancellation listeners', async () => {
   const parent = new AbortController()
   await assert.rejects(withRequestDeadline({ signal: parent.signal }, async () => { throw new Error('offline') }), /offline/)
   assert.equal(getEventListeners(parent.signal, 'abort').length, 0)
+})
+
+test('embedded requests use the Console API namespace without changing standalone paths', async t => {
+  const previous = globalThis.__QINGZHOU_MICROFRONTEND__
+  t.after(() => { globalThis.__QINGZHOU_MICROFRONTEND__ = previous })
+  const paths = []
+  t.mock.method(globalThis, 'fetch', async path => { paths.push(path); return { ok: true, status: 200, json: async () => ({ data: [] }) } })
+  globalThis.__QINGZHOU_MICROFRONTEND__ = true
+  await api.apiList('/api/admin/nodes')
+  globalThis.__QINGZHOU_MICROFRONTEND__ = false
+  await api.apiList('/api/admin/nodes')
+  assert.deepEqual(paths, ['/api/kreeproxy/api/admin/nodes', '/api/admin/nodes'])
+})
+
+test('rejected authentication submissions preserve their error without navigating; expired private requests still redirect', async t => {
+  const previous = globalThis.__QINGZHOU_MICROFRONTEND__
+  t.after(() => { globalThis.__QINGZHOU_MICROFRONTEND__ = previous; delete globalThis.testEmbeddedNavigate })
+  const previousWindow = globalThis.window
+  globalThis.window = { location: { hash: '' } }
+  t.after(() => { if (previousWindow === undefined) delete globalThis.window; else globalThis.window = previousWindow })
+  globalThis.__QINGZHOU_MICROFRONTEND__ = true
+  const destinations = []
+  globalThis.testEmbeddedNavigate = path => destinations.push(path)
+  t.mock.method(globalThis, 'fetch', async () => ({ ok: false, status: 401, json: async () => ({ msg: '用户名或密码错误' }) }))
+  for (const path of ['/api/auth/login', '/api/auth/register', '/api/auth/forgot', '/api/auth/oauth2/start']) {
+    await assert.rejects(api.apiPost(path, {}), { status: 401, message: '用户名或密码错误' })
+  }
+  assert.deepEqual(destinations, [])
+  await assert.rejects(api.apiGet('/api/user/profile'), { status: 401 })
+  assert.deepEqual(destinations, ['/login'])
 })

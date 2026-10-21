@@ -12,6 +12,7 @@ const ociLogo = await readFile(new URL('../src/assets/provider-oci.svg', import.
 const cloudflareLogo = await readFile(new URL('../src/assets/provider-cloudflare.svg', import.meta.url), 'utf8')
 const nodes = await readFile(new URL('../src/views/AdminNodes.vue', import.meta.url), 'utf8')
 const layout = await readFile(new URL('../src/components/DashboardLayout.vue', import.meta.url), 'utf8')
+const navigation = await readFile(new URL('../src/composables/useSidebarNavigation.ts', import.meta.url), 'utf8')
 const router = await readFile(new URL('../src/router/index.ts', import.meta.url), 'utf8')
 const globalStyles = await readFile(new URL('../src/styles/global.css', import.meta.url), 'utf8')
 
@@ -73,7 +74,7 @@ test('provider cards use transparent provider logos in titles and balance items'
 })
 
 test('branding, subscription label, and input focus contract match production', () => {
-  assert.match(layout, /label: '订阅套餐'/)
+  assert.match(navigation, /label: '订阅套餐'/)
   assert.match(layout, /'\/shop': '订阅套餐'/)
   assert.match(globalStyles, /--focus-ring-soft: none/)
   assert.match(globalStyles, /input, textarea \{ caret-color: var\(--accent\); \}/)
@@ -86,7 +87,7 @@ test('branding, subscription label, and input focus contract match production', 
   assert.match(layout, /\.sidebar-filter input \{[\s\S]*?transition: color \.25s var\(--ease-standard\), background-color \.25s var\(--ease-standard\), border-color \.25s var\(--ease-standard\), box-shadow \.25s var\(--ease-standard\);/)
   assert.doesNotMatch(layout, /\.sidebar-filter input:hover:not\(:focus-visible\)/)
   assert.match(layout, /\.header-search :deep\(\.n-input\)[\s\S]*?transition: color \.25s var\(--ease-standard\), background-color \.25s var\(--ease-standard\), border-color \.25s var\(--ease-standard\), box-shadow \.25s var\(--ease-standard\) !important;/)
-  assert.ok(controlSources.slice(0, -1).every((source) => source.includes('<!-- 填写框 -->')))
+  assert.ok(controlSources.slice(0, -1).every((source) => (source.includes('<!-- 填写框 -->') || source.includes('<!-- 日期范围选择器：'))))
   assert.match(controlSources.at(-1), /<!-- 下拉选择菜单：原生配置代理范围使用与顶栏菜单一致的选项悬浮圆角。 -->/)
   assert.match(controlSources.at(-1), /<!-- 复制栏：地址与复制按钮等高相连；按钮悬浮\/按下只变色，无扩圈或位移，键盘焦点独立可见。 -->/)
 })
@@ -233,15 +234,15 @@ test('mobile menu trigger keeps the shared sidebar toggle contract', () => {
 })
 
 test('sidebar categories use static level-one groups with a dedicated admin section', () => {
-  assert.match(layout, /菜单归类级别：一级为静态标题；收起时以中性圆点标记分组/)
-  assert.match(layout, /return \{ type: 'group', key, label: groupLabel\(label\), children, sidebarLabel: label \}/)
-  assert.match(layout, /const infoLeafItems: MenuOption\[\] = \[[\s\S]*?key: '\/account'/)
-  assert.match(layout, /const infoItems = computed<MenuOption\[\]>\(\(\) => infoLeafItems\)/)
-  assert.match(layout, /const adminItems = computed<MenuOption\[\]>\(\(\) => auth\.isAdmin \? \[[\s\S]*?label: '运营'/)
-  assert.match(layout, /key: 'ag-ops', icon: renderIcon\(PulseOutline\)/)
-  assert.match(layout, /key: 'ag-node', icon: renderIcon\(ServerOutline\)/)
-  assert.match(layout, /key: 'ag-sys', icon: renderIcon\(DocumentTextOutline\)/)
-  assert.match(layout, /menuSection\('g-admin', '管理后台', adminItems\.value\)/)
+  assert.match(navigation, /菜单归类级别：一级为静态标题；收起时以中性圆点标记分组/)
+  assert.match(navigation, /return \{ type: 'group', key, label: groupLabel\(label\), children, sidebarLabel: label \}/)
+  assert.match(navigation, /const infoLeafItems: MenuOption\[\] = \[[\s\S]*?key: '\/account'/)
+  assert.match(navigation, /const infoItems = computed<MenuOption\[\]>\(\(\) => infoLeafItems\)/)
+  assert.match(navigation, /const adminItems = computed<MenuOption\[\]>\(\(\) => isAdmin\(\) \? \[[\s\S]*?label: '运营'/)
+  assert.match(navigation, /key: 'ag-ops', icon: renderIcon\(PulseOutline\)/)
+  assert.match(navigation, /key: 'ag-node', icon: renderIcon\(ServerOutline\)/)
+  assert.match(navigation, /key: 'ag-sys', icon: renderIcon\(DocumentTextOutline\)/)
+  assert.match(navigation, /menuSection\('g-admin', '管理后台', adminItems\.value\)/)
 })
 
 test('sidebar search suggestions contain navigable routes only', () => {

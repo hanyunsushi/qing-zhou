@@ -56,7 +56,7 @@
              picks its output from the client's User-Agent, which silently hands
              YAML to anything whose UA contains "clash". This button is for
              v2rayN / NekoBox / Shadowrocket, so it must pin the link list. -->
-        <n-tooltip trigger="hover">
+        <n-tooltip :show-arrow="false" trigger="hover">
           <template #trigger>
             <n-button size="small" secondary @click="copy(base64SubscriptionURL)">通用 / v2rayN</n-button>
           </template>
@@ -73,7 +73,7 @@
         <n-button size="small" type="primary" class="highlight-arc-button" @click="handleResetSub">更换订阅地址</n-button>
         <!-- 禁用与否跟随后端开关，不写死：后端本来就要校验 node_creds_reset_enabled，
              按钮读同一个值才不会出现「管理员开了但按钮还是灰的」。 -->
-        <n-tooltip trigger="hover" :disabled="credsResetEnabled">
+        <n-tooltip :show-arrow="false" trigger="hover" :disabled="credsResetEnabled">
           <template #trigger>
             <!-- 高亮弧边按钮：凭据重置属于风险主动作，使用蓝色语义；禁用由管理员开关控制。 -->
             <n-button size="small" type="primary" class="highlight-arc-button" :disabled="!credsResetEnabled" :loading="resettingCreds"

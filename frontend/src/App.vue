@@ -1,16 +1,19 @@
 <template>
-  <n-config-provider :theme-overrides="themeOverrides" :locale="zhCN" :date-locale="dateZhCN">
-    <n-message-provider>
+  <n-config-provider :theme-overrides="themeOverrides" :locale="zhCN" :date-locale="dateZhCN" :namespace="embedded ? 'console-kreeproxy-surface' : undefined" :style-mount-target="runtimeStyleTarget" :preflight-style-disabled="embedded">
+    <!-- 提示信息：嵌入消息留在应用样式作用域内，不能传送到无样式的body末尾。 -->
+    <n-message-provider :to="embedded ? runtimeStyleTarget : undefined">
       <n-dialog-provider>
+        <FeedbackProvider scope-class="console-kreeproxy-surface" :to="embedded ? runtimeStyleTarget : undefined">
         <!-- 加载反馈：整页/跨壳路由首帧隐藏页面壳；局部加载只隐藏正文。 -->
         <router-view v-slot="{ Component, route: viewRoute }">
           <div ref="rootShell" class="qz-shift5-page-shell" :class="{ 'qz-shift5-full-shell-pending': (pageLoading && (!pageLoadingTarget || pageLoadingTarget === rootShell)) || fullShellTransitionPending }" :key="rootViewKey(viewRoute)">
             <component :is="Component" />
           </div>
         </router-view>
+      </FeedbackProvider>
       </n-dialog-provider>
     </n-message-provider>
-    <PageScrollbar />
+    <PageScrollbar v-if="!embedded" />
     <!-- 加载反馈：小点阵居中于本次加载的可见区域，排除保持不变的顶栏和侧栏。 -->
     <DotMatrixLoader v-if="pageLoading" class="page-loading-indicator" :style="loadingPosition" label="页面加载中" />
   </n-config-provider>
@@ -20,16 +23,20 @@
 import { NConfigProvider, NMessageProvider, NDialogProvider, zhCN, dateZhCN } from 'naive-ui'
 import type { GlobalThemeOverrides } from 'naive-ui'
 import { useConfigStore } from '@/stores/config'
-import { ref } from 'vue'
+import { inject, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { fullShellTransitionPending, useShift5PageTransition } from '@/utils/shift5'
+import FeedbackProvider from '@/components/feedback/FeedbackProvider.vue'
 import PageScrollbar from '@/components/PageScrollbar.vue'
 import DotMatrixLoader from '@/components/DotMatrixLoader.vue'
 import { pageLoading, pageLoadingTarget, usePageLoadingPosition } from '@/utils/page-loading'
+import { qingzhouEmbeddedKey, qingzhouStyleTargetKey } from '@/runtime/runtime-keys'
 
 const route = useRoute()
+const embedded = inject(qingzhouEmbeddedKey, false)
+const runtimeStyleTarget = inject(qingzhouStyleTargetKey, undefined)
 const rootShell = ref<HTMLElement | null>(null)
-const loadingPosition = usePageLoadingPosition()
+const loadingPosition = usePageLoadingPosition(() => embedded ? runtimeStyleTarget?.closest<HTMLElement>('.layout-content') ?? null : null)
 const authRouteNames = new Set(['login', 'register', 'forgot-password'])
 const rootViewKey = (viewRoute: { matched: Array<{ name?: string | symbol | null }> }) => {
   const name = String(viewRoute.matched[0]?.name || (viewRoute.matched.length ? 'layout' : 'pending'))
@@ -78,5 +85,5 @@ const themeOverrides: GlobalThemeOverrides = {
 
 // 只拉站点配置；auth 由 router guard 负责初始化
 const config = useConfigStore()
-config.fetchConfig()
+if (!embedded) config.fetchConfig()
 </script>

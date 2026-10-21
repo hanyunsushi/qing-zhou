@@ -11,7 +11,7 @@ const transpile = source => ts.transpileModule(source.replace(/^export /gm, ''),
 }).outputText
 const flush = async () => { await nextTick(); await new Promise(resolve => setImmediate(resolve)) }
 
-test('settings entry is owned by the whole route shell; only later section changes animate the main pane', async () => {
+test('settings entry is owned by the whole route shell; preloaded section changes do not replay entry', async () => {
   const mounted = [], entered = [], scope = effectScope()
   const route = reactive({ name: 'admin-settings', path: '/admin/settings', fullPath: '/admin/settings?section=access' })
   const rootShell = ref('whole-application-shell')
@@ -26,12 +26,7 @@ test('settings entry is owned by the whole route shell; only later section chang
   const layout = read('../src/components/DashboardLayout.vue')
   const setup = layout.slice(layout.indexOf('const routeShell ='), layout.indexOf('const { isScrolled }'))
   const pageRoot = scope.run(() => runInNewContext(transpile(setup) + '\nrouteShell', context))
-  const mainRoot = ref('settings-main')
-  context.settingsMain = mainRoot
-  const settings = read('../src/views/AdminSettings.vue')
-  const settingsHook = settings.match(/useShift5PageTransition\(settingsMain[^\n]+/)[0]
-  let settingsScope = effectScope()
-  settingsScope.run(() => runInNewContext(settingsHook, context))
+  assert.doesNotMatch(read('../src/views/AdminSettings.vue'), /useShift5PageTransition|runShift5Enter|beginPageLoad/)
   pageRoot.value = 'whole-settings-page'
 
   mounted.forEach(fn => fn())
@@ -40,22 +35,17 @@ test('settings entry is owned by the whole route shell; only later section chang
   entered.length = 0
   route.fullPath = '/admin/settings?section=telegram'
   await flush()
-  assert.deepEqual(entered, ['settings-main'])
+  assert.deepEqual(entered, [])
 
   entered.length = 0
-  settingsScope.stop()
   route.name = 'admin-nodes'; route.path = '/admin/nodes'; route.fullPath = '/admin/nodes'
   await flush()
   assert.deepEqual(entered, ['whole-settings-page'])
 
   entered.length = 0
   route.name = 'admin-settings'; route.path = '/admin/settings'; route.fullPath = '/admin/settings?section=backup'
-  settingsScope = effectScope()
-  settingsScope.run(() => runInNewContext(settingsHook, context))
-  mounted.at(-1)()
   await flush()
   assert.deepEqual(entered, ['whole-settings-page'])
-  settingsScope.stop()
   scope.stop()
 })
 
@@ -89,7 +79,7 @@ test('full-shell loading hides the router view in its first render while leaving
   assert.match(app, /class="qz-shift5-page-shell" :class="\{ 'qz-shift5-full-shell-pending': \(pageLoading && \(!pageLoadingTarget \|\| pageLoadingTarget === rootShell\)\) \|\| fullShellTransitionPending \}"/)
   assert.match(app, /import \{ fullShellTransitionPending, useShift5PageTransition \} from '@\/utils\/shift5'/)
   assert.match(app, /import \{ pageLoading, pageLoadingTarget, usePageLoadingPosition \} from '@\/utils\/page-loading'/)
-  assert.match(app, /<\/router-view>[\s\S]*?<PageScrollbar \/>[\s\S]*?<DotMatrixLoader v-if="pageLoading"/)
+  assert.match(app, /<\/router-view>[\s\S]*?<PageScrollbar v-if="!embedded" \/>[\s\S]*?<DotMatrixLoader v-if="pageLoading"/)
   assert.match(css, /\.qz-shift5-full-shell-pending > \* \{ visibility: hidden !important; \}/)
 })
 
@@ -127,4 +117,25 @@ test('full-shell visibility lock survives loader removal until the reveal overla
   assert.match(shift, /fullShellTransitionPending\.value = activeScope === 'full' && !!root/)
   assert.match(shift, /const current = ensureOverlay\('revealing', host\)\s*fullShellTransitionPending\.value = false/)
   assert.match(shift, /function finish\(token: number\)[\s\S]*?fullShellTransitionPending\.value = false/)
+})
+
+test('preloaded settings routing does not start a load gate or prepare a transition', async () => {
+  const callbacks = {}, loads = [], transitions = []
+  const context = {
+    router: { beforeEach: fn => { callbacks.before = fn }, beforeResolve: fn => { callbacks.resolve = fn } },
+    resetShift5Transition() {}, queryWithinQingzhou: () => 'content',
+    beginPageLoad: target => { loads.push(target); return 1 },
+    prepareShift5Route: target => transitions.push(target),
+    useAuthStore: () => ({ loaded: true, isLoggedIn: true, isAdmin: true }),
+  }
+  const source = read('../src/router/index.ts')
+  runInNewContext(transpile(source.slice(source.indexOf('const loadTokens ='), source.indexOf('router.afterEach'))), context)
+  const parent = { meta: {} }, matched = [parent, { meta: { requiresAuth: true, requiresAdmin: true } }]
+  const from = { name: 'admin-settings', path: '/admin/settings', fullPath: '/admin/settings?section=access', query: { section: 'access' }, matched, meta: {} }
+  const to = { ...from, fullPath: '/admin/settings?section=cert', query: { section: 'cert' } }
+  await callbacks.before(to, from); callbacks.resolve(to, from)
+  assert.deepEqual(loads, []); assert.deepEqual(transitions, [])
+  const next = { ...to, name: 'admin-nodes', path: '/admin/nodes', fullPath: '/admin/nodes' }
+  await callbacks.before(next, to); callbacks.resolve(next, to)
+  assert.deepEqual(loads, ['content']); assert.deepEqual(transitions, ['content'])
 })

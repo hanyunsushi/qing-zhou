@@ -1,6 +1,8 @@
 <template>
-  <header class="app-header" :class="{ 'is-scrolled': isScrolled, 'is-menu-open': openMenu !== null }">
-    <div class="header-left" @click="router.push('/')">
+  <!-- 顶栏：直接复用原控件/菜单与回调，嵌入时只把内容挂到Host槽位。 -->
+      <Teleport :to="topbarTarget || 'body'" :disabled="!topbarTarget">
+      <component :is="topbarTarget ? 'div' : 'header'" v-if="!embedded || topbarTarget" :style="topbarTarget ? { display: 'contents' } : undefined" class="app-header" :class="[topbarTarget ? 'console-kreeproxy-surface console-original-header' : '', { 'is-scrolled': isScrolled, 'is-menu-open': openMenu !== null }]">
+    <div v-if="!topbarTarget" class="header-left" @click="router.push('/')">
       <!-- 品牌标识：公共顶栏与其他页面侧栏复用同一品牌层级，保留顶栏原有位置。 -->
       <div class="logo"><BrandMark :size="40" /></div>
       <div class="brand-copy">
@@ -44,10 +46,14 @@
       </template>
     </div>
 
-  </header>
+  </component>
+      </Teleport>
 </template>
 
 <script setup lang="ts">
+import { inject } from 'vue'
+import { qingzhouEmbeddedKey } from '@/runtime/runtime-keys'
+const embedded = inject(qingzhouEmbeddedKey, false)
 import { h } from 'vue'
 import { useRouter } from 'vue-router'
 import { NButton, NIcon } from 'naive-ui'
@@ -59,6 +65,9 @@ import TopbarHoverMenu from './TopbarHoverMenu.vue'
 import { useMutualHoverMenu } from '@/utils/topbar-menu'
 import { useTopbarScrollState } from '@/utils/topbar-glass'
 
+import { useConsoleLogout, useConsoleHeader } from '@/runtime/console-actions'
+const requestConsoleLogout = useConsoleLogout()
+const topbarTarget = useConsoleHeader(() => '')
 const router = useRouter()
 const auth = useAuthStore()
 const config = useConfigStore()
@@ -90,6 +99,7 @@ const adminMenu = [
 function handleNav(key: string) {
   closeMenu()
   if (key === '__logout') {
+    if (requestConsoleLogout()) return
     auth.logout()
     router.push('/')
   } else {

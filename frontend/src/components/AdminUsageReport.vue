@@ -1,5 +1,5 @@
 <template>
-  <div class="usage">
+  <div ref="usageRoot" class="usage">
     <!-- 控制条：时间口径 + 用户选择。两者共同决定下面所有数字，所以放在最上面
          而不是各图表各自带筛选，避免几块数据各说各的口径。 -->
     <n-card size="small" class="sec">
@@ -10,17 +10,8 @@
           <n-radio-group v-model:value="preset" size="small" class="route-switch" @update:value="onPreset">
             <n-radio-button v-for="p in presets" :key="p.v" :value="p.v">{{ p.l }}</n-radio-button>
           </n-radio-group>
-          <!-- 填写框 -->
-          <n-date-picker
-            v-if="preset === 'custom'"
-            v-model:value="customRange"
-            type="daterange"
-            size="small"
-            clearable
-            :is-date-disabled="disableFuture"
-            style="width:250px;"
-            @update:value="load"
-          />
+          <!-- 日期范围选择器：复用原单表面日历，原毫秒边界与load保持。 -->
+          <SystemDateRangePicker v-if="preset === 'custom'" :model-value="calendarRange" locale="zh-CN" label="用量查询日期范围" :max-date="new Date()" :boundary="() => usageRoot" @change="applyCalendarRange" />
         </div>
 
         <div class="ctl-group grow">
@@ -179,8 +170,10 @@
 </template>
 
 <script setup lang="ts">
+import SystemDateRangePicker from './date-range/SystemDateRangePicker.vue'
+import type { DateRange } from './date-range/date-range-picker-react'
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
-import { NCard, NRadioGroup, NRadioButton, NSelect, NButton, NSpin, NDatePicker, useMessage } from 'naive-ui'
+import { NCard, NRadioGroup, NRadioButton, NSelect, NButton, NSpin, useMessage } from 'naive-ui'
 import * as echarts from '@/utils/echarts'
 import { apiGet, apiList } from '@/api'
 import { fmtBytes } from '@/utils/format'
@@ -200,8 +193,11 @@ const presets = [
   { v: 'custom', l: '自定义' },
 ]
 
+const usageRoot = ref<HTMLElement | null>(null)
 const preset = ref('30d')
 const customRange = ref<[number, number] | null>(null)
+const calendarRange = computed(() => customRange.value ? {start:new Date(customRange.value[0]),end:new Date(customRange.value[1])} : null)
+function applyCalendarRange(range: DateRange) { customRange.value = [range.start.getTime(), range.end.getTime()]; void load() }
 const selected = ref<number[]>([])
 const selectedPkgs = ref<number[]>([])
 const loading = ref(false)
@@ -588,10 +584,12 @@ onUnmounted(() => {
 
 /* 控制条 */
 .ctl { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; }
-.ctl-group { display: flex; align-items: center; gap: 8px; }
-.ctl-group.grow { flex: 1; min-width: 280px; }
+.ctl-group { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-width:0; max-width:100%; }
+/* 日期范围选择器 / 响应式：筛选行按正文换行，不让隐藏横滚祖先为露出触发器而推走整页。 */
+.ctl-group :deep(.route-switch) { min-width:0; max-width:100%; overflow-x:auto; }
+.ctl-group.grow { flex: 1; min-width: min(280px, 100%); }
 .ctl-label { font-size: 12px; color: var(--text-2); font-weight: 550; white-space: nowrap; }
-.user-select { flex: 1; min-width: 220px; }
+.user-select { flex: 1; min-width: min(220px, 100%); }
 .scope {
   margin: 10px 0 0; padding-top: 10px; border-top: 1px solid var(--border);
   font-size: 11.5px; color: var(--text-3); line-height: 1.6;

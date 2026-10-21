@@ -18,7 +18,7 @@ test('site settings provide a single brand-icon control near the site name', () 
 test('public branding synchronizes the visual mark and browser icons', () => {
   assert.match(mark, /config\.config\.brand_icon_data_uri \|\| DEFAULT_BRAND_ICON/)
   assert.match(config, /DEFAULT_SITE_NAME = 'Kreeproxy'/)
-  assert.match(config, /DEFAULT_BRAND_ICON = '\/kreeproxy-brand\.png'/)
+  assert.match(config, /DEFAULT_BRAND_ICON = `\$\{import\.meta\.env\.BASE_URL\}kreeproxy-brand\.png`/)
   assert.match(config, /document\.title = name/)
   assert.match(config, /'shortcut icon'/)
   assert.match(config, /'apple-touch-icon'/)

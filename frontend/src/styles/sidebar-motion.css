@@ -66,7 +66,8 @@
 .motion-sidebar-menu .sidebar-project-copy small { color: var(--sidebar-muted); font: 400 11px/16px var(--ff); }
 .motion-sidebar-menu .sidebar-project-copy strong, .motion-sidebar-menu .sidebar-project-copy small { display: block; min-width: 0; width: 100%; margin: 0; white-space: nowrap; overflow: clip; overflow-clip-margin: 4px; text-overflow: ellipsis; }
 .motion-sidebar-menu .sidebar-project-hover-container { height: 48px; }
-.motion-sidebar-menu .sidebar-project-content { position: relative; display: flow-root; padding: 0 0 12px; }
+/* 多项目路由导航：项目悬浮块与第一条页面入口保持同列表2px留白。 */
+.motion-sidebar-menu .sidebar-project-content { position: relative; display: flow-root; padding: 2px 0 12px; }
 .motion-sidebar-menu .sidebar-project-content[data-motion-pop-id] { margin: 0 !important; }
 /* 多项目路由导航：图标轨道仍40px居中；整栏收起不隐藏已展开项目的原导航图标。 */
 .app-sider.is-collapsed .motion-sidebar-menu .sidebar-project-row { height: 40px !important; }

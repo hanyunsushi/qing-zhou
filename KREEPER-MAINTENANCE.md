@@ -610,3 +610,11 @@ Compose 是可选的容器化部署模板；当前生产升级应替换宿主机
 ### 2026-09-17 清理 Docker 探针目录适配
 
 源码 `42771d1` 移除了仅供 Docker 使用的 `/data/probe` 创建、写权限和 `QZ_PROBE_DIR=/data/probe` 覆盖，恢复官方镜像内置的 `/opt/qingzhou/probe` 路径。其余 Docker 镜像选择、回环端口、环境变量校验和 SSH 密钥挂载配置保持不变。OCI 正式运行态是宿主机 systemd，不使用 QingZhou 容器，因此本次没有替换二进制、重启服务或修改生产环境文件。
+
+## 2026-10-20 共享反馈与预载设置切换
+
+用户提供Headless/Motion反馈源码已进入canonical和青舟FeedbackProvider，现有useMessage/useDialog经版本绑定的Naive注入key适配，保留原按钮与异步/计时/焦点生命周期；无按钮提示不新增动作。设置分区同时去掉页面hook与router加载/切屏，实际整页入场保留。230测试、canonical121/59/311审计/50契约与真实浏览器通过，独立v0.2.80及Console已发布。精确binary、后端commit、在线SQLite备份与回滚以agent.md本轮节为准；不改API/认证/配置/DB。
+
+## 2026-10-20 共享消息绘制
+
+FeedbackMessages同步canonical的实心Apple状态SVG与16px阴影/动效绘制留白，保持原Naive计时/按钮/回调。230前端/50canonical契约、类型/构建/源审计和真实合成登录验证通过；独立v0.2.80已发布，SQLite在线快照、配置/节点/Tunnel/容器及旧资源保护见agent.md本轮节。此修正不改后端/API/认证或字体角色。

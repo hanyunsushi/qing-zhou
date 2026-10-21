@@ -58,12 +58,14 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   function logout(localOnly = false) {
+    let pending: Promise<unknown> = Promise.resolve()
     if (!localOnly && (token.value || user.value)) {
-      apiPost('/api/auth/logout').catch(() => {})
+      pending = apiPost('/api/auth/logout').catch(() => {})
     }
     token.value = ''
     user.value = null
     localStorage.removeItem('qz_token')
+    return pending
   }
 
   /** 初始化：由 HttpOnly cookie 恢复会话，拉取用户信息。防重复调用。 */

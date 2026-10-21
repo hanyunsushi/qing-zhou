@@ -1,7 +1,7 @@
 <template>
-  <div class="app-shell" :class="{ mobile: isMobile }">
+  <div class="app-shell" :class="{ mobile: isMobile, 'is-embedded': embedded }">
     <!-- 桌面侧边栏 -->
-    <aside v-if="!isMobile" class="app-sider sidebar-surface sidebar-motion-rail" :class="{ 'is-collapsed': sidebarCollapsed }">
+    <aside v-if="!isMobile && !embedded" class="app-sider sidebar-surface sidebar-motion-rail" :class="{ 'is-collapsed': sidebarCollapsed }">
       <!-- 顶栏 / 品牌标识：桌面品牌区与右侧顶栏共享玻璃材质和滚动/菜单状态。 -->
       <div class="sidebar-brand" :class="{ 'is-scrolled': isScrolled, 'is-menu-open': openMenu !== null }" @click="router.push('/')">
         <!-- Logo -->
@@ -44,7 +44,7 @@
     </aside>
 
     <!-- 侧边栏：手机抽屉沿用竖屏菜单、品牌和底部几何；仅菜单原生滚动且隐藏滚动条。 -->
-    <n-drawer v-model:show="drawerShow" placement="left" :width="300" :block-scroll="true"
+    <n-drawer v-if="!embedded" v-model:show="drawerShow" placement="left" :width="300" :block-scroll="true"
               class="mobile-sidebar-drawer-root" content-class="mobile-sidebar-drawer">
       <n-drawer-content :native-scrollbar="true" body-content-style="padding:0;">
         <div class="sidebar-surface mobile-sidebar">
@@ -91,8 +91,10 @@
 
     <!-- 主区 -->
     <div class="app-main">
-      <header class="layout-header" :class="{ 'is-scrolled': isScrolled, 'is-menu-open': openMenu !== null }">
-        <div class="header-left">
+      <!-- 顶栏：直接复用原控件/菜单与回调，嵌入时只把内容挂到Host槽位。 -->
+      <Teleport :to="topbarTarget || 'body'" :disabled="!topbarTarget">
+      <component :is="topbarTarget ? 'div' : 'header'" v-if="!embedded || topbarTarget" :style="topbarTarget ? { display: 'contents' } : undefined" class="layout-header" :class="[topbarTarget ? 'console-kreeproxy-surface console-original-header' : '', { 'is-scrolled': isScrolled, 'is-menu-open': openMenu !== null }]">
+        <div v-if="!topbarTarget" class="header-left">
           <!-- 悬浮菜单按钮：沿用移动端侧栏按钮的路径、尺寸与透明状态。 -->
           <button v-if="isMobile" class="icon-btn app-header-menu-toggle" @click="drawerShow = true" aria-label="菜单">
             <svg class="app-header-menu-toggle-icon" aria-hidden="true" fill="none" viewBox="0 0 32 32" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -103,7 +105,7 @@
           <span class="header-title">{{ currentTitle }}</span>
         </div>
         <!-- 填写框 -->
-        <div v-if="!isMobile" class="header-search">
+        <div v-if="!topbarTarget && !isMobile" class="header-search">
           <n-icon class="header-search-icon" :size="17"><SearchOutline /></n-icon>
           <n-auto-complete
             v-model:value="searchQuery"
@@ -139,7 +141,8 @@
             </template>
           </TopbarHoverMenu>
         </div>
-      </header>
+      </component>
+      </Teleport>
       <main class="layout-content">
         <router-view v-slot="{ Component, route: viewRoute }">
           <div ref="routeShell" :key="viewRoute.path" class="route-page-shell">
@@ -152,7 +155,9 @@
 </template>
 
 <script setup lang="ts">
-import { h, computed, ref, onMounted, onUnmounted } from 'vue'
+import { useConsoleLogout, useConsoleHeader } from '@/runtime/console-actions'
+import { createSidebarNavigation, defaultExpandedKeys, type SidebarMenuOption } from '@/composables/useSidebarNavigation'
+import { h, computed, inject, ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import KreeperSidebarMenu from './KreeperSidebarMenu.vue'
 import { NDrawer, NDrawerContent, NButton, NIcon, NAutoComplete } from 'naive-ui'
@@ -173,11 +178,13 @@ import { openHelp } from '@/utils/help'
 import { useMutualHoverMenu } from '@/utils/topbar-menu'
 import { useShift5PageTransition } from '@/utils/shift5'
 import { useTopbarScrollState } from '@/utils/topbar-glass'
+import { qingzhouEmbeddedKey } from '@/runtime/runtime-keys'
 
 const router = useRouter()
 const route = useRoute()
 const auth = useAuthStore()
 const config = useConfigStore()
+const embedded = inject(qingzhouEmbeddedKey, false)
 
 const activeKey = computed(() => route.path)
 const searchQuery = ref('')
@@ -203,19 +210,6 @@ function renderIcon(icon: any) {
   return () => h(NIcon, null, { default: () => h(icon) })
 }
 
-function groupLabel(text: string) {
-  return () => h('span', { class: 'menu-group-label', title: text }, [
-    h('i', { class: 'menu-group-dot', 'aria-hidden': 'true' }),
-    h('span', { class: 'menu-group-text' }, text),
-  ])
-}
-
-type SidebarMenuOption = (MenuOption | MenuGroupOption) & { sidebarLabel?: string }
-
-// 侧边栏 / 菜单归类级别：一级为静态标题；收起时以中性圆点标记分组，不提供导航动作。
-function menuSection(key: string, label: string, children: MenuOption[]): SidebarMenuOption {
-  return { type: 'group', key, label: groupLabel(label), children, sidebarLabel: label }
-}
 
 function toggleSidebar() {
   sidebarCollapsed.value = !sidebarCollapsed.value
@@ -231,74 +225,8 @@ function updateSidebarExpandedKeys(keys: Array<string | number>) {
   sidebarExpandedKeys.value = keys
 }
 
-// 侧边栏菜单归类级别：二级菜单项，直接挂在一级归类下，保留 SVG 图标。
-const userMenuItems: MenuOption[] = [
-  { label: '控制台', key: '/dashboard', icon: renderIcon(SpeedometerOutline) },
-  { label: '订阅管理', key: '/sub', icon: renderIcon(LinkOutline) },
-]
+const { userMenuItems, shopItems, infoItems, adminOpsItems, adminNodeItems, adminSysItems, allMenuOptions } = createSidebarNavigation(() => auth.isAdmin)
 
-// 侧边栏菜单归类级别：二级菜单项，直接挂在一级归类下，保留 SVG 图标。
-const shopItems: MenuOption[] = [
-  { label: '订阅套餐', key: '/shop', icon: renderIcon(CartOutline) },
-  { label: '订单记录', key: '/orders', icon: renderIcon(ReceiptOutline) },
-  { label: '积分明细', key: '/points', icon: renderIcon(WalletOutline) },
-]
-
-// 侧边栏菜单归类级别：信息下只保留普通二级菜单项。
-const infoLeafItems: MenuOption[] = [
-  { label: '公告通知', key: '/notices', icon: renderIcon(MegaphoneOutline) },
-  { label: '帮助中心', key: '/help', icon: renderIcon(BookOutline) },
-  { label: '账户设置', key: '/account', icon: renderIcon(PersonOutline) },
-]
-
-// 侧边栏菜单归类级别：管理后台二级归类下的三级页面项，继续保留 SVG 图标。
-const adminOpsItems: MenuOption[] = [
-  { label: '上游管理', key: '/admin/upstreams', icon: renderIcon(CloudOutline) },
-  { label: '管理概览', key: '/admin', icon: renderIcon(SpeedometerOutline) },
-  { label: '用户管理', key: '/admin/users', icon: renderIcon(PeopleOutline) },
-  { label: '用户组', key: '/admin/user-groups', icon: renderIcon(PeopleCircleOutline) },
-  { label: '套餐管理', key: '/admin/packages', icon: renderIcon(ArchiveOutline) },
-  { label: '订单管理', key: '/admin/orders', icon: renderIcon(ReceiptOutline) },
-  { label: '注册码', key: '/admin/reg-codes', icon: renderIcon(KeyOutline) },
-  { label: 'API Token', key: '/admin/api-tokens', icon: renderIcon(KeyOutline) },
-]
-const adminNodeItems: MenuOption[] = [
-  { label: '节点管理', key: '/admin/nodes', icon: renderIcon(ServerOutline) },
-  { label: 'sing-box', key: '/admin/singbox', icon: renderIcon(HardwareChipOutline) },
-  { label: '证书管理', key: '/admin/certs', icon: renderIcon(ShieldCheckmarkOutline) },
-  { label: '服务器', key: '/admin/servers', icon: renderIcon(ServerOutline) },
-  { label: '监控管理', key: '/admin/monitor', icon: renderIcon(PulseOutline) },
-]
-const adminSysItems: MenuOption[] = [
-  { label: '公告管理', key: '/admin/announcements', icon: renderIcon(NotificationsOutline) },
-  { label: '手动通知', key: '/admin/manual-notifications', icon: renderIcon(MegaphoneOutline) },
-  { label: '帮助文档', key: '/admin/help', icon: renderIcon(DocumentTextOutline) },
-  { label: '系统设置', key: '/admin/settings', icon: renderIcon(SettingsOutline) },
-  { label: '在线更新', key: '/admin/update', icon: renderIcon(CloudDownloadOutline) },
-]
-
-// 侧边栏菜单归类级别：管理后台是独立一级分组，运营/节点服务/内容系统为二级归类。
-const adminItems = computed<MenuOption[]>(() => auth.isAdmin ? [
-  { label: '运营', key: 'ag-ops', icon: renderIcon(PulseOutline), children: adminOpsItems },
-  { label: '节点服务', key: 'ag-node', icon: renderIcon(ServerOutline), children: adminNodeItems },
-  { label: '内容系统', key: 'ag-sys', icon: renderIcon(DocumentTextOutline), children: adminSysItems },
-] : [])
-
-const infoItems = computed<MenuOption[]>(() => infoLeafItems)
-
-const allMenuOptions = computed<MenuOption[]>(() => {
-  // 侧边栏菜单归类级别：一级归类标题使用静态 group，避免一级菜单产生箭头、竖线和伸缩。
-  const items: MenuOption[] = [
-    { label: '首页', key: '/', icon: renderIcon(HomeOutline) },
-    menuSection('g-common', '常用', userMenuItems),
-    menuSection('g-shop', '商城', shopItems),
-    menuSection('g-info', '信息', infoItems.value),
-    menuSection('g-admin', '管理后台', adminItems.value),
-  ]
-  return items
-})
-
-const defaultExpandedKeys = ['ag-ops', 'ag-node', 'ag-sys']
 const sidebarExpandedKeys = ref<Array<string | number>>([...defaultExpandedKeys])
 
 function filterMenuOptions(options: MenuOption[], query: string): MenuOption[] {
@@ -324,6 +252,8 @@ const titleMap: Record<string, string> = {
   '/admin/update': '在线更新',
 }
 const currentTitle = computed(() => titleMap[route.path] || config.config.site_name || 'Kreeproxy')
+const requestConsoleLogout = useConsoleLogout()
+const topbarTarget = useConsoleHeader(() => currentTitle.value)
 
 const searchItems = computed(() => {
   const items = [
@@ -375,7 +305,7 @@ function goAndClose(key: string) {
 }
 function handleUserSelect(key: string) {
   closeMenu()
-  if (key === 'logout') { auth.logout(); router.push('/') }
+  if (key === 'logout') { if (requestConsoleLogout()) return; auth.logout(); router.push('/') }
 }
 function handleAdminSelect(key: string) {
   closeMenu()
@@ -516,6 +446,8 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
 .sidebar-menu::-webkit-scrollbar-thumb { background: revert; border: revert; background-clip: revert; border-radius: revert; }
 
 .app-main { flex: 1; min-width: 0; display: flex; flex-direction: column; min-height: 100vh; background: var(--bg); }
+.app-shell.is-embedded .app-main { width: 100%; }
+.app-shell.is-embedded .layout-content { max-width: none; padding: 0; }
 .layout-header {
   /* Dashboard chrome is nested beside the sidebar; keep it inside .app-main.
      A viewport width here hides the right-side account controls whenever the

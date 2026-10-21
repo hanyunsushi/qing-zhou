@@ -351,6 +351,7 @@
 </template>
 
 <script setup lang="ts">
+import { useConsoleActions } from '@/runtime/console-actions'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import {
   NTabs, NTabPane, NDrawer, NDrawerContent, NButton, NForm, NFormItem, NInput, NInputNumber,
@@ -895,6 +896,11 @@ async function load() {
     if (degraded) message.warning(`${degraded}加载失败，链路拓扑显示不完整`)
   } catch {} finally { loading.value = false }
 }
+
+useConsoleActions([
+  { key: 'refresh', label: '刷新', run: () => load(), loading: () => loading.value },
+  { key: 'create-node', label: '新增节点', variant: 'primary', run: () => openNode() }
+])
 </script>
 
 <style scoped>

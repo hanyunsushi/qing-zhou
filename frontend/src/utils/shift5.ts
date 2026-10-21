@@ -1,3 +1,4 @@
+import { queryWithinQingzhou } from '@/runtime/runtime-keys'
 import { nextTick, onMounted, ref, watch, type Ref } from 'vue'
 import { currentPageLoad, finishPageLoad, nextPagePaint, setPageLoadingTarget, waitForPageRequests } from './page-loading'
 
@@ -34,7 +35,7 @@ export function prepareShift5Route(scope: 'full' | 'content' | 'settings') {
 }
 
 function positionContentOverlay(node: HTMLDivElement, host: HTMLElement | null) {
-  if (!['content', 'settings'].includes(activeScope) || !host) {
+  if ((!['content', 'settings'].includes(activeScope) && !globalThis.__QINGZHOU_MICROFRONTEND__) || !host) {
     node.classList.remove('is-content')
     node.style.removeProperty('top')
     node.style.removeProperty('left')
@@ -44,20 +45,24 @@ function positionContentOverlay(node: HTMLDivElement, host: HTMLElement | null) 
   }
   const rect = host.getBoundingClientRect()
   node.classList.add('is-content')
-  node.style.top = `${rect.top}px`
-  node.style.left = `${rect.left}px`
-  node.style.width = `${rect.width}px`
-  node.style.height = `${rect.height}px`
+  // 组件绘制动画 / 滚动边界：固定遮罩只覆盖可见交集，不能以整段内容高度撑出额外滚动空白。
+  const headerBottom = host.closest('.app-main')?.querySelector('.layout-header')?.getBoundingClientRect().bottom ?? 0
+  const top = Math.max(0, headerBottom, rect.top), left = Math.max(0, rect.left)
+  node.style.setProperty('top', `${top}px`, 'important')
+  node.style.setProperty('left', `${left}px`, 'important')
+  node.style.setProperty('width', `${Math.max(0, Math.min(window.innerWidth, rect.right) - left)}px`, 'important')
+  node.style.setProperty('height', `${Math.max(0, Math.min(window.innerHeight, rect.bottom) - top)}px`, 'important')
 }
 
 function ensureOverlay(stage: string, scopeHost: HTMLElement | null = null) {
+  if (globalThis.__QINGZHOU_MICROFRONTEND__ && !scopeHost) scopeHost = queryWithinQingzhou<HTMLElement>('.qz-shift5-page-shell')
   if (overlay?.isConnected) {
     overlay.dataset.stage = stage
     positionContentOverlay(overlay, scopeHost)
     return overlay
   }
   overlay = document.createElement('div')
-  overlay.className = OVERLAY_CLASS
+  overlay.className = globalThis.__QINGZHOU_MICROFRONTEND__ ? `${OVERLAY_CLASS} console-kreeproxy-surface` : OVERLAY_CLASS
   overlay.dataset.stage = stage
   overlay.setAttribute('aria-hidden', 'true')
   positionContentOverlay(overlay, scopeHost)
@@ -154,9 +159,9 @@ export function startShift5Leave(scope: 'full' | 'content' | 'settings' = 'full'
   if (REDUCED_MOTION || leavePromise) return leavePromise || Promise.resolve()
   activeScope = scope
   const host = scope === 'content'
-    ? document.querySelector<HTMLElement>('.route-page-shell')
+    ? queryWithinQingzhou<HTMLElement>('.route-page-shell')
     : scope === 'settings'
-      ? document.querySelector<HTMLElement>('.settings-main')
+      ? queryWithinQingzhou<HTMLElement>('.settings-main')
       : null
   lockScope(scope, host)
   const current = ensureOverlay('leaving', host)

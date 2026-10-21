@@ -214,6 +214,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import { useConsoleActions } from '@/runtime/console-actions'
 import { ref, reactive, computed, onMounted, onUnmounted, nextTick, shallowRef, h } from 'vue'
 import { NSpin, NButton, NModal, NForm, NFormItem, NInput, NInputNumber, NSwitch, NSpace, NTag, NEmpty, NCard, NSelect, NRadioGroup, NRadioButton, NDrawer, NDrawerContent, NAlert, NProgress, useMessage, useDialog } from 'naive-ui'
 import { apiList, apiPost, apiPut, apiDelete, apiGet } from '@/api'
@@ -450,6 +451,10 @@ async function pollUpgrade(id:number){
 
 onMounted(() => { load(); loadVersions() })
 onUnmounted(() => trafficChart.value?.dispose())
+
+useConsoleActions([
+  { key: 'refresh', label: '刷新', run: () => load(), loading: () => loading.value }
+])
 </script>
 
 <style scoped>

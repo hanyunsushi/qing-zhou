@@ -1,10 +1,12 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { queryWithinQingzhou } from '@/runtime/runtime-keys'
+import { createMemoryHistory, createRouter, createWebHashHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { prepareShift5Route, resetShift5Transition } from '@/utils/shift5'
 import { beginPageLoad, cancelPageLoad, currentPageLoad, finishPageLoad, waitForPageRequests } from '@/utils/page-loading'
 
-const router = createRouter({
-  history: createWebHashHistory(),
+export function createQingZhouRouter(embedded = false) {
+  const router = createRouter({
+  history: embedded ? createMemoryHistory('/kreeproxy') : createWebHashHistory(),
   routes: [
     { path: '/oauth2/callback', name: 'oauth-callback', component: () => import('@/views/OAuthCallback.vue') },
     { path: '/login', name: 'login', component: () => import('@/views/AuthPage.vue'), meta: { authPage: true } },
@@ -50,24 +52,26 @@ const router = createRouter({
       ],
     },
   ],
-})
+  })
 
 const loadTokens = new WeakMap<object, number>()
 const authRouteNames = new Set(['login', 'register', 'forgot-password'])
+// 路由切换组件：设置分区已预载，只更新可见区，不重复加载或切屏。
+const sameSettingsPage = (to: { name?: unknown; path: string }, from: { name?: unknown; path: string }) =>
+  from.name === 'admin-settings' && to.name === 'admin-settings' && from.path === to.path
 const sameAuthShell = (to: { name?: unknown }, from: { name?: unknown }) =>
   authRouteNames.has(String(from.name)) && authRouteNames.has(String(to.name))
 
 router.beforeEach(async (to, from) => {
   // 加载反馈 / 组件绘制动画：取消旧切屏，先准备权限、模块和目标页请求。
   resetShift5Transition()
-  // 加载反馈：保留布局时立即在内容区定位；同页设置分区只以右侧主体为加载区域。
-  const settingsSection = from.name === 'admin-settings' && to.name === 'admin-settings' && from.path === to.path
+  // 加载反馈：认证模式只准备右侧表单，保留左侧说明、品牌和页面外壳。
   // 首页监控和认证后的控制台都使用根路径，不能仅凭 matched[0] 判成同一常驻壳。
   const retainedLayout = from.name !== 'monitor' && to.name !== 'monitor'
     && from.matched.length > 1 && to.matched.length > 1 && from.matched[0] === to.matched[0]
-  const loadingTarget = settingsSection ? document.querySelector<HTMLElement>('.settings-main')
-    : retainedLayout ? document.querySelector<HTMLElement>('.layout-content') : null
-  loadTokens.set(to, beginPageLoad(loadingTarget))
+  const loadingTarget = sameAuthShell(to, from) ? queryWithinQingzhou<HTMLElement>('.auth-form-stack')
+    : retainedLayout ? queryWithinQingzhou<HTMLElement>('.layout-content') : null
+  if (!sameSettingsPage(to, from)) loadTokens.set(to, beginPageLoad(loadingTarget))
   if (to.name === 'oauth-callback') return
   const auth = useAuthStore()
 
@@ -95,16 +99,12 @@ router.beforeEach(async (to, from) => {
 
 router.beforeResolve((to, from) => {
   // 组件绘制动画：这里只选择切屏区域，不在页面加载时播放离场动画。
-  const settingsSectionChange = from.name === 'admin-settings'
-    && to.name === 'admin-settings'
-    && from.path === to.path
-    && from.query.section !== to.query.section
-  if (from.name && to.fullPath !== from.fullPath && to.name !== 'oauth-callback' && !sameAuthShell(to, from)) {
+  if (from.name && to.fullPath !== from.fullPath && to.name !== 'oauth-callback' && !sameAuthShell(to, from) && !sameSettingsPage(to, from)) {
     const sameDashboardShell = from.name !== 'monitor' && to.name !== 'monitor'
       && from.matched.length > 1
       && to.matched.length > 1
       && from.matched[0] === to.matched[0]
-    prepareShift5Route(settingsSectionChange ? 'settings' : sameDashboardShell ? 'content' : 'full')
+    prepareShift5Route(sameDashboardShell ? 'content' : 'full')
   }
 })
 
@@ -119,11 +119,16 @@ router.afterEach((to, from, failure) => {
   }
 })
 
-router.onError((_error, to) => {
+  router.onError((_error, to) => {
   const token = loadTokens.get(to)
   if (token === undefined || token !== currentPageLoad()) return
   cancelPageLoad(token)
   resetShift5Transition()
-})
+  })
 
+  return router
+}
+
+// Even the unused default export must not construct browser History in an ESM child build.
+const router = createQingZhouRouter(import.meta.env.QZ_MICROFRONTEND === true)
 export default router
