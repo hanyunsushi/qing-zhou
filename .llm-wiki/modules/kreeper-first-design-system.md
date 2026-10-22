@@ -1,7 +1,15 @@
 ---
 title: kreeper第一设计系统 — QingZhou 集成
-updated: 2026-10-21
+updated: 2026-10-22
 ---
+
+## Native confirmation and shared feedback injection
+
+`App.vue` retains the native `NDialogProvider`; embedded mode passes its dedicated `runtimeStyleTarget` as `to`, just as the message provider does. `FeedbackProvider.vue` delegates all confirmation creation/lifecycle/Promise/false/focus/Escape/mask behavior to that native API and only supplies the default `positiveButtonProps.type='primary'`, preserving explicit overrides and `destroyAll`. It does not render confirmation dialogs through Headless UI.
+
+Messages and `useNotification` share the top-right glass stack without `centered`. The notification adapter retains title/description/content/meta/action, close vetoes, entry/leave callbacks, automatic timers and hover pause. `FeedbackMessages.vue` forwards `afterEnter` from its surface so the notification entry callbacks actually run. `FeedbackSurface.vue` and `feedback-react.tsx` accept opt-in `fade-scale`; default `source` motion and reduced-motion handling remain unchanged. These five runtime files and `frontend/tests/feedback-provider.test.mjs` define this increment; canonical snapshots/patterns are maintained by the coordinating thread, not this checkout task.
+
+Classification stays within 提示信息/警告信息/组件绘制动画/高亮弧边按钮; no new style type, font role, AWS typography or chart rule. Verification and native deployment status belong to [Validation](../guides/validation.md#native-feedback-design-sync-2026-10-22) and [project authority](../../agent.md).
 
 ## Hover, material and placeholder source synchronization
 

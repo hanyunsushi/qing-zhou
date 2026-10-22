@@ -2,33 +2,23 @@
   <slot />
   <!-- 提示信息 / 警告信息：兼容原Naive调用，自动关闭与原回调留在同一Vue上下文。 -->
   <Teleport :to="to || 'body'">
-    <FeedbackMessages :entries="messages" centered @close="closeMessage" @pause="pause" @resume="resume" @after-leave="afterMessageLeave">
+    <FeedbackMessages :class="scopeClass" :entries="messages" @close="closeMessage" @pause="pause" @resume="resume" @after-leave="afterMessageLeave" @after-enter="afterMessageEnter">
       <template #default="{ entry }"><RenderContent :content="entry.content" /></template>
     </FeedbackMessages>
   </Teleport>
-  <FeedbackSurface v-for="item in dialogs" :key="item.key" :show="item.visible" modal
-    :label="typeof item.title === 'string' ? item.title : '提示'" panel-class="kf-feedback-panel"
-    :scope-class="scopeClass" :z-index="item.zIndex || 2000"
-    :close-on-escape="item.closeOnEsc !== false" :close-on-click-outside="item.maskClosable !== false"
-    @close="(reason, event) => dismiss(item, reason, event)" @after-enter="item.onAfterEnter?.()" @after-leave="afterDialogLeave(item)">
-    <NDialog v-bind="dialogProps(item)" role="presentation" :positive-button-props="{ type: 'primary', ...item.positiveButtonProps }"
-      @positive-click="event => runAction(item, 'onPositiveClick', event)"
-      @negative-click="event => runAction(item, 'onNegativeClick', event)" @close="runAction(item, 'onClose')" />
-  </FeedbackSurface>
 </template>
 <script setup lang="ts">
-import { computed, defineComponent, onBeforeUnmount, provide, reactive, shallowRef, type VNodeChild } from 'vue'
-import { NDialog, type DialogApi, type DialogOptions, type DialogReactive, type MessageApi, type MessageOptions, type MessageReactive } from 'naive-ui'
-// Naive版本绑定的注入适配边界：契约测试保证原useMessage/useDialog仍取得此API，业务调用无需改写。
+import { computed, defineComponent, h, inject, onBeforeUnmount, provide, reactive, shallowRef, type VNodeChild } from 'vue'
+import type { DialogApi, DialogOptions, MessageApi, MessageOptions, MessageReactive, NotificationApi, NotificationOptions, NotificationReactive } from 'naive-ui'
+// 提示信息 / 警告信息：消息和通知共用右上角表面；确认Dialog由外层原生NDialogProvider提供。
 import { messageApiInjectionKey } from 'naive-ui/es/message/src/context'
+import { notificationApiInjectionKey } from 'naive-ui/es/notification/src/NotificationProvider'
 import { dialogApiInjectionKey } from 'naive-ui/es/dialog/src/context'
 import FeedbackMessages from './FeedbackMessages.vue'
-import FeedbackSurface from './FeedbackSurface.vue'
 
 withDefaults(defineProps<{ to?: HTMLElement; scopeClass?: string }>(), { scopeClass: '' })
-type MessageItem = MessageReactive & MessageOptions & { id: string; content: string | (() => VNodeChild) }
-type DialogItem = DialogReactive & { visible: boolean }
-const activeMessages = shallowRef<MessageItem[]>([]), dialogs = shallowRef<DialogItem[]>([])
+type MessageItem = MessageReactive & MessageOptions & { id: string; content: string | (() => VNodeChild); notification?: NotificationReactive }
+const activeMessages = shallowRef<MessageItem[]>([])
 const retiredMessages = new Map<string, MessageItem>()
 const timers = new Map<string, { timer?: ReturnType<typeof setTimeout>; remaining: number; started: number }>()
 let sequence = 0
@@ -45,7 +35,13 @@ function hideMessage(id: string) {
   clearTimeout(timers.get(id)?.timer); timers.delete(id); retiredMessages.set(id, item)
   item.onLeave?.(); activeMessages.value = activeMessages.value.filter(m => m !== item)
 }
-function closeMessage(id: string) { const item = activeMessages.value.find(m => m.id === id); item?.onClose?.(); hideMessage(id) }
+async function closeMessage(id: string) {
+  const item = activeMessages.value.find(m => m.id === id)
+  if (item?.notification && await item.notification.onClose?.() === false) return
+  if (!item?.notification) item?.onClose?.()
+  hideMessage(id)
+}
+function afterMessageEnter(id: string) { const item = activeMessages.value.find(m => m.id === id); item?.notification?.onAfterEnter?.(); item?.notification?.onAfterShow?.() }
 function afterMessageLeave(id: string) { retiredMessages.get(id)?.onAfterLeave?.(); retiredMessages.delete(id) }
 function pause(id: string) { const item = activeMessages.value.find(m => m.id === id), state = timers.get(id); if (item?.keepAliveOnHover !== false && state?.timer) { clearTimeout(state.timer); state.timer = undefined; state.remaining = Math.max(1, state.remaining - (Date.now() - state.started)) } }
 function resume(id: string) { if (!timers.get(id)?.timer) schedule(id) }
@@ -57,30 +53,33 @@ function message(type: MessageItem['type'], content: MessageItem['content'], opt
   return item
 }
 const messageApi = { create: (content, options) => message(options?.type || 'default', content, options), destroyAll: () => activeMessages.value.forEach(m => hideMessage(m.id)), ...Object.fromEntries(['success','error','warning','info','loading'].map(type => [type, (content: MessageItem['content'], options?: MessageOptions) => message(type as MessageItem['type'], content, options)])) } as MessageApi
-function createDialog(options: DialogOptions, type: DialogItem['type'] = 'default'): DialogReactive {
-  const key = `feedback-dialog-${++sequence}`
-  const item = reactive({ type, ...options, key, visible: true, destroy: () => { item.visible = false } }) as DialogItem
-  dialogs.value = [...dialogs.value, item]; return item
+// 高亮弧边按钮：仅补主按钮默认类型，弹窗生命周期、异步false、焦点与动画继续交给原生provider。
+const nativeDialog = inject(dialogApiInjectionKey, null)
+if (nativeDialog) provide(dialogApiInjectionKey, {
+  ...nativeDialog,
+  ...Object.fromEntries((['create', 'success', 'warning', 'error', 'info'] as const).map(method => [method, (options: DialogOptions) => nativeDialog[method]({ ...options, positiveButtonProps: { type: 'primary', ...options?.positiveButtonProps } })])),
+} as DialogApi)
+// 提示信息 / 警告信息：保留通知内容、状态、操作和关闭回调，只合并外观、位置与动效。
+function notification(options: NotificationOptions): NotificationReactive {
+  let item: MessageReactive
+  const entry = reactive({ ...options, key: `feedback-notification-${++sequence}`, destroy: () => item.destroy(), hide: () => item.destroy(), deactivate: () => item.destroy() }) as NotificationReactive
+  const render = (value: string | (() => VNodeChild) | undefined) => typeof value === 'function' ? value() : value
+  item = message(entry.type || 'info', () => [
+    entry.title ? h('strong', null, [render(entry.title)]) : null,
+    entry.description ? h('div', null, [render(entry.description)]) : null,
+    render(entry.content),
+    entry.meta ? h('div', null, [render(entry.meta)]) : null,
+    entry.action ? h('div', null, [render(entry.action)]) : null,
+  ], {
+    duration: entry.duration ?? 4500, closable: entry.closable ?? true, keepAliveOnHover: entry.keepAliveOnHover ?? true,
+    onLeave: () => { entry.onLeave?.(); entry.onHide?.() },
+    onAfterLeave: () => { entry.onAfterLeave?.(); entry.onAfterHide?.() },
+  })
+  ;(item as MessageItem).notification = entry
+  return entry
 }
-function dialogProps(item: DialogItem) {
-  const { onPositiveClick, onNegativeClick, onClose, key, visible, destroy, ...rest } = item
-  return rest
-}
-async function runAction(item: DialogItem, key: 'onPositiveClick' | 'onNegativeClick' | 'onClose', event?: MouseEvent) {
-  const callback = item[key] as ((event?: MouseEvent) => unknown) | undefined
-  const result = callback?.(event)
-  if (result instanceof Promise) {
-    item.loading = true
-    try { if (await result !== false) item.visible = false } finally { item.loading = false }
-  } else if (result !== false) item.visible = false
-}
-function dismiss(item: DialogItem, reason: 'escape' | 'outside', event?: MouseEvent) {
-  if (reason === 'escape') item.onEsc?.()
-  else if (event) item.onMaskClick?.(event)
-  item.visible = false
-}
-function afterDialogLeave(item: DialogItem) { dialogs.value = dialogs.value.filter(d => d !== item); item.onAfterLeave?.() }
-const dialogApi = { create: createDialog, destroyAll: () => dialogs.value.forEach(d => { d.visible = false }), ...Object.fromEntries(['success','warning','error','info'].map(type => [type, (options: DialogOptions) => createDialog(options, type as DialogItem['type'])])) } as DialogApi
-provide(messageApiInjectionKey, messageApi); provide(dialogApiInjectionKey, dialogApi)
-onBeforeUnmount(() => { for (const state of timers.values()) clearTimeout(state.timer); timers.clear(); retiredMessages.clear(); activeMessages.value = []; dialogs.value = [] })
+const notificationApi = { create: notification, open: notification, destroyAll: () => activeMessages.value.filter(item => item.notification).forEach(item => hideMessage(item.id)), ...Object.fromEntries(['success','error','warning','info'].map(type => [type, (options: NotificationOptions) => notification({ ...options, type: type as NotificationOptions['type'] })])) } as NotificationApi
+provide(messageApiInjectionKey, messageApi)
+provide(notificationApiInjectionKey, notificationApi)
+onBeforeUnmount(() => { for (const state of timers.values()) clearTimeout(state.timer); timers.clear(); retiredMessages.clear(); activeMessages.value = [] })
 </script>

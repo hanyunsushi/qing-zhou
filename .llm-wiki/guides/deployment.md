@@ -1,7 +1,13 @@
 ---
 title: QingZhou Deployment and Artifact Retention
-updated: 2026-10-20
+updated: 2026-10-22
 ---
+
+## Native feedback candidate and activation boundary
+
+The design-sync candidate is built by `/Users/hinaw/console-kreeper/output/design-sync-20261022/qz-native-package.py` from a clean `git archive` of the deployed backend baseline plus the verified standalone dist. The frontend checkout is not a backend source. Product version remains `v0.2.80`; frontend commit, release label and binary hash are separate provenance fields. The script reads production assets and hashes only; it does not open the production database, mutate services, or inspect/change containers.
+
+Activation requires separate explicit authorization and a fresh installed/running binary baseline guard. The guarded activation must take an online SQLite Backup API snapshot and integrity-check it, retain the prior binary/configurations, then atomically replace only `/opt/qingzhou/qingzhou` and restart only `qingzhou.service`. Preserve auth/environment/unit/node/Tunnel configuration hashes and node/Tunnel process identity. Verify the new installed and `/proc` executable digests, native health/version and retained static assets; rollback restores only the prior binary, never the live database. OpenStock and other concurrently maintained containers are outside the guard and mutation scope. The Console release remains owned by its coordinator and is not activated by this task. Exact candidate/runtime/rollback facts belong to [project authority](../../agent.md), gate evidence to [Validation](validation.md#native-feedback-design-sync-2026-10-22).
 
 ## Console entry and responsive subscription release v0.2.121
 

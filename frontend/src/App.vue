@@ -2,7 +2,7 @@
   <n-config-provider :theme-overrides="themeOverrides" :locale="zhCN" :date-locale="dateZhCN" :namespace="embedded ? 'console-kreeproxy-surface' : undefined" :style-mount-target="runtimeStyleTarget" :preflight-style-disabled="embedded">
     <!-- 提示信息：嵌入消息留在应用样式作用域内，不能传送到无样式的body末尾。 -->
     <n-message-provider :to="embedded ? runtimeStyleTarget : undefined">
-      <n-dialog-provider>
+      <n-dialog-provider :to="embedded ? runtimeStyleTarget : undefined">
         <FeedbackProvider scope-class="console-kreeproxy-surface" :to="embedded ? runtimeStyleTarget : undefined">
         <!-- 加载反馈：整页/跨壳路由首帧隐藏页面壳；局部加载只隐藏正文。 -->
         <router-view v-slot="{ Component, route: viewRoute }">

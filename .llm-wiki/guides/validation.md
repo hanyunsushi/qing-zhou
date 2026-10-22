@@ -1,7 +1,17 @@
 ---
 title: Validation Guide
-updated: 2026-10-20
+updated: 2026-10-22
 ---
+
+## Native feedback design sync 2026-10-22
+
+`frontend/tests/feedback-provider.test.mjs` runs compiled Vue setup with real Vue injection/reactivity and a minimal renderer. Six focused tests cover native delegation/default primary/explicit overrides, absent-provider behavior, embedded teleport and non-centered stack, timer hover pause and leave retirement, notification content/actions/close veto/lifecycle, destroyAll isolation and the optional animation contract. The full frontend suite is 238/238 passing; fresh logs supersede the earlier session-only reports.
+
+`npm run typecheck`, `npm run build` and `npm run build:microfrontend` pass. The versioned MFE uses `/releases/console-20261022-design-sync-a/apps/kreeproxy/microfrontend/` and is located at `/Users/hinaw/console-kreeper/output/design-sync-20261022/qz-microfrontend`; its 99-file manifest is `qz-microfrontend-files.json` (SHA-256 `b90ca1f63c728f16fdb9c60fe826cffe634b3d3f9850f22f73fdcfeae824451b`). Standalone has 135 files and manifest SHA-256 `0c92ea19d5b7374598fb454e27926c76e27ab429f12cb2dc791f4f26a062088c`. Logs, commands and hashes are in the same absolute output directory under `qz-validation-result.json`.
+
+The native candidate exports backend commit `b48cb4a2e70058ff881b4c000dc9a4014d76dda6` with `git archive`, ignores document symlinks, and replaces only `frontend/dist`. Non-dist export SHA-256 remains `9b3dab7a538653ffe6b779f21869d7d3c880f9d123f0a273dcae92e0166f2df1`; archived baseline Go tests/vet pass. Linux ARM64, CGO=0 and product version `v0.2.80` are verified through Go build metadata; all 292 retained native assets are verified in the candidate. Candidate SHA-256 is `24f6e1b700927ef19232900d1644f2bf7c4aefb7b45ac73244137191f9e0cd8e` at `/Users/hinaw/console-kreeper/output/design-sync-20261022/qz-native-20261021T164802Z/qingzhou-linux-arm64`.
+
+Browser evidence is maintained separately in `qz-browser-result.json` by `qz-browser-check.mjs`: compiled standalone and versioned MFE, desktop/mobile, actual Naive injections and synthetic anonymous API fixtures. Production auth/business writes are not exercised. Native activation was separately authorized after candidate preparation; source publication alone is not activation evidence. Current native status and rollback receipt belong to [project authority](../../agent.md).
 
 ## 首页进入控制台与订阅页窄屏本地验收（2026-10-17）
 
