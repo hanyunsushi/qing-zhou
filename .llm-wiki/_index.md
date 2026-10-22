@@ -1,6 +1,6 @@
 ---
 title: QingZhou Fork Wiki
-updated: 2026-10-15
+updated: 2026-10-22
 ---
 
 [Project Authority](../agent.md)
@@ -13,7 +13,6 @@ updated: 2026-10-15
 - [Console Microfrontend](modules/console-microfrontend.md) - Independent Console ESM adapter and embedded lifecycle.
 - [Official Usage](modules/official-usage.md) - direct OCI and Cloudflare provider adapters.
 - [Subscription Auto Renewal](modules/subscription-auto-renew.md) - queued-plan renewal and charging rules.
-- [Subscription Routing](modules/subscription-routing.md) - opt-in Clash CN return-node group and provider rules.
 - [kreeper第一设计系统](modules/kreeper-first-design-system.md) - QingZhou integration boundary; complete spec, sources and reusable assets live in the unified skill.
 
 # APIs
@@ -27,3 +26,5 @@ updated: 2026-10-15
 # Guides
 - [Validation](guides/validation.md) - local verification commands.
 - [Deployment and Artifact Retention](guides/deployment.md) - host-service rollout, Docker rollback images, and safe cleanup.
+
+- [发布、备份与保留合同](guides/operations-retention.md)

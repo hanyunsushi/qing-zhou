@@ -43,11 +43,6 @@ func clashWithProfile(proxies []*Proxy, template string, profile RoutingProfile,
 	if err := yaml.Unmarshal([]byte(template), &doc); err != nil {
 		doc = map[string]any{}
 	}
-	cnReturnNode, _ := doc["x-qingzhou-cn-return-node"].(string)
-	delete(doc, "x-qingzhou-cn-return-node")
-	if strings.TrimSpace(cnReturnNode) != "" {
-		injectCNReturnRouting(doc, strings.TrimSpace(cnReturnNode))
-	}
 	templateGroupsOnly, _ := doc["x-qingzhou-template-groups"].(bool)
 	delete(doc, "x-qingzhou-template-groups")
 	customNames := map[string]bool{}
@@ -87,11 +82,7 @@ func clashWithProfile(proxies []*Proxy, template string, profile RoutingProfile,
 		list[i] = c.m
 	}
 	doc["proxies"] = list
-	clashNodes := kept
-	if strings.TrimSpace(cnReturnNode) != "" {
-		clashNodes = filterClashNodes(kept, cnReturnNode)
-	}
-	sg := buildStrategyGroups(clashNodes)
+	sg := buildStrategyGroups(kept)
 	primary := grpSelectClash
 	if templateGroupsOnly {
 		groups := mapSlice(doc["proxy-groups"])
@@ -104,10 +95,7 @@ func clashWithProfile(proxies []*Proxy, template string, profile RoutingProfile,
 		}
 		doc["proxy-groups"] = groups
 	} else {
-		doc["proxy-groups"] = mergeClashGroups(doc["proxy-groups"], clashGroups(sg), clashNodes)
-	}
-	if strings.TrimSpace(cnReturnNode) != "" {
-		isolateClashNode(doc, cnReturnNode)
+		doc["proxy-groups"] = mergeClashGroups(doc["proxy-groups"], clashGroups(sg), kept)
 	}
 	var catchAll []any
 	if templateGroupsOnly {
@@ -149,167 +137,6 @@ func clashWithProfile(proxies []*Proxy, template string, profile RoutingProfile,
 
 	b, err := yaml.Marshal(doc)
 	return string(b), err
-}
-
-// filterClashNodes keeps the return node as a real proxy but excludes it from
-// every generated/general-purpose group. injectCNReturnRouting adds it back
-// only to the dedicated China selector, so choosing a normal group cannot
-// accidentally send traffic through the domestic egress.
-func filterClashNodes(nodes []*Proxy, excludedName string) []*Proxy {
-	out := make([]*Proxy, 0, len(nodes))
-	for _, node := range nodes {
-		if node.Name == excludedName {
-			continue
-		}
-		out = append(out, node)
-	}
-	return out
-}
-
-func isolateClashNode(doc map[string]any, nodeName string) {
-	groups := mapSlice(doc["proxy-groups"])
-	for _, group := range groups {
-		if name, _ := group["name"].(string); name == cnReturnGroup {
-			continue
-		}
-		switch members := group["proxies"].(type) {
-		case []any:
-			filtered := make([]any, 0, len(members))
-			for _, member := range members {
-				if member == nodeName {
-					continue
-				}
-				filtered = append(filtered, member)
-			}
-			if len(filtered) == 0 {
-				filtered = append(filtered, "DIRECT")
-			}
-			group["proxies"] = filtered
-		case []string:
-			filtered := make([]string, 0, len(members))
-			for _, member := range members {
-				if member != nodeName {
-					filtered = append(filtered, member)
-				}
-			}
-			if len(filtered) == 0 {
-				filtered = append(filtered, "DIRECT")
-			}
-			group["proxies"] = filtered
-		}
-	}
-	doc["proxy-groups"] = groups
-}
-
-const (
-	cnReturnGroup    = "🇨🇳 中国节点"
-	cnDomainProvider = "qz-cn-domain"
-	cnIPProvider     = "qz-cn-ip"
-)
-
-// injectCNReturnRouting turns on the opt-in "回国" path declared by the
-// private template key x-qingzhou-cn-return-node. The node remains an
-// ordinary QingZhou node; only the generated Clash policy gets a dedicated
-// manual selector and CN rules. Keeping this in the renderer means the same
-// setting works with both the built-in and administrator-supplied templates.
-func injectCNReturnRouting(doc map[string]any, nodeName string) {
-	groups := mapSlice(doc["proxy-groups"])
-	withoutCN := make([]map[string]any, 0, len(groups))
-	var cnGroup map[string]any
-	for _, group := range groups {
-		if name, _ := group["name"].(string); name == cnReturnGroup {
-			cnGroup = group
-			continue
-		}
-		withoutCN = append(withoutCN, group)
-	}
-	if cnGroup == nil {
-		cnGroup = map[string]any{
-			"name": cnReturnGroup,
-			"type": "select",
-		}
-	}
-	setCNReturnMembers(cnGroup, nodeName)
-
-	// The China selector belongs next to the normal manual selector, not at the
-	// end of a long template. Keep the built-in selector first when present and
-	// support template-owned selectors such as "🚀 节点选择".
-	insertAt := len(withoutCN)
-	for i, group := range withoutCN {
-		name, _ := group["name"].(string)
-		if name == grpSelectClash || strings.Contains(name, "节点选择") {
-			insertAt = i + 1
-			break
-		}
-	}
-	ordered := make([]map[string]any, 0, len(withoutCN)+1)
-	ordered = append(ordered, withoutCN[:insertAt]...)
-	ordered = append(ordered, cnGroup)
-	ordered = append(ordered, withoutCN[insertAt:]...)
-	doc["proxy-groups"] = ordered
-
-	providers, _ := doc["rule-providers"].(map[string]any)
-	if providers == nil {
-		providers = map[string]any{}
-		doc["rule-providers"] = providers
-	}
-	providers[cnDomainProvider] = map[string]any{
-		"type":     "http",
-		"behavior": "domain",
-		"format":   "yaml",
-		"url":      "https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/direct.txt",
-		"path":     "./ruleset/qz-cn-domain.yaml",
-		"interval": 86400,
-	}
-	providers[cnIPProvider] = map[string]any{
-		"type":     "http",
-		"behavior": "ipcidr",
-		"format":   "yaml",
-		"url":      "https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/cncidr.txt",
-		"path":     "./ruleset/qz-cn-ip.yaml",
-		"interval": 86400,
-	}
-
-	rules, _ := doc["rules"].([]any)
-	cnRules := []any{
-		"RULE-SET," + cnDomainProvider + "," + cnReturnGroup,
-		"RULE-SET," + cnIPProvider + "," + cnReturnGroup + ",no-resolve",
-		"GEOSITE,CN," + cnReturnGroup,
-		"GEOIP,CN," + cnReturnGroup + ",no-resolve",
-	}
-	// Keep private-network and ad rules ahead of the CN selectors, then place
-	// the selectors before all administrator rules so an old CN,DIRECT entry
-	// cannot steal traffic from the opt-in return path.
-	ruleInsertAt := 0
-	for ruleInsertAt < len(rules) {
-		rule, _ := rules[ruleInsertAt].(string)
-		upper := strings.ToUpper(strings.TrimSpace(rule))
-		if strings.HasPrefix(upper, "GEOSITE,PRIVATE,") ||
-			strings.HasPrefix(upper, "GEOIP,PRIVATE,") ||
-			strings.HasPrefix(upper, "GEOSITE,CATEGORY-ADS-ALL,") {
-			ruleInsertAt++
-			continue
-		}
-		break
-	}
-	kept := make([]any, 0, len(rules)+len(cnRules))
-	kept = append(kept, rules[:ruleInsertAt]...)
-	kept = append(kept, cnRules...)
-	kept = append(kept, rules[ruleInsertAt:]...)
-	doc["rules"] = kept
-}
-
-func setCNReturnMembers(group map[string]any, nodeName string) {
-	items, _ := group["proxies"].([]any)
-	members := []any{"DIRECT", nodeName}
-	for _, item := range items {
-		name, ok := item.(string)
-		if !ok || name == "DIRECT" || name == nodeName {
-			continue
-		}
-		members = append(members, item)
-	}
-	group["proxies"] = members
 }
 
 var clashDomesticDNS = []any{

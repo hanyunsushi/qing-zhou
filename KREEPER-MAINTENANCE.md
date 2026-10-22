@@ -32,6 +32,11 @@ Checkbox4px/无点击外晕、HeroUI源样式普通Radio、分页8px方角与选
 
 # Kreeper QingZhou 定制维护
 
+## 2026-10-22 国内回国节点能力退役
+
+- 删除 Clash 专用回国节点选择组、模板开关、provider 注入和节点隔离实现。生产仅移除对应外部节点及模板配置，通用“全部节点”组、套餐授权、其它节点和 `cn-direct` 国内分流保留。
+- 本机专用 mac-cn-return connector 与 sing-box 入站随该节点退役；OCI 上的 sing-box 节点服务和共享 Cloudflare Tunnel 保持原状。
+
 ## v0.2.114 UI合同同步（2026-10-16，已发布部署）
 
 QingZhou `34c3d3b`、canonical `7d42361`已同步推送main，[Release](https://github.com/hanyunsushi/qing-zhou/releases/tag/v0.2.114-kreeper-20261016-ui-contract-sync)与CI/Release workflow成功。已确认的按钮/状态牌、文件夹/数字、加载/页签/仪表和双区下拉改动均纳入；项目、注释与完整示范一致。
@@ -379,19 +384,6 @@ sing-box/Tunnel 配置均未被替换；公网/本机 health、新 JS/CSS 资源
 - 用户控制台“流量用量”卡片新增当前 UTC 日 Edge 次数额度展示，复用 `/api/user/dashboard` 的 `edge_requests` 汇总，不改变 OCI/原生流量统计。
 - 套餐管理页在创建套餐左侧新增“强制推送”。管理员二次确认后，`POST /api/admin/packages/force-sync` 将所有仍持有且套餐仍存在的非退休计划桶同步到当前套餐定义；多时长按原桶时长匹配，已删除时长回退第一档；流量和 Edge 当日已用清零，购买记录、积分、有效期、队列状态和历史报表保留。该操作不会自动推进或重排队列，提交后清理受影响用户的订阅缓存并异步安排节点配置刷新；流量包已合并到通用流量池，不属于可回写的套餐桶。
 - 功能源码提交 `8fded8f`、队列回归测试提交 `70d1023` 和源码基线 `c0b46be` 已推送 Fork；部署记录由提交 `2767cef` 同步。已构建并部署 `v0.2.80-kreeper-c0b46be` 到 OCI 宿主 `/opt/qingzhou/qingzhou`，active SHA-256 为 `71a013cb483e5bcea6cdcf8d2a5d4e5bd8b432e349ceaa2ccbe380ac3068e893`。回滚材料位于 `/opt/qingzhou/backups/edge-quota-force-sync-c0b46be-20260921-025700/`，数据库快照完整性为 `ok`；仅重启 `qingzhou.service`，三个服务、三个监听端口、本机/公网健康接口和公网新前端资源均验收通过。
-
-## 2026-09-21 Clash 回国节点组隔离（已部署）
-
-- Clash/Mihomo 输出继续保留真实节点 `🏠🇨🇳中国-境外回国`，但从普通 `🚀 节点选择`、固定节点、故障转移、负载均衡和模板 `all` 展开结果中排除；该节点只出现在 `🇨🇳 中国节点` 组中，成员顺序仍为 `DIRECT`、回国节点。这样普通境外节点组的选择不会意外接管境外流量。
-- 变更位于 `internal/subconv/clash.go`，覆盖模板组和内置组；sing-box、Surge、节点授权和节点本身不变。源码提交 `496708a` 已构建并发布为 `v0.2.80-kreeper-496708a`，active 二进制 SHA-256 为 `3ec9f930d1dd0837fea2a818a508e745c552a9f6d18a33d413f7b9c68c291b2a`，回滚材料位于 `/opt/qingzhou/backups/cn-return-isolate-496708a-20260921-015739/`。`go test ./...` 通过；公网健康、三个服务、三个端口和真实 Clash 订阅验收均通过。
-
-## 2026-09-20 Clash 回国节点策略组支持（已部署，DNS 待补）
-
-- QingZhou Fork 新增模板私有键 `x-qingzhou-cn-return-node`。管理员在「系统设置 → Clash 模板（YAML）」中填入实际节点名 `🏠🇨🇳中国-境外回国` 后，所有格式为 Clash/Mihomo 的同一订阅会自动增加 `🇨🇳 中国节点` 手动选择组；不新增套餐、不新增订阅，节点继续沿用原有授权。
-- 渲染器使用 Loyalsoldier `clash-rules` 的 `direct.txt` 和 `cncidr.txt` 作为中国域名/IP规则集，并在现有私有网段/广告规则之后、其他管理员规则之前插入规则；同时保留 `GEOSITE,CN` 与 `GEOIP,CN` 兜底。这样用户只需在 `🇨🇳 中国节点` 组内选择 `🏠🇨🇳中国-境外回国`，其他策略组不变。
-- 私有键会从输出中删除，不会泄露到客户端配置；未填写时渲染行为保持不变。源码提交 `e6e1343` 已构建为 ARM64 `v0.2.80-kreeper-e6e1343` 并部署到 `/opt/qingzhou/qingzhou`，active SHA-256 为 `0a5fc2eb9f4e13373d66a887ccc3aafeae4608b9be0383159a61b167ce28d34d`。生产节点 ID 为 `971`，数据库备份位于 `/opt/qingzhou/backups/cn-return-db-20260920-092649/`，二进制回滚包位于 `/opt/qingzhou/backups/cn-return-e6e1343-20260920-093153/`。
-- 本机 Mac sing-box 使用受限回环 `127.0.0.1:18080` 的 VLESS+WebSocket 入站；专用 Tunnel `mac-cn-return`（ID `31fb9cb1-d82c-41c2-95d3-01b26cb55a83`）已配置 `cn-return.kreeper.cc` ingress，连接器由 macOS LaunchAgent `com.cloudflare.mac-cn-return` 持久化并保持 healthy。Cloudflare 权威 DNS 当前仍对 `cn-return.kreeper.cc` 返回 NXDOMAIN，DNS 写权限不足是公网连通验收的唯一阻塞；补 DNS 后需重新验证 TLS、WebSocket、Clash 节点握手和中国出口 IP。
-- 后续修正已将 `🇨🇳 中国节点` 放在普通节点选择组之后，并固定成员顺序为 `DIRECT`、`🏠🇨🇳中国-境外回国`；因此新渲染订阅默认国内直连，用户仍可手动切换该组到回国节点。源码 `82a741e` 已构建并发布为 `v0.2.80-kreeper-82a741e`，active 二进制 SHA-256 为 `905021ee4a4756b1fccfbbbf14f4cb3542e71ec2caeb61a91e90ef212b7af544`，回滚材料位于 `/opt/qingzhou/backups/cn-return-direct-82a741e-20260920-122438/`；公网健康接口已返回新版本，三个服务均 active。
 
 ## 2026-09-20 OCI 默认额度修正为二进制 10 TB
 

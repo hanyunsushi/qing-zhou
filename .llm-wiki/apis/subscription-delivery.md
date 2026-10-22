@@ -1,6 +1,6 @@
 ---
 title: Subscription Delivery
-updated: 2026-09-18
+updated: 2026-10-22
 ---
 
 # Subscription Delivery
@@ -20,3 +20,7 @@ The behavior is implemented in `internal/api/subinfo.go` and covered by `interna
 ## Node order
 
 The nodes in the rendered profile follow the global `nodes.sort_order` sequence. This sequence includes both external nodes and self-built native nodes; it is not rebuilt as “external first, self-built last.” A subscription-source refresh preserves the order of unchanged share links and places newly discovered links after the current maximum. The ordering path is implemented in `internal/api/user.go` and `internal/store/nodes.go`.
+
+## Routing profiles
+
+The user-selected `cn-direct` and `proxy-all` profiles remain available for supported native subscription formats. The dedicated Clash return-node selector and its template key/provider injection have been removed; general node groups and the independent CN-direct routing profile are unchanged.
