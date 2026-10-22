@@ -28,3 +28,7 @@ Reviewed working-tree changes: supplied shared feedback/optional actions, perman
 ## Current brand and login feedback delta
 
 Host brand-only private font subsets/preload/readiness prevent cold-load fallback and child face collisions. AI browser-bubble suppression retains the original validation gate, accessible field errors and original agreement model. Shared message semantic SVG/paint padding synchronized across AI/QZ/canonical. Host37, AI12 focused, QZ230, canonical50 contracts and121/59/311 audit plus native/sealed builds pass; actual local desktop/narrow login/font evidence and production HTTP/runtime evidence are separate. Console `console-20261020-font-login-b` / rollback `console-20261020-marketing-c` preserves sealed marketingC; AI0.2.16 and QZv0.2.80 retain backend/config/data and rollback. Authority and affected architecture/module/validation owners updated; no new source commit. This supplements the still-valid project/version/marketing boundaries above without replacing another task's pending source work.
+
+# 发布与恢复收尾
+
+运维合同及当前产物/恢复材料已同步。源码发布和文档后续提交分别记录；历史数据缺口不伪造恢复点。详细验证与真实运行身份归agent.md及operations-retention。
