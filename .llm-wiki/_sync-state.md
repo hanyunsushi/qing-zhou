@@ -1,34 +1,27 @@
 ---
-title: Current Documentation Sync State
-updated: 2026-10-21
+title: 本地前端、发布门槛与本机服务边界同步状态
+updated: 2026-10-29
+head_commit: 4320cff27340ad09395802d5b39f66469fc95a05
 ---
 
-# Scope
+# 范围
 
-Current publication: accumulated frontend/Console integration plus canonical hover/material/placeholder synchronization. This is a source commit/push, not a production rollout. Product v0.2.80 and historical deployment evidence remain separate. The schema records the committed base; the containing publication commit owns the reviewed increment.
-
-Validation on this publication:232 frontend tests; standalone and microfrontend typecheck/build/artifact checks; Go tests/vet. Neutral/default-arc/header triggers share unchanged text-2 and400ms gray inset hover; solid primary/copy/confirmation buttons use32px/32% white inset light without ring growth. Shared message panels use topbar glass; empty/result illustrations use the supplied transparent SVG. Canonical audit121sources/59patterns/315hashes and50 contracts/typecheck/isolated build pass. Current local showcase computed styles confirm8px neutral geometry, text-2,1px rings,Apple blue/white primary and400ms pseudo-layer transitions; this is not authenticated application or production visual acceptance. No new visual category or font/chart rule.
-
-QingZhou custom usage-report calendar and settings transition scroll boundary; actual upstream version and optional read-only update publication.
+同步本地前端设计系统接入、隔离图标候选、生产只读核对及发布门槛，同时保留Mac本机服务停用和按需恢复合同。当前HEAD、暂存及未暂存文件清单已核对；原有订阅/部署/维护文档修改保留，并与本轮部署事实分开记录。
 
 # Doc Impact Map
 
-AdminUsageReport/date-range bridge/shift5/CSS scoper → design-system module. Optional onVersionStatus/checkVersion → console-microfrontend. Canonical source references/patterns/hashes are reviewed separately. Authority owns current binary/upstream version, backups and evidence.
+- 本机运行状态、停用事实及数据边界由[项目权威文档](../agent.md#本机服务状态2026-10-23)管理。
+- 按需恢复步骤见[开发指南](guides/deployment.md)。
+- 按钮、表单、Apple语义色、Ionicons MIT配对资源、布局和图表容器变化映射至[设计模块](modules/kreeper-first-design-system.md#当前前端接入合同)。
+- 测试、构建、浏览器路由/交互/MFE的证据与未测边界映射至[验证指南](guides/validation.md#设计系统前端核对2026-10-29)。
+- 本地接入范围、临时服务收尾及生产边界由[项目权威](../agent.md#前端设计系统发布2026-10-29已部署)管理；无后端/API/数据库迁移或产品版本变更；CI仅补齐维护锁和测试工具声明。
 
-# Validation and ownership
+# 发布准备
 
-Host35 tests/typecheck, AI35 focused tests/changed-source lint/typecheck/native build, QingZhou229 tests/typecheck/native build and all three sealed Console builds pass. Canonical audit115 sources/56 patterns/292 package hashes and49 isolated contracts/typecheck/build pass. Browser fixtures cover date Apply/Cancel and original time precision, stable monitor countdown, QingZhou no added document height, independent version click and representative responsive layouts360..1920. QingZhou calendar browser evidence uses compiled Console, not a successful standalone synthetic-browser result. Production Console resource identity and read-only calendar/version/settings navigation were checked with an existing session; no data/settings/authentication/update installation was submitted. Native rollouts have independent runtime/asset evidence. Exact releases, source hashes and rollback receipts belong to each authority.
+用户已确认 Ionicons 替代并授权部署。源码提交 `2103dbce9d373e60150d54153c7ba3cf6eb58eeb` 已推送；CI `40742462521` 通过。原生 SHA-256 `28f9b173ac7f0155d75f7a753b321fbceb83939a0d3d57bdd518ce37ee370bc2` 已激活，健康为 `v0.2.80/ok`；Console 当前为 `console-20261029-qingzhou-design-c`，基于最新并发指针 `console-20261029-marketing-scrollbar-a` 重建。原生 307 项资源、Console 9 条路由/19 项直接资源、公网 79 项资源哈希、390px 无横溢出通过。恢复点、私有副本和保留清理回执归项目权威与 Deployment；未执行 volume prune、`down -v` 或数据库覆盖。
 
-Original business APIs, authentication, permissions, protected config and formal data remain unchanged. AI OCI operations-guide diff remains protected with SHA256 b7ff351eb5eb0a40dfd6957228e45f2911f6e78e93307888fd63c75667a8dce0. Existing unrelated authorized dirty changes remain. Wiki/schema sync uses current committed HEAD plus reviewed working-tree changes; no new source commit is implied.
+# 验证范围
 
-## 2026-10-20 feedback source refresh
+238项前端测试、standalone/MFE构建与产物检查通过；合成API浏览器248个路由/宽度样本、8组交互、6个MFE样本通过。预期认证401及生产/物理设备未验边界按验证指南记录。Wiki18页、188个本地链接、45处源码文件引用无断链、孤立页或缺失文件；权威软链接、双向入口与diff格式检查通过。当前 HEAD 为上方代码提交之后的文档同步工作树；本轮文档修改待提交，原有运维文档 dirty 修改保留。
 
-Reviewed working-tree changes: supplied shared feedback/optional actions, permanent AI onboarding disable, direct preloaded settings switching, plugin notice/checkbox styling. Canonical121sources/59patterns/311hashes,50contracts, Host37/AI52/QZ230 and native/sealed builds pass. Console `console-20261020-feedback-a`/previous `console-20261020-z`, AI0.2.16 image `sha256:45735afdc64b070e0896abf42cd10c75bd1f55531427f6c40571d639ea883122`, QZv0.2.80 binary `38147f7ab0ded2b26564a10db833548d30be9914f19c5f13e75102069a52fa2a` published with rollback; backend/config/data retained. Authority and affected module/deployment/validation pages synchronized; no new source commit. Detailed evidence is owned by Console output/feedback-refresh and output/playwright/feedback-refresh-*.json.
-
-## Current brand and login feedback delta
-
-Host brand-only private font subsets/preload/readiness prevent cold-load fallback and child face collisions. AI browser-bubble suppression retains the original validation gate, accessible field errors and original agreement model. Shared message semantic SVG/paint padding synchronized across AI/QZ/canonical. Host37, AI12 focused, QZ230, canonical50 contracts and121/59/311 audit plus native/sealed builds pass; actual local desktop/narrow login/font evidence and production HTTP/runtime evidence are separate. Console `console-20261020-font-login-b` / rollback `console-20261020-marketing-c` preserves sealed marketingC; AI0.2.16 and QZv0.2.80 retain backend/config/data and rollback. Authority and affected architecture/module/validation owners updated; no new source commit. This supplements the still-valid project/version/marketing boundaries above without replacing another task's pending source work.
-
-# 发布与恢复收尾
-
-运维合同及当前产物/恢复材料已同步。源码发布和文档后续提交分别记录；历史数据缺口不伪造恢复点。详细验证与真实运行身份归agent.md及operations-retention。
+本轮临时预览服务完成验证后关闭；launchd停用、后端8081停止及OCI不操作的边界保持。原本机停机检查的Docker状态/重启策略结论仅按项目权威证据保留，未重新推断业务验收；OpenStock匿名卷例外未宣称数据恢复。未操作共享运维脚本、生产服务或设计技能仓库。

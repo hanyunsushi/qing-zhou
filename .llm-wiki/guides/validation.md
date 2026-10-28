@@ -3,11 +3,17 @@ title: Validation Guide
 updated: 2026-10-29
 ---
 
+## 生产前端部署验收（2026-10-29）
+
+源码提交 `2103dbce9d373e60150d54153c7ba3cf6eb58eeb` 的 Ionicons 前端已部署到原生 QingZhou 和 Console 的 Kreeproxy MFE。CI `40742462521` 全部通过；原生 `/opt/qingzhou/qingzhou` 与 `/proc` 运行文件 SHA-256 均为 `28f9b173ac7f0155d75f7a753b321fbceb83939a0d3d57bdd518ce37ee370bc2`，版本 `v0.2.80`，健康 `ok`，307 项静态资源逐项匹配。Console 当前 release 为 `console-20261029-qingzhou-design-c`，基于部署前实际指针 `console-20261029-marketing-scrollbar-a` 保留其他应用源；本机9条路由/19项资源、公网健康和79项资源精确哈希通过。
+
+生产匿名浏览器检查覆盖独立 QingZhou 与 Console 桌面/390px页面；Console 390px `scrollWidth===innerWidth`，两页未记录脚本错误，Ionicons SVG实际出现。浏览器截图及机器可读结果位于 `output/design-release-20261029/production-console-desktop.png`、`production-console-mobile.png`、`production-native-desktop.png`、`public-browser.json` 与 `public-verification.json`。真实账号登录、业务写入、物理触摸和所有受保护页面仍是未测边界。
+
 ## 替代图标候选核验
 
 隔离候选 `output/design-release-20261029/ionicons-candidate/` 使用原有MIT Ionicons的47个语义映射、46组真实轮廓/实心配对，用户确认后已应用到工作区，SF图形数据和专属组件已移除。候选238项测试、standalone和MFE类型/构建/产物检查通过；实际编译浏览器31条路由×8宽度共248个样本无根文档/body横溢出，8组交互保持真实选中/展开切换、悬停只变色、圆点复选框/复制/日期/确认/触摸及低动态行为。合成Host的6个MFE样本通过作用域、菜单和卸载检查，无错误记录。预期匿名与拒绝登录401按夹具记录，不将其当作脚本异常。
 
-候选与本地SF版的截图、导出来源、完整日志及方案说明集中于 `output/design-release-20261029/`。用户已确认图标替代；产物检查与实际上线回执分开记录。生产只读核对、发布门槛及授权边界归[Deployment](deployment.md#图标发布门槛)和[项目权威](../../agent.md#前端设计系统发布2026-10-29构建中)。
+候选与本地SF版的截图、导出来源、完整日志及方案说明集中于 `output/design-release-20261029/`。用户已确认图标替代；产物检查与实际上线回执分开记录。生产只读核对、发布门槛及授权边界归[Deployment](deployment.md#图标发布门槛)和[项目权威](../../agent.md#前端设计系统发布2026-10-29已部署)。
 
 ## 设计系统前端核对（2026-10-29）
 

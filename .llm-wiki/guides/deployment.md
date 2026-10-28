@@ -1,7 +1,27 @@
 ---
 title: QingZhou Deployment and Artifact Retention
-updated: 2026-10-22
+updated: 2026-10-29
 ---
+
+## 图标发布门槛
+
+用户已确认本项目把SF图形替换为现有 `@vicons/ionicons5@0.12.0` 依赖中的MIT轮廓/实心图形，47个语义映射/46组配对（92个导出），保留原几何和声明。源代码使用 `InterfaceIcon.vue`/`InterfaceIconReact.tsx`；SF图形数据和专属渲染组件已移除。此项目的替代决定不自动修改其他项目或全局设计系统。
+
+源码发布、原生嵌入二进制和Console定向不可变发布继续沿既有授权；产品版本保持真实上游v0.2.80，构建提交另记。生产身份与回滚归[项目权威](../../agent.md)，代码/浏览器检查归[Validation](validation.md#替代图标候选核验)。
+
+## 本机服务的停用与恢复
+
+本机预览状态由[项目权威文档](../../agent.md#本机服务状态2026-10-23)维护。恢复时对 `com.hinaw.qingzhou-preview` 和 `com.hinaw.qingzhou-preview-frontend` 分别执行 `launchctl enable gui/$(id -u)/LABEL`，再以对应 `~/Library/LaunchAgents/LABEL.plist` 执行 `launchctl bootstrap gui/$(id -u) PLIST`。只杀进程不能停用KeepAlive；应先disable并bootout。此操作仅作用于Mac预览。
+
+## QingZhou Ionicons frontend release and activation 2026-10-29
+
+用户确认以 MIT Ionicons 替换原项目 SF 图形后，源码提交 `2103dbce9d373e60150d54153c7ba3cf6eb58eeb` 及 CI 修复提交已推送 `origin/main`；产品版本保持真实上游 `v0.2.80`。CI `40742462521` 通过，原生构建输入为 clean `2103dbce` archive，Console MFE 也从该输入重建。
+
+原生候选以 `/opt/qingzhou/qingzhou` 的旧 SHA 为 guard，基于最新恢复点完成备份后原子替换，只重启 `qingzhou.service`。当前二进制 SHA-256 为 `28f9b173ac7f0155d75f7a753b321fbceb83939a0d3d57bdd518ce37ee370bc2`；health=`ok`/`v0.2.80`，SQLite integrity=`ok`，17项受保护配置、认证设置、sing-box/Tunnel、12个容器与307项资源保持/通过。原生回滚套件是 `design-20261029-2103dbc`、`closeout-20261022-45ebf4b`、`design-sync-20261021T164802Z`。
+
+Console 激活前重新读取线上指针 `console-20261029-marketing-scrollbar-a`，将 QingZhou MFE 合并为不可变 `console-20261029-qingzhou-design-c`；Host 与其他应用文件保持。安装后原子切换 `current`，本机验证9条路由和19项资源；公网健康、79项精确资源哈希及匿名桌面/390px浏览器验证通过。备份与回执在 `/home/ubuntu/oci-recovery/console/20261028T181758Z`、`/home/ubuntu/oci-recovery/qingzhou/20261028T181137Z` 和 `/home/ubuntu/oci-recovery/receipts/qingzhou-design-20261029/`。
+
+收尾使用共享 retention 工具完成 dry-run/seal 后 apply，保留当前 Console 加 `console-20261029-marketing-scrollbar-a`、`console-20261029-marketing-tables-a`、`console-20261029-marketing-antv-a` 三个回滚版；原生保留当前版加上面三个套件。只清理已验证无引用的旧 Console 树、未激活候选、旧原生回滚和临时 stage；不清理容器/镜像/卷，不执行 `volume prune` 或 `down -v`。私有异机材料位于 `~/.local/share/oci-recovery/20261029-qingzhou-design/`，目录0700/文件0600。
 
 ## Native feedback release and activation 2026-10-22
 
