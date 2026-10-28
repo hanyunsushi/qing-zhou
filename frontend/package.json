@@ -37,6 +37,7 @@
     "@vitejs/plugin-vue": "^5.2.0",
     "@vue/compiler-dom": "3.5.44",
     "@vue/compiler-sfc": "3.5.44",
+    "esbuild": "0.25.12",
     "postcss": "^8.5.16",
     "tailwindcss": "^4.3.3",
     "typescript": "~5.7.0",

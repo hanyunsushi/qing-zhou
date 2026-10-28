@@ -72,6 +72,9 @@ importers:
       '@vue/compiler-sfc':
         specifier: 3.5.44
         version: 3.5.44
+      esbuild:
+        specifier: 0.25.12
+        version: 0.25.12
       postcss:
         specifier: ^8.5.16
         version: 8.5.31
