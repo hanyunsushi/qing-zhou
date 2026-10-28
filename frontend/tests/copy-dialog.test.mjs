@@ -44,7 +44,7 @@ test('copy button hover and press change colors only with a fixed keyboard focus
   assert.equal(states.transform, 'none')
   assert.equal(states['box-shadow'], 'none')
   assert.doesNotMatch(states.transition, /box-shadow|transform/)
-  assert.match(css, /\.n-input-group\.copy-field > \.n-button > :is\(\.n-button__border, \.n-button__state-border\) \{ box-shadow: none !important; transition: border-color \.22s var\(--ease-standard\) !important; \}/)
+  assert.match(css, /\.n-input-group\.copy-field > \.n-button > :is\(\.n-button__border, \.n-button__state-border\) \{ box-shadow: none !important; transition: border-color var\(--button-hover-duration\) var\(--button-hover-easing\) !important; \}/)
   const focus = declarations('.n-input-group.copy-field > .n-button:not(.n-button--disabled):focus-visible')
   assert.equal(focus.outline, '2px solid var(--copy-focus-color)')
   assert.equal(focus['outline-offset'], '-3px')

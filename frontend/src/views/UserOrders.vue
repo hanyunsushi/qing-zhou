@@ -8,7 +8,7 @@
       </div>
       <!-- 强调按钮：订单页右上角商城入口与控制台保持同一强调按钮合同。 -->
       <n-button size="small" type="primary" class="action-button action-button--emphasis" @click="router.push('/shop')">
-        <template #icon><n-icon><CartOutline /></n-icon></template>
+        <template #icon><InterfaceIcon name="shop" /></template>
         去商城
       </n-button>
     </div>
@@ -127,7 +127,7 @@
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { NCard, NSpin, NEmpty, NButton, NTag, NRadioGroup, NRadioButton, NSelect, NInput, NIcon } from 'naive-ui'
-import { CartOutline } from '@vicons/ionicons5'
+import InterfaceIcon from '@/components/InterfaceIcon.vue'
 import * as echarts from '@/utils/echarts'
 import { apiList } from '@/api'
 import { fmtDateTime, timeAgo, yuan } from '@/utils/format'
@@ -228,6 +228,9 @@ const pieEl = ref<HTMLElement | null>(null)
 const barEl = ref<HTMLElement | null>(null)
 let pie: echarts.ECharts | null = null
 let bar: echarts.ECharts | null = null
+// 展示信息模块：图表跟随真实内容容器，包含侧栏折叠和窄屏重排。
+let chartObserver: ResizeObserver | null = null
+let chartResizeFrame = 0
 
 const PIE = ['#688ae8', '#c33d69', '#2ea597', '#8456ce', '#e07941', '#3759ce', '#962249', '#096f64']
 const C = { up: '#2ea597', down: '#c33d69', gold: '#e07941', info: '#688ae8' }
@@ -328,17 +331,25 @@ function draw() {
   }
 }
 
-function onResize() { pie?.resize(); bar?.resize() }
+function onResize() {
+  cancelAnimationFrame(chartResizeFrame)
+  chartResizeFrame = requestAnimationFrame(() => { pie?.resize(); bar?.resize() })
+}
 
 onMounted(async () => {
   loading.value = true
   try { orders.value = await apiList('/api/user/orders') } catch {} finally { loading.value = false }
   await nextTick()
   draw()
+  chartObserver = new ResizeObserver(onResize)
+  if (pieEl.value) chartObserver.observe(pieEl.value)
+  if (barEl.value) chartObserver.observe(barEl.value)
   window.addEventListener('resize', onResize)
 })
 
 onUnmounted(() => {
+  chartObserver?.disconnect()
+  cancelAnimationFrame(chartResizeFrame)
   window.removeEventListener('resize', onResize)
   pie?.dispose(); pie = null
   bar?.dispose(); bar = null
@@ -377,8 +388,11 @@ onUnmounted(() => {
 .sec { margin-bottom: 14px; border-radius: var(--r-sm); }
 .sec-title { font-weight: 650; font-size: 14px; }
 .sec-note { font-size: 11.5px; color: var(--text-3); margin-left: 10px; font-weight: 400; }
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-.chart { width: 100%; }
+/* 展示信息模块：Canvas旧尺寸不撑开网格；两列按正文容器降为一列。 */
+.two-col { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 14px; min-width: 0; }
+.two-col > * { min-width: 0; }
+@container qingzhou-content (max-width:900px) { .two-col { grid-template-columns: minmax(0, 1fr); } }
+.chart { width: 100%; min-width: 0; }
 
 /* ---- 筛选栏 ---- */
 .filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; }
@@ -429,5 +443,5 @@ onUnmounted(() => {
 /* 区分-状态：退款返还积分提示使用 Apple 警告色。 */
 .oi-refund { font-size: 11.5px; color: var(--warn); margin-top: 2px; font-variant-numeric: tabular-nums; }
 
-@media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .two-col { grid-template-columns: minmax(0, 1fr); } }
 </style>

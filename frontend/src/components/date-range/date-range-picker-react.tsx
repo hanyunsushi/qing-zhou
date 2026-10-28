@@ -29,13 +29,13 @@ import {
 } from "motion/react";
 import type { Transition, Variants } from "motion/react";
 import {
-  CalendarDays,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
 import { motionTokens } from "./date-range-picker-utils/motion-tokens";
 import styles from "./date-range-picker-utils/date-range-picker.module.css";
+import { InterfaceIcon } from "../InterfaceIconReact";
 
 /** An inclusive range of whole days. */
 export interface DateRange {
@@ -1144,7 +1144,7 @@ export function DateRangePicker({
           animate={quiet}
           transition={quietTransition}
         >
-          <CalendarDays size={16} strokeWidth={1.75} aria-hidden="true" />
+          <InterfaceIcon name="date" size={16} filled={open} />
         </motion.span>
         {open || !layoutId ? (
           <motion.span

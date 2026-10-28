@@ -185,6 +185,9 @@ const pieEl = ref<HTMLElement | null>(null)
 const barEl = ref<HTMLElement | null>(null)
 let pie: echarts.ECharts | null = null
 let bar: echarts.ECharts | null = null
+// 展示信息模块：图表跟随真实内容容器，包含侧栏折叠和窄屏重排。
+let chartObserver: ResizeObserver | null = null
+let chartResizeFrame = 0
 
 const PIE = ['#688ae8', '#c33d69', '#2ea597', '#8456ce', '#e07941', '#3759ce', '#962249', '#096f64']
 const C = { up: '#2ea597', down: '#c33d69', gold: '#e07941', info: '#688ae8' }
@@ -285,7 +288,10 @@ function draw() {
   }
 }
 
-function onResize() { pie?.resize(); bar?.resize() }
+function onResize() {
+  cancelAnimationFrame(chartResizeFrame)
+  chartResizeFrame = requestAnimationFrame(() => { pie?.resize(); bar?.resize() })
+}
 
 onMounted(async () => {
   loading.value = true
@@ -299,10 +305,15 @@ onMounted(async () => {
   computeRecent()
   await nextTick()
   draw()
+  chartObserver = new ResizeObserver(onResize)
+  if (pieEl.value) chartObserver.observe(pieEl.value)
+  if (barEl.value) chartObserver.observe(barEl.value)
   window.addEventListener('resize', onResize)
 })
 
 onUnmounted(() => {
+  chartObserver?.disconnect()
+  cancelAnimationFrame(chartResizeFrame)
   window.removeEventListener('resize', onResize)
   pie?.dispose(); pie = null
   bar?.dispose(); bar = null
@@ -341,8 +352,11 @@ onUnmounted(() => {
 .sec { margin-bottom: 14px; border-radius: var(--r-sm); }
 .sec-title { font-weight: 650; font-size: 14px; }
 .sec-note { font-size: 11.5px; color: var(--text-3); margin-left: 10px; font-weight: 400; }
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-.chart { width: 100%; }
+/* 展示信息模块：Canvas旧尺寸不撑开网格；两列按正文容器降为一列。 */
+.two-col { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 14px; min-width: 0; }
+.two-col > * { min-width: 0; }
+@container qingzhou-content (max-width:900px) { .two-col { grid-template-columns: minmax(0, 1fr); } }
+.chart { width: 100%; min-width: 0; }
 
 /* 筛选栏 */
 .filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
@@ -386,5 +400,5 @@ onUnmounted(() => {
 .tx-amt.down { color: var(--danger-text); }
 .tx-bal { font-size: 11.5px; color: var(--text-3); margin-top: 3px; font-variant-numeric: tabular-nums; }
 
-@media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .two-col { grid-template-columns: minmax(0, 1fr); } }
 </style>

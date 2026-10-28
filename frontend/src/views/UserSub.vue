@@ -8,7 +8,7 @@
       </div>
       <n-space size="small">
         <n-button size="small" secondary @click="router.push('/dashboard')">
-          <template #icon><n-icon><SpeedometerOutline /></n-icon></template>
+          <template #icon><InterfaceIcon name="inventory" /></template>
           控制台
         </n-button>
         <!-- 普通按钮：复用控制台“订阅管理”的尺寸、文字和中性 ring。 -->
@@ -396,7 +396,7 @@
 import { ref, computed, onMounted, h, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { NCard, NInput, NInputGroup, NButton, NDataTable, NTag, NTooltip, NSelect, NSpace, NModal, NForm, NFormItem, NSwitch, NCheckbox, NDatePicker, NProgress, NIcon, NEmpty, useMessage, useDialog } from 'naive-ui'
-import { SpeedometerOutline } from '@vicons/ionicons5'
+import InterfaceIcon from '@/components/InterfaceIcon.vue'
 import { apiGet, apiList, apiPost, apiPut } from '@/api'
 import { useAuthStore } from '@/stores/auth'
 import { fmtBytes, fmtTotal, fmtDate, pct } from '@/utils/format'

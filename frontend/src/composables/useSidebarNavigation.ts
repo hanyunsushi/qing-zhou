@@ -1,13 +1,13 @@
 import { h, computed } from 'vue'
-import { NIcon, type MenuOption, type MenuGroupOption } from 'naive-ui'
+import type { MenuOption, MenuGroupOption } from 'naive-ui'
 import type { ConsoleNavigationItem } from '@/runtime/console-actions'
-import {
-  SpeedometerOutline, LinkOutline, CartOutline, ReceiptOutline, WalletOutline, MegaphoneOutline, BookOutline,
-  PersonOutline, PeopleOutline, PeopleCircleOutline, ArchiveOutline, ServerOutline, SettingsOutline, KeyOutline,
-  NotificationsOutline, DocumentTextOutline, PulseOutline, HardwareChipOutline, HomeOutline, CloudDownloadOutline,
-  CloudOutline, ShieldCheckmarkOutline,
-} from '@vicons/ionicons5'
-function renderIcon(icon: any) { return () => h(NIcon, null, { default: () => h(icon) }) }
+import InterfaceIcon from '@/components/InterfaceIcon.vue'
+import { interfaceSymbols, type InterfaceSymbolName } from '@/utils/interface-symbols'
+// 侧边栏 / 卡片SVG：Ionicons真实配对，选中/展开切Fill；菜单权限和导航不变。
+function sidebarIcon(name: InterfaceSymbolName) {
+  const pair = interfaceSymbols[name]
+  return { icon: () => h(InterfaceIcon, { name }), sidebarSymbol: pair.name, sidebarSelectedSymbol: pair.filledName }
+}
 function groupLabel(text: string) {
   return () => h('span', { class: 'menu-group-label', title: text }, [
     h('i', { class: 'menu-group-dot', 'aria-hidden': 'true' }),
@@ -24,48 +24,48 @@ function menuSection(key: string, label: string, children: MenuOption[]): Sideba
 
 // 侧边栏菜单归类级别：二级菜单项，直接挂在一级归类下，保留 SVG 图标。
 const userMenuItems: MenuOption[] = [
-  { label: '控制台', key: '/dashboard', icon: renderIcon(SpeedometerOutline) },
-  { label: '订阅管理', key: '/sub', icon: renderIcon(LinkOutline) },
+  { label: '控制台', key: '/dashboard', ...sidebarIcon('inventory') },
+  { label: '订阅管理', key: '/sub', ...sidebarIcon('subscription') },
 ]
 
 // 侧边栏菜单归类级别：二级菜单项，直接挂在一级归类下，保留 SVG 图标。
 const shopItems: MenuOption[] = [
-  { label: '订阅套餐', key: '/shop', icon: renderIcon(CartOutline) },
-  { label: '订单记录', key: '/orders', icon: renderIcon(ReceiptOutline) },
-  { label: '积分明细', key: '/points', icon: renderIcon(WalletOutline) },
+  { label: '订阅套餐', key: '/shop', ...sidebarIcon('shop') },
+  { label: '订单记录', key: '/orders', ...sidebarIcon('orders') },
+  { label: '积分明细', key: '/points', ...sidebarIcon('points') },
 ]
 
 // 侧边栏菜单归类级别：信息下只保留普通二级菜单项。
 const infoLeafItems: MenuOption[] = [
-  { label: '公告通知', key: '/notices', icon: renderIcon(MegaphoneOutline) },
-  { label: '帮助中心', key: '/help', icon: renderIcon(BookOutline) },
-  { label: '账户设置', key: '/account', icon: renderIcon(PersonOutline) },
+  { label: '公告通知', key: '/notices', ...sidebarIcon('announcements') },
+  { label: '帮助中心', key: '/help', ...sidebarIcon('dictionary') },
+  { label: '账户设置', key: '/account', ...sidebarIcon('account') },
 ]
 
 // 侧边栏菜单归类级别：管理后台二级归类下的三级页面项，继续保留 SVG 图标。
 const adminOpsItems: MenuOption[] = [
-  { label: '上游管理', key: '/admin/upstreams', icon: renderIcon(CloudOutline) },
-  { label: '管理概览', key: '/admin', icon: renderIcon(SpeedometerOutline) },
-  { label: '用户管理', key: '/admin/users', icon: renderIcon(PeopleOutline) },
-  { label: '用户组', key: '/admin/user-groups', icon: renderIcon(PeopleCircleOutline) },
-  { label: '套餐管理', key: '/admin/packages', icon: renderIcon(ArchiveOutline) },
-  { label: '订单管理', key: '/admin/orders', icon: renderIcon(ReceiptOutline) },
-  { label: '注册码', key: '/admin/reg-codes', icon: renderIcon(KeyOutline) },
-  { label: 'API Token', key: '/admin/api-tokens', icon: renderIcon(KeyOutline) },
+  { label: '上游管理', key: '/admin/upstreams', ...sidebarIcon('cloud') },
+  { label: '管理概览', key: '/admin', ...sidebarIcon('inventory') },
+  { label: '用户管理', key: '/admin/users', ...sidebarIcon('users') },
+  { label: '用户组', key: '/admin/user-groups', ...sidebarIcon('groups') },
+  { label: '套餐管理', key: '/admin/packages', ...sidebarIcon('packages') },
+  { label: '订单管理', key: '/admin/orders', ...sidebarIcon('orders') },
+  { label: '注册码', key: '/admin/reg-codes', ...sidebarIcon('key') },
+  { label: 'API Token', key: '/admin/api-tokens', ...sidebarIcon('key') },
 ]
 const adminNodeItems: MenuOption[] = [
-  { label: '节点管理', key: '/admin/nodes', icon: renderIcon(ServerOutline) },
-  { label: 'sing-box', key: '/admin/singbox', icon: renderIcon(HardwareChipOutline) },
-  { label: '证书管理', key: '/admin/certs', icon: renderIcon(ShieldCheckmarkOutline) },
-  { label: '服务器', key: '/admin/servers', icon: renderIcon(ServerOutline) },
-  { label: '监控管理', key: '/admin/monitor', icon: renderIcon(PulseOutline) },
+  { label: '节点管理', key: '/admin/nodes', ...sidebarIcon('server') },
+  { label: 'sing-box', key: '/admin/singbox', ...sidebarIcon('cpu') },
+  { label: '证书管理', key: '/admin/certs', ...sidebarIcon('success') },
+  { label: '服务器', key: '/admin/servers', ...sidebarIcon('server') },
+  { label: '监控管理', key: '/admin/monitor', ...sidebarIcon('overview') },
 ]
 const adminSysItems: MenuOption[] = [
-  { label: '公告管理', key: '/admin/announcements', icon: renderIcon(NotificationsOutline) },
-  { label: '手动通知', key: '/admin/manual-notifications', icon: renderIcon(MegaphoneOutline) },
-  { label: '帮助文档', key: '/admin/help', icon: renderIcon(DocumentTextOutline) },
-  { label: '系统设置', key: '/admin/settings', icon: renderIcon(SettingsOutline) },
-  { label: '在线更新', key: '/admin/update', icon: renderIcon(CloudDownloadOutline) },
+  { label: '公告管理', key: '/admin/announcements', ...sidebarIcon('notifications') },
+  { label: '手动通知', key: '/admin/manual-notifications', ...sidebarIcon('announcements') },
+  { label: '帮助文档', key: '/admin/help', ...sidebarIcon('document') },
+  { label: '系统设置', key: '/admin/settings', ...sidebarIcon('settings') },
+  { label: '在线更新', key: '/admin/update', ...sidebarIcon('download') },
 ]
 
 
@@ -73,9 +73,9 @@ const adminSysItems: MenuOption[] = [
 export function createSidebarNavigation(isAdmin: () => boolean) {
 // 侧边栏菜单归类级别：管理后台是独立一级分组，运营/节点服务/内容系统为二级归类。
 const adminItems = computed<MenuOption[]>(() => isAdmin() ? [
-  { label: '运营', key: 'ag-ops', icon: renderIcon(PulseOutline), children: adminOpsItems },
-  { label: '节点服务', key: 'ag-node', icon: renderIcon(ServerOutline), children: adminNodeItems },
-  { label: '内容系统', key: 'ag-sys', icon: renderIcon(DocumentTextOutline), children: adminSysItems },
+  { label: '运营', key: 'ag-ops', ...sidebarIcon('overview'), children: adminOpsItems },
+  { label: '节点服务', key: 'ag-node', ...sidebarIcon('server'), children: adminNodeItems },
+  { label: '内容系统', key: 'ag-sys', ...sidebarIcon('document'), children: adminSysItems },
 ] : [])
 
 const infoItems = computed<MenuOption[]>(() => infoLeafItems)
@@ -83,7 +83,7 @@ const infoItems = computed<MenuOption[]>(() => infoLeafItems)
 const allMenuOptions = computed<MenuOption[]>(() => {
   // 侧边栏菜单归类级别：一级归类标题使用静态 group，避免一级菜单产生箭头、竖线和伸缩。
   const items: MenuOption[] = [
-    { label: '首页', key: '/', icon: renderIcon(HomeOutline) },
+    { label: '首页', key: '/', ...sidebarIcon('home') },
     menuSection('g-common', '常用', userMenuItems),
     menuSection('g-shop', '商城', shopItems),
     menuSection('g-info', '信息', infoItems.value),

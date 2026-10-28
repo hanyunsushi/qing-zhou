@@ -1,0 +1,3761 @@
+{
+  "library": "Ionicons 5",
+  "package": "@vicons/ionicons5@0.12.0",
+  "license": "MIT",
+  "symbols": {
+    "HardwareChipOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "rect",
+          "attrs": {
+            "x": "80",
+            "y": "80",
+            "width": "352",
+            "height": "352",
+            "rx": "48",
+            "ry": "48",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "rect",
+          "attrs": {
+            "x": "144",
+            "y": "144",
+            "width": "224",
+            "height": "224",
+            "rx": "16",
+            "ry": "16",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M256 80V48"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M336 80V48"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M176 80V48"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M256 464v-32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M336 464v-32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M176 464v-32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M432 256h32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M432 336h32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M432 176h32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M48 256h32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M48 336h32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M48 176h32"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/HardwareChipOutline",
+      "sha256": "cbac36b59fbc46d0526a47845a88b49c0212b85a99f301925b7c2e7c68c5e48b"
+    },
+    "HardwareChip": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M352 128H160a32 32 0 0 0-32 32v192a32 32 0 0 0 32 32h192a32 32 0 0 0 32-32V160a32 32 0 0 0-32-32zm0 216a8 8 0 0 1-8 8H168a8 8 0 0 1-8-8V168a8 8 0 0 1 8-8h176a8 8 0 0 1 8 8z",
+            "fill": "none"
+          },
+          "children": []
+        },
+        {
+          "tag": "rect",
+          "attrs": {
+            "x": "160",
+            "y": "160",
+            "width": "192",
+            "height": "192",
+            "rx": "8",
+            "ry": "8",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M464 192a16 16 0 0 0 0-32h-16v-32a64.07 64.07 0 0 0-64-64h-32V48a16 16 0 0 0-32 0v16h-48V48a16 16 0 0 0-32 0v16h-48V48a16 16 0 0 0-32 0v16h-32a64.07 64.07 0 0 0-64 64v32H48a16 16 0 0 0 0 32h16v48H48a16 16 0 0 0 0 32h16v48H48a16 16 0 0 0 0 32h16v32a64.07 64.07 0 0 0 64 64h32v16a16 16 0 0 0 32 0v-16h48v16a16 16 0 0 0 32 0v-16h48v16a16 16 0 0 0 32 0v-16h32a64.07 64.07 0 0 0 64-64v-32h16a16 16 0 0 0 0-32h-16v-48h16a16 16 0 0 0 0-32h-16v-48zm-80 160a32 32 0 0 1-32 32H160a32 32 0 0 1-32-32V160a32 32 0 0 1 32-32h192a32 32 0 0 1 32 32z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/HardwareChip",
+      "sha256": "42df208a38b7d734cf9d851eee57fc774950b2d56c061d9da733ba4bd97a5c3b"
+    },
+    "LayersOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M434.8 137.65l-149.36-68.1c-16.19-7.4-42.69-7.4-58.88 0L77.3 137.65c-17.6 8-17.6 21.09 0 29.09l148 67.5c16.89 7.7 44.69 7.7 61.58 0l148-67.5c17.52-8 17.52-21.1-.08-29.09z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M160 308.52l-82.7 37.11c-17.6 8-17.6 21.1 0 29.1l148 67.5c16.89 7.69 44.69 7.69 61.58 0l148-67.5c17.6-8 17.6-21.1 0-29.1l-79.94-38.47",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M160 204.48l-82.8 37.16c-17.6 8-17.6 21.1 0 29.1l148 67.49c16.89 7.7 44.69 7.7 61.58 0l148-67.49c17.7-8 17.7-21.1.1-29.1L352 204.48",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/LayersOutline",
+      "sha256": "a9f7ea2345af910c4a233caf3dec6c09440d7aea651562a206be26cf21dd6052"
+    },
+    "Layers": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M256 256c-13.47 0-26.94-2.39-37.44-7.17l-148-67.49C63.79 178.26 48 169.25 48 152.24s15.79-26 22.58-29.12l149.28-68.07c20.57-9.4 51.61-9.4 72.19 0l149.37 68.07c6.79 3.09 22.58 12.1 22.58 29.12s-15.79 26-22.58 29.11l-148 67.48C282.94 253.61 269.47 256 256 256zm176.76-100.86z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M441.36 226.81L426.27 220l-38.77 17.74l-94 43c-10.5 4.8-24 7.19-37.44 7.19s-26.93-2.39-37.42-7.19l-94.07-43L85.79 220l-15.22 6.84C63.79 229.93 48 239 48 256s15.79 26.08 22.56 29.17l148 67.63C229 357.6 242.49 360 256 360s26.94-2.4 37.44-7.19l147.87-67.61c6.81-3.09 22.69-12.11 22.69-29.2s-15.77-26.07-22.64-29.19z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M441.36 330.8l-15.09-6.8l-38.77 17.73l-94 42.95c-10.5 4.78-24 7.18-37.44 7.18s-26.93-2.39-37.42-7.18l-94.07-43L85.79 324l-15.22 6.84C63.79 333.93 48 343 48 360s15.79 26.07 22.56 29.15l148 67.59C229 461.52 242.54 464 256 464s26.88-2.48 37.38-7.27l147.92-67.57c6.82-3.08 22.7-12.1 22.7-29.16s-15.77-26.07-22.64-29.2z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/Layers",
+      "sha256": "889fb7a2841fdc7d57d10ae82371c133f88426997ddcdf07d3211a5f9f611844"
+    },
+    "LinkOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M208 352h-64a96 96 0 0 1 0-192h64",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "36"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M304 160h64a96 96 0 0 1 0 192h-64",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "36"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "36",
+            "d": "M163.29 256h187.42"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/LinkOutline",
+      "sha256": "cd0f9f3f8940fcadabc6f8f1dc5c3f69be1c4f9023188616dc13f14f8e80f774"
+    },
+    "Link": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M200.66 352H144a96 96 0 0 1 0-192h55.41",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "48"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M312.59 160H368a96 96 0 0 1 0 192h-56.66",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "48"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "48",
+            "d": "M169.07 256h175.86"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/Link",
+      "sha256": "d8d2f1273e9a9d8691e9e64b92dc13ad16b2a4fb24a18e3e8f3cbc6e8a7a21e1"
+    },
+    "CartOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "circle",
+          "attrs": {
+            "cx": "176",
+            "cy": "416",
+            "r": "16",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "circle",
+          "attrs": {
+            "cx": "400",
+            "cy": "416",
+            "r": "16",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M48 80h64l48 272h256"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M160 288h249.44a8 8 0 0 0 7.85-6.43l28.8-144a8 8 0 0 0-7.85-9.57H128",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/CartOutline",
+      "sha256": "35d5b39d563bc88232681c7ae23c551feb4c77153dc3a6a21c3769b9deebddc5"
+    },
+    "Cart": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "circle",
+          "attrs": {
+            "cx": "176",
+            "cy": "416",
+            "r": "32",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "circle",
+          "attrs": {
+            "cx": "400",
+            "cy": "416",
+            "r": "32",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M456.8 120.78a23.92 23.92 0 0 0-18.56-8.78H133.89l-6.13-34.78A16 16 0 0 0 112 64H48a16 16 0 0 0 0 32h50.58l45.66 258.78A16 16 0 0 0 160 368h256a16 16 0 0 0 0-32H173.42l-5.64-32h241.66A24.07 24.07 0 0 0 433 284.71l28.8-144a24 24 0 0 0-5-19.93z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/Cart",
+      "sha256": "b409aa0e1fdf4d6908cd8b9a20d20e6824892d02ae91301c918bc14e2f8cdbd3"
+    },
+    "ReceiptOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M160 336V48l32 16l32-16l31.94 16l32.37-16L320 64l31.79-16l31.93 16L416 48l32.01 16L480 48v224"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M480 272v112a80 80 0 0 1-80 80h0a80 80 0 0 1-80-80v-48H48a15.86 15.86 0 0 0-16 16c0 64 6.74 112 80 112h288",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M224 144h192"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M288 224h128"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/ReceiptOutline",
+      "sha256": "c58a52ab6236e9924b037a73e80379a6cc8d8678d97c55d09dcd4e8c2464ffa2"
+    },
+    "Receipt": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M483.82 32.45a16.28 16.28 0 0 0-11.23 1.37L448 46.1l-24.8-12.4a16 16 0 0 0-14.31 0l-25.11 12.41L359 33.7a16 16 0 0 0-14.36 0L320 46.07l-24.45-12.34a16 16 0 0 0-14.35-.06L256 46.12l-24.8-12.43a16.05 16.05 0 0 0-14.33 0L192 46.1l-24.84-12.41a16 16 0 0 0-19.36 3.94a16.25 16.25 0 0 0-3.8 10.65V288l.05.05H336a32 32 0 0 1 32 32V424c0 30.93 33.07 56 64 56h12a52 52 0 0 0 52-52V48a16 16 0 0 0-12.18-15.55zM416 240H288.5c-8.64 0-16.1-6.64-16.48-15.28A16 16 0 0 1 288 208h127.5c8.64 0 16.1 6.64 16.48 15.28A16 16 0 0 1 416 240zm0-80H224.5c-8.64 0-16.1-6.64-16.48-15.28A16 16 0 0 1 224 128h191.5c8.64 0 16.1 6.64 16.48 15.28A16 16 0 0 1 416 160z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M336 424v-88a16 16 0 0 0-16-16H48a32.1 32.1 0 0 0-32 32.05c0 50.55 5.78 71.57 14.46 87.57C45.19 466.79 71.86 480 112 480h245.68a4 4 0 0 0 2.85-6.81C351.07 463.7 336 451 336 424z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/Receipt",
+      "sha256": "592b75443544fe8e82ef554a1a2c8794e474f313a24cc603517af4a200e6609f"
+    },
+    "WalletOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "rect",
+          "attrs": {
+            "x": "48",
+            "y": "144",
+            "width": "416",
+            "height": "288",
+            "rx": "48",
+            "ry": "48",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M411.36 144v-30A50 50 0 0 0 352 64.9L88.64 109.85A50 50 0 0 0 48 159v49",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M368 320a32 32 0 1 1 32-32a32 32 0 0 1-32 32z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/WalletOutline",
+      "sha256": "86313c6709a9ee15ea307908cbad1a9154297668fb212126219d3bf857b0cdc4"
+    },
+    "Wallet": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M95.5 104h320a87.73 87.73 0 0 1 11.18.71a66 66 0 0 0-77.51-55.56L86 94.08h-.3a66 66 0 0 0-41.07 26.13A87.57 87.57 0 0 1 95.5 104z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M415.5 128h-320a64.07 64.07 0 0 0-64 64v192a64.07 64.07 0 0 0 64 64h320a64.07 64.07 0 0 0 64-64V192a64.07 64.07 0 0 0-64-64zM368 320a32 32 0 1 1 32-32a32 32 0 0 1-32 32z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M32 259.5V160c0-21.67 12-58 53.65-65.87C121 87.5 156 87.5 156 87.5s23 16 4 16s-18.5 24.5 0 24.5s0 23.5 0 23.5L85.5 236z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/Wallet",
+      "sha256": "88e68644f2f0ddded35b450c8adc7c5bbcd2e9245f98e72ce611ca86053ddd14"
+    },
+    "MegaphoneOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M407.94 52.22S321.3 160 240 160H80a16 16 0 0 0-16 16v96a16 16 0 0 0 16 16h160c81.3 0 167.94 108.23 167.94 108.23c6.06 8 24.06 2.52 24.06-9.83V62c0-12.31-17-18.82-24.06-9.78z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M64 256s-16-6-16-32s16-32 16-32",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M448 246s16-4.33 16-22s-16-22-16-22",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M256 160v128"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M112 160v128"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M144 288v168a8 8 0 0 0 8 8h53a16 16 0 0 0 15.29-20.73C211.91 416.39 192 386.08 192 336h16a16 16 0 0 0 16-16v-16a16 16 0 0 0-16-16h-16",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/MegaphoneOutline",
+      "sha256": "d26d2907c1213629a0d14e7180cd4e0134268947e6d414aa781b7e8fa6c44187"
+    },
+    "Megaphone": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M48 176v.66a17.38 17.38 0 0 1-4.2 11.23v.05C38.4 194.32 32 205.74 32 224c0 16.55 5.3 28.23 11.68 35.91A19 19 0 0 1 48 272a32 32 0 0 0 32 32h8a8 8 0 0 0 8-8V152a8 8 0 0 0-8-8h-8a32 32 0 0 0-32 32z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M452.18 186.55l-.93-.17a4 4 0 0 1-3.25-3.93V62c0-12.64-8.39-24-20.89-28.32c-11.92-4.11-24.34-.76-31.68 8.53a431.18 431.18 0 0 1-51.31 51.69c-23.63 20-46.24 34.25-67 42.31a8 8 0 0 0-5.15 7.47V299a16 16 0 0 0 9.69 14.69c19.34 8.29 40.24 21.83 62 40.28a433.74 433.74 0 0 1 51.68 52.16a26.22 26.22 0 0 0 21.1 9.87a33.07 33.07 0 0 0 10.44-1.74C439.71 410 448 399.05 448 386.4V265.53a4 4 0 0 1 3.33-3.94l.85-.14C461.8 258.84 480 247.67 480 224s-18.2-34.84-27.82-37.45z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M240 320V152a8 8 0 0 0-8-8h-96a8 8 0 0 0-8 8v304a24 24 0 0 0 24 24h52.45a32.66 32.66 0 0 0 25.93-12.45a31.65 31.65 0 0 0 5.21-29.05c-1.62-5.18-3.63-11-5.77-17.19c-7.91-22.9-18.34-37.07-21.12-69.32A32 32 0 0 0 240 320z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/Megaphone",
+      "sha256": "2e99b338f0a5f6e567bef4f21f459a57a2b84fb8a827e23d2c311668566d09f0"
+    },
+    "PeopleOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M402 168c-2.93 40.67-33.1 72-66 72s-63.12-31.32-66-72c-3-42.31 26.37-72 66-72s69 30.46 66 72z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M336 304c-65.17 0-127.84 32.37-143.54 95.41c-2.08 8.34 3.15 16.59 11.72 16.59h263.65c8.57 0 13.77-8.25 11.72-16.59C463.85 335.36 401.18 304 336 304z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M200 185.94c-2.34 32.48-26.72 58.06-53 58.06s-50.7-25.57-53-58.06C91.61 152.15 115.34 128 147 128s55.39 24.77 53 57.94z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M206 306c-18.05-8.27-37.93-11.45-59-11.45c-52 0-102.1 25.85-114.65 76.2c-1.65 6.66 2.53 13.25 9.37 13.25H154",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/PeopleOutline",
+      "sha256": "88d4a3375dfd8c2f68cbd00d56b782670c10722611edb933ddb23878b760fc0c"
+    },
+    "People": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M336 256c-20.56 0-40.44-9.18-56-25.84c-15.13-16.25-24.37-37.92-26-61c-1.74-24.62 5.77-47.26 21.14-63.76S312 80 336 80c23.83 0 45.38 9.06 60.7 25.52c15.47 16.62 23 39.22 21.26 63.63c-1.67 23.11-10.9 44.77-26 61C376.44 246.82 356.57 256 336 256zm66-88z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M467.83 432H204.18a27.71 27.71 0 0 1-22-10.67a30.22 30.22 0 0 1-5.26-25.79c8.42-33.81 29.28-61.85 60.32-81.08C264.79 297.4 299.86 288 336 288c36.85 0 71 9 98.71 26.05c31.11 19.13 52 47.33 60.38 81.55a30.27 30.27 0 0 1-5.32 25.78A27.68 27.68 0 0 1 467.83 432z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M147 260c-35.19 0-66.13-32.72-69-72.93c-1.42-20.6 5-39.65 18-53.62c12.86-13.83 31-21.45 51-21.45s38 7.66 50.93 21.57c13.1 14.08 19.5 33.09 18 53.52c-2.87 40.2-33.8 72.91-68.93 72.91z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M212.66 291.45c-17.59-8.6-40.42-12.9-65.65-12.9c-29.46 0-58.07 7.68-80.57 21.62c-25.51 15.83-42.67 38.88-49.6 66.71a27.39 27.39 0 0 0 4.79 23.36A25.32 25.32 0 0 0 41.72 400h111a8 8 0 0 0 7.87-6.57c.11-.63.25-1.26.41-1.88c8.48-34.06 28.35-62.84 57.71-83.82a8 8 0 0 0-.63-13.39c-1.57-.92-3.37-1.89-5.42-2.89z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/People",
+      "sha256": "8a3d70ccea44eb2b58bc35eaf3c772e0409c39915c42df29f5172b05e69aa406"
+    },
+    "PeopleCircleOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M256 464c-114.69 0-208-93.31-208-208S141.31 48 256 48s208 93.31 208 208s-93.31 208-208 208zm0-384c-97 0-176 79-176 176s79 176 176 176s176-78.95 176-176S353.05 80 256 80z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M323.67 292c-17.4 0-34.21-7.72-47.34-21.73a83.76 83.76 0 0 1-22-51.32c-1.47-20.7 4.88-39.75 17.88-53.62S303.38 144 323.67 144c20.14 0 38.37 7.62 51.33 21.46s19.47 33 18 53.51a84 84 0 0 1-22 51.3C357.86 284.28 341.06 292 323.67 292zm55.81-74z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M163.82 295.36c-29.76 0-55.93-27.51-58.33-61.33c-1.23-17.32 4.15-33.33 15.17-45.08s26.22-18 43.15-18s32.12 6.44 43.07 18.14s16.5 27.82 15.25 45c-2.44 33.77-28.6 61.27-58.31 61.27z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M420.37 355.28c-1.59-4.7-5.46-9.71-13.22-14.46c-23.46-14.33-52.32-21.91-83.48-21.91c-30.57 0-60.23 7.9-83.53 22.25c-26.25 16.17-43.89 39.75-51 68.18c-1.68 6.69-4.13 19.14-1.51 26.11a192.18 192.18 0 0 0 232.75-80.17z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M163.63 401.37c7.07-28.21 22.12-51.73 45.47-70.75a8 8 0 0 0-2.59-13.77c-12-3.83-25.7-5.88-42.69-5.88c-23.82 0-49.11 6.45-68.14 18.17c-5.4 3.33-10.7 4.61-14.78 5.75a192.84 192.84 0 0 0 77.78 86.64l1.79-.14a102.82 102.82 0 0 1 3.16-20.02z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/PeopleCircleOutline",
+      "sha256": "c7fcf2fc40281623b1d699ab8462a6997f6726ec16890c6975c11cdae67e3179"
+    },
+    "PeopleCircle": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M258.9 48C141.92 46.42 46.42 141.92 48 258.9c1.56 112.19 92.91 203.54 205.1 205.1c117 1.6 212.48-93.9 210.88-210.88C462.44 140.91 371.09 49.56 258.9 48zm-3.68 152.11c.21-1.2.44-2.4.71-3.59a66.46 66.46 0 0 1 16.29-31.21c12.89-13.73 31.16-21.31 51.45-21.31a74.05 74.05 0 0 1 25.06 4.26a66.69 66.69 0 0 1 26.27 17.2a68.15 68.15 0 0 1 18 42.14a78.46 78.46 0 0 1 0 11.4a86.19 86.19 0 0 1-8.2 31q-.76 1.59-1.59 3.15c-1.11 2.07-2.3 4.1-3.58 6.06a79.47 79.47 0 0 1-8.63 11c-13.12 14-29.92 21.73-47.31 21.73a59.61 59.61 0 0 1-19.17-3.18a63.47 63.47 0 0 1-6.1-2.43a70.76 70.76 0 0 1-22.07-16.12a83.76 83.76 0 0 1-22-51.32q-.27-3.88-.18-7.68a75.62 75.62 0 0 1 1.05-11.08zm-149.73 24.34a59.87 59.87 0 0 1 5.2-20.64a56.76 56.76 0 0 1 2.78-5.3a54.49 54.49 0 0 1 7.19-9.56a55.62 55.62 0 0 1 14-10.82a56.84 56.84 0 0 1 8.11-3.64a63.85 63.85 0 0 1 33.35-2.39a57 57 0 0 1 30.78 17a57.86 57.86 0 0 1 15.41 38.62c.05 2.11 0 4.23-.15 6.38a71.58 71.58 0 0 1-6 23.84a69.49 69.49 0 0 1-5.73 10.42a65.39 65.39 0 0 1-15.76 16.57c-1.5 1.07-3.06 2.07-4.67 3.07a54.21 54.21 0 0 1-10 4.65a49.31 49.31 0 0 1-16.2 2.76c-.93 0-1.86 0-2.78-.08a47.6 47.6 0 0 1-5.48-.62a51.19 51.19 0 0 1-5.35-1.23a53.54 53.54 0 0 1-7.72-2.89c-.84-.39-1.66-.8-2.48-1.23c-18-9.49-31.57-29.16-34.23-52.12c-.12-1.05-.22-2.1-.29-3.16a66.59 66.59 0 0 1 .02-9.63zm53.92 178.6a177.27 177.27 0 0 1-61.94-70.65a4 4 0 0 1 1.62-5.26C117.67 316.69 141.4 311 163.82 311c17 0 30.7 2 42.69 5.88a8 8 0 0 1 2.59 13.77c-23.35 19-38.4 42.54-45.47 70.75a2.77 2.77 0 0 1-4.22 1.65zM256 432a175.12 175.12 0 0 1-65.7-12.72a4 4 0 0 1-2.4-4.46c.4-2.05.84-3.92 1.23-5.48c7.12-28.43 24.76-52 51-68.18c23.29-14.35 53-22.25 83.52-22.25c31.16 0 60 7.58 83.48 21.91a2.72 2.72 0 0 1 .91 3.67A176.1 176.1 0 0 1 256 432z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M161 295.28a47.6 47.6 0 0 1-5.48-.62a47.6 47.6 0 0 0 5.48.62z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M134.64 178.13a55.62 55.62 0 0 0-14 10.82a54.49 54.49 0 0 0-7.19 9.56a54.49 54.49 0 0 1 7.19-9.56a55.62 55.62 0 0 1 14-10.82z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M216.17 257.89a71.58 71.58 0 0 0 6-23.84c.15-2.15.2-4.27.15-6.38q.08 3.15-.15 6.38a71.58 71.58 0 0 1-6 23.84z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M134.64 178.13a56.84 56.84 0 0 1 8.11-3.64a56.84 56.84 0 0 0-8.11 3.64z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M150.21 293.43a53.54 53.54 0 0 1-7.72-2.89a53.54 53.54 0 0 0 7.72 2.89z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M105.78 237.19c2.66 23 16.26 42.63 34.23 52.12c-18.01-9.49-31.57-29.16-34.23-52.12z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M254.34 219a83.76 83.76 0 0 0 22 51.32a70.76 70.76 0 0 0 22.07 16.12a70.76 70.76 0 0 1-22.07-16.12a83.76 83.76 0 0 1-22-51.32q-.27-3.88-.18-7.68q-.09 3.75.18 7.68z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M304.5 288.82a63.47 63.47 0 0 1-6.1-2.43a63.47 63.47 0 0 0 6.1 2.43z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M255.93 196.54a66.46 66.46 0 0 1 16.29-31.21a66.46 66.46 0 0 0-16.29 31.21z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M375 165.46a68.15 68.15 0 0 1 18 42.14a68.15 68.15 0 0 0-18-42.14a66.69 66.69 0 0 0-26.27-17.2a66.69 66.69 0 0 1 26.27 17.2z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M393 219a86.19 86.19 0 0 1-8.2 31a86.19 86.19 0 0 0 8.2-31z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M254.16 211.27a75.62 75.62 0 0 1 1.06-11.14a75.62 75.62 0 0 0-1.06 11.14z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M383.19 253.16z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M206.88 189.05a57.86 57.86 0 0 1 15.41 38.62a57.86 57.86 0 0 0-15.41-38.62a57 57 0 0 0-30.78-17a57 57 0 0 1 30.78 17z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M190 288a54.21 54.21 0 0 1-10 4.65a54.21 54.21 0 0 0 10-4.65z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M105.49 224.45a59.87 59.87 0 0 1 5.2-20.64a59.87 59.87 0 0 0-5.2 20.64z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M194.68 284.88C193.17 286 191.61 287 190 288c1.61-1 3.17-2 4.68-3.12z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M216.17 257.89a69.49 69.49 0 0 1-5.73 10.42a69.49 69.49 0 0 0 5.73-10.42z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M110.69 203.81a56.76 56.76 0 0 1 2.78-5.3a56.76 56.76 0 0 0-2.78 5.3z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M194.68 284.88a65.39 65.39 0 0 0 15.76-16.57a65.39 65.39 0 0 1-15.76 16.57z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/PeopleCircle",
+      "sha256": "7a8a3c8dddad2dd3e346559dceacb94fd93c39ebd726b410753ae291e6b19cc7"
+    },
+    "ArchiveOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M80 152v256a40.12 40.12 0 0 0 40 40h272a40.12 40.12 0 0 0 40-40V152",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "rect",
+          "attrs": {
+            "x": "48",
+            "y": "64",
+            "width": "416",
+            "height": "80",
+            "rx": "28",
+            "ry": "28",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M320 304l-64 64l-64-64"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M256 345.89V224"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/ArchiveOutline",
+      "sha256": "5602dc8a0e52bf933377902d796beaa50fae4c4c2269892a281b89b9cf811542"
+    },
+    "Archive": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M64 164v244a56 56 0 0 0 56 56h272a56 56 0 0 0 56-56V164a4 4 0 0 0-4-4H68a4 4 0 0 0-4 4zm267 151.63l-63.69 63.68a16 16 0 0 1-22.62 0L181 315.63c-6.09-6.09-6.65-16-.85-22.38a16 16 0 0 1 23.16-.56L240 329.37V224.45c0-8.61 6.62-16 15.23-16.43A16 16 0 0 1 272 224v105.37l36.69-36.68a16 16 0 0 1 23.16.56c5.8 6.37 5.24 16.29-.85 22.38z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "rect",
+          "attrs": {
+            "x": "32",
+            "y": "48",
+            "width": "448",
+            "height": "80",
+            "rx": "32",
+            "ry": "32",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/Archive",
+      "sha256": "d66688a47283c3566c3d00cab8544d7a4a141561181558f88cadbedcec9b6430"
+    },
+    "KeyOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M218.1 167.17c0 13 0 25.6 4.1 37.4c-43.1 50.6-156.9 184.3-167.5 194.5a20.17 20.17 0 0 0-6.7 15c0 8.5 5.2 16.7 9.6 21.3c6.6 6.9 34.8 33 40 28c15.4-15 18.5-19 24.8-25.2c9.5-9.3-1-28.3 2.3-36s6.8-9.2 12.5-10.4s15.8 2.9 23.7 3c8.3.1 12.8-3.4 19-9.2c5-4.6 8.6-8.9 8.7-15.6c.2-9-12.8-20.9-3.1-30.4s23.7 6.2 34 5s22.8-15.5 24.1-21.6s-11.7-21.8-9.7-30.7c.7-3 6.8-10 11.4-11s25 6.9 29.6 5.9c5.6-1.2 12.1-7.1 17.4-10.4c15.5 6.7 29.6 9.4 47.7 9.4c68.5 0 124-53.4 124-119.2S408.5 48 340 48s-121.9 53.37-121.9 119.17zM400 144a32 32 0 1 1-32-32a32 32 0 0 1 32 32z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/KeyOutline",
+      "sha256": "5ab91de540e53b0e0ce0c85030ac8fed29789ba87c5e6b195800329eae746aa0"
+    },
+    "Key": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M218.1 167.17c0 13 0 25.6 4.1 37.4c-43.1 50.6-156.9 184.3-167.5 194.5a20.17 20.17 0 0 0-6.7 15c0 8.5 5.2 16.7 9.6 21.3c6.6 6.9 34.8 33 40 28c15.4-15 18.5-19 24.8-25.2c9.5-9.3-1-28.3 2.3-36s6.8-9.2 12.5-10.4s15.8 2.9 23.7 3c8.3.1 12.8-3.4 19-9.2c5-4.6 8.6-8.9 8.7-15.6c.2-9-12.8-20.9-3.1-30.4s23.7 6.2 34 5s22.8-15.5 24.1-21.6s-11.7-21.8-9.7-30.7c.7-3 6.8-10 11.4-11s25 6.9 29.6 5.9c5.6-1.2 12.1-7.1 17.4-10.4c15.5 6.7 29.6 9.4 47.7 9.4c68.5 0 124-53.4 124-119.2S408.5 48 340 48s-121.9 53.37-121.9 119.17zM400 144a32 32 0 1 1-32-32a32 32 0 0 1 32 32z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/Key",
+      "sha256": "bd148cacfbb42d7efc6a4b82968f20b96946f64091cdacc93834b2b6126c0041"
+    },
+    "NotificationsOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M427.68 351.43C402 320 383.87 304 383.87 217.35C383.87 138 343.35 109.73 310 96c-4.43-1.82-8.6-6-9.95-10.55C294.2 65.54 277.8 48 256 48s-38.21 17.55-44 37.47c-1.35 4.6-5.52 8.71-9.95 10.53c-33.39 13.75-73.87 41.92-73.87 121.35C128.13 304 110 320 84.32 351.43C73.68 364.45 83 384 101.61 384h308.88c18.51 0 27.77-19.61 17.19-32.57z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M320 384v16a64 64 0 0 1-128 0v-16",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/NotificationsOutline",
+      "sha256": "bdf4da6edd36617c9bc326ab491a422cb7ca82c787d1f660460755250aafb27e"
+    },
+    "Notifications": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M440.08 341.31c-1.66-2-3.29-4-4.89-5.93c-22-26.61-35.31-42.67-35.31-118c0-39-9.33-71-27.72-95c-13.56-17.73-31.89-31.18-56.05-41.12a3 3 0 0 1-.82-.67C306.6 51.49 282.82 32 256 32s-50.59 19.49-59.28 48.56a3.13 3.13 0 0 1-.81.65c-56.38 23.21-83.78 67.74-83.78 136.14c0 75.36-13.29 91.42-35.31 118c-1.6 1.93-3.23 3.89-4.89 5.93a35.16 35.16 0 0 0-4.65 37.62c6.17 13 19.32 21.07 34.33 21.07H410.5c14.94 0 28-8.06 34.19-21a35.17 35.17 0 0 0-4.61-37.66z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M256 480a80.06 80.06 0 0 0 70.44-42.13a4 4 0 0 0-3.54-5.87H189.12a4 4 0 0 0-3.55 5.87A80.06 80.06 0 0 0 256 480z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/Notifications",
+      "sha256": "eeee5f3cb6518685a21ce62ee6fe1297fc63f279f8a5b10149e5f988b194b346"
+    },
+    "CloudOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M400 240c-8.89-89.54-71-144-144-144c-69 0-113.44 48.2-128 96c-60 6-112 43.59-112 112c0 66 54 112 120 112h260c55 0 100-27.44 100-88c0-59.82-53-85.76-96-88z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/CloudOutline",
+      "sha256": "8e5d7c5e896427bf4377a68f7fdaf2e402ccddebe0da9c89771bf12c38745678"
+    },
+    "Cloud": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M396 432H136c-36.44 0-70.36-12.57-95.51-35.41C14.38 372.88 0 340 0 304c0-36.58 13.39-68.12 38.72-91.22c18.11-16.53 42.22-28.25 69.18-33.87a16 16 0 0 0 11.37-9.15a156.24 156.24 0 0 1 42.05-56C187.76 91.69 220.5 80 256 80a153.57 153.57 0 0 1 107.14 42.9c24.73 23.81 41.5 55.28 49.18 92a16 16 0 0 0 12.12 12.39C470 237.42 512 270.43 512 328c0 33.39-12.24 60.78-35.41 79.23C456.23 423.43 428.37 432 396 432z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/Cloud",
+      "sha256": "b4560cf8fc1085a30aaeda422dcdcead271350e407a212fbcdf7e7a1b39a6c51"
+    },
+    "TimeOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M256 64C150 64 64 150 64 256s86 192 192 192s192-86 192-192S362 64 256 64z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M256 128v144h96"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/TimeOutline",
+      "sha256": "408f792c124accb37083e3bf2beaee57a0e955d2ffa3fffb6ff035ac4bccb54e"
+    },
+    "Time": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M256 48C141.13 48 48 141.13 48 256s93.13 208 208 208s208-93.13 208-208S370.87 48 256 48zm96 240h-96a16 16 0 0 1-16-16V128a16 16 0 0 1 32 0v128h80a16 16 0 0 1 0 32z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/Time",
+      "sha256": "d5c32ab908d3266e1468e0f125f8638ab1d2c5f6daebf064bf58141b1c0b48d2"
+    },
+    "AddCircleOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M448 256c0-106-86-192-192-192S64 150 64 256s86 192 192 192s192-86 192-192z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M256 176v160"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M336 256H176"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/AddCircleOutline",
+      "sha256": "b2c6951a4c0fb279ed7a01184d3ae82a71a9cd2fb58034bfc54fc54504fe26a8"
+    },
+    "AddCircle": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M256 48C141.31 48 48 141.31 48 256s93.31 208 208 208s208-93.31 208-208S370.69 48 256 48zm80 224h-64v64a16 16 0 0 1-32 0v-64h-64a16 16 0 0 1 0-32h64v-64a16 16 0 0 1 32 0v64h64a16 16 0 0 1 0 32z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/AddCircle",
+      "sha256": "24ae3c7c67c0e567a60ea2c4167de170235c68c1362c2468f98004b2c5a94d3c"
+    },
+    "TrashOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M112 112l20 320c.95 18.49 14.4 32 32 32h184c17.67 0 30.87-13.51 32-32l20-320",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32",
+            "d": "M80 112h352",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M192 112V72h0a23.93 23.93 0 0 1 24-24h80a23.93 23.93 0 0 1 24 24h0v40",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M256 176v224"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M184 176l8 224"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M328 176l-8 224"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/TrashOutline",
+      "sha256": "fe44fbf24618a3308cfa5512dc45c23345c26c09fd928ce8048f5f3385743e18"
+    },
+    "Trash": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M296 64h-80a7.91 7.91 0 0 0-8 8v24h96V72a7.91 7.91 0 0 0-8-8z",
+            "fill": "none"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M432 96h-96V72a40 40 0 0 0-40-40h-80a40 40 0 0 0-40 40v24H80a16 16 0 0 0 0 32h17l19 304.92c1.42 26.85 22 47.08 48 47.08h184c26.13 0 46.3-19.78 48-47l19-305h17a16 16 0 0 0 0-32zM192.57 416H192a16 16 0 0 1-16-15.43l-8-224a16 16 0 1 1 32-1.14l8 224A16 16 0 0 1 192.57 416zM272 400a16 16 0 0 1-32 0V176a16 16 0 0 1 32 0zm32-304h-96V72a7.91 7.91 0 0 1 8-8h80a7.91 7.91 0 0 1 8 8zm32 304.57A16 16 0 0 1 320 416h-.58A16 16 0 0 1 304 399.43l8-224a16 16 0 1 1 32 1.14z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/Trash",
+      "sha256": "f40460152a7947728e85469a4511a178092f31ef485aa2106afa7df3d14ffbea"
+    },
+    "CreateOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M384 224v184a40 40 0 0 1-40 40H104a40 40 0 0 1-40-40V168a40 40 0 0 1 40-40h167.48",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M459.94 53.25a16.06 16.06 0 0 0-23.22-.56L424.35 65a8 8 0 0 0 0 11.31l11.34 11.32a8 8 0 0 0 11.34 0l12.06-12c6.1-6.09 6.67-16.01.85-22.38z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M399.34 90L218.82 270.2a9 9 0 0 0-2.31 3.93L208.16 299a3.91 3.91 0 0 0 4.86 4.86l24.85-8.35a9 9 0 0 0 3.93-2.31L422 112.66a9 9 0 0 0 0-12.66l-9.95-10a9 9 0 0 0-12.71 0z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/CreateOutline",
+      "sha256": "29a95efb3cac8b149e5d18c36f02f67d00a4ef0cd149574360c2d7cb6f97b095"
+    },
+    "Create": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M459.94 53.25a16.06 16.06 0 0 0-23.22-.56L424.35 65a8 8 0 0 0 0 11.31l11.34 11.32a8 8 0 0 0 11.34 0l12.06-12c6.1-6.09 6.67-16.01.85-22.38z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M399.34 90L218.82 270.2a9 9 0 0 0-2.31 3.93L208.16 299a3.91 3.91 0 0 0 4.86 4.86l24.85-8.35a9 9 0 0 0 3.93-2.31L422 112.66a9 9 0 0 0 0-12.66l-9.95-10a9 9 0 0 0-12.71 0z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M386.34 193.66L264.45 315.79A41.08 41.08 0 0 1 247.58 326l-25.9 8.67a35.92 35.92 0 0 1-44.33-44.33l8.67-25.9a41.08 41.08 0 0 1 10.19-16.87l122.13-121.91a8 8 0 0 0-5.65-13.66H104a56 56 0 0 0-56 56v240a56 56 0 0 0 56 56h240a56 56 0 0 0 56-56V199.31a8 8 0 0 0-13.66-5.65z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/Create",
+      "sha256": "82d544c957d3faf6c0512cb8850219642d436026e4247b1a3e5b3da52cd103aa"
+    },
+    "DownloadOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M336 176h40a40 40 0 0 1 40 40v208a40 40 0 0 1-40 40H136a40 40 0 0 1-40-40V216a40 40 0 0 1 40-40h40",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M176 272l80 80l80-80"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M256 48v288"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/DownloadOutline",
+      "sha256": "bbf1d6efb311fbf074b457f447abe5077d1ecbf6243c317dfe93c718351f2d32"
+    },
+    "Download": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M376 160H272v153.37l52.69-52.68a16 16 0 0 1 22.62 22.62l-80 80a16 16 0 0 1-22.62 0l-80-80a16 16 0 0 1 22.62-22.62L240 313.37V160H136a56.06 56.06 0 0 0-56 56v208a56.06 56.06 0 0 0 56 56h240a56.06 56.06 0 0 0 56-56V216a56.06 56.06 0 0 0-56-56z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M272 48a16 16 0 0 0-32 0v112h32z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/Download",
+      "sha256": "01485944b05616ad28ab5d66bef047fcad6144be1714c162ba7c748ab5d9a55e"
+    },
+    "CloudUploadOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M320 367.79h76c55 0 100-29.21 100-83.6s-53-81.47-96-83.6c-8.89-85.06-71-136.8-144-136.8c-69 0-113.44 45.79-128 91.2c-60 5.7-112 43.88-112 106.4s54 106.4 120 106.4h56",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M320 255.79l-64-64l-64 64"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M256 448.21V207.79"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/CloudUploadOutline",
+      "sha256": "32ef5a6d05b5da13a7ef1bef645cf879e2093ca761e3bed6efdb814a1d364161"
+    },
+    "CloudUpload": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M473.66 210c-14-10.38-31.2-18-49.36-22.11a16.11 16.11 0 0 1-12.19-12.22c-7.8-34.75-24.59-64.55-49.27-87.13C334.15 62.25 296.21 47.79 256 47.79c-35.35 0-68 11.08-94.37 32.05a150.07 150.07 0 0 0-42.06 53a16 16 0 0 1-11.31 8.87c-26.75 5.4-50.9 16.87-69.34 33.12C13.46 197.33 0 227.24 0 261.39c0 34.52 14.49 66 40.79 88.76c25.12 21.69 58.94 33.64 95.21 33.64h104V230.42l-36.69 36.69a16 16 0 0 1-23.16-.56c-5.8-6.37-5.24-16.3.85-22.39l63.69-63.68a16 16 0 0 1 22.62 0L331 244.14c6.28 6.29 6.64 16.6.39 22.91a16 16 0 0 1-22.68.06L272 230.42v153.37h124c31.34 0 59.91-8.8 80.45-24.77c23.26-18.1 35.55-44 35.55-74.83c0-29.94-13.26-55.61-38.34-74.19z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M240 448.21a16 16 0 1 0 32 0v-64.42h-32z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/CloudUpload",
+      "sha256": "f6df19598ff2abf3fab263a43f82e9eeb78942cd5865afeb6a9a0ccd373d32c0"
+    },
+    "LogOutOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M304 336v40a40 40 0 0 1-40 40H104a40 40 0 0 1-40-40V136a40 40 0 0 1 40-40h152c22.09 0 48 17.91 48 40v40",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M368 336l80-80l-80-80"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M176 256h256"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/LogOutOutline",
+      "sha256": "da165eace02a41039a81638770e6464038a8133a5d7b0ed1366b78a6fbe81562"
+    },
+    "LogOut": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M160 256a16 16 0 0 1 16-16h144V136c0-32-33.79-56-64-56H104a56.06 56.06 0 0 0-56 56v240a56.06 56.06 0 0 0 56 56h160a56.06 56.06 0 0 0 56-56V272H176a16 16 0 0 1-16-16z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M459.31 244.69l-80-80a16 16 0 0 0-22.62 22.62L409.37 240H320v32h89.37l-52.68 52.69a16 16 0 1 0 22.62 22.62l80-80a16 16 0 0 0 0-22.62z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/LogOut",
+      "sha256": "19fdb3bdc154329db96ff5074fc7f2f3af4bbf53ff1f0fbd2d9f096f6118b0d4"
+    },
+    "CheckmarkCircleOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M448 256c0-106-86-192-192-192S64 150 64 256s86 192 192 192s192-86 192-192z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M352 176L217.6 336L160 272"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/CheckmarkCircleOutline",
+      "sha256": "514b5cd36a05fdb133a8bff5299dfd28262a686bdde67e6a290db7c753209798"
+    },
+    "CheckmarkCircle": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M256 48C141.31 48 48 141.31 48 256s93.31 208 208 208s208-93.31 208-208S370.69 48 256 48zm108.25 138.29l-134.4 160a16 16 0 0 1-12 5.71h-.27a16 16 0 0 1-11.89-5.3l-57.6-64a16 16 0 1 1 23.78-21.4l45.29 50.32l122.59-145.91a16 16 0 0 1 24.5 20.58z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/CheckmarkCircle",
+      "sha256": "080ef320b6db77f54c888b7ea21c4efbd6471b529ee35ca68bfdf84ea5008d14"
+    },
+    "ServerOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "ellipse",
+          "attrs": {
+            "cx": "256",
+            "cy": "128",
+            "rx": "192",
+            "ry": "80",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M448 214c0 44.18-86 80-192 80S64 258.18 64 214",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M448 300c0 44.18-86 80-192 80S64 344.18 64 300",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M64 127.24v257.52C64 428.52 150 464 256 464s192-35.48 192-79.24V127.24",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/ServerOutline",
+      "sha256": "a79aa8ca0782eba39e3bdda8587922d881da656434f5533a766d5fc3b46c0665"
+    },
+    "Server": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M256 428c-52.35 0-111.39-11.61-157.93-31c-17.07-7.19-31.69-18.82-43.64-28a4 4 0 0 0-6.43 3.18v12.58c0 28.07 23.49 53.22 66.14 70.82C152.29 471.33 202.67 480 256 480s103.7-8.67 141.86-24.42C440.51 438 464 412.83 464 384.76v-12.58a4 4 0 0 0-6.43-3.18c-11.95 9.17-26.57 20.81-43.65 28c-46.54 19.39-105.57 31-157.92 31z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M464 126.51c-.81-27.65-24.18-52.4-66-69.85C359.74 40.76 309.34 32 256 32s-103.74 8.76-141.91 24.66c-41.78 17.41-65.15 42.11-66 69.69L48 144c0 6.41 5.2 16.48 14.63 24.73c11.13 9.73 27.65 19.33 47.78 27.73C153.24 214.36 207.67 225 256 225s102.76-10.68 145.59-28.58c20.13-8.4 36.65-18 47.78-27.73C458.8 160.49 464 150.42 464 144z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M413.92 226c-46.53 19.43-105.57 31-157.92 31s-111.39-11.57-157.93-31c-17.07-7.15-31.69-18.79-43.64-28a4 4 0 0 0-6.43 3.22V232c0 6.41 5.2 14.48 14.63 22.73c11.13 9.74 27.65 19.33 47.78 27.74C153.24 300.34 207.67 311 256 311s102.76-10.68 145.59-28.57c20.13-8.41 36.65-18 47.78-27.74C458.8 246.47 464 238.41 464 232v-30.78a4 4 0 0 0-6.43-3.18c-11.95 9.17-26.57 20.81-43.65 27.96z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M413.92 312c-46.54 19.41-105.57 31-157.92 31s-111.39-11.59-157.93-31c-17.07-7.17-31.69-18.81-43.64-28a4 4 0 0 0-6.43 3.2V317c0 6.41 5.2 14.47 14.62 22.71c11.13 9.74 27.66 19.33 47.79 27.74C153.24 385.32 207.66 396 256 396s102.76-10.68 145.59-28.57c20.13-8.41 36.65-18 47.78-27.74C458.8 331.44 464 323.37 464 317v-29.8a4 4 0 0 0-6.43-3.18c-11.95 9.17-26.57 20.81-43.65 27.98z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/Server",
+      "sha256": "667228ccbf540c905a34af0dbb4bd6d7ddb2427803b1968866a67973a42f2b06"
+    },
+    "AlbumsOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "rect",
+          "attrs": {
+            "x": "64",
+            "y": "176",
+            "width": "384",
+            "height": "256",
+            "rx": "28.87",
+            "ry": "28.87",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32",
+            "d": "M144 80h224",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32",
+            "d": "M112 128h288",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/AlbumsOutline",
+      "sha256": "125708e32e70c5b821f4f334cc04a56009b1d10ff6ece534fd1f6ef4328c9d79"
+    },
+    "Albums": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M368 96H144a16 16 0 0 1 0-32h224a16 16 0 0 1 0 32z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M400 144H112a16 16 0 0 1 0-32h288a16 16 0 0 1 0 32z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M419.13 448H92.87A44.92 44.92 0 0 1 48 403.13V204.87A44.92 44.92 0 0 1 92.87 160h326.26A44.92 44.92 0 0 1 464 204.87v198.26A44.92 44.92 0 0 1 419.13 448z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/Albums",
+      "sha256": "14d9516a390584dcfe0a812172b10c26ffdf18e23dddcf6d62b0005dee4d9a66"
+    },
+    "StatsChartOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "rect",
+          "attrs": {
+            "x": "64",
+            "y": "320",
+            "width": "48",
+            "height": "160",
+            "rx": "8",
+            "ry": "8",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "rect",
+          "attrs": {
+            "x": "288",
+            "y": "224",
+            "width": "48",
+            "height": "256",
+            "rx": "8",
+            "ry": "8",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "rect",
+          "attrs": {
+            "x": "400",
+            "y": "112",
+            "width": "48",
+            "height": "368",
+            "rx": "8",
+            "ry": "8",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "rect",
+          "attrs": {
+            "x": "176",
+            "y": "32",
+            "width": "48",
+            "height": "448",
+            "rx": "8",
+            "ry": "8",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/StatsChartOutline",
+      "sha256": "25cb8900f13774a557f40d48ad3ea789e9fad04561ce7ac7be7af39cd71fff87"
+    },
+    "StatsChart": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M104 496H72a24 24 0 0 1-24-24V328a24 24 0 0 1 24-24h32a24 24 0 0 1 24 24v144a24 24 0 0 1-24 24z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M328 496h-32a24 24 0 0 1-24-24V232a24 24 0 0 1 24-24h32a24 24 0 0 1 24 24v240a24 24 0 0 1-24 24z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M440 496h-32a24 24 0 0 1-24-24V120a24 24 0 0 1 24-24h32a24 24 0 0 1 24 24v352a24 24 0 0 1-24 24z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M216 496h-32a24 24 0 0 1-24-24V40a24 24 0 0 1 24-24h32a24 24 0 0 1 24 24v432a24 24 0 0 1-24 24z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/StatsChart",
+      "sha256": "ff793c1683953f8b2adf8eac9ddf0d4e7aa58784e5b9dc7d801fcd5c25b17fcb"
+    },
+    "GridOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "rect",
+          "attrs": {
+            "x": "48",
+            "y": "48",
+            "width": "176",
+            "height": "176",
+            "rx": "20",
+            "ry": "20",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "rect",
+          "attrs": {
+            "x": "288",
+            "y": "48",
+            "width": "176",
+            "height": "176",
+            "rx": "20",
+            "ry": "20",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "rect",
+          "attrs": {
+            "x": "48",
+            "y": "288",
+            "width": "176",
+            "height": "176",
+            "rx": "20",
+            "ry": "20",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "rect",
+          "attrs": {
+            "x": "288",
+            "y": "288",
+            "width": "176",
+            "height": "176",
+            "rx": "20",
+            "ry": "20",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/GridOutline",
+      "sha256": "40beec21ef6105093e40b7ebfae4ac9216ff0db52f089636ebe8fb4b84cf3521"
+    },
+    "Grid": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M204 240H68a36 36 0 0 1-36-36V68a36 36 0 0 1 36-36h136a36 36 0 0 1 36 36v136a36 36 0 0 1-36 36z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M444 240H308a36 36 0 0 1-36-36V68a36 36 0 0 1 36-36h136a36 36 0 0 1 36 36v136a36 36 0 0 1-36 36z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M204 480H68a36 36 0 0 1-36-36V308a36 36 0 0 1 36-36h136a36 36 0 0 1 36 36v136a36 36 0 0 1-36 36z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M444 480H308a36 36 0 0 1-36-36V308a36 36 0 0 1 36-36h136a36 36 0 0 1 36 36v136a36 36 0 0 1-36 36z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/Grid",
+      "sha256": "85e788b0d1804fb58329bc16ec3ff0f0e9d84952a44008ceda9e6f2084dd3246"
+    },
+    "FileTrayStackedOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M48 336v96a48.14 48.14 0 0 0 48 48h320a48.14 48.14 0 0 0 48-48v-96",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M48 336h144"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M320 336h144"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M192 336a64 64 0 0 0 128 0",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M384 32H128c-26 0-43 14-48 40L48 192v96a48.14 48.14 0 0 0 48 48h320a48.14 48.14 0 0 0 48-48v-96L432 72c-5-27-23-40-48-40z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M48 192h144"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M320 192h144"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M192 192a64 64 0 0 0 128 0",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/FileTrayStackedOutline",
+      "sha256": "64a9c19e0d37287c389c23cf811dbfaf97f5f46fc25e8d191886f2eea7e5143e"
+    },
+    "FileTrayStacked": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M464 352H320a16 16 0 0 0-16 16a48 48 0 0 1-96 0a16 16 0 0 0-16-16H48a16 16 0 0 0-16 16v64a64.07 64.07 0 0 0 64 64h320a64.07 64.07 0 0 0 64-64v-64a16 16 0 0 0-16-16z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M479.46 187.88L447.61 68.45C441.27 35.59 417.54 16 384 16H128c-16.8 0-31 4.69-42.1 13.94S67.66 52 64.4 68.4L32.54 187.88A15.9 15.9 0 0 0 32 192v48c0 35.29 28.71 80 64 80h320c35.29 0 64-44.71 64-80v-48a15.9 15.9 0 0 0-.54-4.12zM440.57 176H320a15.92 15.92 0 0 0-16 15.82a48 48 0 1 1-96 0A15.92 15.92 0 0 0 192 176H71.43a2 2 0 0 1-1.93-2.52L95.71 75c3.55-18.41 13.81-27 32.29-27h256c18.59 0 28.84 8.53 32.25 26.85l26.25 98.63a2 2 0 0 1-1.93 2.52z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/FileTrayStacked",
+      "sha256": "6a080f24c976975aaf7fb7d325978bb64e543c3998eb8df94a726093b012e4ab"
+    },
+    "ListCircleOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M224 184h128"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M224 256h128"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M224 327h128"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M448 258c0-106-86-192-192-192S64 152 64 258s86 192 192 192s192-86 192-192z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "circle",
+          "attrs": {
+            "cx": "168",
+            "cy": "184",
+            "r": "8",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "circle",
+          "attrs": {
+            "cx": "168",
+            "cy": "257",
+            "r": "8",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "circle",
+          "attrs": {
+            "cx": "168",
+            "cy": "328",
+            "r": "8",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/ListCircleOutline",
+      "sha256": "ad27b8d1664393217877da058479904d65097e7fe82094f0d66045dcc17b5ae3"
+    },
+    "ListCircle": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M256 48C141.31 48 48 141.31 48 256s93.31 208 208 208s208-93.31 208-208S370.69 48 256 48zm-88 302a24 24 0 1 1 24-24a24 24 0 0 1-24 24zm0-71a24 24 0 1 1 24-24a24 24 0 0 1-24 24zm0-73a24 24 0 1 1 24-24a24 24 0 0 1-24 24zm184 135H224a16 16 0 0 1 0-32h128a16 16 0 0 1 0 32zm0-71H224a16 16 0 0 1 0-32h128a16 16 0 0 1 0 32zm0-72H224a16 16 0 0 1 0-32h128a16 16 0 0 1 0 32z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/ListCircle",
+      "sha256": "c6bac462436e7c226b7bd35eb5ee27a06b4f46451aa0840ef3795011ea58c831"
+    },
+    "SettingsOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M262.29 192.31a64 64 0 1 0 57.4 57.4a64.13 64.13 0 0 0-57.4-57.4zM416.39 256a154.34 154.34 0 0 1-1.53 20.79l45.21 35.46a10.81 10.81 0 0 1 2.45 13.75l-42.77 74a10.81 10.81 0 0 1-13.14 4.59l-44.9-18.08a16.11 16.11 0 0 0-15.17 1.75A164.48 164.48 0 0 1 325 400.8a15.94 15.94 0 0 0-8.82 12.14l-6.73 47.89a11.08 11.08 0 0 1-10.68 9.17h-85.54a11.11 11.11 0 0 1-10.69-8.87l-6.72-47.82a16.07 16.07 0 0 0-9-12.22a155.3 155.3 0 0 1-21.46-12.57a16 16 0 0 0-15.11-1.71l-44.89 18.07a10.81 10.81 0 0 1-13.14-4.58l-42.77-74a10.8 10.8 0 0 1 2.45-13.75l38.21-30a16.05 16.05 0 0 0 6-14.08c-.36-4.17-.58-8.33-.58-12.5s.21-8.27.58-12.35a16 16 0 0 0-6.07-13.94l-38.19-30A10.81 10.81 0 0 1 49.48 186l42.77-74a10.81 10.81 0 0 1 13.14-4.59l44.9 18.08a16.11 16.11 0 0 0 15.17-1.75A164.48 164.48 0 0 1 187 111.2a15.94 15.94 0 0 0 8.82-12.14l6.73-47.89A11.08 11.08 0 0 1 213.23 42h85.54a11.11 11.11 0 0 1 10.69 8.87l6.72 47.82a16.07 16.07 0 0 0 9 12.22a155.3 155.3 0 0 1 21.46 12.57a16 16 0 0 0 15.11 1.71l44.89-18.07a10.81 10.81 0 0 1 13.14 4.58l42.77 74a10.8 10.8 0 0 1-2.45 13.75l-38.21 30a16.05 16.05 0 0 0-6.05 14.08c.33 4.14.55 8.3.55 12.47z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/SettingsOutline",
+      "sha256": "868084d3f7027894d3f7bdb7ac4067e5297042db1a1ec6afa050ec5b3b790083"
+    },
+    "Settings": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "circle",
+          "attrs": {
+            "cx": "256",
+            "cy": "256",
+            "r": "48",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M470.39 300l-.47-.38l-31.56-24.75a16.11 16.11 0 0 1-6.1-13.33v-11.56a16 16 0 0 1 6.11-13.22L469.92 212l.47-.38a26.68 26.68 0 0 0 5.9-34.06l-42.71-73.9a1.59 1.59 0 0 1-.13-.22A26.86 26.86 0 0 0 401 92.14l-.35.13l-37.1 14.93a15.94 15.94 0 0 1-14.47-1.29q-4.92-3.1-10-5.86a15.94 15.94 0 0 1-8.19-11.82l-5.59-39.59l-.12-.72A27.22 27.22 0 0 0 298.76 26h-85.52a26.92 26.92 0 0 0-26.45 22.39l-.09.56l-5.57 39.67a16 16 0 0 1-8.13 11.82a175.21 175.21 0 0 0-10 5.82a15.92 15.92 0 0 1-14.43 1.27l-37.13-15l-.35-.14a26.87 26.87 0 0 0-32.48 11.34l-.13.22l-42.77 73.95a26.71 26.71 0 0 0 5.9 34.1l.47.38l31.56 24.75a16.11 16.11 0 0 1 6.1 13.33v11.56a16 16 0 0 1-6.11 13.22L42.08 300l-.47.38a26.68 26.68 0 0 0-5.9 34.06l42.71 73.9a1.59 1.59 0 0 1 .13.22a26.86 26.86 0 0 0 32.45 11.3l.35-.13l37.07-14.93a15.94 15.94 0 0 1 14.47 1.29q4.92 3.11 10 5.86a15.94 15.94 0 0 1 8.19 11.82l5.56 39.59l.12.72A27.22 27.22 0 0 0 213.24 486h85.52a26.92 26.92 0 0 0 26.45-22.39l.09-.56l5.57-39.67a16 16 0 0 1 8.18-11.82c3.42-1.84 6.76-3.79 10-5.82a15.92 15.92 0 0 1 14.43-1.27l37.13 14.95l.35.14a26.85 26.85 0 0 0 32.48-11.34a2.53 2.53 0 0 1 .13-.22l42.71-73.89a26.7 26.7 0 0 0-5.89-34.11zm-134.48-40.24a80 80 0 1 1-83.66-83.67a80.21 80.21 0 0 1 83.66 83.67z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/Settings",
+      "sha256": "6389a6626b39d44c4b5d9e89c8b374443fc5fa85bd237239b56460f8622c387a"
+    },
+    "DocumentTextOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M416 221.25V416a48 48 0 0 1-48 48H144a48 48 0 0 1-48-48V96a48 48 0 0 1 48-48h98.75a32 32 0 0 1 22.62 9.37l141.26 141.26a32 32 0 0 1 9.37 22.62z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M256 56v120a32 32 0 0 0 32 32h120",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M176 288h160"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M176 368h160"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/DocumentTextOutline",
+      "sha256": "2f3a2d179550333499417d0fb577463a5a805ec109e727bc4bc65f41c591fe43"
+    },
+    "DocumentText": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M428 224H288a48 48 0 0 1-48-48V36a4 4 0 0 0-4-4h-92a64 64 0 0 0-64 64v320a64 64 0 0 0 64 64h224a64 64 0 0 0 64-64V228a4 4 0 0 0-4-4zm-92 160H176a16 16 0 0 1 0-32h160a16 16 0 0 1 0 32zm0-80H176a16 16 0 0 1 0-32h160a16 16 0 0 1 0 32z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M419.22 188.59L275.41 44.78a2 2 0 0 0-3.41 1.41V176a16 16 0 0 0 16 16h129.81a2 2 0 0 0 1.41-3.41z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/DocumentText",
+      "sha256": "8b5098ae70d99cc1c20f8675e5f2b37edaafa2baf7162a32f6e050d8caf0420e"
+    },
+    "CashOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "rect",
+          "attrs": {
+            "x": "32",
+            "y": "80",
+            "width": "448",
+            "height": "256",
+            "rx": "16",
+            "ry": "16",
+            "transform": "rotate(180 256 208)",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M64 384h384"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M96 432h320"
+          },
+          "children": []
+        },
+        {
+          "tag": "circle",
+          "attrs": {
+            "cx": "256",
+            "cy": "208",
+            "r": "80",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M480 160a80 80 0 0 1-80-80",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M32 160a80 80 0 0 0 80-80",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M480 256a80 80 0 0 0-80 80",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M32 256a80 80 0 0 1 80 80",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/CashOutline",
+      "sha256": "079dff346b0f1ca61162f8130508b4ed266f26e578f24a2cc6baa1543f030ada"
+    },
+    "Cash": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M448 400H64a16 16 0 0 1 0-32h384a16 16 0 0 1 0 32z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M416 448H96a16 16 0 0 1 0-32h320a16 16 0 0 1 0 32z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M32 272H16v48a32 32 0 0 0 32 32h48v-16a64.07 64.07 0 0 0-64-64z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M480 240h16v-64h-16a96.11 96.11 0 0 1-96-96V64H128v16a96.11 96.11 0 0 1-96 96H16v64h16a96.11 96.11 0 0 1 96 96v16h256v-16a96.11 96.11 0 0 1 96-96zm-224 64a96 96 0 1 1 96-96a96.11 96.11 0 0 1-96 96z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "circle",
+          "attrs": {
+            "cx": "256",
+            "cy": "208",
+            "r": "64",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M416 336v16h48a32 32 0 0 0 32-32v-48h-16a64.07 64.07 0 0 0-64 64z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M480 144h16V96a32 32 0 0 0-32-32h-48v16a64.07 64.07 0 0 0 64 64z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M96 80V64H48a32 32 0 0 0-32 32v48h16a64.07 64.07 0 0 0 64-64z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/Cash",
+      "sha256": "151e6851d856a0acb80523f7f6cc8a93e542d445ec4b2f620b4b676b2b09d853"
+    },
+    "SpeedometerOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M326.1 231.9l-47.5 75.5a31 31 0 0 1-7 7a30.11 30.11 0 0 1-35-49l75.5-47.5a10.23 10.23 0 0 1 11.7 0a10.06 10.06 0 0 1 2.3 14z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M256 64C132.3 64 32 164.2 32 287.9a223.18 223.18 0 0 0 56.3 148.5c1.1 1.2 2.1 2.4 3.2 3.5a25.19 25.19 0 0 0 37.1-.1a173.13 173.13 0 0 1 254.8 0a25.19 25.19 0 0 0 37.1.1l3.2-3.5A223.18 223.18 0 0 0 480 287.9C480 164.2 379.7 64 256 64z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32",
+            "d": "M256 128v32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32",
+            "d": "M416 288h-32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32",
+            "d": "M128 288H96"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32",
+            "d": "M165.49 197.49l-22.63-22.63"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32",
+            "d": "M346.51 197.49l22.63-22.63"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/SpeedometerOutline",
+      "sha256": "e471a4414d826b36562ff480a6f5d86de463044e0c6231b324143d6a5f1117f1"
+    },
+    "Speedometer": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M425.7 118.25A240 240 0 0 0 76.32 447l.18.2c.33.35.64.71 1 1.05c.74.84 1.58 1.79 2.57 2.78a41.17 41.17 0 0 0 60.36-.42a157.13 157.13 0 0 1 231.26 0a41.18 41.18 0 0 0 60.65.06l3.21-3.5l.18-.2a239.93 239.93 0 0 0-10-328.76zM240 128a16 16 0 0 1 32 0v32a16 16 0 0 1-32 0zM128 304H96a16 16 0 0 1 0-32h32a16 16 0 0 1 0 32zm48.8-95.2a16 16 0 0 1-22.62 0l-22.63-22.62a16 16 0 0 1 22.63-22.63l22.62 22.63a16 16 0 0 1 0 22.62zm149.3 23.1l-47.5 75.5a31 31 0 0 1-7 7a30.11 30.11 0 0 1-35-49l75.5-47.5a10.23 10.23 0 0 1 11.7 0a10.06 10.06 0 0 1 2.3 14zm31.72-23.1a16 16 0 0 1-22.62-22.62l22.62-22.63a16 16 0 0 1 22.63 22.63zm65.88 227.6zM416 304h-32a16 16 0 0 1 0-32h32a16 16 0 0 1 0 32z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/Speedometer",
+      "sha256": "e8aafb945dcd9e1abf9c6d73fbebfb2818aec3a6ee9e6182dcff71716437c344"
+    },
+    "CardOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "rect",
+          "attrs": {
+            "x": "48",
+            "y": "96",
+            "width": "416",
+            "height": "320",
+            "rx": "56",
+            "ry": "56",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linejoin": "round",
+            "stroke-width": "60",
+            "d": "M48 192h416"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linejoin": "round",
+            "stroke-width": "60",
+            "d": "M128 300h48v20h-48z"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/CardOutline",
+      "sha256": "316550f71add52f69b7b0b82a1829e2d47a3487dea6da3c04413d196d0296fa2"
+    },
+    "Card": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M32 376a56 56 0 0 0 56 56h336a56 56 0 0 0 56-56V222H32zm66-76a30 30 0 0 1 30-30h48a30 30 0 0 1 30 30v20a30 30 0 0 1-30 30h-48a30 30 0 0 1-30-30z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M424 80H88a56 56 0 0 0-56 56v26h448v-26a56 56 0 0 0-56-56z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/Card",
+      "sha256": "5fe0d0bf671bb0a854734d2e987343e0dbb05cd9613dc888c54c502f75b3f88c"
+    },
+    "FileTrayOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M384 80H128c-26 0-43 14-48 40L48 272v112a48.14 48.14 0 0 0 48 48h320a48.14 48.14 0 0 0 48-48V272l-32-152c-5-27-23-40-48-40z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M48 272h144"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M320 272h144"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M192 272a64 64 0 0 0 128 0",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/FileTrayOutline",
+      "sha256": "627218f995acdc8ca0acf7c1942aef7c3f7a4bf4ea19e47512b9ca9e5c16f079"
+    },
+    "FileTray": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M479.66 268.7l-32-151.81C441.48 83.77 417.68 64 384 64H128c-16.8 0-31 4.69-42.1 13.94s-18.37 22.31-21.58 38.89l-32 151.87A16.65 16.65 0 0 0 32 272v112a64 64 0 0 0 64 64h320a64 64 0 0 0 64-64V272a16.65 16.65 0 0 0-.34-3.3zm-384-145.4v-.28c3.55-18.43 13.81-27 32.29-27H384c18.61 0 28.87 8.55 32.27 26.91c0 .13.05.26.07.39l26.93 127.88a4 4 0 0 1-3.92 4.82H320a15.92 15.92 0 0 0-16 15.82a48 48 0 1 1-96 0A15.92 15.92 0 0 0 192 256H72.65a4 4 0 0 1-3.92-4.82z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/FileTray",
+      "sha256": "72f57990cd1a7a20de8cef6ce3003dda8d1208ab15f34ddc19402d073d87d3e0"
+    },
+    "ChatboxEllipsesOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M408 64H104a56.16 56.16 0 0 0-56 56v192a56.16 56.16 0 0 0 56 56h40v80l93.72-78.14a8 8 0 0 1 5.13-1.86H408a56.16 56.16 0 0 0 56-56V120a56.16 56.16 0 0 0-56-56z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "circle",
+          "attrs": {
+            "cx": "160",
+            "cy": "216",
+            "r": "32",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "circle",
+          "attrs": {
+            "cx": "256",
+            "cy": "216",
+            "r": "32",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "circle",
+          "attrs": {
+            "cx": "352",
+            "cy": "216",
+            "r": "32",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/ChatboxEllipsesOutline",
+      "sha256": "34e6e6845defd56f1d28fbd52fe77760402853d1e6438de89dd344f31780bbc3"
+    },
+    "ChatboxEllipses": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M408 48H104a72.08 72.08 0 0 0-72 72v192a72.08 72.08 0 0 0 72 72h24v64a16 16 0 0 0 26.25 12.29L245.74 384H408a72.08 72.08 0 0 0 72-72V120a72.08 72.08 0 0 0-72-72zM160 248a32 32 0 1 1 32-32a32 32 0 0 1-32 32zm96 0a32 32 0 1 1 32-32a32 32 0 0 1-32 32zm96 0a32 32 0 1 1 32-32a32 32 0 0 1-32 32z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/ChatboxEllipses",
+      "sha256": "87c0965008ca661422a957a94910c63eaa44a96765eab718e0a8246910a4e888"
+    },
+    "SearchCircleOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32",
+            "d": "M283.64 283.64L336 336"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/SearchCircleOutline",
+      "sha256": "c3cddf54885233c9d597e0eb68e2683cb07fd9d44c443f1ce26a0d6305b32ac2"
+    },
+    "SearchCircle": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M256 64C150.13 64 64 150.13 64 256s86.13 192 192 192s192-86.13 192-192S361.87 64 256 64zm91.31 283.31a16 16 0 0 1-22.62 0l-42.84-42.83a88.08 88.08 0 1 1 22.63-22.63l42.83 42.84a16 16 0 0 1 0 22.62z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "circle",
+          "attrs": {
+            "cx": "232",
+            "cy": "232",
+            "r": "56",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/SearchCircle",
+      "sha256": "787515ab5911cdf667e29b0c09b31a481322509c03d1c801ea9f4948ea3a0292"
+    },
+    "ShieldCheckmarkOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M336 176L225.2 304L176 255.8"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M463.1 112.37C373.68 96.33 336.71 84.45 256 48c-80.71 36.45-117.68 48.33-207.1 64.37C32.7 369.13 240.58 457.79 256 464c15.42-6.21 223.3-94.87 207.1-351.63z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/ShieldCheckmarkOutline",
+      "sha256": "f3594a83e4ff690bc0d768f2a6c66873ac667e4697dc6f6855e9d278382c7573"
+    },
+    "ShieldCheckmark": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M479.07 111.36a16 16 0 0 0-13.15-14.74c-86.5-15.52-122.61-26.74-203.33-63.2a16 16 0 0 0-13.18 0C168.69 69.88 132.58 81.1 46.08 96.62a16 16 0 0 0-13.15 14.74c-3.85 61.11 4.36 118.05 24.43 169.24A349.47 349.47 0 0 0 129 393.11c53.47 56.73 110.24 81.37 121.07 85.73a16 16 0 0 0 12 0c10.83-4.36 67.6-29 121.07-85.73a349.47 349.47 0 0 0 71.5-112.51c20.07-51.19 28.28-108.13 24.43-169.24zm-131 75.11l-110.8 128a16 16 0 0 1-11.41 5.53h-.66a16 16 0 0 1-11.2-4.57l-49.2-48.2a16 16 0 1 1 22.4-22.86l37 36.29l99.7-115.13a16 16 0 0 1 24.2 20.94z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/ShieldCheckmark",
+      "sha256": "929582c6e320c8a163b35aa2ec4bbaaa72eda12e7fc2cb474a4a772e7abfe1ad"
+    },
+    "AlertCircleOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M448 256c0-106-86-192-192-192S64 150 64 256s86 192 192 192s192-86 192-192z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M250.26 166.05L256 288l5.73-121.95a5.74 5.74 0 0 0-5.79-6h0a5.74 5.74 0 0 0-5.68 6z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M256 367.91a20 20 0 1 1 20-20a20 20 0 0 1-20 20z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/AlertCircleOutline",
+      "sha256": "5b23b3b2b3485e3b788ed7ffc1f8c86f59bce53409470003a17e53508c486a2f"
+    },
+    "AlertCircle": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M256 48C141.31 48 48 141.31 48 256s93.31 208 208 208s208-93.31 208-208S370.69 48 256 48zm0 319.91a20 20 0 1 1 20-20a20 20 0 0 1-20 20zm21.72-201.15l-5.74 122a16 16 0 0 1-32 0l-5.74-121.94v-.05a21.74 21.74 0 1 1 43.44 0z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/AlertCircle",
+      "sha256": "691b028494da18aa39c594a81a4c33d9cd58655113c6dd50b7ea0daca9c53299"
+    },
+    "RefreshCircleOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M288 193s12.18-6-32-6a80 80 0 1 0 80 80",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-miterlimit": "10",
+            "stroke-width": "28"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "28",
+            "d": "M256 149l40 40l-40 40"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M256 64C150 64 64 150 64 256s86 192 192 192s192-86 192-192S362 64 256 64z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/RefreshCircleOutline",
+      "sha256": "fded935753dcb0500be8714512a51bba969894b53a7a3b74486d743bfc4023a9"
+    },
+    "RefreshCircle": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M256 48C141.31 48 48 141.32 48 256c0 114.86 93.14 208 208 208c114.69 0 208-93.31 208-208c0-114.87-93.13-208-208-208zm0 313a94 94 0 0 1 0-188h4.21l-14.11-14.1a14 14 0 0 1 19.8-19.8l40 40a14 14 0 0 1 0 19.8l-40 40a14 14 0 0 1-19.8-19.8l18-18c-2.38-.1-5.1-.1-8.1-.1a66 66 0 1 0 66 66a14 14 0 0 1 28 0a94.11 94.11 0 0 1-94 94z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/RefreshCircle",
+      "sha256": "a9489fccb7a482e1cce8d7d8a50a675d5b3271e09a6727007810693b797efc64"
+    },
+    "PersonCircleOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M258.9 48C141.92 46.42 46.42 141.92 48 258.9c1.56 112.19 92.91 203.54 205.1 205.1c117 1.6 212.48-93.9 210.88-210.88C462.44 140.91 371.09 49.56 258.9 48zm126.42 327.25a4 4 0 0 1-6.14-.32a124.27 124.27 0 0 0-32.35-29.59C321.37 329 289.11 320 256 320s-65.37 9-90.83 25.34a124.24 124.24 0 0 0-32.35 29.58a4 4 0 0 1-6.14.32A175.32 175.32 0 0 1 80 259c-1.63-97.31 78.22-178.76 175.57-179S432 158.81 432 256a175.32 175.32 0 0 1-46.68 119.25z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M256 144c-19.72 0-37.55 7.39-50.22 20.82s-19 32-17.57 51.93C191.11 256 221.52 288 256 288s64.83-32 67.79-71.24c1.48-19.74-4.8-38.14-17.68-51.82C293.39 151.44 275.59 144 256 144z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/PersonCircleOutline",
+      "sha256": "cefc0c82c57e106e5c691e5ed6a777e7e67ac00116d1015fbb90e9d0d0903948"
+    },
+    "PersonCircle": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M256 48C141.31 48 48 141.31 48 256s93.31 208 208 208s208-93.31 208-208S370.69 48 256 48zm-50.22 116.82C218.45 151.39 236.28 144 256 144s37.39 7.44 50.11 20.94c12.89 13.68 19.16 32.06 17.68 51.82C320.83 256 290.43 288 256 288s-64.89-32-67.79-71.25c-1.47-19.92 4.79-38.36 17.57-51.93zM256 432a175.49 175.49 0 0 1-126-53.22a122.91 122.91 0 0 1 35.14-33.44C190.63 329 222.89 320 256 320s65.37 9 90.83 25.34A122.87 122.87 0 0 1 382 378.78A175.45 175.45 0 0 1 256 432z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/PersonCircle",
+      "sha256": "76f102c548b8d36f6995bcc40774e927e990c37a5d51432f041c5068d0a36555"
+    },
+    "ChevronBackCircleOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M256 64C150 64 64 150 64 256s86 192 192 192s192-86 192-192S362 64 256 64z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M296 352l-96-96l96-96"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/ChevronBackCircleOutline",
+      "sha256": "d068b2b9086d1703b1d6ca4f6c45bf718d4f7ae7e75eb52df87bfc349199c84c"
+    },
+    "ChevronBackCircle": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M256 48C141.13 48 48 141.13 48 256s93.13 208 208 208s208-93.13 208-208S370.87 48 256 48zm35.31 292.69a16 16 0 1 1-22.62 22.62l-96-96a16 16 0 0 1 0-22.62l96-96a16 16 0 0 1 22.62 22.62L206.63 256z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/ChevronBackCircle",
+      "sha256": "42e9067cbb5cce29534d6ea3a599ab1878a8787d792132c97525b43acaf00e02"
+    },
+    "ChevronDownCircleOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M256 64C150 64 64 150 64 256s86 192 192 192s192-86 192-192S362 64 256 64z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M352 216l-96 96l-96-96"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/ChevronDownCircleOutline",
+      "sha256": "d38cbc336fc6cac1d51396084be16095babb459238717df27fd4cfe77748d044"
+    },
+    "ChevronDownCircle": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M464 256c0-114.87-93.13-208-208-208S48 141.13 48 256s93.13 208 208 208s208-93.13 208-208zm-100.69-28.69l-96 96a16 16 0 0 1-22.62 0l-96-96a16 16 0 0 1 22.62-22.62L256 289.37l84.69-84.68a16 16 0 0 1 22.62 22.62z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/ChevronDownCircle",
+      "sha256": "86ffae8e6b45e2721b6d8ae268602f71e6078119c05eb53d572dce88c0f66630"
+    },
+    "ChevronForwardCircleOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M64 256c0 106 86 192 192 192s192-86 192-192S362 64 256 64S64 150 64 256z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M216 352l96-96l-96-96"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/ChevronForwardCircleOutline",
+      "sha256": "80e67c4d44da27e9a6372e85866b8486d54b8543540aac5e49366241ca48b6e9"
+    },
+    "ChevronForwardCircle": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M48 256c0 114.87 93.13 208 208 208s208-93.13 208-208S370.87 48 256 48S48 141.13 48 256zm257.37 0l-84.68-84.69a16 16 0 0 1 22.62-22.62l96 96a16 16 0 0 1 0 22.62l-96 96a16 16 0 0 1-22.62-22.62z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/ChevronForwardCircle",
+      "sha256": "54c81d9dc668b3b5fe42840eec43b81645df9988ad67af0f54d3ec3adad821af"
+    },
+    "CalendarOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "rect",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "x": "48",
+            "y": "80",
+            "width": "416",
+            "height": "384",
+            "rx": "48"
+          },
+          "children": []
+        },
+        {
+          "tag": "circle",
+          "attrs": {
+            "cx": "296",
+            "cy": "232",
+            "r": "24",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "circle",
+          "attrs": {
+            "cx": "376",
+            "cy": "232",
+            "r": "24",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "circle",
+          "attrs": {
+            "cx": "296",
+            "cy": "312",
+            "r": "24",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "circle",
+          "attrs": {
+            "cx": "376",
+            "cy": "312",
+            "r": "24",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "circle",
+          "attrs": {
+            "cx": "136",
+            "cy": "312",
+            "r": "24",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "circle",
+          "attrs": {
+            "cx": "216",
+            "cy": "312",
+            "r": "24",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "circle",
+          "attrs": {
+            "cx": "136",
+            "cy": "392",
+            "r": "24",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "circle",
+          "attrs": {
+            "cx": "216",
+            "cy": "392",
+            "r": "24",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "circle",
+          "attrs": {
+            "cx": "296",
+            "cy": "392",
+            "r": "24",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "stroke-linecap": "round",
+            "d": "M128 48v32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "stroke-linecap": "round",
+            "d": "M384 48v32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M464 160H48"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/CalendarOutline",
+      "sha256": "502c5711b3175bdc05390bd1c4bf463b73ec5d9a27f03a0d00c37b85fc3994fa"
+    },
+    "Calendar": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M480 128a64 64 0 0 0-64-64h-16V48.45c0-8.61-6.62-16-15.23-16.43A16 16 0 0 0 368 48v16H144V48.45c0-8.61-6.62-16-15.23-16.43A16 16 0 0 0 112 48v16H96a64 64 0 0 0-64 64v12a4 4 0 0 0 4 4h440a4 4 0 0 0 4-4z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M32 416a64 64 0 0 0 64 64h320a64 64 0 0 0 64-64V179a3 3 0 0 0-3-3H35a3 3 0 0 0-3 3zm344-208a24 24 0 1 1-24 24a24 24 0 0 1 24-24zm0 80a24 24 0 1 1-24 24a24 24 0 0 1 24-24zm-80-80a24 24 0 1 1-24 24a24 24 0 0 1 24-24zm0 80a24 24 0 1 1-24 24a24 24 0 0 1 24-24zm0 80a24 24 0 1 1-24 24a24 24 0 0 1 24-24zm-80-80a24 24 0 1 1-24 24a24 24 0 0 1 24-24zm0 80a24 24 0 1 1-24 24a24 24 0 0 1 24-24zm-80-80a24 24 0 1 1-24 24a24 24 0 0 1 24-24zm0 80a24 24 0 1 1-24 24a24 24 0 0 1 24-24z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/Calendar",
+      "sha256": "ab1e247eb42cc36e19cddac464c0252bbffa5aaeefb92043e5ec350062c3e1a4"
+    },
+    "BookOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M256 160c16-63.16 76.43-95.41 208-96a15.94 15.94 0 0 1 16 16v288a16 16 0 0 1-16 16c-128 0-177.45 25.81-208 64c-30.37-38-80-64-208-64c-9.88 0-16-8.05-16-17.93V80a15.94 15.94 0 0 1 16-16c131.57.59 192 32.84 208 96z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M256 160v288"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/BookOutline",
+      "sha256": "15dcb4477fc09c09d0b854362046a586d79a7dbc8e856b74c9c5943d5b3b9a25"
+    },
+    "Book": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M202.24 74C166.11 56.75 115.61 48.3 48 48a31.36 31.36 0 0 0-17.92 5.33A32 32 0 0 0 16 79.9V366c0 19.34 13.76 33.93 32 33.93c71.07 0 142.36 6.64 185.06 47a4.11 4.11 0 0 0 6.94-3V106.82a15.89 15.89 0 0 0-5.46-12A143 143 0 0 0 202.24 74z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M481.92 53.3A31.33 31.33 0 0 0 464 48c-67.61.3-118.11 8.71-154.24 26a143.31 143.31 0 0 0-32.31 20.78a15.93 15.93 0 0 0-5.45 12v337.13a3.93 3.93 0 0 0 6.68 2.81c25.67-25.5 70.72-46.82 185.36-46.81a32 32 0 0 0 32-32v-288a32 32 0 0 0-14.12-26.61z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/Book",
+      "sha256": "f65eb8fe01d787c977860cdf0e8030c9f1a415bdcfb4822e048f1883e6d3387b"
+    },
+    "CloseCircleOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M448 256c0-106-86-192-192-192S64 150 64 256s86 192 192 192s192-86 192-192z",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-miterlimit": "10",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M320 320L192 192"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M192 320l128-128"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/CloseCircleOutline",
+      "sha256": "251801bc97606fd6fcbdde1067ababecdb0beae77b4b464d2ffa19bdc6d79456"
+    },
+    "CloseCircle": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M256 48C141.31 48 48 141.31 48 256s93.31 208 208 208s208-93.31 208-208S370.69 48 256 48zm75.31 260.69a16 16 0 1 1-22.62 22.62L256 278.63l-52.69 52.68a16 16 0 0 1-22.62-22.62L233.37 256l-52.68-52.69a16 16 0 0 1 22.62-22.62L256 233.37l52.69-52.68a16 16 0 0 1 22.62 22.62L278.63 256z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/CloseCircle",
+      "sha256": "c6bac7be198338246a569b531ad99742c4ade161ed3019c278e1a38c183ff680"
+    },
+    "HomeOutline": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M80 212v236a16 16 0 0 0 16 16h96V328a24 24 0 0 1 24-24h80a24 24 0 0 1 24 24v136h96a16 16 0 0 0 16-16V212",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M480 256L266.89 52c-5-5.28-16.69-5.34-21.78 0L32 256",
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "fill": "none",
+            "stroke": "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "32",
+            "d": "M400 179V64h-48v69"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/HomeOutline",
+      "sha256": "d98f6dd6ca168a26ab7eebd2fd0fa26b8bee3c623978166f8624fd7da6d6961b"
+    },
+    "Home": {
+      "viewBox": "0 0 512 512",
+      "elements": [
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M261.56 101.28a8 8 0 0 0-11.06 0L66.4 277.15a8 8 0 0 0-2.47 5.79L63.9 448a32 32 0 0 0 32 32H192a16 16 0 0 0 16-16V328a8 8 0 0 1 8-8h80a8 8 0 0 1 8 8v136a16 16 0 0 0 16 16h96.06a32 32 0 0 0 32-32V282.94a8 8 0 0 0-2.47-5.79z",
+            "fill": "currentColor"
+          },
+          "children": []
+        },
+        {
+          "tag": "path",
+          "attrs": {
+            "d": "M490.91 244.15l-74.8-71.56V64a16 16 0 0 0-16-16h-48a16 16 0 0 0-16 16v32l-57.92-55.38C272.77 35.14 264.71 32 256 32c-8.68 0-16.72 3.14-22.14 8.63l-212.7 203.5c-6.22 6-7 15.87-1.34 22.37A16 16 0 0 0 43 267.56L250.5 69.28a8 8 0 0 1 11.06 0l207.52 198.28a16 16 0 0 0 22.59-.44c6.14-6.36 5.63-16.86-.76-22.97z",
+            "fill": "currentColor"
+          },
+          "children": []
+        }
+      ],
+      "source": "@vicons/ionicons5/Home",
+      "sha256": "762ce55339bfa400b82f4a6ba1a8fd21a1b8dcc5427b082f6e776a509b1fd8a1"
+    }
+  }
+}

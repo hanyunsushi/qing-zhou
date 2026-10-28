@@ -3,41 +3,41 @@
     <h2 class="page-title">监控管理</h2>
     <p class="page-sub">服务器监控与告警</p>
 
-    <!-- 汇总卡：展示卡片 -->
+    <!-- 展示卡片 / 卡片SVG：中性摘要图形与原统计语义对应，不生成选中状态。 -->
     <div class="sum-grid">
       <div class="sum-card">
         <div class="sum-ic">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <InterfaceIcon name="server" :size="18" />
         </div>
         <div><span class="sum-val">{{ dash.total_servers || 0 }}</span><span class="sum-lab">服务器</span></div>
       </div>
       <div class="sum-card">
         <div class="sum-ic">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <InterfaceIcon name="online" :size="18" />
         </div>
         <div><span class="sum-val" style="color:var(--success-text);">{{ dash.online || 0 }}</span><span class="sum-lab">在线</span></div>
       </div>
       <div class="sum-card">
         <div class="sum-ic">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          <InterfaceIcon name="close" :size="18" />
         </div>
         <div><span class="sum-val" style="color:var(--danger-text);">{{ dash.offline || 0 }}</span><span class="sum-lab">离线</span></div>
       </div>
       <div class="sum-card">
         <div class="sum-ic">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+          <InterfaceIcon name="memory" :size="18" />
         </div>
         <div><span class="sum-val">{{ fmtBytes(dash.summary?.total_mem_used) }}</span><span class="sum-lab">内存已用 / {{ fmtBytes(dash.summary?.total_mem_total) }}</span></div>
       </div>
       <div class="sum-card">
         <div class="sum-ic">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          <InterfaceIcon name="disk" :size="18" />
         </div>
         <div><span class="sum-val">{{ fmtBytes(dash.summary?.total_disk_used) }}</span><span class="sum-lab">磁盘已用 / {{ fmtBytes(dash.summary?.total_disk_total) }}</span></div>
       </div>
       <div class="sum-card">
         <div class="sum-ic">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <InterfaceIcon name="warning" :size="18" />
         </div>
         <div><span class="sum-val" style="color:var(--warn-text);">{{ dash.alerts_unread || 0 }}</span><span class="sum-lab">未读告警</span></div>
       </div>
@@ -300,6 +300,7 @@
 </template>
 
 <script setup lang="ts">
+import InterfaceIcon from '@/components/InterfaceIcon.vue'
 import { ref, reactive, computed, onMounted, onUnmounted, nextTick, shallowRef, watch } from 'vue'
 import {
   NCard, NButton, NSpace, NTag, NProgress, NDrawer, NDrawerContent, NForm, NFormItem, NInput, NInputNumber, NSwitch, NSelect, NEmpty, NTooltip, NAlert, useMessage

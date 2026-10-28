@@ -20,12 +20,12 @@ const brandIcon = computed(() => config.config.brand_icon_data_uri || DEFAULT_BR
 </script>
 
 <style scoped>
-/* Logo */
+/* 品牌标识：保留应用Logo、40px槽位与8px轮廓，原图不叠加投影。 */
 .qz-brand-mark {
   display: block;
   flex-shrink: 0;
   object-fit: contain;
   border-radius: 8px !important;
-  filter: drop-shadow(0 4px 7px rgba(24, 76, 108, .14));
+  filter: none;
 }
 </style>

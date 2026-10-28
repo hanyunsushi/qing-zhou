@@ -1,7 +1,11 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { ref } from 'vue'
-import { createSidebarNavigation, describeNavigation } from '../src/composables/useSidebarNavigation.ts'
+import { createServer } from 'vite'
+
+const server = await createServer({ server: { middlewareMode: true, hmr: false } })
+const { createSidebarNavigation, describeNavigation } = await server.ssrLoadModule('/src/composables/useSidebarNavigation.ts')
+await server.close()
 
 test('shared menu is complete without mounting a page and follows the original role', () => {
  const admin = ref(true)

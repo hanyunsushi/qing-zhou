@@ -8,7 +8,7 @@
       <div class="page-actions">
         <!-- 强调按钮：页面级主操作统一复用强调按钮合同。 -->
         <n-button type="primary" size="large" class="action-button action-button--emphasis" @click="openCreate">
-          <template #icon><n-icon><AddOutline /></n-icon></template>
+          <template #icon><InterfaceIcon name="add" /></template>
           新建文档
         </n-button>
       </div>
@@ -25,7 +25,7 @@
         :aria-pressed="statusFilter === metric.value"
         @click="statusFilter = metric.value"
       >
-        <span class="metric-icon"><n-icon><component :is="metric.icon" /></n-icon></span>
+        <span class="metric-icon"><InterfaceIcon :name="metric.icon" :filled="statusFilter === metric.value" /></span>
         <span class="metric-copy">
           <b>{{ metric.count }}</b>
           <span>{{ metric.label }}</span>
@@ -49,7 +49,7 @@
             placeholder="搜索文档标题或内容"
             aria-label="搜索帮助文档"
           >
-            <template #prefix><n-icon><SearchOutline /></n-icon></template>
+            <template #prefix><InterfaceIcon name="search" /></template>
           </n-input>
           <!-- 路由切换组件：帮助文档发布状态改变当前列表维度。 -->
           <div ref="statusSwitch" class="status-switch route-switch" role="group" aria-label="按发布状态筛选"
@@ -86,15 +86,15 @@
               </div>
               <p>{{ excerpt(d.content) }}</p>
               <div class="document-meta">
-                <span><n-icon><TimeOutline /></n-icon>更新于 {{ fmtDate(d.updated_at) }}</span>
-                <span><n-icon><ReaderOutline /></n-icon>{{ contentLength(d.content) }} 字</span>
+                <span><InterfaceIcon name="time" />更新于 {{ fmtDate(d.updated_at) }}</span>
+                <span><InterfaceIcon name="document" />{{ contentLength(d.content) }} 字</span>
               </div>
             </div>
 
             <div class="document-actions">
               <!-- 标准默认弧边按钮：文档编辑是中性编辑动作，使用统一弧边而非蓝色主按钮。 -->
               <n-button class="default-arc-button" @click="openEdit(d)">
-                <template #icon><n-icon><CreateOutline /></n-icon></template>
+                <template #icon><InterfaceIcon name="edit" /></template>
                 编辑
               </n-button>
               <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
@@ -104,7 +104,7 @@
                 aria-label="删除文档"
                 @click="confirmDelete(d)"
               >
-                <template #icon><n-icon><TrashOutline /></n-icon></template>
+                <template #icon><InterfaceIcon name="delete" /></template>
                 删除
               </n-button>
             </div>
@@ -212,10 +212,7 @@ import {
   NSpin, NButton, NModal, NForm, NFormItem, NInput, NInputNumber,
   NSwitch, NTag, NEmpty, NIcon, useMessage, useDialog,
 } from 'naive-ui'
-import {
-  AddOutline, CheckmarkCircleOutline, CreateOutline, DocumentsOutline,
-  ReaderOutline, SearchOutline, TimeOutline, TrashOutline,
-} from '@vicons/ionicons5'
+import InterfaceIcon from '@/components/InterfaceIcon.vue'
 import { apiList, apiPost, apiPut, apiDelete } from '@/api'
 import { fmtDate } from '@/utils/format'
 import { mdToHtml } from '@/utils/markdown'
@@ -245,9 +242,9 @@ const statusOptions: { label: string; value: StatusFilter }[] = [
 const publishedCount = computed(() => docs.value.filter(d => d.published).length)
 const draftCount = computed(() => docs.value.length - publishedCount.value)
 const metrics = computed(() => [
-  { label: '全部文档', hint: '帮助中心内容总数', value: 'all' as StatusFilter, count: docs.value.length, icon: DocumentsOutline, tone: '' },
-  { label: '已发布', hint: '当前用户端可见', value: 'published' as StatusFilter, count: publishedCount.value, icon: CheckmarkCircleOutline, tone: 'success' },
-  { label: '草稿', hint: '等待完善或发布', value: 'draft' as StatusFilter, count: draftCount.value, icon: CreateOutline, tone: 'draft' },
+  { label: '全部文档', hint: '帮助中心内容总数', value: 'all' as StatusFilter, count: docs.value.length, icon: 'document' as const, tone: '' },
+  { label: '已发布', hint: '当前用户端可见', value: 'published' as StatusFilter, count: publishedCount.value, icon: 'online' as const, tone: 'success' },
+  { label: '草稿', hint: '等待完善或发布', value: 'draft' as StatusFilter, count: draftCount.value, icon: 'edit' as const, tone: 'draft' },
 ])
 
 const filteredDocs = computed(() => {

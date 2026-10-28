@@ -11,14 +11,15 @@
       <span class="sc-label">{{ label }}</span>
       <span v-if="badge" class="sc-badge" :style="{ background: badgeColor + '1a', color: badgeColor }">{{ badge }}</span>
     </div>
-    <div class="sc-value" :style="valueColor ? { color: valueColor } : {}" :title="String(value)">{{ value }}</div>
+    <div class="sc-value" :style="valueColor ? { color: valueColor } : {}" :title="String(value)"><template v-for="(part, index) in valueParts" :key="index"><span :class="{ numeric: /\d/.test(part) }">{{ part }}</span></template></div>
     <div class="sc-sub" :title="sub">{{ sub }}<span v-if="clickable" class="sc-arrow" aria-hidden="true">›</span></div>
     <div v-if="$slots.default" class="sc-extra"><slot /></div>
   </component>
 </template>
 
 <script setup lang="ts">
-withDefaults(defineProps<{
+import { computed } from 'vue'
+const props = withDefaults(defineProps<{
   label: string
   value: string | number
   sub?: string
@@ -29,6 +30,8 @@ withDefaults(defineProps<{
   /** 入场动画延迟(ms)，同一行卡片依次错开，读起来有先后而不是齐刷刷弹出 */
   delay?: number
 }>(), { delay: 0 })
+// 数字展示：只拆分数值与单位的排版边界，不改字段精度或展示文本。
+const valueParts = computed(() => String(props.value).split(/([+-]?\d[\d,.]*)/g).filter(Boolean))
 defineEmits<{ (e: 'click'): void }>()
 </script>
 

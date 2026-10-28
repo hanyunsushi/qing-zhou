@@ -1,5 +1,13 @@
 <template>
   <div>
+    <!-- 普通按钮 / 组件绘制动画：六点融合滤镜不参与命中或页面布局。 -->
+    <svg class="package-drag-filter" aria-hidden="true" focusable="false"><defs>
+      <filter :id="dragMergeId" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+        <feGaussianBlur in="SourceGraphic" stdDeviation=".65" result="blur" />
+        <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="merged" />
+        <feComposite in="SourceGraphic" in2="merged" operator="atop" />
+      </filter>
+    </defs></svg>
     <div class="page-head">
       <div><h2 class="page-title">套餐管理</h2><p class="page-sub">商品规格、时长阶梯、库存、权限与上下架状态</p></div>
       <div class="page-actions">
@@ -25,13 +33,14 @@
              @dragend="clearPackageDrag">
           <div class="lc-head">
             <span class="lc-title">{{ p.name || '—' }}</span>
-            <n-tag v-if="p.user_group_ids?.length" type="warning" size="tiny" :bordered="false" :title="userGroupNames(p.user_group_ids)">
+            <n-tag v-if="p.user_group_ids?.length" type="info" size="tiny" :bordered="false" :title="userGroupNames(p.user_group_ids)">
               专属
             </n-tag>
             <n-tag :type="p.enabled !== false ? 'success' : 'default'" size="tiny" :bordered="false">{{ p.enabled !== false ? '上架' : '下架' }}</n-tag>
           </div>
           <div class="lc-meta">
-            <span class="kv"><n-tag :type="p.type === 'traffic' ? 'info' : 'success'" size="tiny" :bordered="false">{{ p.type === 'traffic' ? '流量' : '计划' }}</n-tag></span>
+            <span class="kv"><!-- 区分-信息牌：套餐种类是业务身份，不表示操作成功。 -->
+            <n-tag type="info" size="tiny" :bordered="false">{{ p.type === 'traffic' ? '流量' : '计划' }}</n-tag></span>
             <span class="kv">积分 <b>{{ p.price_points }}</b></span>
             <span class="kv">库存 <b>{{ p.stock < 0 ? '不限' : p.stock }}</b></span>
             <span class="kv">订阅 <b>{{ p.subscribers || 0 }}</b></span>
@@ -60,7 +69,7 @@
             <n-button size="tiny" class="default-arc-button" @click="openForm(p)">编辑</n-button>
             <!-- 高亮弧边按钮：统一实心Apple蓝、悬浮/聚焦/按下提亮；原风险文案、确认和请求状态由业务控制。 -->
             <n-button v-if="p.enabled !== false" size="tiny" type="primary" class="highlight-arc-button" @click="handleRetire(p)">下架</n-button>
-            <n-button v-else size="tiny" type="success" @click="handleEnable(p.id)">上架</n-button>
+            <n-button v-else size="tiny" type="primary" class="highlight-arc-button" @click="handleEnable(p.id)">上架</n-button>
             <!-- 删除按钮：统一红字透明底，悬浮浅灰；保留原删除处理与确认流程。 -->
             <n-button size="tiny" quaternary class="delete-button" type="error" @click="handleDelete(p)">删除</n-button>
             <span class="spacer" />
@@ -68,7 +77,9 @@
             <button type="button" class="package-drag-handle" :disabled="reordering" :aria-label="`调整${p.name}顺序`"
                     title="拖动排序，方向键调整顺序" @keydown="handlePackageSortKey(p.id, $event)"
                     @pointerdown="startPackageTouchDrag(p.id, $event)" @pointermove="movePackageTouchDrag"
-                    @pointerup="finishPackageTouchDrag" @pointercancel="clearPackageDrag">⋮⋮</button>
+                    @pointerup="finishPackageTouchDrag" @pointercancel="clearPackageDrag">
+              <span class="package-drag-dots" :style="{ filter: `url(#${dragMergeId})` }" aria-hidden="true"><i v-for="dot in 6" :key="dot" /></span>
+            </button>
           </div>
         </div>
       </div>
@@ -172,7 +183,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, useId } from 'vue'
 import {
   NSpin, NButton, NModal, NForm, NFormItem, NInput, NInputNumber,
   NSelect, NTag, NEmpty, NDynamicInput, useMessage, useDialog
@@ -180,6 +191,8 @@ import {
 import { apiList, apiPost, apiPut, apiDelete } from '@/api'
 import { fmtTotal, yuan } from '@/utils/format'
 
+// 普通按钮 / 组件绘制动画：每实例独立SVG过滤器，避免多个页面/浮层ID冲突。
+const dragMergeId = `package-drag-${useId().replace(/:/g, '')}`
 const message = useMessage()
 const dialog = useDialog()
 const packages = ref<any[]>([])
@@ -430,11 +443,26 @@ onMounted(load)
 .package-sort-card.dragging { opacity: .45; }
 .package-sort-card.drag-over { background: var(--accent-soft) !important; }
 .package-sort-card .spacer { flex: 1; }
-.package-drag-handle { display: inline-grid; place-items: center; height: var(--button-height); min-width: 32px; padding: 0 8px; border: 0; border-radius: 18px; background: transparent; color: var(--text-3); font: inherit; cursor: grab; touch-action: none; }
-.package-drag-handle:hover { background: var(--card-hover); color: var(--text); }
-.package-drag-handle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.package-drag-handle:disabled { opacity: .5; cursor: wait; }
-@media (pointer: coarse) { .package-drag-handle { height: 44px; min-width: 44px; } }
+.package-drag-handle { display:inline-grid; place-items:center; width:32px; height:32px; padding:0; border:0; border-radius:50%; background:transparent; color:var(--text-3); box-shadow:none; font:inherit; cursor:grab; touch-action:none; transition:background-color var(--button-hover-duration) ease,color var(--button-hover-duration) ease,box-shadow var(--button-hover-duration) ease; }
+.package-drag-handle:active { cursor:grabbing; background:var(--card-hover); }
+.package-drag-handle:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+.package-drag-filter { position:absolute; width:0; height:0; overflow:hidden; pointer-events:none; }
+.package-drag-dots { position:relative; width:16px; height:16px; color:var(--text-3); pointer-events:none; }
+.package-drag-dots::after { content:''; position:absolute; left:calc(50% - 1.25px); top:calc(50% - 6.5px); width:2.5px; height:13px; border-radius:2px; background:currentColor; opacity:0; transform:scaleY(.2); transition:opacity var(--button-hover-duration) ease,transform var(--button-hover-duration) ease; }
+.package-drag-dots i { position:absolute; left:calc(50% - 1.25px); top:calc(50% - 1.25px); width:2.5px; height:2.5px; border-radius:50%; background:currentColor; --dot-x:-2px; --dot-y:-4px; transform:translate(var(--dot-x),var(--dot-y)); transition:transform var(--button-hover-duration) ease; }
+.package-drag-dots i:nth-child(even) { --dot-x:2px; }
+.package-drag-dots i:nth-child(3), .package-drag-dots i:nth-child(4) { --dot-y:0px; }
+.package-drag-dots i:nth-child(5), .package-drag-dots i:nth-child(6) { --dot-y:4px; }
+.package-drag-handle:active .package-drag-dots i, .package-drag-handle:focus-visible .package-drag-dots i, .package-sort-card.dragging .package-drag-dots i { transform:translate(0,var(--dot-y)) scaleY(1.8); }
+.package-drag-handle:active .package-drag-dots::after, .package-drag-handle:focus-visible .package-drag-dots::after, .package-sort-card.dragging .package-drag-dots::after { opacity:1; transform:scaleY(1); }
+@media (hover:hover) and (pointer:fine) {
+  .package-drag-handle:hover { background:var(--card-hover); }
+  .package-drag-handle:hover .package-drag-dots i { transform:translate(0,var(--dot-y)) scaleY(1.8); }
+  .package-drag-handle:hover .package-drag-dots::after { opacity:1; transform:scaleY(1); }
+}
+@media (pointer:coarse) { .package-drag-handle { width:44px; height:44px; } }
+@media (prefers-reduced-motion:reduce) { .package-drag-handle, .package-drag-dots i, .package-drag-dots::after { transition:none; } }
+
 /* 删除按钮 / 标准默认弧边按钮：动态卖点动作保持独立间距，输入内容可收缩。 */
 .highlight-actions { display: flex; align-items: center; gap: 8px; margin-left: 8px; flex-shrink: 0; }
 /* 时长档位表：三列等宽 + 删除按钮，列头只写一次 */

@@ -1,4 +1,5 @@
 <template>
+  <!-- 展示信息模块：流量专用趋势，系列采用 AWS 分类色。 -->
   <div ref="el" class="trend-chart" />
 </template>
 
@@ -14,6 +15,7 @@ const props = defineProps<{
 const el = ref<HTMLElement | null>(null)
 let chart: echarts.ECharts | null = null
 let ro: ResizeObserver | null = null
+let motion: MediaQueryList | null = null
 
 const UP = '#2ea597'
 const DOWN = '#688ae8'
@@ -37,6 +39,9 @@ function draw() {
     data: props.data.map((d: any) => d[key] || 0),
   })
   chart.setOption({
+    // 组件绘制动画：减少动态效果直接显示终值，并随系统偏好更新。
+    animation: !(motion?.matches),
+    textStyle: { fontFamily: getComputedStyle(el.value).fontFamily },
     animationDuration: 700,
     animationEasing: 'cubicOut',
     // 数据换挡（7天↔30天）时按点位依次更新，整条线是「长」出来的而不是跳变
@@ -77,6 +82,8 @@ function draw() {
 watch(() => props.data, draw, { deep: true })
 
 onMounted(() => {
+  motion = matchMedia('(prefers-reduced-motion: reduce)')
+  motion.addEventListener('change', draw)
   draw()
   // ResizeObserver 而不是 window resize：侧边栏折叠、卡片布局重排这些不会触发
   // window resize，但图表容器确实变宽了。它同时兜住了「挂载时容器宽度还是 0，
@@ -88,6 +95,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  motion?.removeEventListener('change', draw)
   ro?.disconnect()
   ro = null
   chart?.dispose()
@@ -96,5 +104,6 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* 展示信息模块：260px流量趋势；AWS数据系列色不等于业务状态。 */
 .trend-chart { width: 100%; height: 260px; }
 </style>

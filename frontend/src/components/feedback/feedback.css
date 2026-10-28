@@ -12,19 +12,19 @@
 .kf-feedback-message { width: 100%; max-height: none; overflow: visible; pointer-events: auto; }
 .kf-feedback-message-content { display: flex; align-items: flex-start; gap: 10px; padding: 16px; min-width: 0; color: var(--text, #262626); }
 /* 区分-状态牌：实心Apple状态图标与白色符号保持对比，不沿用旧主题的浅色变量。 */
-.kf-feedback-symbol { flex: 0 0 20px; width: 20px; height: 20px; color: #007aff; }
+.kf-feedback-symbol { flex: 0 0 20px; width: 20px; height: 20px; color: #0088ff; }
 [data-type=success] > /* 区分-状态牌：实心Apple状态图标与白色符号保持对比，不沿用旧主题的浅色变量。 */
 .kf-feedback-symbol { color: #34c759; }
 [data-type=error] > /* 区分-状态牌：实心Apple状态图标与白色符号保持对比，不沿用旧主题的浅色变量。 */
-.kf-feedback-symbol { color: #ff3b30; }
+.kf-feedback-symbol { color: #ff383c; }
 [data-type=warning] > /* 区分-状态牌：实心Apple状态图标与白色符号保持对比，不沿用旧主题的浅色变量。 */
-.kf-feedback-symbol { color: #ff9500; }
+.kf-feedback-symbol { color: #ff8d28; }
 .kf-feedback-message-copy { min-width: 0; flex: 1; font: 400 13px/20px var(--ff-body, sans-serif); overflow-wrap: anywhere; }
 .kf-feedback-message-copy strong { display: block; font-weight: 600; margin-bottom: 4px; }
 /* 普通按钮：仅保留原场景的关闭入口；确认/取消继续由原业务提供。 */
 .kf-feedback-close { flex: 0 0 28px; display: grid; place-items: center; width: 28px; height: 28px; border: 0; border-radius: 8px; padding: 0; background: transparent; color: var(--text-3, #777); font: 400 22px/1 var(--ff-body, sans-serif); cursor: pointer; }
 .kf-feedback-close:hover { background: var(--card-hover, #f0f0f0); color: var(--text, #262626); }
-.kf-feedback-close:focus-visible { outline: 2px solid var(--accent, #007aff); outline-offset: 2px; }
+.kf-feedback-close:focus-visible { outline: 2px solid var(--accent, #0088ff); outline-offset: 2px; }
 .kf-feedback-panel > .kf-feedback-slot > .n-dialog { box-sizing: border-box; max-width: 100%; width: 100%; border: 0 !important; box-shadow: none !important; background: transparent !important; }
 @media (max-width: 480px) { .kf-feedback-viewport { padding: 16px; }.kf-feedback-panel { max-height: calc(100dvh - 32px); } }
 @media (pointer: coarse) { .kf-feedback-close { width: 44px; height: 44px; flex-basis: 44px; }.kf-feedback-message-content { align-items: center; } }

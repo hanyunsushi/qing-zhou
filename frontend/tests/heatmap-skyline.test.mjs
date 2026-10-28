@@ -25,7 +25,7 @@ test('availability folding retains each timestamp once and keeps servers separat
   assert.equal(models[0].model.axes.x.title,'时间')
   assert.equal(models[0].model.axes.y.title,'时间分组')
   assert.deepEqual(models[0].model.axes.y.ticks.map(t=>t.label),['1','2','3'])
-  assert.deepEqual(models[0].model.cells.slice(0,4).map(c=>c.color),['#34c759','#ff9500','#ff3b30','#8e8e93'])
+  assert.deepEqual(models[0].model.cells.slice(0,4).map(c=>c.color),['#34c759','#ff8d28','#ff383c','#8e8e93'])
   assert.equal('colorRamp' in models[0].model,false,'availability uses only QingZhou native severity colors plus neutral missing data')
   assert.equal('colorProgress' in models[0].model.cells[0],false)
 })
@@ -58,7 +58,7 @@ test('activity missing differs from a measured zero; duplicate counts add and ou
 })
 test('availability has three native severity colors and a separate neutral missing sentinel',()=>{
   const states=heatmap.HEATMAP_STATES
-  assert.deepEqual(states.slice(0,3).map(s=>s.color),['#34c759','#ff9500','#ff3b30'])
+  assert.deepEqual(states.slice(0,3).map(s=>s.color),['#34c759','#ff8d28','#ff383c'])
   assert.deepEqual(states.slice(0,3).map(s=>s.label),['运行正常','高负载','严重负载'])
   assert.equal(states[3].color,'#8e8e93')
   const model=heatmap.availabilityModels({state_count:4,servers:[{name:'A'}],buckets:[1,2,3,4],matrix:[[0,1,2,3]]})[0].model
@@ -90,7 +90,7 @@ test('reduced motion draws native status colors without a synthetic ramp and dis
   for(const [id,fn]of [...frames]){frames.delete(id);fn(16)}
   assert.equal(frames.size,0)
   assert.ok(draws>=12,'top and both side faces rendered without intermediate motion')
-  assert.deepEqual(model.cells.map(cell=>cell.color),['#34c759','#ff9500','#ff3b30','#8e8e93'],'only native severity colors and the neutral missing-data color are present')
+  assert.deepEqual(model.cells.map(cell=>cell.color),['#34c759','#ff8d28','#ff383c','#8e8e93'],'only native severity colors and the neutral missing-data color are present')
   assert.equal('colorRamp' in model,false)
   assert.equal(closedStrokes,0,'pillar faces are filled without stroked outlines')
   assert.ok(axisLabels.includes('时间') && axisLabels.includes('时间分组'),'axis titles remain visible in a narrow canvas')

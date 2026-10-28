@@ -1,21 +1,14 @@
 // 区分-状态牌：Apple semantic status palette adapted for QingZhou.
 export const STATUS_COLORS = {
   success: '#34c759',
-  warning: '#ff9500',
-  error: '#ff3b30',
-  info: '#007aff',
+  warning: '#ff8d28',
+  error: '#ff383c',
+  info: '#0088ff',
   inactive: '#8e8e93',
 } as const
 
-// 区分-状态牌：浅底状态牌及状态文字使用可读性更高的深色文字变体；
-// 图表、进度条和热力图仍使用上面的原始 Apple 实色。
-export const STATUS_TEXT_COLORS = {
-  success: '#12A652',
-  warning: '#E37100',
-  error: '#DD3730',
-  info: '#0066CC',
-  inactive: '#828282',
-} as const
+// 区分-状态牌：状态文字与图形共用Apple原色，不另加深。
+export const STATUS_TEXT_COLORS = STATUS_COLORS
 
 // 区分-状态牌：status-encoded charts and meters intentionally reuse the same
 // Apple semantic colors; categorical chart series remain independent.

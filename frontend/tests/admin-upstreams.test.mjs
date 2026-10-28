@@ -177,7 +177,8 @@ test('sidebar uses the Cloudflare documentation sidebar treatment', () => {
   assert.match(layout, /:deep\(\.n-menu-item-content--selected::after\) \{ display: none; \}/)
   assert.match(globalStyles, /侧边栏例外：全局 \[class\*="-item"\] 圆角兜底会匹配 Naive UI 的/)
   assert.match(globalStyles, /\.sidebar-menu \.n-menu-item-content,[\s\S]*?border-radius: 8px !important;/)
-  assert.match(globalStyles, /\.sidebar-menu \.n-submenu-children:not\(\[data-motion-pop-id\]\) \{[\s\S]*?position: relative !important;[\s\S]*?width: auto !important;[\s\S]*?margin: 2px 0 2px 12px !important;[\s\S]*?padding-left: 16px !important;[\s\S]*?border-left: 0 !important;/)
+  assert.match(globalStyles, /\.sidebar-menu \.n-submenu-children:not\(\[data-motion-pop-id\]\) \{[\s\S]*?position: relative !important;[\s\S]*?width: auto !important;[\s\S]*?margin: 2px 0 2px 12px !important;/)
+  assert.match(globalStyles, /\.sidebar-menu \.n-submenu-children \{[\s\S]*?padding-left: 16px !important;[\s\S]*?border-left: 0 !important;/)
   assert.match(globalStyles, /\.sidebar-menu \.n-submenu-children::before \{[\s\S]*?left: 8px;[\s\S]*?width: 1px;[\s\S]*?background: var\(--sidebar-border\);/)
   assert.match(globalStyles, /\.sidebar-menu \.n-submenu-children \{[\s\S]*?overflow-x: clip !important;[\s\S]*?overflow-y: visible !important;/)
   assert.doesNotMatch(layout, /:global\(\.sidebar-menu \.n-menu(?:-item|\-item-content|\-submenu)/)
@@ -227,8 +228,8 @@ test('sidebar collapse resets every nested expansion and hidden filter without r
 })
 
 test('mobile menu trigger keeps the shared sidebar toggle contract', () => {
-  assert.match(layout, /悬浮菜单按钮：沿用移动端侧栏按钮的路径、尺寸与透明状态。/)
-  assert.match(layout, /<button v-if="isMobile" class="icon-btn app-header-menu-toggle"[^>]*aria-label="菜单">[\s\S]*?class="app-header-menu-toggle-icon"[^>]*viewBox="0 0 32 32"[^>]*stroke-width="2\.5"[\s\S]*?stroke-dasharray="12 63" d="M27 10 13 10C10\.8 10 9 8\.2 9 6 9 3\.5 10\.8 2 13 2 15\.2 2 17 3\.8 17 6L17 26C17 28\.2 18\.8 30 21 30 23\.2 30 25 28\.2 25 26 25 23\.8 23\.2 22 21 22L7 22"[\s\S]*?<path d="M7 16 27 16" \/>/)
+  assert.match(layout, /悬浮菜单按钮 \/ 卡片SVG：Ionicons菜单图形随抽屉展开切Fill/)
+  assert.match(layout, /<button v-if="isMobile" class="icon-btn app-header-menu-toggle"[^>]*aria-label="菜单">[\s\S]*?<InterfaceIcon name="menu" :filled="drawerShow" class="app-header-menu-toggle-icon" :size="20"/ )
   assert.match(layout, /\.icon-btn \{[\s\S]*?width: 42px; height: 42px; flex: 0 0 42px; padding: 10px;[\s\S]*?border: 0; border-radius: 8px; background: transparent;/)
   assert.match(layout, /\.app-header-menu-toggle-icon \{ display: block; width: 22px; height: 22px; flex: 0 0 22px; \}/)
 })
@@ -239,9 +240,9 @@ test('sidebar categories use static level-one groups with a dedicated admin sect
   assert.match(navigation, /const infoLeafItems: MenuOption\[\] = \[[\s\S]*?key: '\/account'/)
   assert.match(navigation, /const infoItems = computed<MenuOption\[\]>\(\(\) => infoLeafItems\)/)
   assert.match(navigation, /const adminItems = computed<MenuOption\[\]>\(\(\) => isAdmin\(\) \? \[[\s\S]*?label: '运营'/)
-  assert.match(navigation, /key: 'ag-ops', icon: renderIcon\(PulseOutline\)/)
-  assert.match(navigation, /key: 'ag-node', icon: renderIcon\(ServerOutline\)/)
-  assert.match(navigation, /key: 'ag-sys', icon: renderIcon\(DocumentTextOutline\)/)
+  assert.match(navigation, /key: 'ag-ops', \.\.\.sidebarIcon\('overview'\)/)
+  assert.match(navigation, /key: 'ag-node', \.\.\.sidebarIcon\('server'\)/)
+  assert.match(navigation, /key: 'ag-sys', \.\.\.sidebarIcon\('document'\)/)
   assert.match(navigation, /menuSection\('g-admin', '管理后台', adminItems\.value\)/)
 })
 

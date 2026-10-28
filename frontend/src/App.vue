@@ -51,14 +51,14 @@ useShift5PageTransition(
 
 const themeOverrides: GlobalThemeOverrides = {
   common: {
-    primaryColor: '#007aff',
-    primaryColorHover: '#298fff',
-    primaryColorPressed: '#002b55',
-    primaryColorSuppl: '#007aff',
-    infoColor: '#007aff',
+    primaryColor: '#0088ff',
+    primaryColorHover: '#299bff',
+    primaryColorPressed: '#299bff',
+    primaryColorSuppl: '#0088ff',
+    infoColor: '#0088ff',
     successColor: '#34c759',
-    warningColor: '#ff9500',
-    errorColor: '#ff3b30',
+    warningColor: '#ff8d28',
+    errorColor: '#ff383c',
     borderRadius: '18px',
     borderColor: '#d5dbdb',
     textColorBase: '#16191f',
@@ -75,6 +75,10 @@ const themeOverrides: GlobalThemeOverrides = {
   },
   // 提示信息 / 警告信息：各类反馈沿用浅色语义面和图标，不附加边框线。
   Alert: {
+    colorInfo: 'var(--info-soft)', iconColorInfo: 'var(--info)',
+    colorSuccess: 'var(--success-soft)', iconColorSuccess: 'var(--success)',
+    colorWarning: 'var(--warn-soft)', iconColorWarning: 'var(--warn)',
+    colorError: 'var(--danger-soft)', iconColorError: 'var(--danger)',
     border: 'none',
     borderInfo: 'none',
     borderSuccess: 'none',

@@ -75,3 +75,10 @@
 .app-sider.is-collapsed .motion-sidebar-menu .sidebar-project-copy,
 .app-sider.is-collapsed .motion-sidebar-menu .sidebar-project-route .sidebar-motion-arrow { display: none !important; }
 .app-sider.is-collapsed .motion-sidebar-menu .sidebar-project-hover-container { height: 40px; }
+
+/* 侧边栏 / 卡片SVG：仅显式图形内盒；维持16px菜单、18px项目和原图标轨道。 */
+.sidebar-symbol{position:relative;display:block;width:16px;height:16px;flex:none;transform-origin:center;color:inherit}
+.sidebar-project-icon .sidebar-symbol{width:18px;height:18px}
+.sidebar-symbol-svg{position:absolute;inset:0;display:block;width:100%;height:100%;overflow:visible}
+/* 侧边栏 / 卡片SVG：悬停/焦点只变色；轮廓与Fill仅由真实选中状态决定。 */
+.motion-sidebar-menu .n-menu-item-content:is(:hover,:focus-visible):not(:disabled) .sidebar-symbol{color:var(--accent)}

@@ -104,8 +104,8 @@ test('late-mounted metrics animate independently without resetting existing serv
 test('zero, invalid values, status thresholds and reduced motion stay accurate', async () => {
   const c = clock(true), scope = effectScope(), props = reactive({ percent: 0, ready: true })
   const ring = scope.run(() => c.gauge(props))
-  for (const [input, value, color] of [[0, 0, '#34c759'], [69.9, 69.9, '#34c759'], [70, 70, '#ff9500'],
-    [90, 90, '#ff3b30'], [140, 100, '#ff3b30'], [-5, 0, '#34c759'], [NaN, 0, '#34c759'], [Infinity, 0, '#34c759']]) {
+  for (const [input, value, color] of [[0, 0, '#34c759'], [69.9, 69.9, '#34c759'], [70, 70, '#ff8d28'],
+    [90, 90, '#ff383c'], [140, 100, '#ff383c'], [-5, 0, '#34c759'], [NaN, 0, '#34c759'], [Infinity, 0, '#34c759']]) {
     props.percent = input
     await nextTick()
     assert.equal(ring.dPercent.value, value)

@@ -11,12 +11,12 @@
         <RefreshButton label="刷新控制台" :loading="refreshing" @refresh="reload" />
         <!-- 普通按钮：使用紧凑描边几何，不改文字和 SVG。 -->
         <n-button size="small" secondary class="action-button action-button--normal" @click="router.push('/sub')">
-          <template #icon><n-icon><LinkOutline /></n-icon></template>
+          <template #icon><InterfaceIcon name="subscription" /></template>
           订阅管理
         </n-button>
         <!-- 强调按钮：保留现有蓝色主按钮，仅采用紧凑几何。 -->
         <n-button size="small" type="primary" class="action-button action-button--emphasis" @click="router.push('/shop')">
-          <template #icon><n-icon><CartOutline /></n-icon></template>
+          <template #icon><InterfaceIcon name="shop" /></template>
           去商城
         </n-button>
       </div>
@@ -125,11 +125,11 @@
         </div>
         <n-space vertical size="small" style="margin-top:14px;">
           <n-button block secondary @click="router.push('/sub')">
-            <template #icon><n-icon><LinkOutline /></n-icon></template>
+            <template #icon><InterfaceIcon name="subscription" /></template>
             管理订阅
           </n-button>
           <n-button block secondary @click="router.push('/orders')">
-            <template #icon><n-icon><ReceiptOutline /></n-icon></template>
+            <template #icon><InterfaceIcon name="orders" /></template>
             订单记录
           </n-button>
         </n-space>
@@ -175,7 +175,7 @@
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { NCard, NAlert, NButton, NList, NListItem, NThing, NTag, NRadioGroup, NRadioButton, NModal, NSpace, NSpin, NIcon } from 'naive-ui'
-import { LinkOutline, CartOutline, ReceiptOutline } from '@vicons/ionicons5'
+import InterfaceIcon from '@/components/InterfaceIcon.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useConfigStore } from '@/stores/config'
 import { apiGet, apiList } from '@/api'
@@ -433,8 +433,8 @@ a{color:var(--accent)}
 .alert-enter-from,.alert-leave-to{opacity:0;transform:translateY(-6px)}
 .onboarding-strip{display:grid;grid-template-columns:minmax(220px,1.25fr) repeat(3,minmax(160px,1fr));gap:8px;margin:0 0 16px;padding:10px;border:0;background:var(--card);box-shadow:none}
 .onboarding-copy{display:flex;flex-direction:column;justify-content:center;padding:4px 8px}.onboarding-copy b{font-size:13px}.onboarding-copy span{margin-top:2px;color:var(--text-3);font-size:11.5px;line-height:1.5}
-/* 普通按钮悬浮效果：复用共享灰色内阴影，400ms进出、不加深文字或扩圈。 */
-.onboarding-strip button{display:flex;align-items:center;gap:9px;padding:8px 9px;border:0;border-radius:var(--r);background:var(--card);color:var(--text-2);text-align:left;font:inherit;cursor:pointer;box-shadow:inset 0 0 rgb(0 7 7 / .12);transition:box-shadow .4s ease}.onboarding-strip button:hover{box-shadow:inset 0 0 32px rgb(0 7 7 / .12)}.onboarding-strip button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* 普通按钮 / 悬浮效果：300ms灰色高亮，文字、边界与位置保持不变。 */
+.onboarding-strip button{display:flex;align-items:center;gap:9px;padding:8px 9px;border:0;border-radius:var(--r);background:var(--card);color:var(--text-2);text-align:left;font:inherit;cursor:pointer;box-shadow:none;transition:background-color var(--button-hover-duration) ease}.onboarding-strip button:hover{background:var(--card-hover)}.onboarding-strip button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .onboarding-strip button i{display:grid;place-items:center;flex:none;width:26px;height:26px;border-radius:var(--r);background:#e8ecef;color:#4f5b65;font-size:11px;font-style:normal;font-weight:700}.onboarding-strip button span{display:flex;min-width:0;flex-direction:column}.onboarding-strip button b{font-size:12px}.onboarding-strip button small{overflow:hidden;color:var(--text-3);font-size:10.5px;white-space:nowrap;text-overflow:ellipsis}
 
 /* KPI */
@@ -450,6 +450,9 @@ a{color:var(--accent)}
 .dash-grid{display:grid;grid-template-columns:minmax(220px,260px) 1fr;gap:16px;align-items:start}
 @media (max-width:840px){.dash-grid{grid-template-columns:1fr}}
 @media (max-width:980px){.onboarding-strip{grid-template-columns:1fr}.onboarding-copy{padding-bottom:8px}}
+/* 展示信息模块：侧栏占宽后按正文容器收排，操作不超出模块。 */
+@container qingzhou-content (max-width:980px){.onboarding-strip{grid-template-columns:1fr}.onboarding-copy{padding-bottom:8px}}
+@container qingzhou-content (max-width:840px){.dash-grid{grid-template-columns:minmax(0,1fr)}}
 .dash-main{display:flex;flex-direction:column;gap:16px;min-width:0}
 .usage-card :deep(.n-card__content){padding-bottom:10px}
 

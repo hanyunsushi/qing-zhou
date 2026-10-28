@@ -3,6 +3,8 @@ import React, { Children, cloneElement, forwardRef, isValidElement, createContex
 import { motion, AnimatePresence, MotionContext, useReducedMotion, type HTMLMotionProps, type Variants } from 'framer-motion'
 import { render as renderVue, h, type VNodeChild } from 'vue'
 import type { MenuOption } from 'naive-ui'
+import { SidebarSymbol } from './SidebarSymbol'
+import type { SvgSymbolName } from '../utils/svg-symbols'
 import { SPRING_LAYOUT, SUBMENU_VARIANTS, SUBMENU_ITEM_VARIANTS, RAIL_TRANSITION, RAIL_CONTENT_VARIANTS, RAIL_STAGGER_VARIANTS, RAIL_LABEL_VARIANTS } from '../utils/sidebar-motion'
 const cn=(...v:unknown[])=>v.filter(Boolean).join(' ')
 // 侧边栏 / 组件绘制动画：入场终值释放filter层，避免共享背景跨行时遮住相邻行文字。
@@ -216,7 +218,7 @@ function renderItem({item,activeId,reduce,nested=false,projectChild=false,late=f
   <div className={cn("n-menu-item sidebar-row-track",project&&"sidebar-project-row")}>
    <button type="button" className={cn('n-menu-item-content',project&&'sidebar-project-route',!expandable&&active&&'n-menu-item-content--selected',expandable&&active&&'n-menu-item-content--child-active')} disabled={!!item.disabled} aria-current={project&&active?'location':!expandable&&active?'page':undefined} aria-expanded={expandable?open:undefined} aria-controls={project?activeId+'-project-'+String(item.key):undefined} aria-label={project||props.collapsed?label:undefined} title={project||props.collapsed?label:undefined} onClick={choose}>
     {active&&<motion.span layoutId={activeId} transition={reduce?{duration:0}:SPRING_LAYOUT} className="sidebar-active-projection" aria-hidden="true"/>}
-    {project?<span className="sidebar-project-icon" aria-hidden="true">{item.icon?<VueContent item={item} icon/>:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5M3 16l9 5 9-5"/></svg>}</span>:item.icon?<span className="n-menu-item-content__icon" aria-hidden="true"><VueContent item={item} icon/></span>:<span className="sidebar-empty-icon" aria-hidden="true"/>}
+    {item.sidebarSymbol?<span className={project?"sidebar-project-icon":"n-menu-item-content__icon"} aria-hidden="true"><SidebarSymbol name={item.sidebarSymbol as SvgSymbolName} selectedName={item.sidebarSelectedSymbol as SvgSymbolName} active={active} open={open} expandable={expandable} reduce={reduce}/></span>:project?<span className="sidebar-project-icon" aria-hidden="true">{item.icon?<VueContent item={item} icon/>:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5M3 16l9 5 9-5"/></svg>}</span>:item.icon?<span className="n-menu-item-content__icon" aria-hidden="true"><VueContent item={item} icon/></span>:<span className="sidebar-empty-icon" aria-hidden="true"/>}
     {/* 侧边栏 / 组件绘制动画：项目披露移动整行；文字仅响应整栏状态，不继承项目open/closed。 */}
     {project?<span className="n-menu-item-content-header sidebar-project-copy"><strong>{label}</strong>{!!item.sidebarCaption&&<small>{String(item.sidebarCaption)}</small>}</span>:nested?<span className="n-menu-item-content-header"><VueContent item={item}/></span>:<RailLabel item={item} collapsed={props.collapsed} reduce={reduce} projectChild={projectChild}/>}
     {expandable&&<motion.span className="sidebar-motion-arrow" aria-hidden="true" initial={false} animate={{opacity:props.collapsed?0:1,rotate:open?90:0,x:props.collapsed?4:0}} transition={reduce?{duration:0}:SPRING_LAYOUT}><i className="sidebar-chevron"/></motion.span>}

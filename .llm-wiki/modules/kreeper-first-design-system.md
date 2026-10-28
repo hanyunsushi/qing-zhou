@@ -1,7 +1,21 @@
 ---
 title: kreeper第一设计系统 — QingZhou 集成
-updated: 2026-10-22
+updated: 2026-10-29
 ---
+
+## 当前前端接入合同
+
+应用按完整设计系统的按钮、表单、SVG和Apple语义色合同接入；本节覆盖下方历史发布段落中的旧色值、400ms内光、方形复选框和Lucide刷新描述。运行入口仍为 `frontend/src/styles/global.css`、`App.vue` 的 Naive theme，以及组件 scoped 样式。
+
+- 普通/默认弧边为白色实体常态、text-2、1px中性ring，300ms灰色高亮；强调按钮使用蓝色提亮和1→2px外ring，高亮弧边保持固定边界。复制栏仅变色，键盘焦点独立；不再使用共享内光。UserDashboard的引导动作同步灰色高亮。
+- `status-colors.ts` 与CSS/Naive theme共用Apple原色；状态前景不另加深，柔和底为15%同色。头像保留六类和用户名稳定分配，采用12%柔和底；管理员为浅蓝身份牌，本机/远程仍为中性身份牌。套餐类型/专属资格使用信息语义，不能表达成功或告警。
+- Checkbox复用16px圆点与白点外观，保留原多选/取消/半选、ARIA与Space。按压合成 `translateY(-50%) scale(.95)` 保持中心；半选保留白色短横。Radio、原生Naive内部图形、日期精度及草稿/提交行为保持。
+- `components/InterfaceIcon.vue`、`InterfaceIconReact.tsx`、`SidebarSymbol.tsx` 与 `utils/interface-symbols.ts` 按用户确认使用MIT Ionicons 5：47个语义映射、46组真实轮廓/实心配对。`reference/svg/ionicons.json`保存92个导出的原始viewBox、路径、stroke、基础形状及来源模块SHA256；许可见同目录THIRD_PARTY_NOTICES.md。悬停只变色，菜单/日期/侧栏的真实展开或选中才切Fill；静态摘要保持默认轮廓。方向箭头、品牌/提供者、点阵、数据图形及六点拖动柄沿各自专项。本项目公开发布采用经用户确认的MIT替代图形；SF资源与其渲染组件已从项目移除，其他项目和全局规范不由此自动变更。部署事实由项目权威维护。
+- 刷新为透明、无外框、Apple蓝Ionicons图形；真实loading切Fill，保留400/800ms旋转、禁用与低动态终态，coarse pointer命中44px。品牌原图去除附加投影。StatCard仅数值片段使用Courier Prime，单位及“不限/—”保持正文；AWS分类系列与四字族合同保持。
+- `DashboardLayout .layout-content` 建立 `qingzhou-content` 容器，控制台引导及双栏图表按实际正文宽度收排。订单/积分的图表使用ResizeObserver与合帧resize，卸载释放观察器/帧；卡片网格可收缩，服务器操作栏可换行。宽表仍由自身横滚；固定列只绘制1px中性分隔线，不删列、不隐藏操作。业务表格沿原应用合同，不套独立示范的三级表格底色。
+- 套餐排序保留原drag/drop、触摸指针和方向键回调；把手为32/44px正圆，六个浅灰圆点在原位融合/还原，滤镜ID由实例生成，不跨页面冲突。
+
+沿用既有中文分类，未新增视觉类型。原路由、身份/权限、API、数据模型、查询时区/精度、产品版本与Console Host菜单协议保持；新增接入组件不引入运行依赖。包内来源快照是历史参考，本轮不回写技能仓库或刷新其未审查哈希。验证与边界见[本地前端核对](../guides/validation.md#设计系统前端核对2026-10-29)。
 
 ## Native confirmation and shared feedback injection
 
@@ -11,9 +25,9 @@ Messages and `useNotification` share the top-right glass stack without `centered
 
 Classification stays within 提示信息/警告信息/组件绘制动画/高亮弧边按钮; no new style type, font role, AWS typography or chart rule. Verification and native deployment status belong to [Validation](../guides/validation.md#native-feedback-design-sync-2026-10-22) and [project authority](../../agent.md).
 
-## Hover, material and placeholder source synchronization
+## Historical hover, material and placeholder synchronization (2026-10-21)
 
-The latest canonical contract is synchronized into runtime global CSS and UserDashboard: neutral/default-arc/header triggers retain text-2 and fixed1px rings while a gray inset shadow animates0→32px over400ms ease both directions. Solid primary, highlight-arc, joined-copy and Teleport confirmation actions share32px/32% white inset light on unchanged Apple blue; keyboard focus and real loading remain independent. Empty/result illustrations use the supplied transparent SVG; message/notification panels use the topbar glass without changing modal base material. Existing dimensions, geometry, source references and app branding are preserved. No new visual category or font/chart rule.
+The 2026-10-21 source publication synchronized this historical contract into runtime global CSS and UserDashboard: neutral/default-arc/header triggers retain text-2 and fixed1px rings while a gray inset shadow animates0→32px over400ms ease both directions. Solid primary, highlight-arc, joined-copy and Teleport confirmation actions share32px/32% white inset light on unchanged Apple blue; keyboard focus and real loading remain independent. Empty/result illustrations use the supplied transparent SVG; message/notification panels use the topbar glass without changing modal base material. Existing dimensions, geometry, source references and app branding are preserved. No new visual category or font/chart rule.
 
 232 frontend tests, native andMFE builds/artifact validation, Go tests/vet pass. Canonical audit121sources/59patterns/315hashes and50 contracts/typecheck/isolated build pass. Local showcase computed styles verify neutral/primary base values and400ms pseudo layers, not full native/production hover animation acceptance. This publication is a source commit/push only; historical deployment evidence below is not a rollout of this increment.
 
@@ -317,7 +331,7 @@ PageScrollbar居中按实际内部15px轨道验收：外宽16px包含左侧1px�
 
 ## 真实运行层
 
-Vue 3 + Naive UI + Ionicons + ECharts。实际视觉入口仍是 `frontend/src/styles/global.css`、`frontend/src/App.vue` 的 themeOverrides 及 Vue scoped styles；没有新增运行依赖，也没有把 Cloudscape React 包导入 Vue。
+Vue 3 + Naive UI + ECharts；界面功能图形采用本地SF导出，方向箭头与第三方控件内部标记沿专项。实际视觉入口仍是 `frontend/src/styles/global.css`、`frontend/src/App.vue` 的 themeOverrides 及 Vue scoped styles；没有新增运行依赖，也没有把 Cloudscape React 包导入 Vue。
 
 外部参考组合：AWS 数据系列色/文字刻度与交互语义，Apple 状态/身份色及顶栏玻璃参考，Cloudflare 侧栏层级几何；PageScrollbar、Shift5、count-up 与资源圈属于青舟专项实现。项目局部数值和 CSS 最终层叠优先于通用参考。
 
@@ -335,11 +349,11 @@ Vue 3 + Naive UI + Ionicons + ECharts。实际视觉入口仍是 `frontend/src/s
 - 输入框2px蓝色内焦点边界，无扩散晕；选择框中性，copy-field只读/中性/无过渡。完整认证规范包含登录/注册/找回、OAuth与配置开关、反馈槽固定28px、860px单栏断点以及loading/disabled/focus状态。
 - 全部提示类型使用无边框浅色语义面，保留原背景、状态图标、文字和布局。`frontend/src/App.vue` 的 Alert 主题与 skill `assets/utils/theme.ts` 同步设置 `border` / `borderInfo` / `borderSuccess` / `borderWarning` / `borderError` 为 `none`，使用已有“提示信息 / 警告信息”分类；普通类型正确token是`border`而非`borderDefault`。完整规范在 skill overlays。Naive 2.44.1 的边框由 `.n-alert__border` 内层绘制，须核对它的计算边宽，不以根节点 border0 或不存在的类型class代替验收；显式bordered=false的实例可直接不输出内层。
 - 鼠标focus不清除按钮原外ring：全局box-shadow重置已移除，普通/强调/默认弧边的Naive focus/pressed内边框为0；高亮/警告点击后保持聚焦提亮属于正常状态。状态验收覆盖点击释放、失焦、再次点击与键盘聚焦，防止仅验证hover。
-- 默认弧边与普通按钮共用紧凑尺寸、字体、透明背景、中性描边及hover/focus/pressed；唯一差异为18px与8px圆角，撤销默认弧边独立蓝色hover描边。沿用“标准默认弧边按钮”分类；源码、复用CSS与示范同步，已随v0.2.98按钮版本发布。
+- 默认弧边与普通按钮共用紧凑尺寸、字体、白色实体背景、中性描边及300ms灰色hover/pressed；圆角分别为18px与8px，键盘焦点独立。沿用“标准默认弧边按钮”分类；源码、复用CSS与示范同步，已随v0.2.98按钮版本发布。
 - 当前按钮几何以源码提交 `1c665580765e18ceb1c5ac4eef22da5287387d3a` 为准：桌面32px高、13px/20px、字重500、左右10px，触摸设备44px；同组删除、撤销、编辑、充值、订单、上架/下架和拖动把手统一高度与垂直中心线。套餐卡使用拖动排序，提交完整ID顺序并在失败时回滚；这属于已有“展示卡片 / 普通按钮”组合，不新增分类。
 - 明确删除按钮使用节点卡同款delete-button，并在删除入口与全局样式责任边界标注“删除按钮”；删除实体/记录及删除表单条目共用，撤销、吊销、禁用和重置不按颜色自动迁移。完整尺寸/状态/触摸命中规范由skill buttons维护，原删除处理器及确认流程保留。
 - AdminNodes顶层/分组/空态“添加节点”和各页面“清除筛选”归入默认弧边；示范移到同款功能复用区，取消浅蓝次级/轻量独立样式与分类。用量报表清空筛选也归默认弧边；明确销毁记录的套餐移除/流量包清空、上游配置清除、Short ID和动态卖点删除均归delete-button（24个模板入口）。强调按钮与高亮弧边注释按真实class区分；其他历史secondary/primary-quiet仅保留调用方兼容；Naive2.44.1不输出tertiary/quaternary/text类，默认弧边使用实际.n-button__border子节点限定，避免误改裸编辑动作和数字步进控件。
-- 高亮弧边hover/focus（含鼠标点击后）的背景和边框复用提亮accent，分类注释同步“变亮”，与警告同为提亮方向；完整合同在skill buttons/interactions。loading是现有按钮的请求状态；高亮弧边示范取消模拟加载，按下/释放后的聚焦反馈与警告一致。标准刷新使用Lucide refresh-cw完整SVG及viewBox中心旋转。按钮修正已同步青舟、skill代码/快照/pattern与规范，已随v0.2.98按钮版本发布。
+- 高亮弧边hover/pressed/focus-visible的背景和边框复用提亮accent，鼠标focus不锁住高亮；完整合同在skill buttons/interactions。loading是现有按钮的请求状态；高亮弧边示范取消模拟加载，按下/释放后的聚焦反馈与警告一致。标准刷新采用SF ArrowClockwiseCircle/Fill及viewBox中心旋转。按钮修正已同步青舟、skill代码/快照/pattern与规范，已随v0.2.98按钮版本发布。
 - 悬浮、聚焦、按下、禁用分别约束；展示/可跳转卡维持所属深度底色和位置，只增加指定中性阴影。按钮变体、普通下拉/顶栏菜单各自遵循专项几何；文本选择为 rgba(0,122,255,.2) 且前景继承。
 - 响应式是基本理念，所有组件同时覆盖宽/窄屏、触摸、键盘和reduced motion；页面不横向溢出，表格/代码/页签横滚局限于自身。验证尺寸和专项断点见 skill responsive，不用一套全局断点覆盖全部页面。
 - 页面Shift5与组件绘制分离；资源单圈/双圈用1100ms共享数字/弧值，在所属页面揭示后启动；刷新从当前值过渡，迟到数据独立绘制，零值无假进度圆头。

@@ -236,8 +236,8 @@
   --duration-fast: 160ms;
   --duration-considered: 240ms;
   --ease-standard: cubic-bezier(.22,1,.36,1);
-  --accent-strong: var(--accent-button-hover, #298fff);
-  --accent-subtle: rgba(0,122,255,.12);
+  --accent-strong: var(--accent-button-hover, #299bff);
+  --accent-subtle: rgba(0,136,255,.12);
   --accent-foreground: #fff;
   max-width: 100%;
 }

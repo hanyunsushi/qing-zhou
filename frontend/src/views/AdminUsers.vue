@@ -10,7 +10,7 @@
         <RefreshButton label="刷新用户列表" :loading="loading" @refresh="load" />
         <!-- 强调按钮：页面级主操作统一复用强调按钮合同。 -->
         <n-button size="small" type="primary" class="action-button action-button--emphasis" @click="openCreate">
-          <template #icon><n-icon><PersonAddOutline /></n-icon></template>
+          <template #icon><InterfaceIcon name="add" /></template>
           创建用户
         </n-button>
       </div>
@@ -28,7 +28,7 @@
     <div class="page-toolbar">
       <!-- 填写框 -->
       <n-input v-model:value="search" placeholder="搜索用户名 / 邮箱 / 备注" style="width:240px;max-width:60%;" clearable>
-        <template #prefix><n-icon><SearchOutline /></n-icon></template>
+        <template #prefix><InterfaceIcon name="search" /></template>
       </n-input>
       <n-select v-model:value="sortBy" :options="sortOptions" size="small" style="width:132px;" />
       <span class="spacer" />
@@ -46,8 +46,8 @@
                 <span class="uc-name" :title="u.username">{{ u.username }}</span>
                 <span v-if="u.online" class="dot-live" title="在线" />
                 <n-tag v-if="u.status === 'banned'" type="error" size="tiny" :bordered="false">封禁</n-tag>
-                <!-- 区分-身份牌：管理员使用 Apple 警告色实心底与白色文字，独立于头像身份色。 -->
-                <n-tag v-if="u.role === 'admin'" class="identity-badge" type="warning" size="tiny" :bordered="false">管理员</n-tag>
+                <!-- 区分-身份牌：管理员使用浅蓝身份面和Apple原色，独立于头像身份色。 -->
+                <n-tag v-if="u.role === 'admin'" class="identity-badge identity-badge--admin" type="info" size="tiny" :bordered="false">管理员</n-tag>
               </div>
               <div class="uc-sub" :title="u.email || ''">
                 {{ u.email || '未绑定邮箱' }} · {{ u.online ? '在线' : timeAgo(u.last_online_at) }}
@@ -376,7 +376,7 @@ import {
   NSwitch, NTag, NSelect, NEmpty, NCheckbox, NDropdown, NRadioGroup, NRadioButton,
   useMessage, useDialog
 } from 'naive-ui'
-import { PersonAddOutline, SearchOutline } from '@vicons/ionicons5'
+import InterfaceIcon from '@/components/InterfaceIcon.vue'
 import { apiList, apiPost, apiPut, apiDelete } from '@/api'
 import { fmtBytes, fmtDate, fmtDateTime, timeAgo, daysLeft, pct, toLocalDatetimeInput } from '@/utils/format'
 import { planStatusMeta, planSortKey } from '@/utils/plan'
@@ -550,14 +550,14 @@ const filtered = computed(() => {
   return sorted
 })
 
-// ---- 头像 ----
+// 区分-身份牌：六色原色前景与12%柔和底，保留用户名稳定分配。
 const AVATAR_PALETTE = [
-  { background: '#5856d6', color: '#433f9f' },
-  { background: '#af52de', color: '#7d2a9f' },
-  { background: '#ff2d55', color: '#b51c3e' },
-  { background: '#5ac8fa', color: '#18789f' },
-  { background: '#32ade6', color: '#176785' },
-  { background: '#00c7be', color: '#087d78' },
+  { background: '#6155f5', color: '#6155f5' },
+  { background: '#cb30e0', color: '#cb30e0' },
+  { background: '#ff2d55', color: '#ff2d55' },
+  { background: '#00c0e8', color: '#00c0e8' },
+  { background: '#0088ff', color: '#0088ff' },
+  { background: '#00c3d0', color: '#00c3d0' },
 ]
 function initial(name: string) { return (name || '?').charAt(0).toUpperCase() }
 function hashHue(name: string) {
@@ -1068,7 +1068,8 @@ useConsoleActions([
 .uc-id { min-width: 0; flex: 1; }
 .uc-name-row { display: flex; align-items: center; gap: 6px; min-width: 0; }
 .uc-name { font-weight: 650; font-size: 14.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.identity-badge { background: var(--warn) !important; color: #fff !important; border-color: transparent !important; }
+/* 区分-身份牌：管理员使用浅蓝身份面，不借告警色表示角色。 */
+.identity-badge--admin { background: var(--info-soft) !important; color: var(--info) !important; border-color: transparent !important; }
 .uc-sub { font-size: 11.5px; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 /* 备注和邮箱行区分开：略深一点、单行截断，长备注靠 title 看全 */
 .uc-remark {

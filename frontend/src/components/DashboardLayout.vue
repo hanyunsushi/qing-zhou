@@ -34,10 +34,7 @@
           :title="sidebarCollapsed ? '展开侧栏' : '收起侧栏'"
           @click="toggleSidebar"
         >
-          <span class="sidebar-collapse-mark" aria-hidden="true">
-            <n-icon :size="14"><component :is="sidebarCollapsed ? ChevronForwardOutline : ChevronBackOutline" /></n-icon>
-            <n-icon :size="14"><component :is="sidebarCollapsed ? ChevronForwardOutline : ChevronBackOutline" /></n-icon>
-          </span>
+          <SidebarCollapseSymbol :collapsed="sidebarCollapsed" />
           <span v-if="!sidebarCollapsed">收起侧栏</span>
         </button>
       </div>
@@ -78,10 +75,7 @@
               title="收起侧栏"
               @click="drawerShow = false"
             >
-              <span class="sidebar-collapse-mark" aria-hidden="true">
-                <n-icon :size="14"><ChevronBackOutline /></n-icon>
-                <n-icon :size="14"><ChevronBackOutline /></n-icon>
-              </span>
+              <SidebarCollapseSymbol :collapsed="false" />
               <span>收起侧栏</span>
             </button>
           </div>
@@ -95,18 +89,15 @@
       <Teleport :to="topbarTarget || 'body'" :disabled="!topbarTarget">
       <component :is="topbarTarget ? 'div' : 'header'" v-if="!embedded || topbarTarget" :style="topbarTarget ? { display: 'contents' } : undefined" class="layout-header" :class="[topbarTarget ? 'console-kreeproxy-surface console-original-header' : '', { 'is-scrolled': isScrolled, 'is-menu-open': openMenu !== null }]">
         <div v-if="!topbarTarget" class="header-left">
-          <!-- 悬浮菜单按钮：沿用移动端侧栏按钮的路径、尺寸与透明状态。 -->
+          <!-- 悬浮菜单按钮 / 卡片SVG：Ionicons菜单图形随抽屉展开切Fill，命中与透明表面保留。 -->
           <button v-if="isMobile" class="icon-btn app-header-menu-toggle" @click="drawerShow = true" aria-label="菜单">
-            <svg class="app-header-menu-toggle-icon" aria-hidden="true" fill="none" viewBox="0 0 32 32" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path stroke-dasharray="12 63" d="M27 10 13 10C10.8 10 9 8.2 9 6 9 3.5 10.8 2 13 2 15.2 2 17 3.8 17 6L17 26C17 28.2 18.8 30 21 30 23.2 30 25 28.2 25 26 25 23.8 23.2 22 21 22L7 22" />
-              <path d="M7 16 27 16" />
-            </svg>
+            <InterfaceIcon name="menu" :filled="drawerShow" class="app-header-menu-toggle-icon" :size="20" />
           </button>
           <span class="header-title">{{ currentTitle }}</span>
         </div>
         <!-- 填写框 -->
         <div v-if="!topbarTarget && !isMobile" class="header-search">
-          <n-icon class="header-search-icon" :size="17"><SearchOutline /></n-icon>
+          <InterfaceIcon name="search" class="header-search-icon" :size="17" />
           <n-auto-complete
             v-model:value="searchQuery"
             :options="searchOptions"
@@ -134,7 +125,7 @@
           <TopbarHoverMenu :open="openMenu === 'account'" :options="userMenu" @open="setMenuOpen('account', true)" @close="setMenuOpen('account', false)" @select="handleUserSelect">
             <template #trigger>
             <n-button quaternary size="small" aria-label="账户菜单" title="账户菜单" class="account-button dashboard-dropdown-trigger topbar-language-reference-trigger topbar-account-trigger topbar-hover-trigger" :aria-expanded="openMenu === 'account'" aria-haspopup="menu">
-              <svg class="topbar-account-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.25"/><path d="M5.9 19c.75-3.35 2.8-5.1 6.1-5.1s5.35 1.75 6.1 5.1"/></svg>
+              <InterfaceIcon name="account" :filled="openMenu === 'account'" class="topbar-account-icon" />
               <span v-if="!isMobile" class="account-name">{{ auth.user?.username }}</span>
               <span class="topbar-trigger-chevron" :class="{ 'is-open': openMenu === 'account' }" aria-hidden="true" />
             </n-button>
@@ -160,16 +151,10 @@ import { createSidebarNavigation, defaultExpandedKeys, type SidebarMenuOption } 
 import { h, computed, inject, ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import KreeperSidebarMenu from './KreeperSidebarMenu.vue'
-import { NDrawer, NDrawerContent, NButton, NIcon, NAutoComplete } from 'naive-ui'
+import { NDrawer, NDrawerContent, NButton, NAutoComplete } from 'naive-ui'
 import type { MenuGroupOption, MenuOption } from 'naive-ui'
-import {
-  SpeedometerOutline, LinkOutline, CartOutline,
-  ReceiptOutline, WalletOutline, MegaphoneOutline, BookOutline,
-  PersonOutline, PeopleOutline, PeopleCircleOutline, ArchiveOutline, ServerOutline,
-  SettingsOutline, KeyOutline, NotificationsOutline, DocumentTextOutline,
-  PulseOutline, HardwareChipOutline, HomeOutline, LogOutOutline, CloudDownloadOutline, CloudOutline,
-  ShieldCheckmarkOutline, SearchOutline, ChevronBackOutline, ChevronForwardOutline
-} from '@vicons/ionicons5'
+import InterfaceIcon from '@/components/InterfaceIcon.vue'
+import SidebarCollapseSymbol from './SidebarCollapseSymbol.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useConfigStore } from '@/stores/config'
 import BrandMark from './BrandMark.vue'
@@ -205,10 +190,6 @@ function checkMobile() {
 }
 onMounted(() => { checkMobile(); window.addEventListener('resize', checkMobile) })
 onUnmounted(() => window.removeEventListener('resize', checkMobile))
-
-function renderIcon(icon: any) {
-  return () => h(NIcon, null, { default: () => h(icon) })
-}
 
 
 function toggleSidebar() {
@@ -281,7 +262,7 @@ const searchOptions = computed(() => {
 })
 
 const userMenu = [
-  { label: '退出登录', key: 'logout', icon: () => h(NIcon, null, { default: () => h(LogOutOutline) }) },
+  { label: '退出登录', key: 'logout', icon: () => h(InterfaceIcon, { name: 'logout' }) },
 ]
 const adminQuickMenu = [
   { label: '上游管理', key: '/admin/upstreams' },
@@ -523,7 +504,8 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
 .app-header-menu-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; background: transparent; box-shadow: none; }
 .app-header-menu-toggle-icon { display: block; width: 22px; height: 22px; flex: 0 0 22px; }
 
-.layout-content { flex: 1; padding: 22px 28px 40px; max-width: 1360px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+/* 展示信息模块：响应式以实际正文宽度判断，外层侧栏与顶栏几何保持。 */
+.layout-content { container: qingzhou-content / inline-size; flex: 1; padding: 22px 28px 40px; max-width: 1360px; margin: 0 auto; width: 100%; box-sizing: border-box; }
 .route-page-shell { animation: none; }
 
 /* 移动端 */

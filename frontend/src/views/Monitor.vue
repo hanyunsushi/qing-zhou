@@ -32,7 +32,7 @@
           </div>
           <div class="hero-right">
             <div class="clock">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+              <InterfaceIcon name="time" :size="14" />
               {{ clock }}
             </div>
             <div class="auto-badge">
@@ -44,11 +44,11 @@
           </div>
         </div>
 
-        <!-- 汇总卡片 -->
+        <!-- 展示卡片 / 卡片SVG：摘要沿用原布局和中性Regular轮廓，不生成选中状态。 -->
         <div class="summary-grid">
           <div class="summary-card">
             <div class="summary-icon i-server">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="8" rx="2"/><rect x="2" y="13" width="20" height="8" rx="2"/><line x1="6" y1="7" x2="6.01" y2="7"/><line x1="6" y1="17" x2="6.01" y2="17"/></svg>
+              <InterfaceIcon name="server" :size="20" />
             </div>
             <div class="summary-body">
               <span class="summary-val">{{ Math.round(dTotal) }}</span>
@@ -58,7 +58,7 @@
 
           <div class="summary-card">
             <div class="summary-icon i-cpu">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+              <InterfaceIcon name="cpu" :size="20" />
             </div>
             <div class="summary-body">
               <span class="summary-val">{{ hasData ? dCpu.toFixed(1) : '—' }}<i>%</i></span>
@@ -69,7 +69,7 @@
 
           <div class="summary-card">
             <div class="summary-icon i-mem">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="10" rx="2"/><line x1="6" y1="11" x2="6" y2="13"/><line x1="10" y1="11" x2="10" y2="13"/><line x1="14" y1="11" x2="14" y2="13"/><line x1="18" y1="11" x2="18" y2="13"/></svg>
+              <InterfaceIcon name="memory" :size="20" />
             </div>
             <div class="summary-body">
               <span class="summary-val">{{ hasData ? dMem.toFixed(1) : '—' }}<i>%</i></span>
@@ -80,7 +80,7 @@
 
           <div class="summary-card">
             <div class="summary-icon i-disk">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>
+              <InterfaceIcon name="disk" :size="20" />
             </div>
             <div class="summary-body">
               <span class="summary-val">{{ hasData ? dDisk.toFixed(1) : '—' }}<i>%</i></span>
@@ -200,30 +200,30 @@
                   <div><span class="ic-label">下行</span><span class="ic-val">{{ fmtBytes(s.metrics.net_down) }}/s</span></div>
                 </div>
                 <div class="info-cell" :title="`1 / 5 / 15 分钟平均负载`">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+                  <InterfaceIcon name="overview" :size="2" />
                   <div><span class="ic-label">负载</span><span class="ic-val">{{ s.metrics.load1.toFixed(2) }} / {{ s.metrics.load5.toFixed(2) }} / {{ s.metrics.load15.toFixed(2) }}</span></div>
                 </div>
                 <div class="info-cell" title="运行时长">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+                  <InterfaceIcon name="time" :size="2" />
                   <div><span class="ic-label">运行</span><span class="ic-val">{{ fmtUptime(s.metrics.uptime) }}</span></div>
                 </div>
                 <div class="info-cell" v-if="s.metrics.tcp_connections != null" title="TCP 连接数">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 0"/><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M6 8.5v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-7"/><circle cx="12" cy="19" r="2.5"/></svg>
+                  <InterfaceIcon name="subscription" :size="2" />
                   <div><span class="ic-label">连接</span><span class="ic-val">{{ s.metrics.tcp_connections }}</span></div>
                 </div>
                 <div class="info-cell" v-if="s.metrics.process_count != null" title="进程数">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                  <InterfaceIcon name="control" :size="2" />
                   <div><span class="ic-label">进程</span><span class="ic-val">{{ s.metrics.process_count }}</span></div>
                 </div>
                 <div class="info-cell wide" v-if="s.metrics.platform" title="操作系统 / 架构">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                  <InterfaceIcon name="server" :size="2" />
                   <div><span class="ic-label">系统</span><span class="ic-val ellip">{{ s.metrics.platform }}<template v-if="s.metrics.arch"> · {{ s.metrics.arch }}</template></span></div>
                 </div>
               </div>
             </template>
 
             <div v-else class="card-no-data">
-              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".3"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <InterfaceIcon name="warning" :size="30" />
               <span>暂无数据</span>
             </div>
 
@@ -303,6 +303,7 @@
 </template>
 
 <script setup lang="ts">
+import InterfaceIcon from '@/components/InterfaceIcon.vue'
 import { ref, computed, onMounted, onUnmounted, nextTick, reactive, watch } from 'vue'
 import { NEmpty } from 'naive-ui'
 import { apiGet, apiList, apiPost, apiPut } from '@/api'
