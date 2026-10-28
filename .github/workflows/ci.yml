@@ -57,10 +57,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
+      - uses: pnpm/action-setup@v4
+        with:
+          version: "10.11.0"
       - name: Build frontend
         working-directory: frontend
         # Keep the same type and network checks required before a release.
         run: |
-          npm ci
+          pnpm install --frozen-lockfile
           npm test
           npm run build
