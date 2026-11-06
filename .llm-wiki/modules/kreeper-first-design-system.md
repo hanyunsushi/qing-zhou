@@ -5,6 +5,8 @@ updated: 2026-10-29
 
 ## 当前前端接入合同
 
+`frontend/src/styles/sidebar-motion.css`显式居中普通菜单的16px图标与20px文字行框；收起父项的透明Motion箭头以绝对定位退出网格流，保留淡出/位移，避免生成第二行。原32px行、列位置、Ionicons与权限/路由保持。 验证与发布状态由[项目权威](../../agent.md)维护。
+
 应用按完整设计系统的按钮、表单、SVG和Apple语义色合同接入；本节覆盖下方历史发布段落中的旧色值、400ms内光、方形复选框和Lucide刷新描述。运行入口仍为 `frontend/src/styles/global.css`、`App.vue` 的 Naive theme，以及组件 scoped 样式。
 
 - 普通/默认弧边为白色实体常态、text-2、1px中性ring，300ms灰色高亮；强调按钮使用蓝色提亮和1→2px外ring，高亮弧边保持固定边界。复制栏仅变色，键盘焦点独立；不再使用共享内光。UserDashboard的引导动作同步灰色高亮。
@@ -262,7 +264,7 @@ Markdown正文沿用“项目超链接”合同：`global.css`中`.md a`常态Ap
 
 本轮进一步收窄命中面：对象占位的114px顶部展开留白、`.gf-root`/`.gf-interaction`透明包装以及文件夹组背景空白均不形成交互区域；悬浮、点击和wheel只从实际后板、前盖轮廓或展开纸页按钮承接。代码与skill合同均保留透明包装的`pointer-events:none`及实际子面恢复命中，避免点击组件背景误开合或滚轮误切页。
 
-新分类“玻璃文件夹卡片”已获用户确认，模板/CSS责任边界与内部分开的数字/展示卡片注释同步。完整skill按需入口见[专项](</Users/hinaw/Library/Mobile Documents/com~apple~CloudDocs/obsidian vault/knowledge vault/ai/agent-skills/custom/kreeper-first-design-system/references/glass-folder.md>)：提供无API/store依赖的三文件复用单元、滚轮预览和互斥接入合同，默认完整动画，仅系统减少动态效果静态；明暗对象材质不改变模块深度或AWS/Apple业务颜色合同。来源是未附可核实URL/许可证的用户附件，保留SHA与分发授权边界。
+新分类“玻璃文件夹卡片”已获用户确认，模板/CSS责任边界与内部分开的数字/展示卡片注释同步。完整skill按需入口见[专项](</Users/hinaw/agent-skills/custom/kreeper-first-design-system/references/glass-folder.md>)：提供无API/store依赖的三文件复用单元、滚轮预览和互斥接入合同，默认完整动画，仅系统减少动态效果静态；明暗对象材质不改变模块深度或AWS/Apple业务颜色合同。来源是未附可核实URL/许可证的用户附件，保留SHA与分发授权边界。
 
 源码、canonical规范/快照/pattern和原5191示范同步；本项尚未提交发布部署，运行及预览事实由[项目权威](../../agent.md)维护，浏览器/测试边界见[Validation](../guides/validation.md#玻璃文件夹商城未部署)。
 
@@ -280,7 +282,7 @@ PageScrollbar居中按实际内部15px轨道验收：外宽16px包含左侧1px�
 
 ## 默认加载与页面切屏
 
-用户指定DotMatrix作为默认等待图标，新增“加载反馈”分类；`DotMatrixLoader.vue`与`styles/loading.css`提供小型3×3圆点。Naive BaseLoading共享替换保留原请求/禁用/占位语义，覆盖按钮16px、NSpin/表格20px、选择器/输入16px；标准刷新继续沿用其专项SVG。React文本仅用于DotMatrix视觉参考，不安装React/Motion/Tailwind；参数、源码和来源见 [skill 专项规范](</Users/hinaw/Library/Mobile Documents/com~apple~CloudDocs/obsidian vault/knowledge vault/ai/agent-skills/custom/kreeper-first-design-system/references/loading.md>)。用户取消的特效卡片规范与局部按钮变体已移除。
+用户指定DotMatrix作为默认等待图标，新增“加载反馈”分类；`DotMatrixLoader.vue`与`styles/loading.css`提供小型3×3圆点。Naive BaseLoading共享替换保留原请求/禁用/占位语义，覆盖按钮16px、NSpin/表格20px、选择器/输入16px；标准刷新继续沿用其专项SVG。React文本仅用于DotMatrix视觉参考，不安装React/Motion/Tailwind；参数、源码和来源见 [skill 专项规范](</Users/hinaw/agent-skills/custom/kreeper-first-design-system/references/loading.md>)。用户取消的特效卡片规范与局部按钮变体已移除。
 
 `utils/page-loading.ts`按导航token收集准备期请求，`api/index.ts`追踪完整fetch/JSON与原45秒截止时间，成功或失败均落定；Vue更新和绘制安静期包含连续请求，目标壳实际NSpin/按钮/aria-busy状态保留重试间隙的加载门控。router只准备scope，目标页隐藏挂载，`shift5.ts`在API和字体/媒体就绪后撤掉加载符号一帧，再离场/揭示。快速导航取消旧动画和门控，旧响应不能提前揭示新页；取消/错误释放等待。后续刷新不重启路由加载；减弱动态效果保留数据等待，跳过切屏。模板/CSS/状态边界已标记“加载反馈 / 组件绘制动画”，复用代码与示范同步，未发布部署。
 
@@ -322,7 +324,7 @@ PageScrollbar居中按实际内部15px轨道验收：外宽16px包含左侧1px�
 
 ## 权威与文档分工
 
-青舟完整设计规范、来源、代码复用和字体资产统一由 [kreeper第一设计系统](</Users/hinaw/Library/Mobile Documents/com~apple~CloudDocs/obsidian vault/knowledge vault/ai/agent-skills/custom/kreeper-first-design-system/SKILL.md>) 管理。这是完整 skill 包，而非孤立 md；入口采用渐进式披露。本页仅维护青舟项目集成边界，不复制全套组件规范。
+青舟完整设计规范、来源、代码复用和字体资产统一由 [kreeper第一设计系统](</Users/hinaw/agent-skills/custom/kreeper-first-design-system/SKILL.md>) 管理。这是完整 skill 包，而非孤立 md；入口采用渐进式披露。本页仅维护青舟项目集成边界，不复制全套组件规范。
 
 - 规范按需入口：skill 的 references/foundations、typography、sidebar、topbar、scrollbars、buttons、forms、surfaces、semantics、navigation、overlays、charts、content、motion、pages、authentication、interactions、responsive、maintenance、showcase，以及refresh/skyline专项。
 - 覆盖索引：references/component-catalog.md 与 coverage.json；当前 71 个 Vue/TS/CSS 文件、50 个组件/页面均有映射，逐文件 template/style/媒体查询在 assets/patterns，完整业务依赖在 assets/source-reference。

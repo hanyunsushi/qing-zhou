@@ -3,7 +3,8 @@
 .motion-sidebar-menu .sidebar-motion-item { position: relative; overflow: visible !important; }
 .motion-sidebar-menu .sidebar-leaf { height: 32px !important; }
 .motion-sidebar-menu .sidebar-row-track { position: relative; overflow: visible !important; }
-.motion-sidebar-menu .n-menu-item-content { border: 0; cursor: pointer; text-align: left; font-family: inherit; outline: none; }
+/* 侧边栏：16px图标与20px文字行框共用中心线。 */
+.motion-sidebar-menu .n-menu-item-content { align-items: center; border: 0; cursor: pointer; text-align: left; font-family: inherit; outline: none; }
 .motion-sidebar-menu .n-menu-item-content:disabled { cursor: not-allowed; opacity: .4; }
 .motion-sidebar-menu .sidebar-hover-container { position: absolute; inset-inline: 0; top: 0; height: 32px; pointer-events: none; }
 .motion-sidebar-menu .sidebar-hover-projection,
@@ -82,3 +83,6 @@
 .sidebar-symbol-svg{position:absolute;inset:0;display:block;width:100%;height:100%;overflow:visible}
 /* 侧边栏 / 卡片SVG：悬停/焦点只变色；轮廓与Fill仅由真实选中状态决定。 */
 .motion-sidebar-menu .n-menu-item-content:is(:hover,:focus-visible):not(:disabled) .sidebar-symbol{color:var(--accent)}
+
+/* 侧边栏：收起时箭头保留原Motion淡出，但不占网格第二行挤偏父项图标。 */
+.app-sider.is-collapsed .motion-sidebar-menu .sidebar-motion-arrow { position: absolute; inset-inline-end: 12px; top: 8px; }
