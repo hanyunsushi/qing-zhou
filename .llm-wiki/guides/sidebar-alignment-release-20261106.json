@@ -31,7 +31,9 @@
     "nativeAIAssets": 720,
     "publicConsoleChecks": 35,
     "publicConsoleDigests": 24,
-    "productionBrowser": "IAB desktop, collapsed, 390x844 Drawer: center offset 0; logo16px; actual company same-tab navigation confirmed"
+    "productionBrowser": "IAB desktop, collapsed, 390x844 Drawer: center offset 0; logo16px; actual company same-tab navigation confirmed",
+    "postRetentionPublicConsoleChecks": 35,
+    "postRetentionPublicDigests": 24
   },
   "production": {
     "manifestFiles": 1704,
@@ -66,7 +68,9 @@
     "compatibilityFiles": 1047,
     "removedPaths": 3,
     "removedImageTags": 2,
-    "formalVolumeDeletion": false
+    "formalVolumeDeletion": false,
+    "taskStagingRemoved": true,
+    "totalRemovedTaskAndRetiredPaths": 4
   },
   "limits": [
     "No authenticated native production menu acceptance",
