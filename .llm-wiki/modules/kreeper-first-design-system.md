@@ -5,7 +5,7 @@ updated: 2026-10-29
 
 ## 当前前端接入合同
 
-`frontend/src/styles/sidebar-motion.css`显式居中普通菜单的16px图标与20px文字行框；收起父项的透明Motion箭头以绝对定位退出网格流，保留淡出/位移，避免生成第二行。原32px行、列位置、Ionicons与权限/路由保持。 验证与发布状态由[项目权威](../../agent.md)维护。
+`frontend/src/styles/sidebar-motion.css`显式居中普通菜单的16px图标与20px文字行框；收起父项的透明Motion箭头以绝对定位退出网格流，保留淡出/位移，避免生成第二行。原32px行、列位置、Ionicons与权限/路由保持。 验证与发布状态由[项目权威](../../agent.md)维护，脱敏[发布回执](../guides/sidebar-alignment-release-20261106.json)记录本次双入口范围。
 
 应用按完整设计系统的按钮、表单、SVG和Apple语义色合同接入；本节覆盖下方历史发布段落中的旧色值、400ms内光、方形复选框和Lucide刷新描述。运行入口仍为 `frontend/src/styles/global.css`、`App.vue` 的 Naive theme，以及组件 scoped 样式。
 

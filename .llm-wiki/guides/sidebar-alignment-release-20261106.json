@@ -1,0 +1,78 @@
+{
+  "date": "2026-11-06",
+  "releaseId": "console-20261106-sidebar-alignment-a",
+  "previous": "console-20261106-home-topbar-performance-a",
+  "sources": {
+    "console-kreeper": "86dcfdc38f933a8e30c1a3ca03fbb2d1316f6435",
+    "qing-zhou-fork": "8cc544084996146fd341d52ae71ccdcc67ae8e5c",
+    "sub2api-src": "d7dde235de5c84488b9a7394f84118e2570699d3",
+    "agent-skills": "63c1464a8f11559eacd66a4ec0266300e3a7d43c"
+  },
+  "versions": {
+    "console": "0.1.0",
+    "qingzhou": "v0.2.80",
+    "sub2api": "0.2.19"
+  },
+  "scope": [
+    "Console company website same-tab link and 16px transparent logo",
+    "ordinary sidebar icon/text centering",
+    "collapsed parent arrow grid-flow correction",
+    "native QingZhou and AI plus Console MFE synchronization",
+    "canonical asset/specification synchronization"
+  ],
+  "validation": {
+    "hostTests": 57,
+    "qingzhouFrontendTests": 238,
+    "AIFrontendTests": 3218,
+    "canonicalTests": 84,
+    "typeAndBuild": "passed; AI production native/MFE build on Node22",
+    "qingzhouGoTestVet": "passed",
+    "nativeQingZhouAssets": 207,
+    "nativeAIAssets": 720,
+    "publicConsoleChecks": 35,
+    "publicConsoleDigests": 24,
+    "productionBrowser": "IAB desktop, collapsed, 390x844 Drawer: center offset 0; logo16px; actual company same-tab navigation confirmed"
+  },
+  "production": {
+    "manifestFiles": 1704,
+    "otherChildFilesByteIdentical": 1366,
+    "AIImage": "sha256:06f67a781b48c159236a87de9a1053f466f62e2ff094b8cacd5ed72772ea416d",
+    "AIHealth": "healthy",
+    "AIRestarts": 0,
+    "QingZhouBinarySha256": "9c64c1cdcf21c0b57c77d8692d73751ba2e2571fae7a307d70f4a06eed8879f8",
+    "SQLiteIntegrity": "ok",
+    "nativeProtectedConfiguration": "unchanged",
+    "AIEnvMountsCredentialsSettings": "unchanged",
+    "otherContainersUnchangedDuringAI": 11,
+    "nodeTunnelUnchanged": true
+  },
+  "recovery": {
+    "backups": {
+      "console": "/home/ubuntu/oci-recovery/console/20261106T151358Z",
+      "qingzhou": "/home/ubuntu/oci-recovery/qingzhou/20261106T151417Z",
+      "sub2api": "/home/ubuntu/oci-recovery/sub2api/20261106T151433Z"
+    },
+    "offhostDirectory": "~/.local/share/oci-recovery/20261106-sidebar-alignment/",
+    "offhostNative": "clean source, current binaries, prior complete image and reconstruction recipe; new image full export retained on OCI",
+    "offhostConsole": "1704 exact manifest files reconstructed and hash verified",
+    "currentAndRollbackReleases": [
+      "console-20261106-sidebar-alignment-a",
+      "console-20261106-home-topbar-performance-a",
+      "console-20261106-authentik-navigation-a",
+      "console-20261106-topbar-glass-a"
+    ],
+    "retentionManifests": 6341,
+    "staticReferences": 51711,
+    "compatibilityFiles": 1047,
+    "removedPaths": 3,
+    "removedImageTags": 2,
+    "formalVolumeDeletion": false
+  },
+  "limits": [
+    "No authenticated native production menu acceptance",
+    "No physical touch, other browser engine or full recovery drill",
+    "Production browser covered Console shell and direct website destination",
+    "Node26 clean AI build checker failed; Node22 complete production build passed"
+  ],
+  "evidence": "output/sidebar-release-20261106/"
+}
