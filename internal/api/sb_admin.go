@@ -1506,6 +1506,7 @@ var sbInboundTypes = map[string]bool{"vless": true, "hysteria2": true, "tuic": t
 
 func (a *API) handleAdminSaveSbInbound(w http.ResponseWriter, r *http.Request) {
 	var n store.SbInbound
+	var previousOptions string
 	// On update, decode onto the stored row. SaveSbInbound writes every column,
 	// including relay_secret — which is json:"-" and therefore CANNOT come from
 	// the client. Decoding into a zero value blanked it on every save, including
@@ -1520,6 +1521,7 @@ func (a *API) handleAdminSaveSbInbound(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		n = *cur
+		previousOptions = cur.Options
 	}
 	if err := json.NewDecoder(r.Body).Decode(&n); err != nil {
 		fail(w, http.StatusBadRequest, "请求格式错误")
@@ -1563,10 +1565,35 @@ func (a *API) handleAdminSaveSbInbound(w http.ResponseWriter, r *http.Request) {
 		fail(w, http.StatusBadRequest, fmt.Sprintf("端口 %d 已被入站「%s」占用", n.ListenPort, existingTag))
 		return
 	}
+	if n.Options == "" {
+		n.Options = "{}"
+	}
 	if n.Options != "" {
 		var opts map[string]interface{}
 		if err := json.Unmarshal([]byte(n.Options), &opts); err != nil {
 			fail(w, http.StatusBadRequest, "options 不是合法 JSON")
+			return
+		}
+		// Older panel clients rebuild options from their visible controls. Keep
+		// the WSS endpoint unless the caller explicitly clears it with null.
+		if _, provided := opts["client_endpoint"]; !provided && previousOptions != "" {
+			var previous map[string]interface{}
+			if json.Unmarshal([]byte(previousOptions), &previous) == nil && previous["client_endpoint"] != nil {
+				if opts == nil {
+					opts = map[string]interface{}{}
+				}
+				opts["client_endpoint"] = previous["client_endpoint"]
+				encoded, _ := json.Marshal(opts)
+				n.Options = string(encoded)
+			}
+		}
+		ep, err := singbox.ParseClientEndpoint(n.Type, opts)
+		if err != nil {
+			fail(w, http.StatusBadRequest, err.Error())
+			return
+		}
+		if ep != nil && (n.TlsID != 0 || (n.Listen != "127.0.0.1" && n.Listen != "::1")) {
+			fail(w, http.StatusBadRequest, "前置 WSS 入站必须监听本机回环地址，TLS 由前置服务终止")
 			return
 		}
 		// Shadowsocks-2022 needs a server PSK; generate one if absent.

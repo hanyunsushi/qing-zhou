@@ -941,6 +941,12 @@ func (s *Store) BuildSelfBuiltLinks(u *User, host string) []SelfBuiltLink {
 				p.WSHost = p.SNI // CDN host defaults to the TLS SNI
 			}
 		}
+		if ep, err := singbox.ParseClientEndpoint(ib.Type, opts); err != nil {
+			continue // never publish an invalid endpoint as an origin-IP fallback
+		} else if ep != nil {
+			p.Host, p.Port, p.SNI = ep.Server, ep.ServerPort, ep.ServerName
+			p.WSHost, p.TLS, p.Insecure = ep.ServerName, true, false
+		}
 		if r, ok := server["reality"].(map[string]interface{}); ok {
 			p.PublicKey = nestedStr(client, "reality", "public_key")
 			p.ShortID = firstShortID(r["short_id"])

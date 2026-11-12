@@ -222,6 +222,11 @@ func GenerateConfigWithOptions(base json.RawMessage, inbounds []Inbound, opt Opt
 		delete(m, "disable_chrome_parrot")
 		delete(m, "hop_interval")
 		delete(m, "hop_interval_max")
+		// TLS is terminated by the WSS frontend; this is client metadata only.
+		if _, err := ParseClientEndpoint(ib.Type, m); err != nil {
+			return nil, err
+		}
+		delete(m, "client_endpoint")
 		ibList = append(ibList, m)
 		if tag, _ := m["tag"].(string); tag != "" {
 			emittedTags = append(emittedTags, tag)
