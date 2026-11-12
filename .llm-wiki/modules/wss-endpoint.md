@@ -1,14 +1,42 @@
 ---
-title: Native VLESS behind a WSS frontend
+title: Native VLESS with direct and frontend WSS
 updated: 2026-11-12
 ---
 
 # Responsibility
 
 QingZhou owns users, node entitlements, traffic accounting and the native
-sing-box listener. Cloudflare terminates external TLS and carries WebSocket
-traffic through Tunnel to a loopback VLESS/WS listener. The public connection
-address is independent of that listener's bind address and port.
+sing-box listeners. A direct VLESS/WSS inbound terminates TLS in sing-box on
+the OCI host. The Cloudflare variant terminates TLS at Cloudflare and carries
+WebSocket traffic through Tunnel to a loopback VLESS/WS listener. Both can
+coexist with AnyTLS and use the same node groups and per-owner credentials.
+
+# Direct WSS and certificate renewal
+
+Direct WSS uses an ordinary public VLESS inbound with a TLS profile and
+`transport.type=ws`; it does not use `options.client_endpoint`. The published
+server address may be the OCI IP while TLS SNI and WebSocket Host match a
+dedicated certificate hostname. Its DNS A record must remain DNS-only for
+clients that connect by that hostname. Certificate verification stays enabled.
+
+The direct TLS profile references Certbot's stable `fullchain.pem` and
+`privkey.pem` paths under `/etc/letsencrypt/live/<hostname>/`. Certbot owns
+renewal through the existing enabled `certbot.timer`; a deployment hook
+restarts only `qingzhou-sing-box.service`, and only when `RENEWED_LINEAGE`
+matches this endpoint. The panel's certificate center does not own this
+certificate. HTTP-01 issuance and renewal need port 80 to remain reachable
+and available to Certbot's standalone listener.
+
+Validate renewal with `certbot renew --cert-name <hostname> --dry-run --no-random-sleep-on-renew`.
+This staging check does not replace the live
+certificate or run deployment hooks by default. Verify the actual public
+subscription and VLESS/WSS traffic separately from certificate issuance.
+
+To retire only the direct endpoint, disable its logical node and inbound,
+then remove its dedicated TLS profile, DNS record and lineage-scoped renewal
+hook if no longer referenced. Do not change the AnyTLS or Tunnel inbounds,
+and do not restore the whole database for a node rollback. Concrete endpoint,
+recovery and acceptance facts belong to [Project authority](../../agent.md).
 
 # Subscription endpoint metadata
 

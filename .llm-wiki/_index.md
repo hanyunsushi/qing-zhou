@@ -9,7 +9,7 @@ updated: 2026-11-12
 - [System Overview](architecture/overview.md) - QingZhou boundaries and admin data flow.
 
 # Modules
-- [Native VLESS behind a WSS frontend](modules/wss-endpoint.md) - loopback ingress, public subscription endpoint and effective Tunnel routing.
+- [Native VLESS with direct and frontend WSS](modules/wss-endpoint.md) - direct TLS, certificate renewal, loopback ingress and effective Tunnel routing.
 - [Console OIDC Backend](modules/console-oidc-backend.md) - Original-site and Console callback compatibility.
 - [Console Microfrontend](modules/console-microfrontend.md) - Independent Console ESM adapter and embedded lifecycle.
 - [Official Usage](modules/official-usage.md) - direct OCI and Cloudflare provider adapters.

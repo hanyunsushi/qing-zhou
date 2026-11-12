@@ -33,11 +33,12 @@ The OCI production deployment runs QingZhou as a host `systemd` service rather t
 
 The legacy EdgeTunnel OCI node service has been retired; port `8881` is not part of the current production path. QingZhou's native service owns the OCI node on `8882`. The optional Docker Compose deployment remains a center-panel/remote-SSH mode and must not be used to replace the production host service without an explicit migration.
 
-Native VLESS/WS can also sit behind a TLS-terminating WSS frontend. Its
-subscription endpoint is independent of the loopback listener, while user
-entitlements and statistics remain under QingZhou. The endpoint metadata,
-backward-compatible panel updates and effective remotely managed Tunnel
-rules are described in [WSS endpoints](../modules/wss-endpoint.md). Current
+Native VLESS/WS can terminate TLS directly on the OCI host or sit behind a
+TLS-terminating WSS frontend. In the frontend topology the subscription
+endpoint is independent of the loopback listener. User entitlements and
+statistics remain under QingZhou in both cases. Direct certificate renewal,
+endpoint metadata and effective remotely managed Tunnel rules are described
+in [WSS endpoints](../modules/wss-endpoint.md). Current
 production addresses and validation evidence belong to the project authority.
 
 ### Subscription node order
