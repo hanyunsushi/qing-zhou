@@ -1,32 +1,20 @@
 ---
-title: 本地前端、发布门槛与本机服务边界同步状态
-updated: 2026-10-29
-head_commit: 4320cff27340ad09395802d5b39f66469fc95a05
+title: WSS 节点增量同步状态
+updated: 2026-11-12
+head_commit: c521ec5
 ---
-
-
-## 当前侧栏发布同步范围
-
-本次Doc Impact Map含普通行中心与折叠箭头占位：实现归[设计模块](modules/kreeper-first-design-system.md)，干净源码/测试/双入口构建、生产资源与回滚验证归[权威](../agent.md)和[回执](guides/sidebar-alignment-release-20261106.json)。本轮源码已推送发布；Node22完成AI生产构建。已核对HEAD与dirty范围，既有并行文档和业务文件保持，其他历史同步段不由此扩大验收范围。
-
-# 范围
-
-同步本地前端设计系统接入、隔离图标候选、生产只读核对及发布门槛，同时保留Mac本机服务停用和按需恢复合同。当前HEAD、暂存及未暂存文件清单已核对；原有订阅/部署/维护文档修改保留，并与本轮部署事实分开记录。
 
 # Doc Impact Map
 
-- 本机运行状态、停用事实及数据边界由[项目权威文档](../agent.md#本机服务状态2026-10-23)管理。
-- 按需恢复步骤见[开发指南](guides/deployment.md)。
-- 按钮、表单、Apple语义色、Ionicons MIT配对资源、布局和图表容器变化映射至[设计模块](modules/kreeper-first-design-system.md#当前前端接入合同)。
-- 测试、构建、浏览器路由/交互/MFE的证据与未测边界映射至[验证指南](guides/validation.md#设计系统前端核对2026-10-29)。
-- 本地接入范围、临时服务收尾及生产边界由[项目权威](../agent.md#前端设计系统发布2026-10-29已部署)管理；无后端/API/数据库迁移或产品版本变更；CI仅补齐维护锁和测试工具声明。
+- 地址映射验证、按用户订阅、核心配置剥离、旧表单保存兼容及有效 Tunnel 路由由 [WSS 模块](modules/wss-endpoint.md) 维护。
+- 生产监听/入口、运行产物、保护摘要、恢复点、保留集合和未验范围由 [项目权威](../agent.md) 维护。
+- [架构概览](architecture/overview.md) 与 [索引](./_index.md) 提供入口，不复制发布流水。
+- 初始未提交的 subscription-delivery.md 和 KREEPER-MAINTENANCE.md 修改保持，未纳入本轮提交。
 
-# 发布准备
+# 验证
 
-用户已确认 Ionicons 替代并授权部署。源码提交 `2103dbce9d373e60150d54153c7ba3cf6eb58eeb` 已推送；CI `40742462521` 通过。原生 SHA-256 `28f9b173ac7f0155d75f7a753b321fbceb83939a0d3d57bdd518ce37ee370bc2` 已激活，健康为 `v0.2.80/ok`；Console 当前为 `console-20261029-qingzhou-design-c`，基于最新并发指针 `console-20261029-marketing-scrollbar-a` 重建。原生 307 项资源、Console 9 条路由/19 项直接资源、公网 79 项资源哈希、390px 无横溢出通过。恢复点、私有副本和保留清理回执归项目权威与 Deployment；未执行 volume prune、`down -v` 或数据库覆盖。
+源码七个文件的变更已推送；Go 测试和受影响包 vet 通过，前端 238 项测试、类型与构建通过。生产复用并验证 207 项原资源，用户凭据/设置/环境摘要保持，三个服务 active，SQLite 完整性检查通过。公网代理与大请求的测量结果由权威指定任务报告维护；未刷新或切换现用 Clash，不把独立客户端测试当作客户端配置上线。
 
-# 验证范围
+# 文档检查
 
-238项前端测试、standalone/MFE构建与产物检查通过；合成API浏览器248个路由/宽度样本、8组交互、6个MFE样本通过。预期认证401及生产/物理设备未验边界按验证指南记录。Wiki18页、188个本地链接、45处源码文件引用无断链、孤立页或缺失文件；权威软链接、双向入口与diff格式检查通过。当前 HEAD 为上方代码提交之后的文档同步工作树；本轮文档修改待提交，原有运维文档 dirty 修改保留。
-
-本轮临时预览服务完成验证后关闭；launchd停用、后端8081停止及OCI不操作的边界保持。原本机停机检查的Docker状态/重启策略结论仅按项目权威证据保留，未重新推断业务验收；OpenStock匿名卷例外未宣称数据恢复。未操作共享运维脚本、生产服务或设计技能仓库。
+本轮检查 Wiki 索引覆盖、相对文件链接、源文件引用、权威软链接和双向入口；结果另存任务目录 documentation-validation.json。文档不保存节点 UUID、认证 token、WS 私有路径或 Cloudflare 账户凭据。

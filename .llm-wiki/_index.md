@@ -1,6 +1,6 @@
 ---
 title: QingZhou Fork Wiki
-updated: 2026-10-22
+updated: 2026-11-12
 ---
 
 [Project Authority](../agent.md)
@@ -9,6 +9,7 @@ updated: 2026-10-22
 - [System Overview](architecture/overview.md) - QingZhou boundaries and admin data flow.
 
 # Modules
+- [Native VLESS behind a WSS frontend](modules/wss-endpoint.md) - loopback ingress, public subscription endpoint and effective Tunnel routing.
 - [Console OIDC Backend](modules/console-oidc-backend.md) - Original-site and Console callback compatibility.
 - [Console Microfrontend](modules/console-microfrontend.md) - Independent Console ESM adapter and embedded lifecycle.
 - [Official Usage](modules/official-usage.md) - direct OCI and Cloudflare provider adapters.
