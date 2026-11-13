@@ -428,3 +428,5 @@ Changed categories are existing 日期范围选择器 / 填写框 / 路由切换
 `frontend/src/components/AppHeader.vue`与`DashboardLayout.vue`在顶栏自身设置`--topbar-surface:transparent`；继续使用原22px模糊、1.5饱和度、64px和分割线。侧栏品牌/反馈沿根级渐变；无背景滤镜时回退原后备面。
 
 共用材质合同由`kreeper-first-design-system/references/topbar.md`维护；源码/浏览器与发布状态分别由[项目权威](../../agent.md)记录。
+
+发布身份、回滚和生产验收边界由[项目权威](../../agent.md)与[共享回执](/Users/hinaw/console-kreeper/.llm-wiki/guides/frosted-release-20261113.json)维护，不能把CSS夹具视作已登录业务验收。
