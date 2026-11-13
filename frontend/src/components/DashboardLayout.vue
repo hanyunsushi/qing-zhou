@@ -429,7 +429,9 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
 .app-main { flex: 1; min-width: 0; display: flex; flex-direction: column; min-height: 100vh; background: var(--bg); }
 .app-shell.is-embedded .app-main { width: 100%; }
 .app-shell.is-embedded .layout-content { max-width: none; padding: 0; }
+/* 顶栏：透明磨砂直接模糊背景，原控件、品牌区及菜单表面独立。 */
 .layout-header {
+  --topbar-surface: transparent;
   /* Dashboard chrome is nested beside the sidebar; keep it inside .app-main.
      A viewport width here hides the right-side account controls whenever the
      document has a scrollbar or Naive UI temporarily locks the page. */
@@ -636,5 +638,10 @@ onUnmounted(() => window.removeEventListener('keydown', focusSidebarFilter))
 :global(.mobile-sidebar-drawer .n-drawer-body-content-wrapper) { border-radius: 0 !important; }
 @media (max-width: 1080px) {
   .layout-header { grid-template-columns: minmax(120px, 1fr) minmax(0, 360px) max-content; gap: 12px; }
+}
+
+/* 顶栏：无背景滤镜支持时保留可读后备面。 */
+@supports not ((backdrop-filter: blur(22px)) or (-webkit-backdrop-filter: blur(22px))) {
+  .layout-header { --topbar-surface: var(--topbar-scrim-background-fallback); }
 }
 </style>

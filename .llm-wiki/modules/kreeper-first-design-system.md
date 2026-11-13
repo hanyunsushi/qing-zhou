@@ -422,3 +422,9 @@ AdminUsageReport replaces only its custom date filter with `components/date-rang
 Shift5 root overlays use the visible intersection below the retained header with explicit fixed important geometry. The microfrontend CSS scoper maps the overlay's own root to `:scope.qz-shift5-route-transition`; a descendant-only selector leaves that body-mounted root in document flow and creates temporary blank scroll space. The source and canonical reusable utility share this correction. Settings keep their original secondary navigation, natural page scrolling and content visuals.
 
 Changed categories are existing 日期范围选择器 / 填写框 / 路由切换组件 / 组件绘制动画; no new category, AWS palette/typography rule or QingZhou-wide visual migration. Canonical reviewed source references, AdminUsageReport pattern, date-range pattern and affected hashes are synchronized. Build/browser/deployment evidence is owned by [authority](../../agent.md).
+
+## 透明磨砂顶栏
+
+`frontend/src/components/AppHeader.vue`与`DashboardLayout.vue`在顶栏自身设置`--topbar-surface:transparent`；继续使用原22px模糊、1.5饱和度、64px和分割线。侧栏品牌/反馈沿根级渐变；无背景滤镜时回退原后备面。
+
+共用材质合同由`kreeper-first-design-system/references/topbar.md`维护；源码/浏览器与发布状态分别由[项目权威](../../agent.md)记录。

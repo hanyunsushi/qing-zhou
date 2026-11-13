@@ -110,7 +110,9 @@ function handleNav(key: string) {
 </script>
 
 <style scoped>
+/* 顶栏：透明磨砂直接模糊背景，原控件、品牌区及菜单表面独立。 */
 .app-header {
+  --topbar-surface: transparent;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -159,4 +161,9 @@ function handleNav(key: string) {
   .header-right { gap: 2px; }
 }
 
+
+/* 顶栏：无背景滤镜支持时保留可读后备面。 */
+@supports not ((backdrop-filter: blur(22px)) or (-webkit-backdrop-filter: blur(22px))) {
+  .app-header { --topbar-surface: var(--topbar-scrim-background-fallback); }
+}
 </style>
